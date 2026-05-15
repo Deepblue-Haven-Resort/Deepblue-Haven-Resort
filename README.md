@@ -90,7 +90,7 @@ Deepblue-Haven-Resort
 │   │   │   ├── pojo/                 # Các class thực thể (Entities/Models) tương tác với Database
 │   │   │   ├── repositories/         # Các Interface giao tiếp trực tiếp với Database (JPA)
 │   │   │   ├── service/              # Xử lý logic nghiệp vụ cốt lõi (Business Logic)
-│   │   │   ├── DeepblueHavenApplication.java  # File khởi chạy ứng dụng Spring Boot
+│   │   │   ├── DeepbluehavenApplication.java  # File khởi chạy ứng dụng Spring Boot
 │   │   │   └── SeedDataRunner.java            # Khởi tạo dữ liệu mẫu (mock data) khi chạy app
 │   │   │
 │   │   └── resources/        # Chứa tài nguyên tĩnh và views
@@ -100,15 +100,6 @@ Deepblue-Haven-Resort
 │   │       │   └── pic/      # Thư mục lưu trữ hình ảnh (Banners, Rooms, Services...)
 │   │       │
 │   │       ├── templates/    # Chứa các file giao diện HTML (Thymeleaf views)
-│   │       │   ├── admin/        # Giao diện cho Quản lý / Admin
-│   │       │   ├── auth/         # Giao diện Đăng nhập / Đăng ký / Quên mật khẩu
-│   │       │   ├── cashier/      # Giao diện cho Lễ tân / Thu ngân (Booking, Thanh toán)
-│   │       │   ├── component/    # Các thành phần UI nhỏ dùng chung
-│   │       │   ├── customer/     # Giao diện cho Khách hàng (Tìm phòng, Đặt phòng, Profile)
-│   │       │   ├── error/        # Giao diện báo lỗi (404, 500)
-│   │       │   ├── fragments/    # Các phần giao diện dùng chung (Header, Footer, Sidebar)
-│   │       │   ├── kitchen/      # Giao diện cho Bếp / Dịch vụ ăn uống
-│   │       │   └── waiter/       # Giao diện cho Buồng phòng / Phục vụ
 │   │       │
 │   │       └── application.properties # File cấu hình môi trường, database, port của hệ thống
 │   │
