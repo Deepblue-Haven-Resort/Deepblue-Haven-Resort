@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Deep Blue Haven | Customer Dashboard</title>
+
+  <link rel="stylesheet" th:href="@{/assets/css/theme.css}" />
+  <link rel="stylesheet" th:href="@{/assets/css/base.css}" />
+  <link rel="stylesheet" th:href="@{/assets/css/header.css}" />
+  <link rel="stylesheet" th:href="@{/assets/css/home.css}" />
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+</head>
+
+<body>
+  <header th:replace="~{fragments/header :: header}"></header>
+
+  <main class="customer-home">
+    <section class="home-hero">
+      <div class="container hero-inner">
+        <div class="hero-content">
+          <span class="hero-label">Welcome to Deep Blue Haven</span>
+
+          <h1 class="heading-1">
+            Nghỉ dưỡng sang trọng bên bờ biển xanh
+          </h1>
+
+          <p class="body-1">
+            Quản lý đặt phòng, xem ưu đãi, khám phá dịch vụ và tận hưởng kỳ nghỉ
+            của bạn tại Deep Blue Haven.
+          </p>
+
+          <div class="hero-actions">
+            <a th:href="@{/booking}" class="btn btn-large">
+              Đặt phòng ngay
+            </a>
+
+            <a th:href="@{/rooms}" class="hero-link">
+              Khám phá phòng nghỉ
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <p class="caption-3">Xin chào</p>
+
+          <h2 class="heading-4">
+            <span th:text="${session.currentUser != null ? session.currentUser.fullName : 'Quý khách'}">
+              Quý khách
+            </span>
+          </h2>
+
+          <div class="dashboard-stats">
+            <div class="stat-item">
+              <strong>02</strong>
+              <span>Đặt phòng</span>
+            </div>
+
+            <div class="stat-item">
+              <strong>03</strong>
+              <span>Thông báo</span>
+            </div>
+
+            <div class="stat-item">
+              <strong>01</strong>
+              <span>Ưu đãi</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="section-label">Customer Dashboard</span>
+            <h2 class="heading-2">Bảng điều khiển của bạn</h2>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <a th:href="@{/booking}" class="dashboard-card">
+            <i class="fa-solid fa-calendar-check"></i>
+            <h3 class="heading-5">Đặt phòng</h3>
+            <p>Chọn phòng nghỉ phù hợp và đặt lịch lưu trú.</p>
+          </a>
+
+          <a th:href="@{/booking/history}" class="dashboard-card">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <h3 class="heading-5">Lịch sử đặt phòng</h3>
+            <p>Theo dõi các booking đã đặt và trạng thái xử lý.</p>
+          </a>
+
+          <a th:href="@{/services}" class="dashboard-card">
+            <i class="fa-solid fa-spa"></i>
+            <h3 class="heading-5">Dịch vụ resort</h3>
+            <p>Spa, nhà hàng, hồ bơi, đưa đón và các tiện ích khác.</p>
+          </a>
+
+          <a th:href="@{/customer/notifications}" class="dashboard-card">
+            <i class="fa-regular fa-bell"></i>
+            <h3 class="heading-5">Thông báo</h3>
+            <p>Xem thông tin mới nhất từ Deep Blue Haven.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
