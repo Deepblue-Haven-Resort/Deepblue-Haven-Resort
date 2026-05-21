@@ -1,0 +1,357 @@
+<footer class="dbh-footer">
+  <style>
+    .dbh-footer {
+      --footer-navy: #0a1628;
+      --footer-teal: #0d3d56;
+      --footer-wave: #1a4a6b;
+      --footer-accent: #1a8fe3;
+      --footer-text: #ffffff;
+      --footer-muted: rgba(255, 255, 255, 0.65);
+      --footer-glass: rgba(255, 248, 230, 0.12);
+      --footer-border: rgba(255, 255, 255, 0.16);
+
+      position: relative;
+      overflow: hidden;
+      padding: 8rem 5vw 2rem;
+      color: var(--footer-text);
+      background: linear-gradient(135deg, var(--footer-navy), var(--footer-teal));
+    }
+
+    .dbh-wave {
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 200%;
+      height: 120px;
+      color: var(--footer-wave);
+      animation: dbhWaveMove 14s linear infinite;
+      opacity: 0.9;
+    }
+
+    @keyframes dbhWaveMove {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .dbh-footer-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .dbh-cta-card {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2rem;
+      align-items: center;
+      min-height: 260px;
+      padding: clamp(2rem, 4vw, 3.5rem);
+      margin-bottom: 4rem;
+      border-radius: 2rem;
+      background:
+        linear-gradient(135deg, rgba(255, 248, 230, 0.18), rgba(255, 255, 255, 0.06)),
+        var(--footer-glass);
+      border: 1px solid var(--footer-border);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.22);
+    }
+
+    .dbh-cta-eyebrow {
+      margin: 0 0 0.8rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--footer-muted);
+    }
+
+    .dbh-cta-title {
+      margin: 0;
+      max-width: 620px;
+      font-family: var(--font-heading, serif);
+      font-size: clamp(2.4rem, 5vw, 4.5rem);
+      line-height: 0.95;
+      font-weight: 700;
+    }
+
+    .dbh-cta-text {
+      max-width: 520px;
+      margin: 1rem 0 2rem;
+      color: var(--footer-muted);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .dbh-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 1.5rem;
+      border-radius: 999px;
+      background: var(--footer-accent);
+      color: #fff;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 16px 36px rgba(26, 143, 227, 0.28);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .dbh-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 22px 50px rgba(26, 143, 227, 0.36);
+    }
+
+    .dbh-visual {
+      position: relative;
+      min-height: 240px;
+      display: grid;
+      place-items: center;
+    }
+
+    .dbh-orbit {
+      position: absolute;
+      border: 1px dashed rgba(255, 255, 255, 0.18);
+      border-radius: 50%;
+    }
+
+    .dbh-orbit:nth-child(1) { width: 120px; height: 120px; }
+    .dbh-orbit:nth-child(2) { width: 190px; height: 190px; }
+    .dbh-orbit:nth-child(3) { width: 260px; height: 260px; }
+
+    .dbh-sun {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff4c7, #f2c16b 58%, rgba(242, 193, 107, 0));
+      box-shadow: 0 0 60px rgba(242, 193, 107, 0.35);
+    }
+
+    .dbh-dot {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .dbh-dot.one { top: 34px; right: 28%; }
+    .dbh-dot.two { bottom: 40px; left: 25%; }
+    .dbh-dot.three { top: 50%; right: 14%; }
+
+    .dbh-footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
+      gap: 3rem;
+      padding-bottom: 3rem;
+    }
+
+    .dbh-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .dbh-logo-placeholder {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid var(--footer-border);
+    }
+
+    .dbh-footer p {
+      margin: 0;
+      color: var(--footer-muted);
+      line-height: 1.7;
+    }
+
+    .dbh-footer h4 {
+      margin: 0 0 1rem;
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .dbh-footer-links {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .dbh-footer a {
+      color: var(--footer-muted);
+      text-decoration: none;
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+
+    .dbh-footer a:hover {
+      color: var(--footer-text);
+      transform: translateX(2px);
+    }
+
+    .dbh-newsletter {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      padding: 0.35rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--footer-border);
+    }
+
+    .dbh-newsletter input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      padding: 0 0.9rem;
+      color: var(--footer-text);
+      font: inherit;
+    }
+
+    .dbh-newsletter input::placeholder {
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .dbh-newsletter button {
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 50%;
+      cursor: pointer;
+      background: var(--footer-accent);
+      color: #fff;
+      font-size: 1.1rem;
+    }
+
+    .dbh-copyright {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--footer-border);
+      color: var(--footer-muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .dbh-cta-card,
+      .dbh-footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dbh-visual {
+        min-height: 200px;
+      }
+
+      .dbh-copyright {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .dbh-footer {
+        padding-inline: 1rem;
+        padding-top: 6.5rem;
+      }
+
+      .dbh-cta-card {
+        border-radius: 1.5rem;
+      }
+
+      .dbh-newsletter {
+        border-radius: 1.25rem;
+      }
+    }
+  </style>
+
+  <svg class="dbh-wave" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M0,56 C120,96 240,16 360,48 C480,80 600,112 720,72 C840,32 960,8 1080,48 C1200,88 1320,100 1440,56 L1440,0 L0,0 Z"
+    ></path>
+    <path
+      fill="currentColor"
+      d="M1440,56 C1560,96 1680,16 1800,48 C1920,80 2040,112 2160,72 C2280,32 2400,8 2520,48 C2640,88 2760,100 2880,56 L2880,0 L1440,0 Z"
+    ></path>
+  </svg>
+
+  <div class="dbh-footer-inner">
+    <section class="dbh-cta-card">
+      <div>
+        <p class="dbh-cta-eyebrow">Deep Blue Haven</p>
+        <h2 class="dbh-cta-title">Sẵn sàng cho kỳ nghỉ trong mơ?</h2>
+        <p class="dbh-cta-text">
+          Đặt phòng ngay hôm nay và nhận ưu đãi độc quyền cho thành viên mới.
+        </p>
+        <a class="dbh-cta-btn" href="/booking">Đặt phòng ngay →</a>
+      </div>
+
+      <div class="dbh-visual" aria-hidden="true">
+        <span class="dbh-orbit"></span>
+        <span class="dbh-orbit"></span>
+        <span class="dbh-orbit"></span>
+        <span class="dbh-sun"></span>
+        <span class="dbh-dot one"></span>
+        <span class="dbh-dot two"></span>
+        <span class="dbh-dot three"></span>
+      </div>
+    </section>
+
+    <div class="dbh-footer-grid">
+      <div>
+        <div class="dbh-brand">
+          <span class="dbh-logo-placeholder">🌊</span>
+          <span>Deep Blue Haven</span>
+        </div>
+        <p>
+          Khu nghỉ dưỡng ven biển dành cho những kỳ nghỉ tinh tế, riêng tư và
+          tràn đầy cảm hứng đại dương.
+        </p>
+      </div>
+
+      <div>
+        <h4>Khám phá</h4>
+        <div class="dbh-footer-links">
+          <a href="/rooms">Phòng nghỉ</a>
+          <a href="/services">Dịch vụ</a>
+          <a href="/offers">Ưu đãi</a>
+          <a href="/about">Về chúng tôi</a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Kết nối</h4>
+        <div class="dbh-footer-links">
+          <a href="#">Facebook</a>
+          <a href="#">Instagram</a>
+          <a href="#">TikTok</a>
+          <a href="#">YouTube</a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Bản tin</h4>
+        <p>Nhận ưu đãi, cảm hứng du lịch và thông tin mới nhất từ resort.</p>
+        <form class="dbh-newsletter">
+          <input type="email" placeholder="Nhập email của bạn..." aria-label="Email" />
+          <button type="submit" aria-label="Đăng ký">→</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="dbh-copyright">
+      <span>© 2025 Deep Blue Haven. All rights reserved.</span>
+      <span>Luxury Beach Resort Experience</span>
+    </div>
+  </div>
+</footer>
