@@ -1,5 +1,94 @@
 package deepbluehaven.pojo;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import deepbluehaven.pojo.enums.RoomStatus;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "Room")
 public class Room {
-    
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resort_id", nullable = false)
+    private Resort resort;
+
+    @Column(name = "room_number", nullable = false, length = 50)
+    private String roomNumber;
+
+    @Column(name = "type", nullable = false, length = 100)
+    private String type;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 30)
+    private RoomStatus status;
+
+    @Column(name = "capacity", nullable = false)
+    private Integer capacity;
+
+    @Column(name = "base_price", nullable = false, precision = 12, scale = 2)
+    private BigDecimal basePrice;
+
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    private List<RoomStatusLog> statusLogs = new ArrayList<>();
+
+    public Room() {}
+
+    public Long getId() { 
+        return id; }
+    public void setId(Long id) { 
+        this.id = id; }
+
+    public Resort getResort() { 
+        return resort; }
+    public void setResort(Resort resort) { 
+        this.resort = resort; }
+
+    public String getRoomNumber() { 
+        return roomNumber; }
+    public void setRoomNumber(String roomNumber) { 
+        this.roomNumber = roomNumber; }
+
+    public String getType() { 
+        return type; }
+    public void setType(String type) { 
+        this.type = type; }
+
+    public RoomStatus getStatus() { 
+        return status; }
+    public void setStatus(RoomStatus status) { 
+        this.status = status; }
+
+    public Integer getCapacity() { 
+        return capacity; }
+    public void setCapacity(Integer capacity) { 
+        this.capacity = capacity; }
+
+    public BigDecimal getBasePrice() { 
+        return basePrice; }
+    public void setBasePrice(BigDecimal basePrice) { 
+        this.basePrice = basePrice; }
+
+    public List<RoomStatusLog> getStatusLogs() { 
+        return statusLogs; }
+    public void setStatusLogs(List<RoomStatusLog> statusLogs) { 
+        this.statusLogs = statusLogs; }
 }
