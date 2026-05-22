@@ -1,12 +1,15 @@
 package deepbluehaven.dto;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import deepbluehaven.pojo.enums.ServiceCategory;
 import deepbluehaven.pojo.enums.ServiceStatus;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.math.BigDecimal;
 
 public class ServiceDTO {
 
@@ -18,8 +21,12 @@ public class ServiceDTO {
         @Size(max = 150, message = "Name cannot exceed 150 characters")
         private String name;
 
+        @NotBlank(message = "Description is strictly required")
         private String description;
 
+        @NotEmpty(message = "You must provide at least one image")
+        private List<String> images;
+        
         @NotBlank(message = "Type is required")
         @Size(max = 100, message = "Type cannot exceed 100 characters")
         private String type;
@@ -55,6 +62,11 @@ public class ServiceDTO {
         public void setDescription(String description) { 
             this.description = description; }
 
+        public List<String> getImages() { 
+            return images; }
+        public void setImages(List<String> images) { 
+            this.images = images; }
+
         public String getType() { 
             return type; }
         public void setType(String type) { 
@@ -86,6 +98,7 @@ public class ServiceDTO {
         private Long resortId;
         private String name;
         private String description;
+        private List<String> images;
         private String type;
         private ServiceCategory category;
         private BigDecimal basePrice;
@@ -113,6 +126,11 @@ public class ServiceDTO {
             return description; }
         public void setDescription(String description) { 
             this.description = description; }
+
+        public List<String> getImages() { 
+            return images; }
+        public void setImages(List<String> images) { 
+            this.images = images; }
 
         public String getType() { 
             return type; }

@@ -1,11 +1,13 @@
 package deepbluehaven.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import deepbluehaven.pojo.enums.RoomStatus;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public class RoomDTO {
@@ -20,6 +22,12 @@ public class RoomDTO {
         @NotBlank(message = "Room type is required")
         private String type;
 
+        @NotBlank(message = "Description is strictly required")
+        private String description;
+
+        @NotEmpty(message = "You must provide at least one image")
+        private List<String> images;
+        
         @NotNull(message = "Room status is required")
         private RoomStatus status;
 
@@ -48,6 +56,16 @@ public class RoomDTO {
         public void setType(String type) { 
             this.type = type; }
 
+        public String getDescription() { 
+            return description; }
+        public void setDescription(String description) { 
+            this.description = description; }
+
+        public List<String> getImages() { 
+            return images; }
+        public void setImages(List<String> images) { 
+            this.images = images; }
+
         public RoomStatus getStatus() { 
             return status; }
         public void setStatus(RoomStatus status) { 
@@ -69,6 +87,8 @@ public class RoomDTO {
         private Long resortId;
         private String roomNumber;
         private String type;
+        private String description;
+        private List<String> images;
         private RoomStatus status;
         private Integer capacity;
         private BigDecimal basePrice;
@@ -94,6 +114,16 @@ public class RoomDTO {
             return type; }
         public void setType(String type) { 
             this.type = type; }
+
+        public String getDescription() { 
+            return description; }
+        public void setDescription(String description) { 
+            this.description = description; }
+
+        public List<String> getImages() { 
+            return images; }
+        public void setImages(List<String> images) { 
+            this.images = images; }
 
         public RoomStatus getStatus() { 
             return status; }
