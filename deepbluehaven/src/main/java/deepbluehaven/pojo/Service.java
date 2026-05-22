@@ -1,8 +1,14 @@
 package deepbluehaven.pojo;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import deepbluehaven.pojo.enums.ServiceCategory;
 import deepbluehaven.pojo.enums.ServiceStatus;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,9 +20,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "Service")
@@ -36,6 +39,16 @@ public class Service {
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
+
+    public List<String> getImages() { 
+        return images; }
+    public void setImages(List<String> images) { 
+        this.images = images; }
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "service_images", joinColumns = @JoinColumn(name = "service_id"))
+    @Column(name = "image_url", length = 255)
+    private List<String> images = new ArrayList<>();
 
     @Column(name = "type", nullable = false, length = 100)
     private String type;

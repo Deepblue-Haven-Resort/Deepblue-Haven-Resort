@@ -1,9 +1,11 @@
 package deepbluehaven.dto;
 
+import java.time.LocalDateTime;
+
+import deepbluehaven.pojo.enums.MessageType;
+import deepbluehaven.pojo.enums.SenderType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 public class ChatMessageDTO {
 
@@ -11,9 +13,13 @@ public class ChatMessageDTO {
         @NotNull(message = "Session ID is required")
         private Long sessionId;
 
-        @NotBlank(message = "Sender is required")
-        @Size(max = 100, message = "Sender cannot exceed 100 characters")
-        private String sender;
+        private Long senderId;
+
+        @NotNull(message = "Sender type is strictly required")
+        private SenderType senderType;
+
+        @NotNull(message = "Message type is strictly required")
+        private MessageType messageType;
 
         @NotBlank(message = "Content is required")
         private String content;
@@ -24,11 +30,21 @@ public class ChatMessageDTO {
             return sessionId; }
         public void setSessionId(Long sessionId) { 
             this.sessionId = sessionId; }
+            
+        public Long getSenderId() { 
+            return senderId; }
+        public void setSenderId(Long senderId) { 
+            this.senderId = senderId; }
 
-        public String getSender() { 
-            return sender; }
-        public void setSender(String sender) { 
-            this.sender = sender; }
+        public SenderType getSenderType() { 
+            return senderType; }
+        public void setSenderType(SenderType senderType) { 
+            this.senderType = senderType; }
+
+        public MessageType getMessageType() { 
+            return messageType; }
+        public void setMessageType(MessageType messageType) { 
+            this.messageType = messageType; }
 
         public String getContent() { 
             return content; }
@@ -39,7 +55,9 @@ public class ChatMessageDTO {
     public static class Response {
         private Long id;
         private Long sessionId;
-        private String sender;
+        private Long senderId;
+        private SenderType senderType;
+        private MessageType messageType;
         private String content;
         private LocalDateTime timestamp;
 
@@ -55,10 +73,20 @@ public class ChatMessageDTO {
         public void setSessionId(Long sessionId) { 
             this.sessionId = sessionId; }
 
-        public String getSender() { 
-            return sender; }
-        public void setSender(String sender) { 
-            this.sender = sender; }
+        public Long getSenderId() { 
+            return senderId; }
+        public void setSenderId(Long senderId) { 
+            this.senderId = senderId; }
+
+        public SenderType getSenderType() { 
+            return senderType; }
+        public void setSenderType(SenderType senderType) { 
+            this.senderType = senderType; }
+
+        public MessageType getMessageType() { 
+            return messageType; }
+        public void setMessageType(MessageType messageType) { 
+            this.messageType = messageType; }
 
         public String getContent() { 
             return content; }

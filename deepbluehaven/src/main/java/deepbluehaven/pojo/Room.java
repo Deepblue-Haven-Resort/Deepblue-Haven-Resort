@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import deepbluehaven.pojo.enums.RoomStatus;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -36,6 +38,14 @@ public class Room {
 
     @Column(name = "type", nullable = false, length = 100)
     private String type;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "room_images", joinColumns = @JoinColumn(name = "room_id"))
+    @Column(name = "image_url", length = 255)
+    private List<String> images = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 30)
@@ -72,6 +82,16 @@ public class Room {
     public void setType(String type) { 
         this.type = type; }
 
+    public String getDescription() { 
+        return description; }
+    public void setDescription(String description) { 
+        this.description = description; }
+
+    public List<String> getImages() { 
+        return images; }
+    public void setImages(List<String> images) { 
+        this.images = images; }
+        
     public RoomStatus getStatus() { 
         return status; }
     public void setStatus(RoomStatus status) { 

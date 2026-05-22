@@ -1,12 +1,14 @@
 package deepbluehaven.pojo;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "Pricing_Rule")
@@ -23,8 +25,11 @@ public class PricingRule {
     @Column(name = "multiplier", nullable = false, precision = 10, scale = 4)
     private BigDecimal multiplier;
 
-    @Column(name = "season", nullable = false, length = 100)
-    private String season;
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
+
+    @Column(name = "end_date", nullable = false)
+    private LocalDate endDate;
 
     public PricingRule() {}
 
@@ -43,8 +48,13 @@ public class PricingRule {
     public void setMultiplier(BigDecimal multiplier) { 
         this.multiplier = multiplier; }
 
-    public String getSeason() { 
-        return season; }
-    public void setSeason(String season) { 
-        this.season = season; }
+    public LocalDate getStartDate() { 
+        return startDate; }
+    public void setStartDate(LocalDate startDate) { 
+        this.startDate = startDate; }
+
+    public LocalDate getEndDate() { 
+        return endDate; }
+    public void setEndDate(LocalDate endDate) { 
+        this.endDate = endDate; }
 }
