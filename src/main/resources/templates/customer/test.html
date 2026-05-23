@@ -1,357 +1,848 @@
-<footer class="dbh-footer">
-  <style>
-    .dbh-footer {
-      --footer-navy: #0a1628;
-      --footer-teal: #0d3d56;
-      --footer-wave: #1a4a6b;
-      --footer-accent: #1a8fe3;
-      --footer-text: #ffffff;
-      --footer-muted: rgba(255, 255, 255, 0.65);
-      --footer-glass: rgba(255, 248, 230, 0.12);
-      --footer-border: rgba(255, 255, 255, 0.16);
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deep Blue Haven Resort</title>
 
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --navy: #071827;
+      --deep-blue: #0d3b66;
+      --ocean: #1d5f8b;
+      --sky: #d8efff;
+      --soft-blue: #bfe3ff;
+      --gold: #d4b06a;
+      --white: #f8fbff;
+      --text: #18354a;
+      --muted: #657987;
+      --radius-lg: 36px;
+      --radius-md: 24px;
+      --shadow: 0 24px 70px rgba(7, 24, 39, 0.16);
+    }
+
+    body {
+      font-family: "Nunito", sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #dff2ff 0%, #f8fbff 45%, #eef8ff 100%);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3 {
+      font-family: "Cormorant Garamond", serif;
+      color: #0a3a5a;
+      line-height: 1.05;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .page {
+      padding: 32px 48px;
+    }
+
+    .header {
+      position: fixed;
+      top: 28px;
+      left: 48px;
+      right: 48px;
+      z-index: 100;
+      height: 92px;
+      padding: 0 28px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(180, 224, 255, 0.78);
+      backdrop-filter: blur(22px);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+    }
+
+    .logo img {
+      width: 78px;
+      height: 54px;
+      object-fit: contain;
+    }
+
+    .nav {
+      display: flex;
+      gap: 42px;
+      font-weight: 800;
+      color: #041d30;
+    }
+
+    .nav a {
+      padding: 14px 18px;
+      border-radius: 999px;
+      transition: 0.3s;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      background: rgba(255, 255, 255, 0.7);
+      color: #0b4f7c;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .icon-btn {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 1px solid #0d3b66;
+      background: rgba(255,255,255,0.35);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+    }
+
+    .book-btn {
+      padding: 18px 32px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #08395f, #0f5f8f);
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 14px 35px rgba(13, 59, 102, 0.28);
+    }
+
+    .hero {
+      min-height: 100vh;
+      padding: 170px 42px 80px;
+      border-radius: 0 0 48px 48px;
       position: relative;
       overflow: hidden;
-      padding: 8rem 5vw 2rem;
-      color: var(--footer-text);
-      background: linear-gradient(135deg, var(--footer-navy), var(--footer-teal));
-    }
-
-    .dbh-wave {
-      position: absolute;
-      top: -1px;
-      left: 0;
-      width: 200%;
-      height: 120px;
-      color: var(--footer-wave);
-      animation: dbhWaveMove 14s linear infinite;
-      opacity: 0.9;
-    }
-
-    @keyframes dbhWaveMove {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
-    }
-
-    .dbh-footer-inner {
-      position: relative;
-      z-index: 1;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .dbh-cta-card {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 2rem;
-      align-items: center;
-      min-height: 260px;
-      padding: clamp(2rem, 4vw, 3.5rem);
-      margin-bottom: 4rem;
-      border-radius: 2rem;
       background:
-        linear-gradient(135deg, rgba(255, 248, 230, 0.18), rgba(255, 255, 255, 0.06)),
-        var(--footer-glass);
-      border: 1px solid var(--footer-border);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.22);
+        linear-gradient(90deg, rgba(216,239,255,0.96) 0%, rgba(216,239,255,0.78) 42%, rgba(7,24,39,0.22) 100%),
+        url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1800&q=80");
+      background-size: cover;
+      background-position: center;
     }
 
-    .dbh-cta-eyebrow {
-      margin: 0 0 0.8rem;
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--footer-muted);
+    .hero::after {
+      content: "";
+      position: absolute;
+      left: -10%;
+      right: -10%;
+      bottom: -80px;
+      height: 220px;
+      background: rgba(255,255,255,0.45);
+      border-radius: 50% 50% 0 0;
+      filter: blur(6px);
     }
 
-    .dbh-cta-title {
-      margin: 0;
-      max-width: 620px;
-      font-family: var(--font-heading, serif);
-      font-size: clamp(2.4rem, 5vw, 4.5rem);
-      line-height: 0.95;
-      font-weight: 700;
-    }
-
-    .dbh-cta-text {
-      max-width: 520px;
-      margin: 1rem 0 2rem;
-      color: var(--footer-muted);
-      font-size: 1rem;
-      line-height: 1.7;
-    }
-
-    .dbh-cta-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 52px;
-      padding: 0 1.5rem;
-      border-radius: 999px;
-      background: var(--footer-accent);
-      color: #fff;
-      font-weight: 800;
-      text-decoration: none;
-      box-shadow: 0 16px 36px rgba(26, 143, 227, 0.28);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .dbh-cta-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 22px 50px rgba(26, 143, 227, 0.36);
-    }
-
-    .dbh-visual {
+    .hero-content {
       position: relative;
-      min-height: 240px;
-      display: grid;
-      place-items: center;
+      z-index: 2;
+      max-width: 900px;
     }
 
-    .dbh-orbit {
-      position: absolute;
-      border: 1px dashed rgba(255, 255, 255, 0.18);
-      border-radius: 50%;
+    .eyebrow {
+      color: var(--gold);
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
     }
 
-    .dbh-orbit:nth-child(1) { width: 120px; height: 120px; }
-    .dbh-orbit:nth-child(2) { width: 190px; height: 190px; }
-    .dbh-orbit:nth-child(3) { width: 260px; height: 260px; }
-
-    .dbh-sun {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #fff4c7, #f2c16b 58%, rgba(242, 193, 107, 0));
-      box-shadow: 0 0 60px rgba(242, 193, 107, 0.35);
+    .hero h1 {
+      font-size: clamp(56px, 7vw, 112px);
+      max-width: 980px;
+      margin-bottom: 24px;
     }
 
-    .dbh-dot {
-      position: absolute;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.18);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+    .hero p {
+      max-width: 780px;
+      font-size: 22px;
+      line-height: 1.8;
+      color: #466172;
+      margin-bottom: 36px;
     }
 
-    .dbh-dot.one { top: 34px; right: 28%; }
-    .dbh-dot.two { bottom: 40px; left: 25%; }
-    .dbh-dot.three { top: 50%; right: 14%; }
-
-    .dbh-footer-grid {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
-      gap: 3rem;
-      padding-bottom: 3rem;
-    }
-
-    .dbh-brand {
+    .hero-buttons {
       display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-      font-size: 1.1rem;
-      font-weight: 800;
+      gap: 20px;
+      flex-wrap: wrap;
     }
 
-    .dbh-logo-placeholder {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid var(--footer-border);
-    }
-
-    .dbh-footer p {
-      margin: 0;
-      color: var(--footer-muted);
-      line-height: 1.7;
-    }
-
-    .dbh-footer h4 {
-      margin: 0 0 1rem;
-      font-size: 0.95rem;
-      font-weight: 800;
-    }
-
-    .dbh-footer-links {
-      display: grid;
-      gap: 0.8rem;
-    }
-
-    .dbh-footer a {
-      color: var(--footer-muted);
-      text-decoration: none;
-      transition: color 0.25s ease, transform 0.25s ease;
-    }
-
-    .dbh-footer a:hover {
-      color: var(--footer-text);
-      transform: translateX(2px);
-    }
-
-    .dbh-newsletter {
-      display: flex;
-      gap: 0.6rem;
-      margin-top: 1rem;
-      padding: 0.35rem;
+    .btn-primary,
+    .btn-secondary {
+      padding: 18px 30px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid var(--footer-border);
+      font-weight: 900;
     }
 
-    .dbh-newsletter input {
+    .btn-primary {
+      background: #082f4d;
+      color: white;
+    }
+
+    .btn-secondary {
+      border: 1px solid rgba(8, 47, 77, 0.35);
+      color: #082f4d;
+      background: rgba(255,255,255,0.45);
+      backdrop-filter: blur(14px);
+    }
+
+    .stats {
+      margin-top: -54px;
+      position: relative;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    .stat-card {
+      padding: 32px;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 34px;
+      color: var(--deep-blue);
+      margin-bottom: 8px;
+    }
+
+    .section {
+      padding: 110px 42px;
+    }
+
+    .section-head {
+      max-width: 760px;
+      margin-bottom: 52px;
+    }
+
+    .section-head span {
+      color: var(--gold);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(42px, 5vw, 76px);
+      margin: 14px 0;
+    }
+
+    .section-head p {
+      font-size: 19px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .room-card {
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .room-card img {
       width: 100%;
-      min-width: 0;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      padding: 0 0.9rem;
-      color: var(--footer-text);
-      font: inherit;
+      height: 330px;
+      object-fit: cover;
+      transition: 0.5s;
     }
 
-    .dbh-newsletter input::placeholder {
-      color: rgba(255, 255, 255, 0.45);
+    .room-card:hover img {
+      transform: scale(1.08);
     }
 
-    .dbh-newsletter button {
-      flex: 0 0 auto;
-      width: 44px;
-      height: 44px;
-      border: 0;
-      border-radius: 50%;
-      cursor: pointer;
-      background: var(--footer-accent);
-      color: #fff;
-      font-size: 1.1rem;
+    .room-body {
+      padding: 30px;
     }
 
-    .dbh-copyright {
+    .room-body h3 {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .room-body p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .room-footer {
       display: flex;
       justify-content: space-between;
-      gap: 1rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--footer-border);
-      color: var(--footer-muted);
-      font-size: 0.9rem;
+      align-items: center;
+      font-weight: 900;
     }
 
-    @media (max-width: 900px) {
-      .dbh-cta-card,
-      .dbh-footer-grid {
+    .room-footer span {
+      color: var(--gold);
+      font-size: 20px;
+    }
+
+    .experiences {
+      background: linear-gradient(135deg, #071827, #0d3b66);
+      border-radius: 56px;
+      color: white;
+    }
+
+    .experiences h2,
+    .experiences h3 {
+      color: white;
+    }
+
+    .experiences .section-head p {
+      color: rgba(255,255,255,0.72);
+    }
+
+    .experience-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+    }
+
+    .experience-card {
+      min-height: 360px;
+      border-radius: 32px;
+      overflow: hidden;
+      position: relative;
+      padding: 28px;
+      display: flex;
+      align-items: flex-end;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .experience-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.72));
+    }
+
+    .experience-card div {
+      position: relative;
+      z-index: 2;
+    }
+
+    .experience-card h3 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .experience-card p {
+      color: rgba(255,255,255,0.75);
+      line-height: 1.6;
+    }
+
+    .offers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+    }
+
+    .offer-card {
+      padding: 38px;
+      border-radius: 34px;
+      background: linear-gradient(180deg, white, #edf8ff);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(13, 59, 102, 0.08);
+    }
+
+    .offer-card .badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(212,176,106,0.18);
+      color: #9b7832;
+      font-weight: 900;
+      margin-bottom: 22px;
+    }
+
+    .offer-card h3 {
+      font-size: 36px;
+      margin-bottom: 14px;
+    }
+
+    .offer-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr 1fr;
+      grid-auto-rows: 260px;
+      gap: 22px;
+    }
+
+    .gallery-grid img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .gallery-grid img:nth-child(1) {
+      grid-row: span 2;
+    }
+
+    .gallery-grid img:nth-child(4) {
+      grid-column: span 2;
+    }
+
+    .cta {
+      margin: 60px 42px 110px;
+      min-height: 480px;
+      border-radius: 56px;
+      padding: 70px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(7,24,39,0.9), rgba(13,59,102,0.72)),
+        url("https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1800&q=80");
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+    }
+
+    .cta h2 {
+      color: white;
+      font-size: clamp(44px, 5vw, 82px);
+      max-width: 780px;
+      margin-bottom: 22px;
+    }
+
+    .cta p {
+      max-width: 620px;
+      font-size: 20px;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.78);
+      margin-bottom: 34px;
+    }
+
+    .footer {
+      background: linear-gradient(135deg, #071827, #0d3b66);
+      color: white;
+      padding: 80px 90px 34px;
+      border-radius: 56px 56px 0 0;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+      gap: 44px;
+      margin-bottom: 50px;
+    }
+
+    .footer h3 {
+      color: white;
+      font-size: 30px;
+      margin-bottom: 18px;
+    }
+
+    .footer p,
+    .footer a {
+      color: rgba(255,255,255,0.7);
+      line-height: 2;
+      display: block;
+    }
+
+    .newsletter {
+      display: flex;
+      margin-top: 18px;
+      background: rgba(255,255,255,0.12);
+      padding: 8px;
+      border-radius: 999px;
+    }
+
+    .newsletter input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      padding: 0 16px;
+    }
+
+    .newsletter button {
+      border: none;
+      padding: 14px 20px;
+      border-radius: 999px;
+      background: var(--gold);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .copyright {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 26px;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(255,255,255,0.58);
+    }
+
+    @media (max-width: 1024px) {
+      .header {
+        left: 20px;
+        right: 20px;
+      }
+
+      .nav {
+        display: none;
+      }
+
+      .stats,
+      .rooms-grid,
+      .experience-grid,
+      .offers-grid,
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding: 20px;
+      }
+
+      .header {
+        height: 78px;
+        top: 18px;
+        left: 16px;
+        right: 16px;
+      }
+
+      .book-btn {
+        padding: 14px 18px;
+      }
+
+      .icon-btn {
+        display: none;
+      }
+
+      .hero {
+        padding: 145px 24px 80px;
+      }
+
+      .hero p {
+        font-size: 18px;
+      }
+
+      .stats,
+      .rooms-grid,
+      .experience-grid,
+      .offers-grid,
+      .footer-grid,
+      .gallery-grid {
         grid-template-columns: 1fr;
       }
 
-      .dbh-visual {
-        min-height: 200px;
+      .section {
+        padding: 80px 24px;
       }
 
-      .dbh-copyright {
+      .cta {
+        margin: 30px 20px 80px;
+        padding: 40px 26px;
+      }
+
+      .footer {
+        padding: 60px 28px 30px;
+      }
+
+      .copyright {
         flex-direction: column;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .dbh-footer {
-        padding-inline: 1rem;
-        padding-top: 6.5rem;
-      }
-
-      .dbh-cta-card {
-        border-radius: 1.5rem;
-      }
-
-      .dbh-newsletter {
-        border-radius: 1.25rem;
+        gap: 12px;
       }
     }
   </style>
+</head>
 
-  <svg class="dbh-wave" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
-    <path
-      fill="currentColor"
-      d="M0,56 C120,96 240,16 360,48 C480,80 600,112 720,72 C840,32 960,8 1080,48 C1200,88 1320,100 1440,56 L1440,0 L0,0 Z"
-    ></path>
-    <path
-      fill="currentColor"
-      d="M1440,56 C1560,96 1680,16 1800,48 C1920,80 2040,112 2160,72 C2280,32 2400,8 2520,48 C2640,88 2760,100 2880,56 L2880,0 L1440,0 Z"
-    ></path>
-  </svg>
+<body>
 
-  <div class="dbh-footer-inner">
-    <section class="dbh-cta-card">
-      <div>
-        <p class="dbh-cta-eyebrow">Deep Blue Haven</p>
-        <h2 class="dbh-cta-title">Sẵn sàng cho kỳ nghỉ trong mơ?</h2>
-        <p class="dbh-cta-text">
-          Đặt phòng ngay hôm nay và nhận ưu đãi độc quyền cho thành viên mới.
+  <header class="header">
+    <a href="#" class="logo">
+      <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" alt="Deep Blue Haven">
+    </a>
+
+    <nav class="nav">
+      <a href="#" class="active">Trang chủ</a>
+      <a href="#rooms">Phòng nghỉ</a>
+      <a href="#services">Dịch vụ</a>
+      <a href="#offers">Ưu đãi</a>
+      <a href="#about">Về chúng tôi</a>
+      <a href="#contact">Liên hệ</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn">🔔</button>
+      <a href="#booking" class="book-btn">Đặt phòng</a>
+      <button class="icon-btn">👤</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <div class="eyebrow">Deep Blue Haven Resort</div>
+        <h1>Thiên đường nghỉ dưỡng nơi đại dương gặp gỡ sự sang trọng</h1>
+        <p>
+          Tận hưởng kỳ nghỉ ven biển đẳng cấp với phòng nghỉ tinh tế,
+          bãi biển riêng, ẩm thực cao cấp và những trải nghiệm được cá nhân hóa
+          dành riêng cho bạn.
         </p>
-        <a class="dbh-cta-btn" href="/booking">Đặt phòng ngay →</a>
-      </div>
 
-      <div class="dbh-visual" aria-hidden="true">
-        <span class="dbh-orbit"></span>
-        <span class="dbh-orbit"></span>
-        <span class="dbh-orbit"></span>
-        <span class="dbh-sun"></span>
-        <span class="dbh-dot one"></span>
-        <span class="dbh-dot two"></span>
-        <span class="dbh-dot three"></span>
+        <div class="hero-buttons">
+          <a href="#booking" class="btn-primary">Đặt phòng ngay</a>
+          <a href="#rooms" class="btn-secondary">Khám phá phòng nghỉ →</a>
+        </div>
       </div>
     </section>
 
-    <div class="dbh-footer-grid">
-      <div>
-        <div class="dbh-brand">
-          <span class="dbh-logo-placeholder">🌊</span>
-          <span>Deep Blue Haven</span>
+    <section class="page">
+      <div class="stats">
+        <div class="stat-card">
+          <strong>5★</strong>
+          <span>Tiêu chuẩn nghỉ dưỡng</span>
         </div>
+        <div class="stat-card">
+          <strong>120+</strong>
+          <span>Phòng & villa cao cấp</span>
+        </div>
+        <div class="stat-card">
+          <strong>24/7</strong>
+          <span>Dịch vụ concierge</span>
+        </div>
+        <div class="stat-card">
+          <strong>98%</strong>
+          <span>Khách hàng hài lòng</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="rooms">
+      <div class="section-head">
+        <span>Luxury Stay</span>
+        <h2>Không gian lưu trú dành cho kỳ nghỉ trọn vẹn</h2>
         <p>
-          Khu nghỉ dưỡng ven biển dành cho những kỳ nghỉ tinh tế, riêng tư và
-          tràn đầy cảm hứng đại dương.
+          Mỗi hạng phòng tại Deep Blue Haven được thiết kế để mang lại sự riêng tư,
+          thoải mái và cảm giác gần gũi với đại dương.
+        </p>
+      </div>
+
+      <div class="rooms-grid">
+        <div class="room-card">
+          <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=80" alt="">
+          <div class="room-body">
+            <h3>Ocean Suite</h3>
+            <p>Suite hướng biển với ban công riêng, nội thất tinh tế và không gian thư giãn rộng rãi.</p>
+            <div class="room-footer">
+              <span>Từ 3.200.000đ</span>
+              <a href="#">Xem chi tiết →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="room-card">
+          <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1000&q=80" alt="">
+          <div class="room-body">
+            <h3>Sunset Villa</h3>
+            <p>Villa riêng tư với hồ bơi cá nhân, phù hợp cho cặp đôi và gia đình muốn tận hưởng sự yên tĩnh.</p>
+            <div class="room-footer">
+              <span>Từ 6.800.000đ</span>
+              <a href="#">Xem chi tiết →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="room-card">
+          <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1000&q=80" alt="">
+          <div class="room-body">
+            <h3>Lagoon Room</h3>
+            <p>Phòng nghỉ hiện đại với tầm nhìn xanh mát, phù hợp cho kỳ nghỉ ngắn ngày nhưng vẫn đầy đủ tiện nghi.</p>
+            <div class="room-footer">
+              <span>Từ 2.400.000đ</span>
+              <a href="#">Xem chi tiết →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section experiences" id="services">
+      <div class="section-head">
+        <span>Resort Experience</span>
+        <h2>Không chỉ là nơi ở, mà là một hành trình tận hưởng</h2>
+        <p>
+          Từ spa thư giãn, ẩm thực ven biển đến hồ bơi vô cực và bãi biển riêng,
+          mọi trải nghiệm đều được chăm chút để tạo nên kỳ nghỉ đáng nhớ.
+        </p>
+      </div>
+
+      <div class="experience-grid">
+        <div class="experience-card" style="background-image:url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=900&q=80')">
+          <div>
+            <h3>Spa Retreat</h3>
+            <p>Liệu trình thư giãn phục hồi năng lượng.</p>
+          </div>
+        </div>
+
+        <div class="experience-card" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=80')">
+          <div>
+            <h3>Fine Dining</h3>
+            <p>Ẩm thực cao cấp với nguyên liệu tươi mới.</p>
+          </div>
+        </div>
+
+        <div class="experience-card" style="background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80')">
+          <div>
+            <h3>Private Beach</h3>
+            <p>Bãi biển riêng yên tĩnh và sang trọng.</p>
+          </div>
+        </div>
+
+        <div class="experience-card" style="background-image:url('https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?auto=format&fit=crop&w=900&q=80')">
+          <div>
+            <h3>Infinity Pool</h3>
+            <p>Hồ bơi vô cực nhìn thẳng ra đại dương.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="offers">
+      <div class="section-head">
+        <span>Special Offers</span>
+        <h2>Ưu đãi độc quyền cho kỳ nghỉ của bạn</h2>
+        <p>
+          Chọn gói nghỉ dưỡng phù hợp và tận hưởng nhiều đặc quyền chỉ có tại Deep Blue Haven.
+        </p>
+      </div>
+
+      <div class="offers-grid">
+        <div class="offer-card">
+          <div class="badge">Couple Package</div>
+          <h3>Honeymoon Escape</h3>
+          <p>Gói nghỉ dưỡng lãng mạn gồm villa riêng, dinner bên biển và spa đôi.</p>
+          <a class="btn-primary" href="#">Xem ưu đãi</a>
+        </div>
+
+        <div class="offer-card">
+          <div class="badge">Family Choice</div>
+          <h3>Family Retreat</h3>
+          <p>Kỳ nghỉ gia đình với phòng rộng, buffet sáng và hoạt động vui chơi cho trẻ em.</p>
+          <a class="btn-primary" href="#">Xem ưu đãi</a>
+        </div>
+
+        <div class="offer-card">
+          <div class="badge">Weekend Deal</div>
+          <h3>Weekend Luxury</h3>
+          <p>Gói nghỉ cuối tuần ngắn ngày với check-in sớm và cocktail chào mừng.</p>
+          <a class="btn-primary" href="#">Xem ưu đãi</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <span>Gallery</span>
+        <h2>Khoảnh khắc nghỉ dưỡng tại Deep Blue Haven</h2>
+        <p>
+          Một không gian được thiết kế để bạn tận hưởng biển xanh, ánh nắng và sự bình yên.
+        </p>
+      </div>
+
+      <div class="gallery-grid">
+        <img src="https://images.unsplash.com/photo-1501117716987-c8e1ecb210d4?auto=format&fit=crop&w=900&q=80" alt="">
+        <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=900&q=80" alt="">
+        <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=900&q=80" alt="">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80" alt="">
+        <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=900&q=80" alt="">
+      </div>
+    </section>
+
+    <section class="cta" id="booking">
+      <div>
+        <h2>Sẵn sàng cho kỳ nghỉ bên đại dương?</h2>
+        <p>
+          Đặt phòng ngay hôm nay để tận hưởng ưu đãi độc quyền,
+          không gian nghỉ dưỡng sang trọng và dịch vụ cá nhân hóa tại Deep Blue Haven.
+        </p>
+        <a href="#" class="btn-primary">Đặt phòng ngay</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="contact">
+    <div class="footer-grid">
+      <div>
+        <h3>Deep Blue Haven</h3>
+        <p>
+          Khu nghỉ dưỡng ven biển cao cấp, nơi mỗi khoảnh khắc đều được thiết kế
+          để mang lại sự thư giãn, riêng tư và đẳng cấp.
         </p>
       </div>
 
       <div>
-        <h4>Khám phá</h4>
-        <div class="dbh-footer-links">
-          <a href="/rooms">Phòng nghỉ</a>
-          <a href="/services">Dịch vụ</a>
-          <a href="/offers">Ưu đãi</a>
-          <a href="/about">Về chúng tôi</a>
-        </div>
+        <h3>Khám phá</h3>
+        <a href="#">Phòng nghỉ</a>
+        <a href="#">Dịch vụ</a>
+        <a href="#">Ưu đãi</a>
+        <a href="#">Thư viện ảnh</a>
       </div>
 
       <div>
-        <h4>Kết nối</h4>
-        <div class="dbh-footer-links">
-          <a href="#">Facebook</a>
-          <a href="#">Instagram</a>
-          <a href="#">TikTok</a>
-          <a href="#">YouTube</a>
-        </div>
+        <h3>Liên hệ</h3>
+        <p>Hotline: 1900 888 999</p>
+        <p>Email: booking@deepbluehaven.com</p>
+        <p>Địa chỉ: Bãi biển Deep Blue, Việt Nam</p>
       </div>
 
       <div>
-        <h4>Bản tin</h4>
-        <p>Nhận ưu đãi, cảm hứng du lịch và thông tin mới nhất từ resort.</p>
-        <form class="dbh-newsletter">
-          <input type="email" placeholder="Nhập email của bạn..." aria-label="Email" />
-          <button type="submit" aria-label="Đăng ký">→</button>
+        <h3>Nhận ưu đãi</h3>
+        <p>Đăng ký để nhận thông tin ưu đãi mới nhất từ resort.</p>
+        <form class="newsletter">
+          <input type="email" placeholder="Email của bạn">
+          <button>Gửi</button>
         </form>
       </div>
     </div>
 
-    <div class="dbh-copyright">
-      <span>© 2025 Deep Blue Haven. All rights reserved.</span>
-      <span>Luxury Beach Resort Experience</span>
+    <div class="copyright">
+      <span>© 2026 Deep Blue Haven Resort. All Rights Reserved.</span>
+      <span>Luxury Ocean Experience</span>
     </div>
-  </div>
-</footer>
+  </footer>
+
+</body>
+</html>
