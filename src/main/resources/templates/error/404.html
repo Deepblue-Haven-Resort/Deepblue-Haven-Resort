@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>404 - Deep Blue Haven</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      min-height:100vh;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      overflow:hidden;
+
+      font-family:'Nunito',sans-serif;
+
+      background:
+        linear-gradient(
+          rgba(6,20,32,.82),
+          rgba(6,20,32,.9)
+        ),
+        url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2070&auto=format&fit=crop');
+
+      background-size:cover;
+      background-position:center;
+
+      position:relative;
+
+      color:white;
+    }
+
+    /* Glow Background */
+    body::before{
+      content:"";
+      position:absolute;
+
+      width:700px;
+      height:700px;
+
+      background:rgba(0,170,255,.14);
+
+      border-radius:50%;
+
+      filter:blur(120px);
+
+      top:-260px;
+      right:-200px;
+    }
+
+    body::after{
+      content:"";
+      position:absolute;
+
+      width:500px;
+      height:500px;
+
+      background:rgba(216,180,106,.12);
+
+      border-radius:50%;
+
+      filter:blur(120px);
+
+      bottom:-180px;
+      left:-120px;
+    }
+
+    /* Main Card */
+    .error-container{
+      width:min(92%,650px);
+
+      padding:60px 50px;
+
+      border-radius:32px;
+
+      background:rgba(255,255,255,.06);
+
+      border:1px solid rgba(255,255,255,.12);
+
+      backdrop-filter:blur(18px);
+
+      text-align:center;
+
+      position:relative;
+      z-index:2;
+
+      box-shadow:
+        0 25px 60px rgba(0,0,0,.35);
+    }
+
+    /* Image */
+    .error-image{
+      width:320px;
+      max-width:80%;
+      height:auto;
+
+      margin-bottom:30px;
+
+      animation:float 4s ease-in-out infinite;
+    }
+
+    @keyframes float{
+      0%{
+        transform:translateY(0px);
+      }
+
+      50%{
+        transform:translateY(-12px);
+      }
+
+      100%{
+        transform:translateY(0px);
+      }
+    }
+
+    /* 404 Number */
+    .error-code{
+      font-size:5rem;
+      line-height:1;
+
+      font-family:'Cormorant Garamond',serif;
+
+      margin-bottom:14px;
+
+      background:linear-gradient(
+        180deg,
+        #ffffff,
+        #d8b46a
+      );
+
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    /* Title */
+    .error-title{
+      font-size:2.8rem;
+
+      font-family:'Cormorant Garamond',serif;
+
+      margin-bottom:20px;
+    }
+
+    /* Description */
+    .error-description{
+      max-width:520px;
+
+      margin:auto;
+      margin-bottom:38px;
+
+      color:rgba(255,255,255,.72);
+
+      font-size:1rem;
+      line-height:1.9;
+    }
+
+    /* Button */
+    .cta-button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+
+      min-width:230px;
+      height:58px;
+
+      padding:0 34px;
+
+      border-radius:999px;
+
+      background:#d8b46a;
+
+      color:#04111d;
+
+      text-decoration:none;
+
+      font-size:.95rem;
+      font-weight:700;
+      letter-spacing:.6px;
+
+      transition:.35s ease;
+    }
+
+    .cta-button:hover{
+      transform:translateY(-4px);
+
+      box-shadow:
+        0 16px 35px rgba(216,180,106,.35);
+    }
+
+    /* Wave */
+    .ocean-wave{
+      position:absolute;
+
+      bottom:0;
+      left:0;
+
+      width:200%;
+      height:180px;
+
+      background:url("https://svgshare.com/i/14xA.svg") repeat-x;
+      background-size:contain;
+
+      opacity:.12;
+
+      animation:waveMove 18s linear infinite;
+    }
+
+    @keyframes waveMove{
+      from{
+        transform:translateX(0);
+      }
+
+      to{
+        transform:translateX(-50%);
+      }
+    }
+
+    /* Responsive */
+    @media(max-width:768px){
+
+      .error-container{
+        padding:50px 28px;
+      }
+
+      .error-code{
+        font-size:4rem;
+      }
+
+      .error-title{
+        font-size:2rem;
+      }
+
+      .error-description{
+        font-size:.95rem;
+      }
+
+      .cta-button{
+        width:100%;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- Wave -->
+  <div class="ocean-wave"></div>
+
+  <!-- Content -->
+  <div class="error-container">
+
+    <img
+      class="error-image"
+      th:src="@{/assets/pic/404.png}"
+      alt="404 Error"
+    />
+
+    <div class="error-code">
+      404
+    </div>
+
+    <h1 class="error-title">
+      Lost In The Ocean
+    </h1>
+
+    <p class="error-description">
+      The page you are looking for seems to have drifted away
+      into the deep blue sea. Let’s guide you back to your
+      luxury coastal escape.
+    </p>
+
+    <a th:href="@{/}" class="cta-button">
+      Return To Homepage
+    </a>
+
+  </div>
+
+</body>
+</html>
