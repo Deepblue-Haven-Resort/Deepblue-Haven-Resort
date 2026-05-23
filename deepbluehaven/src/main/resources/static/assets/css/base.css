@@ -1,0 +1,284 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* Cuộn mượt */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 400;
+    color: var(--color-text);
+    background: var(--color-bg);
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+.heading-1 {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+h2,
+.heading-2 {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    line-height: 1.2;
+    font-weight: 600;
+}
+
+h3,
+.heading-3 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    line-height: 1.25;
+    font-weight: 600;
+}
+
+h4,
+.heading-4 {
+    font-family: var(--font-heading);
+    font-size: 1.625rem;
+    line-height: 1.3;
+    font-weight: 500;
+}
+
+h5,
+.heading-5 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+h6,
+.heading-6 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--color-heading);
+}
+
+.body-1 {
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.body-2 {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.body-3 {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.body-4 {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+.body-5 {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+p {
+    font-family: var(--font-body);
+    color: var(--color-text-muted);
+}
+
+.caption-1 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.caption-2 {
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    line-height: 1.45;
+    font-weight: 500;
+}
+
+.caption-3 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.caption-4 {
+    font-family: var(--font-heading);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    font-weight: 400;
+}
+
+.caption-5 {
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    line-height: 1.45;
+    font-weight: 400;
+}
+
+.caption-6 {
+    font-family: var(--font-heading);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    font-weight: 400;
+}
+
+.button-1 {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.25;
+    font-weight: 700;
+}
+
+.button-2 {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.35;
+    font-weight: 600;
+}
+
+.button-3 {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1.3;
+    font-weight: 600;
+}
+
+.button-4 {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.button-5 {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    line-height: 1.35;
+    font-weight: 500;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+img,
+svg {
+    max-width: 100%;
+    display: block;
+}
+
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
+    color: inherit;
+    outline: none;
+}
+
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+.container {
+    width: calc(100% - var(--grid-desktop-margin) * 2);
+    margin-inline: auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-desktop-columns), 1fr);
+    column-gap: var(--grid-desktop-gutter);
+}
+
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-md);
+    background: #581919;
+    color: var(--white);
+}
+
+.btn-large {
+    padding-inline: 1.5rem;
+    min-height: 4rem;
+}
+
+.btn-medium {
+    padding-inline: 1.5rem;
+    min-height: 3.5rem;
+}
+
+.btn-small {
+    padding-inline: 1.5rem;
+    min-height: 3rem;
+}
+
+input,
+textarea,
+select {
+    border: var(--border-1) solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--surface-0);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary-600);
+}
+
+::selection {
+    background: var(--primary-200);
+    color: var(--primary-900);
+}
