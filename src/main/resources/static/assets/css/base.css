@@ -463,23 +463,3 @@ select:focus {
 }
 
 
-.badge {
-    position: relative;
-    z-index: 2;
-    display: inline-flex;
-
-    margin-bottom: var(--space-24);
-    padding: var(--space-8) var(--space-16);
-
-    border-radius: 999px;
-    border: var(--border-1) solid var(--gold-500);
-
-    color: var(--primary-800);
-    background: var(--primary-100);
-
-    font-size: 0.78rem;
-    font-weight: 800;
-
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
