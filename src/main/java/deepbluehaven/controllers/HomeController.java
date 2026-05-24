@@ -10,9 +10,4 @@ public class HomeController {
   public String home() {
     return "customer/dashboard";
   }
-
-  @GetMapping("/404")
-  public String notFound() {
-    return "404";
-  }
 }
