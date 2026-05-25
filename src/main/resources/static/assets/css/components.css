@@ -1,0 +1,117 @@
+/* =========================
+   BADGE COMPONENT
+   Dùng chung cho Role / Status
+========================= */
+
+.badge,
+.role,
+.status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 96px;
+    min-height: 40px;
+
+    padding-inline: var(--space-16);
+
+    border-radius: 999px;
+
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1;
+
+    border: var(--border-1) solid transparent;
+}
+
+/* =========================
+   STATUS BADGE
+========================= */
+
+.status-success,
+.status.active {
+    background: var(--success-100);
+    color: var(--success-700);
+}
+
+.status-error,
+.status.locked {
+    background: var(--error-100);
+    color: var(--error-700);
+}
+
+.status-warning,
+.status.pending {
+    background: var(--warning-400);
+    color: var(--neutral-900);
+}
+
+.status-info {
+    background: var(--primary-100);
+    color: var(--primary-700);
+}
+
+/* =========================
+   ROLE BADGE
+========================= */
+
+.role-customer,
+.role.customer {
+    background: var(--primary-100);
+    color: var(--primary-700);
+}
+
+.role-housekeeping,
+.role.housekeeping {
+    background: var(--secondary-100);
+    color: var(--secondary-800);
+}
+
+.role-manager,
+.role.manager {
+    background: var(--warning-400);
+    color: var(--neutral-900);
+}
+
+.role-admin,
+.role.admin {
+    background: var(--primary-800);
+    color: var(--white);
+}
+
+.role-receptionist,
+.role.receptionist {
+    background: var(--primary-200);
+    color: var(--primary-800);
+}
+
+/* =========================
+   OPTIONAL SIZE
+========================= */
+
+.badge-sm {
+    min-width: auto;
+    min-height: 32px;
+
+    padding-inline: var(--space-12);
+
+    font-size: 0.75rem;
+}
+
+.badge-md {
+    min-width: 96px;
+    min-height: 40px;
+
+    padding-inline: var(--space-16);
+
+    font-size: 0.8125rem;
+}
+
+.badge-lg {
+    min-width: 112px;
+    min-height: 48px;
+
+    padding-inline: var(--space-24);
+
+    font-size: 0.875rem;
+}

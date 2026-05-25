@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="admin-layout">
+
+    <div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+
+    <main class="admin-main">
+
+        <section class="dashboard-hero">
+            <div>
+                <span class="page-label">Admin Control Center</span>
+                <h1>Dashboard</h1>
+                <p>Theo dõi tài khoản, phân quyền và trạng thái hệ thống Deep Blue Haven.</p>
+            </div>
+
+            <button class="btn btn-cta btn-medium">
+                <i class="fa-solid fa-plus"></i>
+                Thêm tài khoản
+            </button>
+        </section>
+
+        <section class="stats-grid">
+
+            <article class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div>
+                    <span>Tổng tài khoản</span>
+                    <strong>128</strong>
+                    <small>+12 tài khoản </small>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+                <div>
+                    <span>Đang hoạt động</span>
+                    <strong>115</strong>
+                    <small>89% tài khoản active</small>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <div>
+                    <span>Nhân viên</span>
+                    <strong>24</strong>
+                    <small>Admin, Manager, Staff</small>
+                </div>
+            </article>
+
+            <article class="stat-card warning">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-user-lock"></i>
+                </div>
+                <div>
+                    <span>Bị khóa</span>
+                    <strong>3</strong>
+                    <small>Cần kiểm tra bảo mật</small>
+                </div>
+            </article>
+
+        </section>
+
+        <section class="dashboard-grid">
+
+            <article class="chart-card large">
+                <div class="card-header">
+                    <div>
+                        <h2>User Growth</h2>
+                        <p>Tài khoản mới trong 7 ngày gần đây</p>
+                    </div>
+                    <span class="chip success">+18%</span>
+                </div>
+
+                <div class="fake-line-chart">
+                    <div style="height: 35%"></div>
+                    <div style="height: 55%"></div>
+                    <div style="height: 42%"></div>
+                    <div style="height: 70%"></div>
+                    <div style="height: 58%"></div>
+                    <div style="height: 82%"></div>
+                    <div style="height: 65%"></div>
+                </div>
+
+                <div class="chart-labels">
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                    <span>Sun</span>
+                </div>
+            </article>
+
+            <article class="chart-card">
+                <div class="card-header">
+                    <div>
+                        <h2>Role Distribution</h2>
+                        <p>Tỷ lệ phân quyền</p>
+                    </div>
+                </div>
+
+                <div class="donut-wrap">
+                    <div class="donut-chart"></div>
+                    <div class="donut-center">
+                        <strong>128</strong>
+                        <span>Users</span>
+                    </div>
+                </div>
+
+                <div class="role-list">
+                    <div><span class="dot customer"></span>Customer <strong>104</strong></div>
+                    <div><span class="dot staff"></span>Staff <strong>18</strong></div>
+                    <div><span class="dot admin"></span>Admin <strong>6</strong></div>
+                </div>
+            </article>
+
+            <article class="chart-card">
+                <div class="card-header">
+                    <div>
+                        <h2>System Health</h2>
+                        <p>Trạng thái vận hành</p>
+                    </div>
+                </div>
+
+                <div class="health-list">
+                    <div>
+                        <span>Server</span>
+                        <strong class="online">Online</strong>
+                    </div>
+                    <div>
+                        <span>Database</span>
+                        <strong class="online">Connected</strong>
+                    </div>
+                    <div>
+                        <span>Login Failed</span>
+                        <strong class="warning-text">3</strong>
+                    </div>
+                    <div>
+                        <span>Active Sessions</span>
+                        <strong>24</strong>
+                    </div>
+                </div>
+            </article>
+
+            <article class="chart-card">
+                <div class="card-header">
+                    <div>
+                        <h2>Recent Activities</h2>
+                        <p>Lịch sử thao tác gần đây</p>
+                    </div>
+                </div>
+
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <p><strong>Admin</strong> tạo tài khoản lễ tân mới</p>
+                    </div>
+
+                    <div class="activity-item">
+                        <i class="fa-solid fa-lock"></i>
+                        <p><strong>Manager</strong> khóa tài khoản nghi ngờ</p>
+                    </div>
+
+                    <div class="activity-item">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <p><strong>Admin</strong> cập nhật phân quyền staff</p>
+                    </div>
+                </div>
+            </article>
+
+        </section>
+
+        <section class="account-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2>Account List</h2>
+                    <p>Danh sách tài khoản đang có trong hệ thống</p>
+                </div>
+
+                <button class="btn btn-cta btn-medium">
+                    <i class="fa-solid fa-plus"></i>
+                    Thêm tài khoản
+                </button>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Tìm theo tên, email, vai trò...">
+                </div>
+
+                <select>
+                    <option>Tất cả vai trò</option>
+                    <option>ADMIN</option>
+                    <option>MANAGER</option>
+                    <option>RECEPTIONIST</option>
+                    <option>HOUSEKEEPING</option>
+                    <option>CUSTOMER</option>
+                </select>
+
+                <select>
+                    <option>Tất cả trạng thái</option>
+                    <option>Active</option>
+                    <option>Locked</option>
+                </select>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="account-table">
+                    <thead>
+                    <tr>
+                        <th>Người dùng</th>
+                        <th>Email</th>
+                        <th>Vai trò</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="avatar">A</div>
+                                <div>
+                                    <strong>Nguyễn Minh Anh</strong>
+                                    <span>Customer Account</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>minhanh@gmail.com</td>
+                        <td><span class="role customer">CUSTOMER</span></td>
+                        <td><span class="status status-success">Active</span></td>
+                        <td>25/05/2026</td>
+                        <td>
+                            <div class="action-group">
+                                <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
+                                <button class="lock-btn"><i class="fa-solid fa-lock"></i></button>
+                                <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="avatar">N</div>
+                                <div>
+                                    <strong>Trần Hoàng Nam</strong>
+                                    <span>Staff Account</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>nam.staff@deepblue.com</td>
+                        <td><span class="role housekeeping">HOUSEKEEPING</span></td>
+                        <td><span class="status status-success">Active</span></td>
+                        <td>21/05/2026</td>
+                        <td>
+                            <div class="action-group">
+                                <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
+                                <button class="lock-btn"><i class="fa-solid fa-lock"></i></button>
+                                <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="avatar">L</div>
+                                <div>
+                                    <strong>Lê Thanh Vy</strong>
+                                    <span>Manager Account</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>vy.manager@deepblue.com</td>
+                        <td><span class="role manager">MANAGER</span></td>
+                        <td><span class="status status-error">Locked</span></td>
+                        <td>18/05/2026</td>
+                        <td>
+                            <div class="action-group">
+                                <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
+                                <button class="unlock-btn"><i class="fa-solid fa-unlock"></i></button>
+                                <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script th:src="@{/assets/js/admin-sidebar.js}"></script>
+</body>
+</html>

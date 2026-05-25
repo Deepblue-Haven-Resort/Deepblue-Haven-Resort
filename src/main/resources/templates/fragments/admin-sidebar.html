@@ -1,0 +1,45 @@
+<aside th:fragment="adminSidebar" class="admin-sidebar" id="adminSidebar">
+
+    <button class="sidebar-toggle" id="sidebarToggle" type="button">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <nav class="sidebar-menu">
+
+        <a href="/admin/dashboard" class="sidebar-item active">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/admin/accounts" class="sidebar-item">
+            <i class="fa-solid fa-users-gear"></i>
+            <span>Quản lý tài khoản</span>
+        </a>
+
+        <a href="/admin/roles" class="sidebar-item">
+            <i class="fa-solid fa-user-shield"></i>
+            <span>Phân quyền</span>
+        </a>
+
+        <a href="/admin/reports" class="sidebar-item">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Báo cáo</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-footer">
+
+        <a href="/settings" class="sidebar-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Cài đặt</span>
+        </a>
+
+        <a href="/logout" class="sidebar-item logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Đăng xuất</span>
+        </a>
+
+    </div>
+
+</aside>
