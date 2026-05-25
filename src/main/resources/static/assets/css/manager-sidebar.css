@@ -1,4 +1,4 @@
-.admin-sidebar {
+.manager-sidebar {
     width: 280px;
     height: 100vh;
 
@@ -145,41 +145,41 @@
     color: var(--error-700);
 }
 
-.admin-sidebar.is-collapsed {
+.manager-sidebar.is-collapsed {
     width: 88px;
 }
 
-.admin-sidebar.is-collapsed .sidebar-item span {
+.manager-sidebar.is-collapsed .sidebar-item span {
     opacity: 0;
     width: 0;
     overflow: hidden;
     pointer-events: none;
 }
 
-.admin-sidebar.is-collapsed .sidebar-item {
+.manager-sidebar.is-collapsed .sidebar-item {
     justify-content: center;
     padding-inline: 0;
     gap: 0;
 }
 
-.admin-sidebar.is-collapsed .sidebar-toggle {
+.manager-sidebar.is-collapsed .sidebar-toggle {
     align-self: center;
 }
 
-.admin-sidebar.is-collapsed .sidebar-footer {
+.manager-sidebar.is-collapsed .sidebar-footer {
     align-items: center;
 }
 
-.admin-sidebar.is-collapsed .sidebar-item:hover {
+.manager-sidebar.is-collapsed .sidebar-item:hover {
     transform: none;
 }
 
-.admin-main {
+.manager-main {
     margin-left: 304px;
     padding: var(--space-24);
     transition: margin-left 0.3s ease;
 }
 
-.admin-sidebar.is-collapsed ~ .admin-main {
+.manager-sidebar.is-collapsed ~ .manager-main {
     margin-left: 112px;
 }
