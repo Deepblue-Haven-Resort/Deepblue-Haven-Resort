@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="manager-layout">
+
+    <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+    <main class="manager-main">
+
+        <!-- HERO -->
+        <section class="dashboard-hero manager-hero">
+            <div>
+                <span class="page-label">Manager Operation Center</span>
+                <h1>Resort Dashboard</h1>
+                <p>Theo dõi vận hành phòng, booking, doanh thu, dịch vụ và hiệu suất nhân viên.</p>
+            </div>
+
+            <div class="hero-actions">
+                <button class="btn btn-cta btn-medium">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                    Tạo booking
+                </button>
+
+                <button class="btn btn-outline btn-medium">
+                    <i class="fa-solid fa-file-export"></i>
+                    Xuất báo cáo
+                </button>
+            </div>
+        </section>
+
+        <!-- KPI -->
+        <section class="stats-grid">
+
+            <article class="stat-card revenue">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                </div>
+                <div>
+                    <span>Doanh thu hôm nay</span>
+                    <strong>128.5M</strong>
+                    <small>+14% so với hôm qua</small>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-bed"></i>
+                </div>
+                <div>
+                    <span>Công suất phòng</span>
+                    <strong>82%</strong>
+                    <small>51 / 62 phòng đang sử dụng</small>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <div>
+                    <span>Booking hôm nay</span>
+                    <strong>36</strong>
+                    <small>12 check-in, 8 check-out</small>
+                </div>
+            </article>
+
+            <article class="stat-card warning">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-broom"></i>
+                </div>
+                <div>
+                    <span>Phòng cần xử lý</span>
+                    <strong>16</strong>
+                    <small>12 cleaning, 4 maintenance</small>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- MAIN DASHBOARD GRID -->
+        <section class="dashboard-grid">
+
+            <!-- REVENUE CHART -->
+            <article class="chart-card large">
+                <div class="card-header">
+                    <div>
+                        <h2>Revenue Overview</h2>
+                        <p>Doanh thu 7 ngày gần đây từ phòng và dịch vụ</p>
+                    </div>
+                    <span class="chip success">+18%</span>
+                </div>
+
+                <div class="fake-line-chart revenue-chart">
+                    <div style="height: 42%"></div>
+                    <div style="height: 58%"></div>
+                    <div style="height: 46%"></div>
+                    <div style="height: 72%"></div>
+                    <div style="height: 64%"></div>
+                    <div style="height: 88%"></div>
+                    <div style="height: 76%"></div>
+                </div>
+
+                <div class="chart-labels">
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                    <span>Sun</span>
+                </div>
+            </article>
+
+            <!-- ROOM STATUS -->
+            <article class="chart-card">
+                <div class="card-header">
+                    <div>
+                        <h2>Room Status</h2>
+                        <p>Tình trạng phòng hiện tại</p>
+                    </div>
+                </div>
+
+                <div class="donut-wrap">
+                    <div class="donut-chart room-donut"></div>
+                    <div class="donut-center">
+                        <strong>62</strong>
+                        <span>Rooms</span>
+                    </div>
+                </div>
+
+                <div class="role-list">
+                    <div><span class="dot available"></span>Available <strong>32</strong></div>
+                    <div><span class="dot occupied"></span>Occupied <strong>51</strong></div>
+                    <div><span class="dot cleaning"></span>Cleaning <strong>12</strong></div>
+                    <div><span class="dot maintenance"></span>Maintenance <strong>4</strong></div>
+                </div>
+            </article>
+
+            <!-- BOOKING STATUS -->
+            <article class="chart-card">
+                <div class="card-header">
+                    <div>
+                        <h2>Booking Flow</h2>
+                        <p>Trạng thái đặt phòng hôm nay</p>
+                    </div>
+                </div>
+
+                <div class="health-list">
+                    <div>
+                        <span>Pending</span>
+                        <strong class="warning-text">6</strong>
+                    </div>
+                    <div>
+                        <span>Confirmed</span>
+                        <strong>18</strong>
+                    </div>
+                    <div>
+                        <span>Checked In</span>
+                        <strong class="online">12</strong>
+                    </div>
+                    <div>
+                        <span>Cancelled</span>
+                        <strong class="danger-text">2</strong>
+                    </div>
+                </div>
+            </article>
+
+            <!-- SERVICE ORDERS -->
+            <article class="chart-card">
+                <div class="card-header">
+                    <div>
+                        <h2>Service Orders</h2>
+                        <p>Dịch vụ đang được xử lý</p>
+                    </div>
+                    <span class="chip warning">9 pending</span>
+                </div>
+
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <i class="fa-solid fa-bell-concierge"></i>
+                        <p><strong>Room 204</strong> gọi dịch vụ F&B</p>
+                    </div>
+
+                    <div class="activity-item">
+                        <i class="fa-solid fa-spa"></i>
+                        <p><strong>Room 502</strong> đặt lịch Spa lúc 15:30</p>
+                    </div>
+
+                    <div class="activity-item">
+                        <i class="fa-solid fa-shirt"></i>
+                        <p><strong>Room 118</strong> yêu cầu Laundry</p>
+                    </div>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- SECOND GRID -->
+        <section class="dashboard-grid secondary-grid">
+
+            <!-- STAFF PERFORMANCE -->
+            <article class="chart-card large">
+                <div class="card-header">
+                    <div>
+                        <h2>Staff Performance</h2>
+                        <p>Hiệu suất xử lý công việc của nhân viên</p>
+                    </div>
+                    <span class="chip success">Good</span>
+                </div>
+
+                <div class="staff-list">
+
+                    <div class="staff-row">
+                        <div class="staff-profile">
+                            <div class="avatar">N</div>
+                            <div>
+                                <strong>Trần Hoàng Nam</strong>
+                                <span>Housekeeping</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-box">
+                            <div class="progress-info">
+                                <span>12 tasks completed</span>
+                                <strong>92%</strong>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="staff-row">
+                        <div class="staff-profile">
+                            <div class="avatar">H</div>
+                            <div>
+                                <strong>Phạm Quốc Huy</strong>
+                                <span>Receptionist</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-box">
+                            <div class="progress-info">
+                                <span>18 bookings handled</span>
+                                <strong>86%</strong>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: 86%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="staff-row">
+                        <div class="staff-profile">
+                            <div class="avatar">L</div>
+                            <div>
+                                <strong>Lê Thanh Vy</strong>
+                                <span>Service Staff</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-box">
+                            <div class="progress-info">
+                                <span>9 service orders</span>
+                                <strong>78%</strong>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill warning-fill" style="width: 78%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </article>
+
+            <!-- CUSTOMER EXPERIENCE -->
+            <article class="chart-card">
+                <div class="card-header">
+                    <div>
+                        <h2>Guest Experience</h2>
+                        <p>Đánh giá và khách VIP</p>
+                    </div>
+                </div>
+
+                <div class="rating-box">
+                    <strong>4.8</strong>
+                    <div>
+                        <span class="stars">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star-half-stroke"></i>
+                        </span>
+                        <p>326 reviews</p>
+                    </div>
+                </div>
+
+                <div class="health-list">
+                    <div>
+                        <span>VIP Guests</span>
+                        <strong>18</strong>
+                    </div>
+                    <div>
+                        <span>Returning Guests</span>
+                        <strong>42%</strong>
+                    </div>
+                    <div>
+                        <span>Complaints</span>
+                        <strong class="warning-text">3</strong>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ALERTS -->
+            <article class="chart-card alert-card">
+                <div class="card-header">
+                    <div>
+                        <h2>Operational Alerts</h2>
+                        <p>Cảnh báo cần xử lý</p>
+                    </div>
+                </div>
+
+                <div class="alert-list">
+
+                    <div class="alert-item high">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div>
+                            <strong>Room 305 maintenance</strong>
+                            <span>Máy lạnh cần kiểm tra gấp</span>
+                        </div>
+                    </div>
+
+                    <div class="alert-item medium">
+                        <i class="fa-solid fa-clock"></i>
+                        <div>
+                            <strong>Cleaning delayed</strong>
+                            <span>Room 410 trễ 25 phút</span>
+                        </div>
+                    </div>
+
+                    <div class="alert-item low">
+                        <i class="fa-solid fa-box"></i>
+                        <div>
+                            <strong>Low inventory</strong>
+                            <span>Minibar water gần hết kho</span>
+                        </div>
+                    </div>
+
+                </div>
+            </article>
+
+        </section>
+
+        <!-- TABLE / LIVE ACTIVITY -->
+        <section class="manager-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2>Live Resort Activity</h2>
+                    <p>Theo dõi toàn bộ hoạt động mới nhất trong resort</p>
+                </div>
+
+                <button class="btn btn-cta btn-medium">
+                    <i class="fa-solid fa-rotate"></i>
+                    Refresh
+                </button>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="activity-table">
+                    <thead>
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Loại hoạt động</th>
+                        <th>Đối tượng</th>
+                        <th>Người thực hiện</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td>10:25</td>
+                        <td>
+                            <span class="activity-badge booking">
+                                <i class="fa-solid fa-calendar-check"></i>
+                                Booking
+                            </span>
+                        </td>
+                        <td>Booking #BK1024</td>
+                        <td>Receptionist Huy</td>
+                        <td><span class="status status-success">CONFIRMED</span></td>
+                        <td>Khách đặt Ocean Suite</td>
+                    </tr>
+
+                    <tr>
+                        <td>10:18</td>
+                        <td>
+                            <span class="activity-badge room">
+                                <i class="fa-solid fa-bed"></i>
+                                Room
+                            </span>
+                        </td>
+                        <td>Room 502</td>
+                        <td>System</td>
+                        <td><span class="status status-warning">CLEANING</span></td>
+                        <td>Sau khi khách check-out</td>
+                    </tr>
+
+                    <tr>
+                        <td>10:06</td>
+                        <td>
+                            <span class="activity-badge payment">
+                                <i class="fa-solid fa-credit-card"></i>
+                                Payment
+                            </span>
+                        </td>
+                        <td>Invoice #INV8821</td>
+                        <td>Receptionist Mai</td>
+                        <td><span class="status status-success">PAID</span></td>
+                        <td>Thanh toán bằng E-Wallet</td>
+                    </tr>
+
+                    <tr>
+                        <td>09:52</td>
+                        <td>
+                            <span class="activity-badge service">
+                                <i class="fa-solid fa-bell-concierge"></i>
+                                Service
+                            </span>
+                        </td>
+                        <td>Service Order #SV221</td>
+                        <td>Service Staff Vy</td>
+                        <td><span class="status status-info">DELIVERED</span></td>
+                        <td>Minibar Room 204</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script th:src="@{/assets/js/manager-sidebar.js}"></script>
+</body>
+</html>

@@ -1,11 +1,7 @@
-  <link rel="stylesheet" th:href="@{/assets/css/header.css}" />
-  
-<div
-  th:fragment="header"
-  id="header"
-  class="site-header"
-  th:data-user-id="${session.currentUser != null ? session.currentUser.id : ''}"
->
+<link rel="stylesheet" th:href="@{/assets/css/header.css}" />
+
+<div th:fragment="header" id="header" class="site-header"
+  th:data-user-id="${session.currentUser != null ? session.currentUser.id : ''}">
   <a th:href="@{/}" class="header-logo" aria-label="Deep Blue Haven">
     <img th:src="@{/assets/pic/logo.png}" alt="Deep Blue Haven" />
   </a>
@@ -20,15 +16,8 @@
   </nav>
 
   <nav class="header-actions" id="action" aria-label="Hành động người dùng">
-    <button
-      class="icon-btn notify"
-      id="notifyBtn"
-      type="button"
-      title="Thông báo"
-      aria-label="Thông báo"
-      aria-haspopup="dialog"
-      aria-expanded="false"
-    >
+    <button class="icon-btn notify" id="notifyBtn" type="button" title="Thông báo" aria-label="Thông báo"
+      aria-haspopup="dialog" aria-expanded="false">
       <i class="fa-regular fa-bell"></i>
       <span class="notify-badge" id="notifyBadge"></span>
     </button>
@@ -37,34 +26,17 @@
       <div class="notify-head">
         <div class="notify-title">Thông báo</div>
 
-        <button
-          class="notify-close"
-          id="notifyClose"
-          type="button"
-          aria-label="Đóng thông báo"
-        >
+        <button class="notify-close" id="notifyClose" type="button" aria-label="Đóng thông báo">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
       <div class="notify-tabs" role="tablist" aria-label="Bộ lọc thông báo">
-        <button
-          class="notify-tab is-active"
-          type="button"
-          data-filter="all"
-          role="tab"
-          aria-selected="true"
-        >
+        <button class="notify-tab is-active" type="button" data-filter="all" role="tab" aria-selected="true">
           Tất cả
         </button>
 
-        <button
-          class="notify-tab"
-          type="button"
-          data-filter="unread"
-          role="tab"
-          aria-selected="false"
-        >
+        <button class="notify-tab" type="button" data-filter="unread" role="tab" aria-selected="false">
           Chưa đọc
         </button>
       </div>
@@ -76,23 +48,13 @@
       </a>
     </div>
 
-    <a
-      class=" btn btn-cta btn-small"
-      th:href="@{/booking}"
-      aria-label="Đặt phòng"
-    >
+    <a class=" btn btn-cta btn-small" th:href="@{/booking}" aria-label="Đặt phòng">
       Đặt phòng
     </a>
 
     <div class="user-menu" id="userMenu">
-      <button
-        class="icon-btn user-btn"
-        id="userBtn"
-        type="button"
-        aria-label="Tài khoản"
-        aria-haspopup="menu"
-        aria-expanded="false"
-      >
+      <button class="icon-btn user-btn" id="userBtn" type="button" aria-label="Tài khoản" aria-haspopup="menu"
+        aria-expanded="false">
         <i class="fa-regular fa-user"></i>
       </button>
 
@@ -104,20 +66,11 @@
 
         <div class="divider"></div>
 
-        <a
-          th:if="${session.currentUser == null}"
-          th:href="@{/login}"
-          role="menuitem"
-        >
+        <a th:if="${session.currentUser == null}" th:href="@{/login}" role="menuitem">
           Đăng nhập
         </a>
 
-        <form
-          th:if="${session.currentUser != null}"
-          th:action="@{/logout}"
-          method="post"
-          class="logout-form"
-        >
+        <form th:if="${session.currentUser != null}" th:action="@{/logout}" method="post" class="logout-form">
           <button type="submit" class="dropdown-logout" role="menuitem">
             Đăng xuất
           </button>
