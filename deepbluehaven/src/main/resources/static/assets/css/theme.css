@@ -93,7 +93,7 @@
     --radius-lg: 24px;
     --radius-xl: 40px;
 
-
+    --space-4: 4px;
     --space-8: 8px;
     --space-12: 12px;
     --space-16: 16px;
@@ -110,7 +110,7 @@
 
     --grid-desktop-columns: 12;
     --grid-desktop-margin: 80px;
-    --grid-desktop-gutter: 80px;
+    --grid-desktop-gutter: 24px;
 
     --grid-tablet-columns: 8;
     --grid-tablet-margin: 32px;
