@@ -60,8 +60,6 @@
 }
 
 .error-section::after {
-    content: "404";
-
     position: absolute;
     left: 50%;
     top: 50%;
@@ -247,4 +245,42 @@
     border-color: var(--primary-400);
 
     box-shadow: var(--shadow-md);
+}
+@Media (max-width:1399px) {
+    .error-section {
+        grid-template-columns: repeat(12, 1fr);
+    }
+
+    .error-image-wrap {
+        grid-column: 1 / span 7;
+        max-width: 100%;
+    }
+
+    .error-content {
+        grid-column: 8 / span 5;
+        max-width: 100%;
+    }
+}
+
+@Media (max-width: 799px) {
+    .error-section {
+        grid-template-columns: repeat(12, 1fr);
+    }
+
+    .error-image-wrap {
+        grid-column: 1 / span 12;
+        max-width: 100%;
+    }
+
+    .error-content {
+        grid-column: 1 / span 12;
+        max-width: 100%;
+        padding: var(--space-32);
+    }
+}
+
+@media (max-width: 479px) {
+    .error-content {
+        padding: var(--space-24);
+    }
 }
