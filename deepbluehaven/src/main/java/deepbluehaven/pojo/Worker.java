@@ -32,6 +32,10 @@ public class Worker {
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
+    @OneToMany(mappedBy = "worker", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<WorkerRoleTag> roleTags = new ArrayList<>();
+
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private WorkerStatus status;
@@ -52,6 +56,11 @@ public class Worker {
 
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+
+    public List<WorkerRoleTag> getRoleTags() { 
+        return roleTags; }
+    public void setRoleTags(List<WorkerRoleTag> roleTags) { 
+        this.roleTags = roleTags; }
 
     public WorkerStatus getStatus() { return status; }
     public void setStatus(WorkerStatus status) { this.status = status; }

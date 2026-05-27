@@ -1,7 +1,10 @@
 package deepbluehaven.dto;
+import java.util.List;
+
+import deepbluehaven.pojo.enums.RoleTag;
+import deepbluehaven.pojo.enums.WorkerStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import deepbluehaven.pojo.enums.WorkerStatus;
 
 public class WorkerDTO {
 
@@ -15,16 +18,36 @@ public class WorkerDTO {
         @NotNull(message = "Status is required")
         private WorkerStatus status;
 
+        @NotNull(message = "Role level is required")
+        private Integer roleLevel;
+        @NotNull(message = "At least one role tag is required")
+        private List<RoleTag> roleTags;
+
         public Request() {}
 
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
+        public String getUsername() { 
+            return username; }
+        public void setUsername(String username) { 
+            this.username = username; }
 
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
+        public String getPassword() { 
+            return password; }
+        public void setPassword(String password) { 
+            this.password = password; }
 
-        public WorkerStatus getStatus() { return status; }
-        public void setStatus(WorkerStatus status) { this.status = status; }
+        public WorkerStatus getStatus() { 
+            return status; }
+        public void setStatus(WorkerStatus status) {
+            this.status = status; }
+
+        public Integer getRoleLevel() { 
+            return roleLevel; }
+        public void setRoleLevel(Integer roleLevel) { 
+            this.roleLevel = roleLevel; }
+        public List<RoleTag> getRoleTags() { 
+            return roleTags; }
+        public void setRoleTags(List<RoleTag> roleTags) { 
+            this.roleTags = roleTags; }
     }
 
     public static class Response {
@@ -35,6 +58,8 @@ public class WorkerDTO {
         private String role;
         private String phoneNumber;
         private String email;
+        private Integer roleLevel;
+        private List<RoleTag> roleTags;
 
         public Response() {}
 
@@ -52,5 +77,14 @@ public class WorkerDTO {
             return status; }
         public void setStatus(WorkerStatus status) { 
             this.status = status; }
+        public Integer getRoleLevel() { 
+            return roleLevel; }
+        public void setRoleLevel(Integer roleLevel) { 
+            this.roleLevel = roleLevel; }
+        public List<RoleTag> getRoleTags() { 
+            return roleTags; }
+        public void setRoleTags(List<RoleTag> roleTags) { 
+            this.roleTags = roleTags; }
     }
+
 }

@@ -1,6 +1,5 @@
 package deepbluehaven.pojo;
 import deepbluehaven.pojo.enums.Role;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,6 +31,9 @@ public class WorkerProfile {
     @Column(name = "role", nullable = false, length = 30)
     private Role role;
 
+    @Column(name = "role_level", nullable = false)
+    private Integer roleLevel = 1;
+
     @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber;
 
@@ -59,6 +61,11 @@ public class WorkerProfile {
         return role; }
     public void setRole(Role role) { 
         this.role = role; }
+
+    public Integer getRoleLevel() { 
+        return roleLevel; }
+    public void setRoleLevel(Integer roleLevel) { 
+        this.roleLevel = roleLevel; }
 
     public String getPhoneNumber() { 
         return phoneNumber; }

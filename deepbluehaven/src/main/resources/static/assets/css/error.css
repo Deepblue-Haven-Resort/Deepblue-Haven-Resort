@@ -24,7 +24,7 @@
 }
 
 .error-section {
-    min-height: calc(100vh - 152px);
+    min-height: calc(100vh - 500px);
     width: 100%;
 
     display: grid;
@@ -34,7 +34,8 @@
 
     padding-inline: var(--space-40);
     border-radius: var(--radius-xl);
-
+    margin-top: var(--space-32);
+    
     position: relative;
     overflow: hidden;
 }
@@ -270,17 +271,112 @@
     .error-image-wrap {
         grid-column: 1 / span 12;
         max-width: 100%;
+        margin-bottom:-122px;
+        margin-top: -92px;
     }
 
     .error-content {
         grid-column: 1 / span 12;
         max-width: 100%;
-        padding: var(--space-32);
+        margin-bottom:32px;
+
     }
 }
 
 @media (max-width: 479px) {
+    .error-page {
+        width: 100%;
+        min-height: 100vh;
+
+        padding: 96px 16px 24px;
+
+        overflow-x: hidden;
+    }
+
+    .error-section {
+        width: 100%;
+        max-width: 100%;
+
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+
+        padding: 28px 16px 32px;
+        margin-top: 0;
+
+        min-height: auto;
+        border-radius: 28px;
+
+        overflow: hidden;
+    }
+
+    .error-image-wrap {
+        grid-column: 1 / -1;
+
+        width: 100%;
+        max-width: 240px;
+
+        margin: 0 auto;
+        justify-self: center;
+
+        order: 1;
+    }
+
+    .error-image {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
+
     .error-content {
-        padding: var(--space-24);
+        grid-column: 1 / -1;
+
+        width: 100%;
+        max-width: 100%;
+
+        padding: 24px 18px;
+        margin: 0;
+
+        text-align: center;
+        border-radius: 28px;
+
+        overflow: visible;
+
+        order: 2;
+    }
+
+    .error-content h2 {
+        font-size: clamp(2rem, 10vw, 3rem);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+
+        margin-bottom: 16px;
+
+        white-space: normal;
+        word-break: normal;
+        overflow-wrap: normal;
+    }
+
+    .error-content p {
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+
+    .error-actions {
+        width: 100%;
+        margin-top: 24px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .error-actions a,
+    .error-actions .btn,
+    .error-outline-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
+

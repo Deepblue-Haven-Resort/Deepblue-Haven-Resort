@@ -1,6 +1,7 @@
 .site-header {
-    position: sticky;
+    position: fixed;
     top: 16px;
+    left: var(--space-32);
     z-index: 1000;
 
     width: calc(100% - 64px);
@@ -395,6 +396,7 @@
 
 @Media (max-width: 799px) {
     .site-header {
+        left: var(--space-16);
         height: 64px;
     }
 
@@ -417,5 +419,129 @@
 
     .header-menu::-webkit-scrollbar {
         display: none;
+    }
+}
+
+@media (max-width: 479px) {
+    .site-header {
+        left: 50%;
+        transform: translateX(-50%);
+
+        width: calc(100% - 16px);
+        height: 60px;
+
+        padding-inline: 8px;
+        gap: 5px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .header-logo {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: visible;
+    }
+
+    .header-logo img {
+        width: 50px;
+        height: 50px;
+        max-width: none;
+        object-fit: contain;
+    }
+
+    .header-menu {
+        flex: 1 1 auto;
+        min-width: 0;
+
+        max-width: 125px;
+
+        display: flex;
+        align-items: center;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        padding: 0;
+        gap: 5px;
+
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .header-menu::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Bỏ ẩn menu nếu đang dùng menu trượt */
+    .header-menu .header-link:not(.is-active) {
+        display: flex;
+    }
+
+    .header-link {
+        flex: 0 0 auto;
+
+        min-height: 38px;
+        padding: 7px 11px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 0.76rem;
+        white-space: nowrap;
+    }
+
+    /* CỤM CHUÔNG + ĐẶT PHÒNG + ACCOUNT GỌN LẠI */
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        flex: 0 0 auto;
+    }
+
+    .site-header .icon-btn {
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+
+        padding: 0;
+        margin: 0;
+
+        background: transparent;
+        border: none;
+        box-shadow: none;
+
+        font-size: 0.88rem;
+    }
+
+    /* NÚT ĐẶT PHÒNG GỌN HƠN */
+    .site-header .btn.btn-cta.btn-small {
+        min-width: 72px;
+        height: 36px;
+        min-height: 36px;
+
+        padding-inline: 9px;
+
+        font-size: 0.7rem;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .user-menu {
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }
