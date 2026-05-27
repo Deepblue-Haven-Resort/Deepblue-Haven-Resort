@@ -30,8 +30,13 @@ public class Task {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @Column(name = "type", nullable = false, length = 100)
-    private String type;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task_type_id", nullable = false)
+    private TaskType taskType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_by_id", nullable = true)
+    private Worker assignedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_to_id", nullable = true)
@@ -60,10 +65,14 @@ public class Task {
     public void setRoom(Room room) { 
         this.room = room; }
 
-    public String getType() { 
-        return type; }
-    public void setType(String type) { 
-        this.type = type; }
+    public TaskType getTaskType() { 
+        return taskType; }
+    public void setTaskType(TaskType taskType) { 
+        this.taskType = taskType; }
+    public Worker getAssignedBy() { 
+        return assignedBy; }
+    public void setAssignedBy(Worker assignedBy) { 
+        this.assignedBy = assignedBy; }
 
     public Worker getAssignedTo() { 
         return assignedTo; }

@@ -15,6 +15,9 @@ public class WorkerProfileDTO {
         @NotNull(message = "Role is required")
         private Role role;
 
+        @NotNull(message = "Role level is required")
+        private Integer roleLevel;
+
         @NotBlank(message = "Phone number is required")
         @Size(max = 20, message = "Phone number cannot exceed 20 characters")
         private String phoneNumber;
@@ -34,6 +37,11 @@ public class WorkerProfileDTO {
         public void setRole(Role role) { 
             this.role = role; }
 
+        public Integer getRoleLevel() { 
+            return roleLevel; }
+        public void setRoleLevel(Integer roleLevel) { 
+            this.roleLevel = roleLevel; }
+
         public String getPhoneNumber() { 
             return phoneNumber; }
         public void setPhoneNumber(String phoneNumber) { 
@@ -49,6 +57,7 @@ public class WorkerProfileDTO {
         private Long workerId;
         private String fullName;
         private Role role;
+        private Integer roleLevel;
         private String phoneNumber;
         private String email;
 
@@ -68,6 +77,11 @@ public class WorkerProfileDTO {
             return role; }
         public void setRole(Role role) { 
             this.role = role; }
+
+        public Integer getRoleLevel() { 
+            return roleLevel; }
+        public void setRoleLevel(Integer roleLevel) { 
+            this.roleLevel = roleLevel; }
 
         public String getPhoneNumber() { 
             return phoneNumber; }
