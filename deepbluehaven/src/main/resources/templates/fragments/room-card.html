@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<article th:fragment="roomCard(
+            imagePath,
+            altText,
+            badge,
+            roomName,
+            location,
+            tagIcon,
+            tagText,
+            tagClass,
+            bedInfo,
+            bathInfo,
+            sizeInfo,
+            price,
+            priceValue,
+            resortKey,
+            typeKey,
+            guestsValue,
+            viewKeys,
+            ratingValue,
+            detailUrl
+        )"
+         class="room-card"
+         data-price="1250000"
+         data-resort="nha-trang"
+         data-type="premium"
+         data-guests="2"
+         data-view="ocean"
+         data-rating="4.8"
+         th:attr="data-price=${priceValue},
+                  data-resort=${resortKey},
+                  data-type=${typeKey},
+                  data-guests=${guestsValue},
+                  data-view=${viewKeys},
+                  data-rating=${ratingValue}">
+
+    <div class="room-card__media">
+        <img th:src="@{${imagePath}}"
+             th:alt="${altText}"
+             src="/images/rooms/ocean-deluxe.jpg"
+             alt="Room image">
+
+        <span class="room-card__badge"
+              th:if="${badge != null and !#strings.isEmpty(badge)}"
+              th:text="${badge}">
+            Best Seller
+        </span>
+    </div>
+
+    <div class="room-card__body">
+        <div class="room-card__top">
+            <div>
+                <h2 class="room-card__name" th:text="${roomName}">Ocean Deluxe</h2>
+                <p class="room-card__location" th:text="${location}">Ocean Wing, Deepblue Haven</p>
+            </div>
+
+            <span class="room-card__tag" th:classappend="${tagClass}">
+                <i th:class="${'fa-solid ' + tagIcon}" class="fa-solid fa-check"></i>
+                <span th:text="${tagText}">Available</span>
+            </span>
+        </div>
+
+        <div class="room-card__features">
+            <span>
+                <i class="fa-solid fa-bed"></i>
+                <span th:text="${bedInfo}">1 King Bed</span>
+            </span>
+
+            <span>
+                <i class="fa-solid fa-bath"></i>
+                <span th:text="${bathInfo}">1 Bathroom</span>
+            </span>
+
+            <span>
+                <i class="fa-solid fa-ruler-combined"></i>
+                <span th:text="${sizeInfo}">42m²</span>
+            </span>
+        </div>
+
+        <div class="room-card__price">
+            <span>Starting from</span>
+            <strong th:text="${price}">1,250,000 VND</strong>
+            <small>/ night</small>
+        </div>
+
+        <a th:href="@{${detailUrl}}"
+           href="/rooms/ocean-deluxe"
+           class="btn btn-cta btn-small room-card__action">
+            View Room
+        </a>
+    </div>
+</article>
+
+</body>
+</html>

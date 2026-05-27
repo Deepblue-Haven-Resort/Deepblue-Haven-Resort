@@ -1,6 +1,7 @@
 .site-header {
-    position: sticky;
+    position: fixed;
     top: 16px;
+    left: var(--space-32);
     z-index: 1000;
 
     width: calc(100% - 64px);
