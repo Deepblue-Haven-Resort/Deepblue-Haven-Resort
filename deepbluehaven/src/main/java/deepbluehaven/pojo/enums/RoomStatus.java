@@ -4,5 +4,5 @@ public enum RoomStatus {
     AVAILABLE,
     OCCUPIED,
     CLEANING, 
-    MAINTANCE;
+    MAINTENANCE;
 }
