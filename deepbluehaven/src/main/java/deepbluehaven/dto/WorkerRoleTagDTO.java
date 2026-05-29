@@ -1,12 +1,12 @@
 package deepbluehaven.dto;
 
-import deepbluehaven.pojo.enums.RoleTag;
+import deepbluehaven.pojo.enums.PermissionTag;
 
 public class WorkerRoleTagDTO {
 
     public static class Request {
         private Long workerId;
-        private RoleTag roleTag;
+        private PermissionTag roleTag;
         private String description;
 
         public Request() {}
@@ -14,9 +14,9 @@ public class WorkerRoleTagDTO {
             return workerId; }
         public void setWorkerId(Long workerId) { 
             this.workerId = workerId; }
-        public RoleTag getRoleTag() { 
+        public PermissionTag getRoleTag() { 
             return roleTag; }
-        public void setRoleTag(RoleTag roleTag) { 
+        public void setRoleTag(PermissionTag roleTag) { 
             this.roleTag = roleTag; }
         public String getDescription() { 
             return description; }
@@ -27,7 +27,7 @@ public class WorkerRoleTagDTO {
     public static class Response {
         private Long id;
         private Long workerId;
-        private RoleTag roleTag;
+        private PermissionTag roleTag;
         private String description;
 
         public Response() {}
@@ -39,9 +39,9 @@ public class WorkerRoleTagDTO {
             return workerId; }
         public void setWorkerId(Long workerId) { 
             this.workerId = workerId; }
-        public RoleTag getRoleTag() { 
+        public PermissionTag getRoleTag() { 
             return roleTag; }
-        public void setRoleTag(RoleTag roleTag) { 
+        public void setRoleTag(PermissionTag roleTag) { 
             this.roleTag = roleTag; }
         public String getDescription() { 
             return description; }

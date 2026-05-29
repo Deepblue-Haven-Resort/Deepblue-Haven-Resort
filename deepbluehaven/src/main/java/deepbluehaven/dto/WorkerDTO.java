@@ -1,7 +1,7 @@
 package deepbluehaven.dto;
 import java.util.List;
 
-import deepbluehaven.pojo.enums.RoleTag;
+import deepbluehaven.pojo.enums.PermissionTag;
 import deepbluehaven.pojo.enums.WorkerStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +21,7 @@ public class WorkerDTO {
         @NotNull(message = "Role level is required")
         private Integer roleLevel;
         @NotNull(message = "At least one role tag is required")
-        private List<RoleTag> roleTags;
+        private List<PermissionTag> roleTags;
 
         public Request() {}
 
@@ -44,9 +44,9 @@ public class WorkerDTO {
             return roleLevel; }
         public void setRoleLevel(Integer roleLevel) { 
             this.roleLevel = roleLevel; }
-        public List<RoleTag> getRoleTags() { 
+        public List<PermissionTag> getRoleTags() { 
             return roleTags; }
-        public void setRoleTags(List<RoleTag> roleTags) { 
+        public void setRoleTags(List<PermissionTag> roleTags) { 
             this.roleTags = roleTags; }
     }
 
@@ -59,7 +59,7 @@ public class WorkerDTO {
         private String phoneNumber;
         private String email;
         private Integer roleLevel;
-        private List<RoleTag> roleTags;
+        private List<PermissionTag> roleTags;
 
         public Response() {}
 
@@ -81,9 +81,9 @@ public class WorkerDTO {
             return roleLevel; }
         public void setRoleLevel(Integer roleLevel) { 
             this.roleLevel = roleLevel; }
-        public List<RoleTag> getRoleTags() { 
+        public List<PermissionTag> getRoleTags() { 
             return roleTags; }
-        public void setRoleTags(List<RoleTag> roleTags) { 
+        public void setRoleTags(List<PermissionTag> roleTags) { 
             this.roleTags = roleTags; }
     }
 

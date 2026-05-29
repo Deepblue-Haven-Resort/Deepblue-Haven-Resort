@@ -22,4 +22,8 @@ public class HomeController {
     public String roomsList() {
         return "customer/rooms-list";
     }
+  @GetMapping("/rooms/{id}")
+    public String roomDetail() {
+        return "customer/room-detail";
+    }
 }

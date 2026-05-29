@@ -1,6 +1,6 @@
 package deepbluehaven.pojo;
 
-import deepbluehaven.pojo.enums.RoleTag;
+import deepbluehaven.pojo.enums.PermissionTag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,8 +26,8 @@ public class WorkerRoleTag {
     private Worker worker;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role_tag", nullable = false, length = 50)
-    private RoleTag roleTag;
+    @Column(name = "permission_tag", nullable = false, length = 50)
+    private PermissionTag permissionTag;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
@@ -42,10 +42,10 @@ public class WorkerRoleTag {
         return worker; }
     public void setWorker(Worker worker) { 
         this.worker = worker; }
-    public RoleTag getRoleTag() { 
-        return roleTag; }
-    public void setRoleTag(RoleTag roleTag) {
-        this.roleTag = roleTag; }
+    public PermissionTag getPermissionTag() { 
+        return permissionTag; }
+    public void setPermissionTag(PermissionTag permissionTag) {
+        this.permissionTag = permissionTag; }
     public String getDescription() { 
         return description; }
     public void setDescription(String description) { 

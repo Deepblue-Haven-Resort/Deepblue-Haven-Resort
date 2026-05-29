@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${room != null ? 'Room ' + room.roomNumber + ' | DeepBlue Haven' : 'Room Detail | DeepBlue Haven'}">
+        Room Detail | DeepBlue Haven
+    </title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" href="/assets/css/base.css">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}" href="/assets/css/components.css">
+    <link rel="stylesheet" th:href="@{/assets/css/toast.css}" href="/assets/css/toast.css">
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css" />
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css" />
+    <link rel="stylesheet" th:href="@{/assets/css/customer/room-detail.css}" href="/assets/css/customer/room-detail.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+<div class="room-detail-page">
+
+
+    <main class="room-main">
+
+        <!-- Gallery title -->
+        <section class="container room-hero">
+            <div class="room-hero__top">
+                <div>
+                    <span class="room-eyebrow">
+                        <i class="fa-solid fa-location-dot"></i>
+                        DeepBlue Haven Resort
+                    </span>
+
+                    <h1 class="heading-2 room-hero__title"
+                        th:text="${room != null ? room.roomType : 'Ocean Premium Suite'}">
+                        Ocean Premium Suite
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Gallery -->
+            <div class="room-gallery room-gallery-slider" data-room-gallery>
+                <button class="room-gallery__nav room-gallery__nav--prev" type="button" aria-label="Previous photo">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+
+                <div class="room-gallery__viewport">
+                    <div class="room-gallery__track">
+
+                        <div th:replace="~{fragments/image-card :: imageCard(
+                            ${room != null && room.images != null && #lists.size(room.images) > 0 ? room.images[0] : 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=900&q=80'},
+                            'Ocean pool view',
+                            'Ocean Pool View',
+                            'Enjoy the signature deepblue resort view with calm water, fresh air and relaxing coastal light.'
+                        )}"></div>
+
+                        <div th:replace="~{fragments/image-card :: imageCard(
+                            ${room != null && room.images != null && #lists.size(room.images) > 1 ? room.images[1] : 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80'},
+                            'Premium bedroom',
+                            'Premium Bedroom',
+                            'A soft and elegant sleeping space designed for comfort, privacy and restful nights.'
+                        )}"></div>
+
+                        <div th:replace="~{fragments/image-card :: imageCard(
+                            ${room != null && room.images != null && #lists.size(room.images) > 2 ? room.images[2] : 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80'},
+                            'Living corner',
+                            'Living Corner',
+                            'A warm sitting area for reading, morning coffee or quiet moments after a day by the sea.'
+                        )}"></div>
+
+                        <div th:replace="~{fragments/image-card :: imageCard(
+                            ${room != null && room.images != null && #lists.size(room.images) > 3 ? room.images[3] : 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=900&q=80'},
+                            'Bathroom space',
+                            'Modern Bathroom',
+                            'Clean, bright and fully equipped with premium amenities for a comfortable stay.'
+                        )}"></div>
+
+                        <div th:replace="~{fragments/image-card :: imageCard(
+                            ${room != null && room.images != null && #lists.size(room.images) > 4 ? room.images[4] : 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=900&q=80'},
+                            'Balcony view',
+                            'Private Balcony',
+                            'A peaceful corner to enjoy sea breeze, natural light and the DeepBlue Haven atmosphere.'
+                        )}"></div>
+
+                    </div>
+                </div>
+
+                <button class="room-gallery__nav room-gallery__nav--next" type="button" aria-label="Next photo">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+                <div class="room-gallery__dots" aria-label="Gallery pagination"></div>
+            </div>
+        </section>
+
+        <!-- Content -->
+        <section class="container room-content">
+            <div class="room-content__main">
+
+                <!-- Room summary -->
+                <section class="room-summary">
+                    <div class="room-summary__location">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Coastal wing, DeepBlue Haven</span>
+                    </div>
+
+                    <div class="room-summary__head">
+                        <div>
+                            <h2 class="heading-3"
+                                th:text="${room != null ? room.roomType : 'Premium room with ocean atmosphere'}">
+                                Premium room with ocean atmosphere
+                            </h2>
+
+                            <p>
+                                <span th:text="${room != null ? room.capacity : 4}">4</span>
+                                guests ·
+                                <span th:text="${room != null ? room.roomNumber : 'A101'}">A101</span>
+                                room number · Sea view · Private balcony
+                            </p>
+                        </div>
+
+                        <span class="status badge-sm"
+                              th:classappend="${room != null && room.status != null && room.status.name() == 'AVAILABLE'} ? 'status-success' : 'status-warning'"
+                              th:text="${room != null && room.status != null ? room.status : 'AVAILABLE'}">
+                            AVAILABLE
+                        </span>
+                    </div>
+
+                    <div class="room-tags">
+                        <span class="room-chip">
+                            <i class="fa-solid fa-water"></i>
+                            Sea view
+                        </span>
+
+                        <span class="room-chip">
+                            <i class="fa-solid fa-wifi"></i>
+                            Free Wi-Fi
+                        </span>
+
+                        <span class="room-chip">
+                            <i class="fa-solid fa-mug-saucer"></i>
+                            Breakfast
+                        </span>
+
+                        <span class="room-chip" th:each="tag : ${room != null ? room.tags : null}" th:text="${tag}">
+                            Balcony
+                        </span>
+                    </div>
+                </section>
+
+                <!-- Favourite card -->
+                <section class="room-rating-card">
+                    <div>
+                        <h3 class="heading-5">Guest favourite</h3>
+                        <p>This room is highly rated for comfort, cleanliness and sea-inspired design.</p>
+                    </div>
+
+                    <div class="room-rating-card__score">
+                        <strong>4.9</strong>
+                        <span>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star-half-stroke"></i>
+                        </span>
+                    </div>
+
+                    <div class="room-rating-card__reviews">
+                        <strong>50</strong>
+                        <span>reviews</span>
+                    </div>
+                </section>
+
+                <!-- Description -->
+                <section class="room-section">
+                    <h3 class="heading-4">Comfortable seaside living</h3>
+
+                    <p th:text="${room != null && room.description != null ? room.description : 'Welcome to DeepBlue Haven Resort. This room is designed with a calm ocean palette, soft natural light and premium amenities for a relaxing coastal stay.'}">
+                        Welcome to DeepBlue Haven Resort. This room is designed with a calm ocean palette,
+                        soft natural light and premium amenities for a relaxing coastal stay.
+                    </p>
+                </section>
+
+                <!-- Highlights -->
+                <section class="room-section">
+                    <h3 class="heading-4">Room highlights</h3>
+
+                    <div class="room-highlights">
+                        <article class="room-highlight">
+                            <span>
+                                <i class="fa-solid fa-bed"></i>
+                            </span>
+                            <div>
+                                <h4>Premium bedding</h4>
+                                <p>Soft linen, spacious layout and restful lighting.</p>
+                            </div>
+                        </article>
+
+                        <article class="room-highlight">
+                            <span>
+                                <i class="fa-solid fa-person-swimming"></i>
+                            </span>
+                            <div>
+                                <h4>Resort facilities</h4>
+                                <p>Easy access to pool, spa, restaurant and beach area.</p>
+                            </div>
+                        </article>
+
+                        <article class="room-highlight">
+                            <span>
+                                <i class="fa-solid fa-wind"></i>
+                            </span>
+                            <div>
+                                <h4>Fresh ocean mood</h4>
+                                <p>Deepblue color tone with relaxing coastal atmosphere.</p>
+                            </div>
+                        </article>
+
+                        <article class="room-highlight">
+                            <span>
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </span>
+                            <div>
+                                <h4>Safe and private</h4>
+                                <p>Secure room access and quiet private space.</p>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- Amenities -->
+                <section class="room-section">
+                    <h3 class="heading-4">Amenities</h3>
+
+                    <div class="room-amenities">
+                        <div class="room-amenity">
+                            <i class="fa-solid fa-wifi"></i>
+                            High-speed Wi-Fi
+                        </div>
+
+                        <div class="room-amenity">
+                            <i class="fa-solid fa-snowflake"></i>
+                            Air conditioning
+                        </div>
+
+                        <div class="room-amenity">
+                            <i class="fa-solid fa-tv"></i>
+                            Smart TV
+                        </div>
+
+                        <div class="room-amenity">
+                            <i class="fa-solid fa-bath"></i>
+                            Private bathroom
+                        </div>
+
+                        <div class="room-amenity">
+                            <i class="fa-solid fa-martini-glass-citrus"></i>
+                            Mini bar
+                        </div>
+
+                        <div class="room-amenity">
+                            <i class="fa-solid fa-vault"></i>
+                            Safety box
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="room-content__side">
+                <section class="room-booking-card">
+                    <div class="room-booking-card__head">
+                        <div>
+                            <span>From</span>
+                            <strong>
+                                <span th:text="${room != null && room.basePrice != null ? #numbers.formatDecimal(room.basePrice, 0, 'POINT', 0, 'COMMA') : '2.500.000'}">
+                                    2.500.000
+                                </span>
+                                VND
+                            </strong>
+                            <small>/ night</small>
+                        </div>
+
+                        <span class="room-booking-card__badge">
+                            <i class="fa-solid fa-anchor"></i>
+                            Deepblue deal
+                        </span>
+                    </div>
+
+                    <div class="room-booking-card__form">
+                        <label>
+                            Check in
+                            <input type="date" name="checkIn">
+                        </label>
+
+                        <label>
+                            Check out
+                            <input type="date" name="checkOut">
+                        </label>
+
+                        <label>
+                            Guests
+                            <select name="guests">
+                                <option value="1">1 guest</option>
+                                <option value="2">2 guests</option>
+                                <option value="3">3 guests</option>
+                                <option value="4" selected>4 guests</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <button class="btn btn-cta btn-medium room-booking-card__button"
+                            type="button"
+                            data-toast="availability">
+                        <i class="fa-regular fa-calendar-check btn-icon"></i>
+                        Check availability
+                    </button>
+                </section>
+
+                <section class="room-plan-card">
+                    <div class="room-plan-card__tabs">
+                        <button type="button" class="is-active" data-plan-tab="overview">Overview</button>
+                        <button type="button" data-plan-tab="plan">Room plan</button>
+                    </div>
+
+                    <div class="room-plan-panel is-active" data-plan-panel="overview">
+                        <div class="room-mini-stats">
+                            <div>
+                                <strong th:text="${room != null ? room.capacity : 4}">4</strong>
+                                <span>Guests</span>
+                            </div>
+
+                            <div>
+                                <strong>48m²</strong>
+                                <span>Area</span>
+                            </div>
+
+                            <div>
+                                <strong>1</strong>
+                                <span>Bath</span>
+                            </div>
+                        </div>
+
+                        <p>
+                            Elegant room layout with sea-inspired interior, relaxing sleeping area and
+                            comfortable living corner.
+                        </p>
+                    </div>
+
+                    <div class="room-plan-panel" data-plan-panel="plan">
+                        <div class="room-floorplan" aria-label="Room floor plan preview">
+                            <span class="room-floorplan__zone room-floorplan__zone--bed">Bedroom</span>
+                            <span class="room-floorplan__zone room-floorplan__zone--bath">Bath</span>
+                            <span class="room-floorplan__zone room-floorplan__zone--living">Living</span>
+                            <span class="room-floorplan__zone room-floorplan__zone--balcony">Balcony</span>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </section>
+    </main>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <!-- Toast fragment -->
+    <div th:replace="~{fragments/toast :: toast}">
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const showRoomToast = function (type, title, message) {
+            if (typeof showToast === "function") {
+                showToast(type, title, message, {
+                    theme: "dark",
+                    duration: 3600
+                });
+            }
+        };
+
+        const availabilityBtn = document.querySelector("[data-toast='availability']");
+        const shareBtn = document.querySelector("[data-toast='share']");
+        const photosBtn = document.querySelector("[data-toast='photos']");
+
+        if (availabilityBtn) {
+            availabilityBtn.addEventListener("click", function () {
+                showRoomToast(
+                    "success",
+                    "Availability checked",
+                    "This room is ready for your selected stay."
+                );
+            });
+        }
+
+        if (shareBtn) {
+            shareBtn.addEventListener("click", function () {
+                showRoomToast(
+                    "info",
+                    "Share room",
+                    "Room detail link has been prepared for sharing."
+                );
+            });
+        }
+
+        if (photosBtn) {
+            photosBtn.addEventListener("click", function () {
+                showRoomToast(
+                    "info",
+                    "Photo gallery",
+                    "Full photo gallery will be opened from this action."
+                );
+            });
+        }
+
+        const tabs = document.querySelectorAll("[data-plan-tab]");
+        const panels = document.querySelectorAll("[data-plan-panel]");
+
+        tabs.forEach(function (tab) {
+            tab.addEventListener("click", function () {
+                const target = tab.dataset.planTab;
+
+                tabs.forEach(function (item) {
+                    item.classList.remove("is-active");
+                });
+
+                panels.forEach(function (panel) {
+                    panel.classList.toggle("is-active", panel.dataset.planPanel === target);
+                });
+
+                tab.classList.add("is-active");
+            });
+        });
+    const gallery = document.querySelector("[data-room-gallery]");
+
+if (gallery) {
+    const slides = Array.from(gallery.querySelectorAll(".room-gallery__item"));
+    const prevBtn = gallery.querySelector(".room-gallery__nav--prev");
+    const nextBtn = gallery.querySelector(".room-gallery__nav--next");
+    const dotsWrap = gallery.querySelector(".room-gallery__dots");
+
+    let currentIndex = 0;
+
+    function getLoopIndex(index) {
+        if (index < 0) {
+            return slides.length - 1;
+        }
+
+        if (index >= slides.length) {
+            return 0;
+        }
+
+        return index;
+    }
+
+    function getPrevIndex(index) {
+        return getLoopIndex(index - 1);
+    }
+
+    function getNextIndex(index) {
+        return getLoopIndex(index + 1);
+    }
+
+    function getFarPrevIndex(index) {
+        return getLoopIndex(index - 2);
+    }
+
+    function getFarNextIndex(index) {
+        return getLoopIndex(index + 2);
+    }
+
+    function renderDots() {
+        if (!dotsWrap) return;
+
+        dotsWrap.innerHTML = "";
+
+        slides.forEach(function (_, index) {
+            const dot = document.createElement("button");
+            dot.type = "button";
+            dot.className = "room-gallery__dot";
+            dot.setAttribute("aria-label", "Go to photo " + (index + 1));
+
+            dot.addEventListener("click", function () {
+                setActiveSlide(index);
+            });
+
+            dotsWrap.appendChild(dot);
+        });
+    }
+
+    function setActiveSlide(index) {
+        if (!slides.length) return;
+
+        currentIndex = getLoopIndex(index);
+
+        const prevIndex = getPrevIndex(currentIndex);
+        const nextIndex = getNextIndex(currentIndex);
+        const farPrevIndex = getFarPrevIndex(currentIndex);
+        const farNextIndex = getFarNextIndex(currentIndex);
+
+        slides.forEach(function (slide, slideIndex) {
+            slide.classList.remove(
+                "is-active",
+                "is-prev",
+                "is-next",
+                "is-far-prev",
+                "is-far-next"
+            );
+
+            if (slideIndex === currentIndex) {
+                slide.classList.add("is-active");
+            } else if (slideIndex === prevIndex) {
+                slide.classList.add("is-prev");
+            } else if (slideIndex === nextIndex) {
+                slide.classList.add("is-next");
+            } else if (slideIndex === farPrevIndex) {
+                slide.classList.add("is-far-prev");
+            } else if (slideIndex === farNextIndex) {
+                slide.classList.add("is-far-next");
+            }
+        });
+
+        const dots = Array.from(gallery.querySelectorAll(".room-gallery__dot"));
+
+        dots.forEach(function (dot, dotIndex) {
+            dot.classList.toggle("is-active", dotIndex === currentIndex);
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener("click", function () {
+            setActiveSlide(currentIndex - 1);
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener("click", function () {
+            setActiveSlide(currentIndex + 1);
+        });
+    }
+
+    slides.forEach(function (slide, index) {
+        slide.addEventListener("click", function () {
+            if (!slide.classList.contains("is-active")) {
+                setActiveSlide(index);
+            }
+        });
+    });
+
+    renderDots();
+    setActiveSlide(currentIndex);
+}
+    });
+</script>
+</body>
+</html>
