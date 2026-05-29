@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<div th:fragment="otpModal">
+    <div class="auth-modal" id="otpModal" aria-hidden="true">
+        <div class="auth-modal__overlay" data-close-otp></div>
+
+        <div class="auth-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="otpModalTitle">
+            <button type="button" class="auth-modal__close" data-close-otp aria-label="Close popup">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="auth-modal__icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <h3 class="auth-modal__title" id="otpModalTitle">
+                Enter verification code
+            </h3>
+
+            <p class="auth-modal__desc">
+                We sent a 6-digit code to
+                <strong id="forgotPreviewValue">your account</strong>.
+            </p>
+
+            <form id="otpForm" class="auth-modal__form">
+                <div class="auth-otp">
+                    <input type="text" maxlength="1" inputmode="numeric" class="auth-otp__input" />
+                    <input type="text" maxlength="1" inputmode="numeric" class="auth-otp__input" />
+                    <input type="text" maxlength="1" inputmode="numeric" class="auth-otp__input" />
+                    <input type="text" maxlength="1" inputmode="numeric" class="auth-otp__input" />
+                    <input type="text" maxlength="1" inputmode="numeric" class="auth-otp__input" />
+                    <input type="text" maxlength="1" inputmode="numeric" class="auth-otp__input" />
+                </div>
+
+                <p class="auth-modal__error" id="otpError"></p>
+
+                <div class="auth-modal__meta">
+                    <span>Didn’t receive the code?</span>
+                    <button type="button" class="auth-modal__text-btn" id="resendOtpBtn">
+                        Resend code
+                    </button>
+                </div>
+
+                <div class="auth-modal__actions">
+                    <button type="button" class="btn btn-luxury btn-medium" id="backToForgotModal">
+                        Back
+                    </button>
+
+                    <button type="submit" class="btn btn-cta btn-medium">
+                        Verify OTP
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
