@@ -1,0 +1,695 @@
+/* ============================= */
+/* PROFILE EMPLOYEE PAGE */
+/* Use colors from theme.css */
+/* ============================= */
+
+.admin-layout {
+    min-height: 100vh;
+    display: flex;
+    background:
+        radial-gradient(circle at top right, var(--primary-200), transparent 34%),
+        radial-gradient(circle at bottom left, var(--secondary-200), transparent 30%),
+        linear-gradient(180deg, var(--neutral-50) 0%, var(--primary-100) 100%);
+}
+
+.admin-main {
+    flex: 1;
+    margin-left: 304px;
+    padding: var(--space-24) var(--space-32) var(--space-40);
+}
+
+/* ============================= */
+/* MAIN PROFILE CARD */
+/* ============================= */
+
+.account-profile-card {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    min-height: 620px;
+    overflow: hidden;
+
+    background: var(--surface-0);
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-xl);
+
+    box-shadow: var(--shadow-xl);
+}
+
+/* ============================= */
+/* LEFT PROFILE SIDE */
+/* ============================= */
+
+.profile-sidebar-card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: var(--space-64) var(--space-32) var(--space-40);
+
+    border-right: var(--border-1) solid var(--primary-200);
+
+    background:
+        radial-gradient(circle at 50% 12%, var(--primary-200), transparent 34%),
+        linear-gradient(180deg, var(--surface-0), var(--primary-100));
+
+    text-align: center;
+}
+
+.profile-sidebar-card::before {
+    content: "";
+    position: absolute;
+    top: var(--space-32);
+    left: 50%;
+    width: 160px;
+    height: 160px;
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+    background: var(--primary-100);
+    filter: blur(6px);
+    pointer-events: none;
+}
+
+.profile-avatar {
+    position: relative;
+    z-index: 1;
+
+    width: 138px;
+    height: 138px;
+    padding: 5px;
+    margin-bottom: var(--space-24);
+
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-700), var(--secondary-600));
+
+    box-shadow:
+        0 18px 34px rgba(var(--shadow-color), 0.12),
+        0 0 0 8px var(--primary-100);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    display: block;
+
+    border: 5px solid var(--surface-0);
+    border-radius: 50%;
+
+    object-fit: cover;
+}
+
+.profile-sidebar-card h2 {
+    margin: 0;
+
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    line-height: 1.05;
+    color: var(--primary-900);
+}
+
+.profile-sidebar-card p {
+    margin: var(--space-8) 0 0;
+
+    color: var(--neutral-600);
+    font-size: 0.96rem;
+    font-weight: 800;
+}
+
+/* ============================= */
+/* EXPERIENCE BOX */
+/* ============================= */
+
+.profile-experience-box {
+    width: 100%;
+    margin-top: var(--space-32);
+
+    display: grid;
+    gap: var(--space-16);
+}
+
+.experience-item {
+    display: grid;
+    grid-template-columns: 46px minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-16);
+
+    padding: var(--space-16);
+
+    border-radius: var(--radius-lg);
+    background: var(--surface-0);
+    border: var(--border-1) solid var(--primary-200);
+
+    box-shadow: var(--shadow-lg);
+
+    text-align: left;
+    transition: 0.25s ease;
+}
+
+.experience-item:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary-300);
+    box-shadow: var(--shadow-xl);
+}
+
+.experience-item i {
+    width: 46px;
+    height: 46px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: var(--radius-md);
+
+    background: linear-gradient(135deg, var(--primary-700), var(--primary-500));
+    color: var(--white);
+
+    font-size: 1rem;
+    box-shadow: var(--shadow-md);
+}
+
+.experience-item div {
+    min-width: 0;
+}
+
+.experience-item span {
+    display: block;
+    margin-bottom: var(--space-4);
+
+    color: var(--neutral-500);
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+}
+
+.experience-item strong {
+    display: block;
+
+    color: var(--primary-900);
+    font-size: 1.08rem;
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+}
+
+/* ============================= */
+/* BADGES */
+/* ============================= */
+
+.profile-badges {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+
+    margin-top: var(--space-24);
+}
+
+/* ============================= */
+/* ROLE + STATUS BADGES */
+/* ============================= */
+
+.role,
+.status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 34px;
+    padding: 0 var(--space-16);
+
+    border-radius: 999px;
+
+    font-size: 0.8rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+/* Role colors from theme */
+.role-customer,
+.role.customer {
+    background: var(--primary-100);
+    color: var(--primary-700);
+    border: var(--border-1) solid var(--primary-200);
+}
+
+.role-housekeeping,
+.role.housekeeping {
+    background: var(--success-100);
+    color: var(--success-700);
+    border: var(--border-1) solid var(--success-300);
+}
+
+.role-manager,
+.role.manager {
+    background: var(--warning-400);
+    color: var(--neutral-900);
+    border: var(--border-1) solid var(--warning-500);
+}
+
+.role-admin,
+.role.admin {
+    background: linear-gradient(135deg, var(--primary-900), var(--primary-700));
+    color: var(--white);
+    border: var(--border-1) solid var(--primary-600);
+}
+
+.role-receptionist,
+.role.receptionist {
+    background: var(--secondary-200);
+    color: var(--secondary-900);
+    border: var(--border-1) solid var(--secondary-400);
+}
+
+/* Status colors from theme */
+.status-success {
+    background: var(--success-100);
+    color: var(--success-700);
+    border: var(--border-1) solid var(--success-300);
+}
+
+.status-error {
+    background: var(--error-100);
+    color: var(--error-700);
+    border: var(--border-1) solid var(--error-300);
+}
+
+.status-warning {
+    background: var(--warning-400);
+    color: var(--neutral-900);
+    border: var(--border-1) solid var(--warning-500);
+}
+
+.status-info {
+    background: var(--primary-100);
+    color: var(--primary-800);
+    border: var(--border-1) solid var(--primary-200);
+}
+
+/* ============================= */
+/* RIGHT CONTENT */
+/* ============================= */
+
+.profile-content-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    background: var(--surface-0);
+}
+
+.profile-info-section {
+    padding: var(--space-24) var(--space-32);
+    border-bottom: var(--border-1) solid var(--primary-100);
+}
+
+.profile-info-section:last-child {
+    border-bottom: none;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-16);
+    margin-bottom: var(--space-24);
+
+    color: var(--primary-900);
+    font-size: 1.08rem;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+}
+
+.section-heading i {
+    width: 44px;
+    height: 44px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--primary-100), var(--surface-100));
+    color: var(--primary-700);
+
+    box-shadow: var(--shadow-sm);
+}
+
+.profile-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(170px, 1fr));
+    column-gap: var(--space-48);
+    row-gap: var(--space-24);
+}
+
+.profile-info-item {
+    min-width: 0;
+}
+
+.profile-info-item span {
+    display: block;
+    margin-bottom: var(--space-8);
+
+    color: var(--neutral-500);
+    font-size: 0.84rem;
+    font-weight: 850;
+    letter-spacing: 0.015em;
+}
+
+.profile-info-item strong {
+    display: block;
+
+    color: var(--neutral-900);
+    font-size: 1rem;
+    font-weight: 900;
+    line-height: 1.35;
+
+    word-break: break-word;
+}
+
+/* ============================= */
+/* SECURITY & PERMISSIONS */
+/* ============================= */
+
+.permission-list {
+    display: grid;
+    gap: var(--space-16);
+}
+
+.permission-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-16);
+
+    padding: var(--space-12) var(--space-16);
+
+    border-radius: var(--radius-lg);
+    background: var(--primary-100);
+    border: var(--border-1) solid var(--primary-200);
+}
+
+.permission-row > div > span {
+    display: block;
+    margin-bottom: var(--space-8);
+
+    color: var(--neutral-500);
+    font-size: 0.84rem;
+    font-weight: 850;
+}
+
+.permission-row > div > strong {
+    display: block;
+
+    color: var(--neutral-900);
+    font-size: 1rem;
+    font-weight: 900;
+}
+
+/* ============================= */
+/* SWITCH COMPONENT SUPPORT */
+/* nếu switch đã tách sang components.css thì có thể bỏ đoạn này */
+/* ============================= */
+
+.switch-control {
+    position: relative;
+
+    width: 52px;
+    height: 30px;
+
+    flex-shrink: 0;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.switch-control input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.switch-control span {
+    position: absolute;
+    inset: 0;
+
+    display: block;
+    margin: 0;
+
+    border-radius: 999px;
+
+    background: var(--neutral-300);
+    box-shadow: inset 0 2px 6px rgba(var(--shadow-color), 0.12);
+
+    transition: 0.25s ease;
+}
+
+.switch-control span::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+
+    width: 22px;
+    height: 22px;
+
+    border-radius: 50%;
+    background: var(--surface-0);
+
+    box-shadow: 0 4px 10px rgba(var(--shadow-color), 0.18);
+    transition: 0.25s ease;
+}
+
+.switch-control input:checked + span {
+    background: var(--success-600);
+}
+
+.switch-control input:checked + span::before {
+    transform: translateX(22px);
+}
+
+.switch-control input:disabled + span {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.switch-control:has(input:disabled) {
+    cursor: not-allowed;
+}
+
+/* ============================= */
+/* BOTTOM PANEL */
+/* ============================= */
+
+.account-profile-panel {
+    margin-top: var(--space-32);
+    padding: var(--space-32);
+
+    background: var(--surface-0);
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-xl);
+
+    box-shadow: var(--shadow-xl);
+}
+
+.profile-tabs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-32);
+
+    margin-bottom: var(--space-24);
+    border-bottom: var(--border-1) solid var(--primary-200);
+}
+
+.profile-tabs button {
+    position: relative;
+
+    padding: 0 0 var(--space-16);
+
+    border: none;
+    background: transparent;
+
+    color: var(--neutral-500);
+    font-size: 0.96rem;
+    font-weight: 900;
+
+    cursor: pointer;
+    transition: 0.22s ease;
+}
+
+.profile-tabs button:hover,
+.profile-tabs button.active {
+    color: var(--primary-700);
+}
+
+.profile-tabs button.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+
+    width: 100%;
+    height: 3px;
+
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--primary-700), var(--primary-500));
+}
+
+/* ============================= */
+/* TABLE */
+/* ============================= */
+
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    border: var(--border-1) solid var(--primary-200);
+}
+
+.account-table {
+    width: 100%;
+    min-width: 880px;
+    border-collapse: collapse;
+    background: var(--surface-0);
+}
+
+.account-table thead {
+    background: linear-gradient(180deg, var(--primary-100), var(--primary-200));
+}
+
+.account-table th {
+    padding: var(--space-16) var(--space-24);
+
+    color: var(--primary-800);
+    font-size: 0.84rem;
+    font-weight: 900;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.account-table td {
+    padding: var(--space-16) var(--space-24);
+
+    border-bottom: var(--border-1) solid var(--neutral-200);
+
+    color: var(--neutral-700);
+    font-size: 0.95rem;
+    font-weight: 650;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.account-table tbody tr {
+    transition: 0.22s ease;
+}
+
+.account-table tbody tr:hover {
+    background: var(--primary-100);
+}
+
+.account-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.profile-log-table td:nth-child(4) {
+    max-width: 560px;
+    text-align: left;
+    line-height: 1.55;
+}
+
+.view-row-btn {
+    width: 40px;
+    height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: var(--radius-md);
+
+    background: var(--primary-100);
+    color: var(--primary-700);
+
+    cursor: pointer;
+    transition: 0.22s ease;
+}
+
+.view-row-btn:hover {
+    background: var(--primary-700);
+    color: var(--white);
+    transform: translateX(3px);
+}
+
+/* ============================= */
+/* TABLE FOOTER */
+/* ============================= */
+
+.table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-16);
+
+    padding-top: var(--space-24);
+}
+
+.table-footer p {
+    color: var(--neutral-600);
+    font-size: 0.92rem;
+    font-weight: 650;
+}
+
+.table-footer p strong {
+    color: var(--primary-800);
+    font-weight: 900;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.page-btn {
+    min-width: 40px;
+    height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-md);
+
+    background: var(--surface-0);
+    color: var(--primary-800);
+
+    font-size: 0.92rem;
+    font-weight: 900;
+
+    cursor: pointer;
+    transition: 0.22s ease;
+}
+
+.page-btn:hover {
+    background: var(--primary-100);
+    border-color: var(--primary-300);
+    transform: translateY(-1px);
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, var(--primary-700), var(--primary-500));
+    color: var(--white);
+    border-color: var(--primary-600);
+    box-shadow: var(--shadow-md);
+}
+
+.page-btn.disabled {
+    color: var(--neutral-400);
+    background: var(--surface-0);
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+

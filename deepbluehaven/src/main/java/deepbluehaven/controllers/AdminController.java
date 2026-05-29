@@ -24,4 +24,14 @@ public class AdminController {
         model.addAttribute("activePage", "accounts");
         return "admin/accounts";
     }
+    @GetMapping("/admin/profile-employee")
+    public String profileEmployee(Model model) {
+        model.addAttribute("activePage", "profile-employee");
+        return "admin/profile-employee";
+    }
+     @GetMapping("/admin/accounts/create")
+    public String createEmployeeAccount(Model model) {
+        model.addAttribute("activePage", "accounts");
+        return "admin/create-employee";
+    }
 }
