@@ -1,0 +1,377 @@
+/* =========================
+   BADGE COMPONENT
+   Dùng chung cho Role / Status
+========================= */
+
+.badge,
+.role,
+.status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 96px;
+    min-height: 40px;
+
+    padding-inline: var(--space-16);
+
+    border-radius: 999px;
+
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1;
+
+    border: var(--border-1) solid transparent;
+}
+
+/* =========================
+   STATUS BADGE
+========================= */
+
+.status-success,
+.status.active {
+    background: var(--success-100);
+    color: var(--success-700);
+}
+
+.status-error,
+.status.locked {
+    background: var(--error-100);
+    color: var(--error-700);
+}
+
+.status-warning,
+.status.pending {
+    background: var(--warning-400);
+    color: var(--neutral-900);
+}
+
+.status-info {
+    background: var(--primary-100);
+    color: var(--primary-700);
+}
+
+/* =========================
+   ROLE BADGE
+========================= */
+.role.admin {
+    background: var(--primary-100);
+    color: var(--primary-800);
+}
+
+.role.manager {
+    background: var(--secondary-100);
+    color: var(--secondary-800);
+}
+
+.role.receptionist {
+    background: var(--success-100);
+    color: var(--success-700);
+}
+
+.role.housekeeper {
+    background: var(--warning-400);
+    color: var(--neutral-900);
+}
+
+.status-success {
+    background: var(--success-100);
+    color: var(--success-700);
+}
+
+.status-error {
+    background: var(--error-100);
+    color: var(--error-700);
+}
+
+/* =========================
+   OPTIONAL SIZE
+========================= */
+
+.badge-sm {
+    min-width: auto;
+    min-height: 32px;
+
+    padding-inline: var(--space-12);
+
+    font-size: 0.75rem;
+}
+
+.badge-md {
+    min-width: 96px;
+    min-height: 40px;
+
+    padding-inline: var(--space-16);
+
+    font-size: 0.8125rem;
+}
+
+.badge-lg {
+    min-width: 112px;
+    min-height: 48px;
+
+    padding-inline: var(--space-24);
+
+    font-size: 0.875rem;
+}
+
+/* toggle switch — nút bật/tắt quyền hoặc trạng thái. */
+
+
+.switch-control {
+    position: relative;
+
+    width: 52px;
+    height: 30px;
+
+    flex-shrink: 0;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.switch-control input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.switch-control span {
+    position: absolute;
+    inset: 0;
+
+    display: block;
+    margin: 0;
+
+    border-radius: 999px;
+
+    background: var(--neutral-300);
+    box-shadow: inset 0 2px 6px var(--shadow-inset-1);
+
+    transition: 0.25s ease;
+}
+
+.switch-control span::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+
+    width: 22px;
+    height: 22px;
+
+    border-radius: 50%;
+    background: var(--surface-0);
+
+    box-shadow: 0 4px 10px var(--shadow-1);
+    transition: 0.25s ease;
+}
+
+.switch-control input:checked+span {
+    background: var(--success-600);
+}
+
+.switch-control input:checked+span::before {
+    transform: translateX(22px);
+}
+
+.switch-control input:disabled+span {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.switch-control:has(input:disabled) {
+    cursor: not-allowed;
+}
+
+/* filter riêng */
+/* ============================= */
+/* FILTER COMPONENT */
+/* Reusable filter bar + dropdown */
+/* ============================= */
+
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-16);
+    margin-bottom: var(--space-24);
+}
+
+/* Search input in filter bar */
+.search-box {
+    flex: 1;
+    min-height: 3.5rem;
+
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+
+    padding-inline: var(--space-16);
+
+    background: var(--primary-100);
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-md);
+}
+
+.search-box i {
+    color: var(--primary-700);
+    flex-shrink: 0;
+}
+
+.search-box input {
+    width: 100%;
+
+    border: none;
+    outline: none;
+    background: transparent;
+
+    color: var(--neutral-900);
+    font-size: 0.95rem;
+    font-weight: 650;
+}
+
+.search-box input::placeholder {
+    color: var(--neutral-500);
+}
+
+/* Dropdown */
+.filter-dropdown {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.filter-btn {
+    min-width: 160px;
+    height: 52px;
+
+    padding: 0 var(--space-16);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-12);
+
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-md);
+
+    background: var(--primary-800);
+    color: var(--white);
+
+    font-size: 0.875rem;
+    font-weight: 800;
+
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.filter-btn i {
+    font-size: 0.8rem;
+    transition: 0.25s ease;
+}
+
+.filter-btn:hover {
+    border-color: var(--primary-400);
+    background: var(--primary-700);
+    transform: translateY(-1px);
+}
+
+.filter-dropdown.active .filter-btn i {
+    transform: rotate(180deg);
+}
+
+.filter-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    z-index: 100;
+
+    min-width: 220px;
+    padding: 10px;
+
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+
+    background: var(--surface-0);
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: 18px;
+
+    box-shadow: 0 14px 34px rgba(var(--shadow-color), 0.14);
+}
+
+.filter-dropdown.active .filter-menu {
+    display: flex;
+}
+
+.filter-menu button {
+    min-height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+
+    padding: 0 var(--space-12);
+
+    border: none;
+    border-radius: var(--radius-sm);
+
+    background: transparent;
+    color: var(--primary-800);
+
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-align: center;
+
+    cursor: pointer;
+    transition: 0.22s ease;
+}
+
+.filter-menu button:hover {
+    background: var(--primary-100);
+    color: var(--primary-700);
+    transform: translateX(3px);
+}
+
+/* Status dot */
+.status-dot {
+    width: 10px;
+    height: 10px;
+
+    display: inline-block;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+}
+
+.status-dot.all {
+    background: var(--primary-500);
+}
+
+.status-dot.active {
+    background: var(--success-600);
+}
+
+.status-dot.inactive {
+    background: var(--warning-500);
+}
+
+.status-dot.locked {
+    background: var(--error-600);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-dropdown,
+    .filter-btn {
+        width: 100%;
+    }
+
+    .filter-menu {
+        width: 100%;
+    }
+}
