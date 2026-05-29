@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/auth/auth.css}" />
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+
+<body class="auth-body">
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main class="auth-page">
+    <section class="auth-shell auth-shell--reverse" aria-label="Register page">
+
+        <aside class="auth-visual">
+            <div class="auth-visual__overlay"></div>
+
+            <a th:href="@{/}" href="/" class="auth-brand">
+                <span class="auth-brand__logo">
+                    <img th:src="@{/assets/pic/logo.png}"
+                         src="/assets/pic/logo.png"
+                         alt="Deep Blue Haven" />
+                </span>
+                <span class="auth-brand__name">Deep Blue Haven</span>
+            </a>
+
+            <div class="auth-visual__content">
+                <div class="auth-dots">
+                    <span></span>
+                    <span class="is-active"></span>
+                    <span></span>
+                </div>
+
+                <p class="auth-kicker">Luxury Ocean Resort</p>
+                <h1>Begin your blue escape.</h1>
+                <p>
+                    Create your account and unlock a private ocean-side experience crafted for your perfect stay.
+                </p>
+            </div>
+        </aside>
+
+        <section class="auth-panel">
+            <div class="auth-card">
+
+                <div class="auth-tabs">
+                    <a th:href="@{/login}" href="/login" class="auth-tab">Login</a>
+                    <a th:href="@{/register}" href="/register" class="auth-tab is-active">Register</a>
+                </div>
+
+                <div class="auth-heading">
+                    <h3>Create your account</h3>
+                </div>
+
+                <form class="auth-form" th:action="@{/register}" action="/register" method="post">
+                    <input type="hidden"
+                           th:if="${_csrf != null}"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}" />
+
+                    <label class="auth-field" for="fullName">
+                        <span>Full name</span>
+                        <input id="fullName"
+                               name="fullName"
+                               type="text"
+                               autocomplete="name"
+                               placeholder="Enter your full name"
+                               required />
+                    </label>
+
+                    <label class="auth-field" for="email">
+                        <span>Email / SĐT</span>
+                        <input id="email"
+                               name="email"
+                               type="email"
+                               autocomplete="email"
+                               placeholder="Enter your email"
+                               required />
+                    </label>
+
+                    
+                    <label class="auth-field" for="password">
+                        <span>Password</span>
+                        <input id="password"
+                               name="password"
+                               type="password"
+                               autocomplete="new-password"
+                               placeholder="Create your password"
+                               required />
+
+                        <button class="auth-password-toggle"
+                                type="button"
+                                data-toggle-password="password"
+                                aria-label="Show or hide password">
+                            <i class="fa-regular fa-eye-slash"></i>
+                        </button>
+                    </label>
+
+                    <label class="auth-field" for="confirmPassword">
+                        <span>Confirm password</span>
+                        <input id="confirmPassword"
+                               name="confirmPassword"
+                               type="password"
+                               autocomplete="new-password"
+                               placeholder="Confirm your password"
+                               required />
+
+                        <button class="auth-password-toggle"
+                                type="button"
+                                data-toggle-password="confirmPassword"
+                                aria-label="Show or hide password">
+                            <i class="fa-regular fa-eye-slash"></i>
+                        </button>
+                    </label>
+
+                    <label class="auth-checkbox auth-terms">
+                        <input type="checkbox" name="terms" required />
+                        <span>
+                            I agree to the
+                            <a href="#">Terms</a>
+                            and
+                            <a href="#">Privacy Policy</a>
+                        </span>
+                    </label>
+
+                    <button class="btn btn-luxury btn-medium auth-submit" type="submit">
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="auth-divider">
+                    <span></span>
+                    <p>Or register with</p>
+                    <span></span>
+                </div>
+
+                <div class="auth-social">
+                    <a href="#" class="auth-social-btn" aria-label="Register with Google">
+                        <i class="fa-brands fa-google"></i>
+                    </a>
+                    <a href="#" class="auth-social-btn" aria-label="Register with Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="auth-social-btn" aria-label="Register with Apple">
+                        <i class="fa-brands fa-apple"></i>
+                    </a>
+                </div>
+
+                <p class="auth-note">
+                    Already have an account?
+                    <a th:href="@{/login}" href="/login">Login now</a>
+                </p>
+
+            </div>
+        </section>
+
+    </section>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script th:src="@{/js/auth/register.js}"></script>
+
+</body>
+</html>
