@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Profile | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/profile-employee.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+
+        <div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+
+        <main class="admin-main">
+
+            <section class="account-profile-card">
+
+                <aside class="profile-sidebar-card">
+                    <div class="profile-avatar">
+                        <img th:src="@{/assets/images/avatar-employee.jpg}"
+                            src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80"
+                            alt="Employee avatar">
+                    </div>
+
+                    <h2>Trần Hoàng Nam</h2>
+                    <p>Housekeeper Account</p>
+
+                    <div class="profile-experience-box">
+                        <div class="experience-item">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            <div>
+                                <span>Years of Experience</span>
+                                <strong>2 years</strong>
+                            </div>
+                        </div>
+
+                        <div class="experience-item">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <div>
+                                <span>Account Created</span>
+                                <strong>21/05/2024</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-badges">
+                        <span class="status status-success">Active</span>
+                        <span class=" role housekeeper">Housekeeper</span>
+                    </div>
+                </aside>
+
+                <div class="profile-content-card">
+
+                    <div class="profile-info-section">
+                        <div class="section-heading">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Personal Information</span>
+                        </div>
+
+                        <div class="profile-info-grid">
+                            <div class="profile-info-item">
+                                <span>Full Name</span>
+                                <strong>Trần Hoàng Nam</strong>
+                            </div>
+                            <div class="profile-info-item">
+                                <span>Gender</span>
+                                <strong>Male</strong>
+                            </div>
+                            <div class="profile-info-item">
+                                <span>Date of Birth</span>
+                                <strong>23/02/1998</strong>
+                            </div>
+                            <div class="profile-info-item">
+                                <span>Phone Number</span>
+                                <strong>090 281 480</strong>
+                            </div>
+                            <div class="profile-info-item">
+                                <span>Email</span>
+                                <strong>nam.housekeeping@deepblue.com</strong>
+                            </div>
+                            <div class="profile-info-item">
+                                <span>Address</span>
+                                <strong>Da Nang, Viet Nam</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-section">
+                        <div class="section-heading">
+                            <i class="fa-solid fa-briefcase"></i>
+                            <span>Employee Account</span>
+                        </div>
+
+                        <div class="profile-info-grid">
+                            <div class="profile-info-item">
+                                <span>Employee ID</span>
+                                <strong>EMP-HK-001</strong>
+                            </div>
+                            <div class="profile-info-item">
+                                <span>Department</span>
+                                <strong>Housekeeping</strong>
+                            </div>
+                            <div class="profile-info-item">
+                                <span>Role</span>
+                                <strong>Housekeeper</strong>
+                            </div>
+                            <div class="profile-info-item">
+                                <span>Created Date</span>
+                                <strong>21/05/2026</strong>
+                            </div>
+                            <div class="profile-info-item">
+                                <span>Last Login</span>
+                                <strong>27/05/2026, 08:30</strong>
+                            </div>
+                            <div class="profile-info-item">
+                                <span>Account Status</span>
+                                <strong>Active</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-section">
+                        <div class="section-heading">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Security & Permissions</span>
+                        </div>
+
+                        <div class="permission-list">
+                            <div class="permission-row">
+                                <div>
+                                    <span>Login Access</span>
+                                    <strong>Allowed</strong>
+                                </div>
+                                <label class="switch-control">
+                                    <input type="checkbox" checked>
+                                    <span></span>
+                                </label>
+                            </div>
+
+                            <div class="permission-row">
+                                <div>
+                                    <span>Account Locked</span>
+                                    <strong>No</strong>
+                                </div>
+                                <label class="switch-control">
+                                    <input type="checkbox">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+            <section class="account-profile-panel">
+
+                <div class="profile-tabs">
+                    <button class="active" type="button" data-target="activityPanel">Activity Log</button>
+                    <button type="button" data-target="tasksPanel">Tasks</button>
+                </div>
+
+                <!-- BẢNG 1: ACTIVITY LOG -->
+                <div id="activityPanel">
+                    <div class="table-wrapper">
+                        <table class="account-table profile-log-table">
+                            <thead>
+                                <tr>
+                                    <th>Activity Type</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>Login</td>
+                                    <td>27/05/2026, 08:30</td>
+                                    <td><span class="status status-success">Success</span></td>
+                                    <td>Employee logged into the housekeeping dashboard.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Room Update</td>
+                                    <td>26/05/2026, 17:20</td>
+                                    <td><span class="status status-success">Done</span></td>
+                                    <td>Updated room 204 status from Cleaning to Available.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Password</td>
+                                    <td>25/05/2026, 10:12</td>
+                                    <td><span class="status status-warning">Changed</span></td>
+                                    <td>Password was changed by the employee.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Permission</td>
+                                    <td>21/05/2026, 09:00</td>
+                                    <td><span class="status status-info">Assigned</span></td>
+                                    <td>Admin assigned Housekeeper role to this account.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <p>Showing <strong>1-5</strong> of <strong>128</strong> activities</p>
+
+                        <div class="pagination">
+                            <button class="page-btn disabled">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+
+                            <span class="page-dots">...</span>
+                            <button class="page-btn">13</button>
+
+                            <button class="page-btn">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BẢNG 2: TASKS -->
+                <div id="tasksPanel" hidden>
+                    <div class="table-wrapper">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>Room</th>
+                                    <th>Type</th>
+                                    <th>Action</th>
+                                    <th>Status</th>
+                                    <th>Created Time</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>101</td>
+                                    <td>Cleaning</td>
+                                    <td>Clean room after guest checkout</td>
+                                    <td>
+                                        <span class="status status-warning">PENDING</span>
+                                    </td>
+                                    <td>27/05/2026, 08:15</td>
+                                </tr>
+
+                                <tr>
+                                    <td>204</td>
+                                    <td>Housekeeping</td>
+                                    <td>Change bedsheet and refill amenities</td>
+                                    <td>
+                                        <span class="status status-info">ASSIGNED</span>
+                                    </td>
+                                    <td>27/05/2026, 09:00</td>
+                                </tr>
+
+                                <tr>
+                                    <td>305</td>
+                                    <td>Cleaning</td>
+                                    <td>Deep clean bathroom and balcony</td>
+                                    <td>
+                                        <span class="status status-info">CLEANING</span>
+                                    </td>
+                                    <td>27/05/2026, 10:30</td>
+                                </tr>
+
+                                <tr>
+                                    <td>412</td>
+                                    <td>Inspection</td>
+                                    <td>Inspect room before guest check-in</td>
+                                    <td>
+                                        <span class="status status-success">INSPECTED</span>
+                                    </td>
+                                    <td>27/05/2026, 11:45</td>
+                                </tr>
+
+                                <tr>
+                                    <td>508</td>
+                                    <td>Maintenance</td>
+                                    <td>Check air conditioner issue</td>
+                                    <td>
+                                        <span class="status status-warning">PENDING</span>
+                                    </td>
+                                    <td>27/05/2026, 13:20</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <p>Showing <strong>1-5</strong> of <strong>128</strong> tasks</p>
+
+                        <div class="pagination">
+                            <button class="page-btn disabled">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+
+                            <span class="page-dots">...</span>
+                            <button class="page-btn">13</button>
+
+                            <button class="page-btn">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+    <script th:src="@{/js/admin-sidebar.js}"></script>
+    <script th:src="@{/js/admin/profile-employee.js}"></script>
+
+</body>
+
+</html>

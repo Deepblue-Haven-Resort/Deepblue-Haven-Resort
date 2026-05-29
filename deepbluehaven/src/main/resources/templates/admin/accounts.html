@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý tài khoản | Deep Blue Haven</title>
+    <title>Accounts Management | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
@@ -11,233 +12,283 @@
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/accounts.css}">
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
-<div class="admin-layout">
+    <div class="admin-layout">
 
-    <div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+        <div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
 
-    <main class="admin-main">
+        <main class="admin-main">
+            <section class="stats-grid">
 
-        <section class="accounts-hero">
-            <div>
-                <span class="page-label">Admin Control Center</span>
-                <h1>Quản lý tài khoản</h1>
-                <p>Quản lý toàn bộ tài khoản khách hàng và nhân viên trong hệ thống Deep Blue Haven.</p>
-            </div>
+                <article class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <span>Total accounts</span>
+                        <strong>128</strong>
+                    </div>
+                </article>
 
-            <button class="btn-add">
-                <i class="fa-solid fa-user-plus"></i>
-                Thêm tài khoản
-            </button>
-        </section>
+                <article class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                    <div>
+                        <span>Active</span>
+                        <strong>115</strong>
+                    </div>
+                </article>
 
-        <section class="account-stats">
-            <article class="stat-card">
-                <div class="stat-icon blue">
-                    <i class="fa-solid fa-users"></i>
-                </div>
-                <div>
-                    <span>Tổng tài khoản</span>
-                    <strong>128</strong>
-                    <small>Khách hàng + nhân viên</small>
-                </div>
-            </article>
+                <article class="stat-card">
+                    <div class="stat-icon gold">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div>
+                        <span>Employees</span>
+                        <strong>24</strong>
+                    </div>
+                </article>
 
-            <article class="stat-card">
-                <div class="stat-icon green">
-                    <i class="fa-solid fa-user-check"></i>
-                </div>
-                <div>
-                    <span>Đang hoạt động</span>
-                    <strong>115</strong>
-                    <small>Tài khoản active</small>
-                </div>
-            </article>
+                <article class="stat-card">
+                    <div class="stat-icon red">
+                        <i class="fa-solid fa-user-lock"></i>
+                    </div>
+                    <div>
+                        <span>Locked</span>
+                        <strong>3</strong>
+                    </div>
+                </article>
 
-            <article class="stat-card">
-                <div class="stat-icon gold">
-                    <i class="fa-solid fa-user-tie"></i>
-                </div>
-                <div>
-                    <span>Nhân viên</span>
-                    <strong>24</strong>
-                    <small>Admin, lễ tân, buồng phòng</small>
-                </div>
-            </article>
+            </section>
 
-            <article class="stat-card">
-                <div class="stat-icon red">
-                    <i class="fa-solid fa-user-lock"></i>
-                </div>
-                <div>
-                    <span>Bị khóa</span>
-                    <strong>3</strong>
-                    <small>Cần kiểm tra</small>
-                </div>
-            </article>
-        </section>
+            <section class="account-panel">
 
-        <section class="account-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2><strong>Account List</strong></h2>
+                    </div>
 
-            <div class="panel-header">
-                <div>
-                    <h2>Danh sách tài khoản</h2>
-                    <p>Hiển thị tất cả khách hàng và nhân viên đang có trong hệ thống.</p>
-                </div>
-            </div>
-
-            <div class="filter-bar">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Tìm theo tên, email, số điện thoại...">
+                    <a th:href="@{/admin/accounts/create}" class="btn btn-cta btn-medium">
+                        <i class="fa-solid fa-plus"></i>
+                        Create Account
+                    </a>
                 </div>
 
-                <select>
-                    <option>Tất cả vai trò</option>
-                    <option>ADMIN</option>
-                    <option>MANAGER</option>
-                    <option>RECEPTIONIST</option>
-                    <option>HOUSEKEEPING</option>
-                    <option>CUSTOMER</option>
-                </select>
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Tìm kiếm tài khoản...">
+                    </div>
 
-                <select>
-                    <option>Tất cả trạng thái</option>
-                    <option>Active</option>
-                    <option>Locked</option>
-                </select>
-            </div>
+                    <div class="filter-dropdown">
+                        <button class="filter-btn" type="button">
+                            <span class="filter-label"><strong>All Roles</strong></span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
 
-            <div class="table-card">
-                <table class="account-table">
-                    <thead>
-                    <tr>
-                        <th>Người dùng</th>
-                        <th>Email</th>
-                        <th>Số điện thoại</th>
-                        <th>Loại tài khoản</th>
-                        <th>Vai trò</th>
-                        <th>Trạng thái</th>
-                        <th>Ngày tạo</th>
-                        <th>Hành động</th>
-                    </tr>
-                    </thead>
+                        <div class="filter-menu">
+                            <button type="button"><strong>All Roles</strong></button>
+                            <button type="button"><strong>Admin</strong></button>
+                            <button type="button"><strong></strong>Manager</strong></button>
+                            <button type="button"><strong>Receptionist</strong></button>
+                            <button type="button"><strong>Housekeeper</strong></button>
+                        </div>
+                    </div>
 
-                    <tbody>
+                    <div class="filter-dropdown">
 
-                    <tr>
-                        <td>
-                            <div class="user-info">
-                                <div class="avatar">A</div>
-                                <div>
-                                    <strong>Nguyễn Minh Anh</strong>
-                                    <span>Customer Account</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>minhanh@gmail.com</td>
-                        <td>0901 222 333</td>
-                        <td><span class="type customer-type">Khách hàng</span></td>
-                        <td><span class="role customer">CUSTOMER</span></td>
-                        <td><span class="status active">Active</span></td>
-                        <td>25/05/2026</td>
-                        <td>
-                            <div class="actions">
-                                <button class="edit"><i class="fa-solid fa-pen"></i></button>
-                                <button class="lock"><i class="fa-solid fa-lock"></i></button>
-                                <button class="delete"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </td>
-                    </tr>
+                        <button class="filter-btn">
+                            <span class="filter-label"><strong>All Status</strong></span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
 
-                    <tr>
-                        <td>
-                            <div class="user-info">
-                                <div class="avatar">N</div>
-                                <div>
-                                    <strong>Trần Hoàng Nam</strong>
-                                    <span>Staff Account</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>nam.staff@deepblue.com</td>
-                        <td>0912 456 789</td>
-                        <td><span class="type staff-type">Nhân viên</span></td>
-                        <td><span class="role housekeeping">HOUSEKEEPING</span></td>
-                        <td><span class="status active">Active</span></td>
-                        <td>21/05/2026</td>
-                        <td>
-                            <div class="actions">
-                                <button class="edit"><i class="fa-solid fa-pen"></i></button>
-                                <button class="lock"><i class="fa-solid fa-lock"></i></button>
-                                <button class="delete"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </td>
-                    </tr>
+                        <div class="filter-menu">
 
-                    <tr>
-                        <td>
-                            <div class="user-info">
-                                <div class="avatar">V</div>
-                                <div>
-                                    <strong>Lê Thanh Vy</strong>
-                                    <span>Manager Account</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>vy.manager@deepblue.com</td>
-                        <td>0988 111 222</td>
-                        <td><span class="type staff-type">Nhân viên</span></td>
-                        <td><span class="role manager">MANAGER</span></td>
-                        <td><span class="status locked">Locked</span></td>
-                        <td>18/05/2026</td>
-                        <td>
-                            <div class="actions">
-                                <button class="edit"><i class="fa-solid fa-pen"></i></button>
-                                <button class="unlock"><i class="fa-solid fa-unlock"></i></button>
-                                <button class="delete"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </td>
-                    </tr>
+                            <button>
+                                <span class="status-dot all"></span>
+                                <strong>All Status</strong>
+                            </button>
 
-                    <tr>
-                        <td>
-                            <div class="user-info">
-                                <div class="avatar">P</div>
-                                <div>
-                                    <strong>Phạm Quốc Huy</strong>
-                                    <span>Receptionist Account</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>huy.reception@deepblue.com</td>
-                        <td>0933 555 777</td>
-                        <td><span class="type staff-type">Nhân viên</span></td>
-                        <td><span class="role receptionist">RECEPTIONIST</span></td>
-                        <td><span class="status active">Active</span></td>
-                        <td>15/05/2026</td>
-                        <td>
-                            <div class="actions">
-                                <button class="edit"><i class="fa-solid fa-pen"></i></button>
-                                <button class="lock"><i class="fa-solid fa-lock"></i></button>
-                                <button class="delete"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </td>
-                    </tr>
+                            <button>
+                                <span class="status-dot active"></span>
+                                <strong></strong>Active</strong>
+                            </button>
 
-                    </tbody>
-                </table>
-            </div>
+                            <button>
+                                <span class="status-dot inactive"></span>
+                                <strong>Inactive</strong>
+                            </button>
 
-        </section>
+                        </div>
 
-    </main>
-</div>
+                    </div>
+                </div>
 
-<script th:src="@{/assets/js/admin-sidebar.js}"></script>
+                <div class="table-wrapper">
+                    <table class="account-table">
+                        <thead>
+                            <tr>
+                                <th>Người dùng</th>
+                                <th>Email</th>
+                                <th>Vai trò</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày tạo</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div>
+                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
+                                                <strong>Trần Hoàng Nam</strong>
+                                            </a>
+                                            <span>Housekeeper Account</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>nam.housekeeping@deepblue.com</td>
+                                <td><span class="role housekeeping">Housekeeper</span></td>
+                                <td><span class="status status-success">Active</span></td>
+                                <td>21/05/2026</td>
+                                <td>
+                                    <div class="action-group">
+                                        <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="lock-btn"><i class="fa-solid fa-lock"></i></button>
+                                        <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div>
+                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
+                                                <strong>Lê Thanh Vy</strong>
+                                            </a>
+                                            <span>Manager Account</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>vy.manager@deepblue.com</td>
+                                <td><span class="role manager">Manager</span></td>
+                                <td><span class="status status-error">Locked</span></td>
+                                <td>18/05/2026</td>
+                                <td>
+                                    <div class="action-group">
+                                        <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="unlock-btn"><i class="fa-solid fa-unlock"></i></button>
+                                        <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div>
+                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
+                                                <strong>Phạm Quốc Bảo</strong>
+                                            </a>
+                                            <span>Receptionist Account</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>bao.reception@deepblue.com</td>
+                                <td><span class="role receptionist">Receptionist</span></td>
+                                <td><span class="status status-success">Active</span></td>
+                                <td>17/05/2026</td>
+                                <td>
+                                    <div class="action-group">
+                                        <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="lock-btn"><i class="fa-solid fa-lock"></i></button>
+                                        <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div>
+                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
+                                                <strong>Đặng Hải Yến</strong>
+                                            </a>
+                                            <span>Admin Account</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>yen.admin@deepblue.com</td>
+                                <td><span class="role admin">Admin</span></td>
+                                <td><span class="status status-success">Active</span></td>
+                                <td>15/05/2026</td>
+                                <td>
+                                    <div class="action-group">
+                                        <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="lock-btn"><i class="fa-solid fa-lock"></i></button>
+                                        <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div>
+                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
+                                                <strong>Nguyễn Văn Kiệt</strong>
+                                            </a>
+                                            <span>Manager Account</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>kiet.manager@deepblue.com</td>
+                                <td><span class="role manager">Manager</span></td>
+                                <td><span class="status status-success">Active</span></td>
+                                <td>14/05/2026</td>
+                                <td>
+                                    <div class="action-group">
+                                        <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="lock-btn"><i class="fa-solid fa-lock"></i></button>
+                                        <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-footer">
+                    <p>Hiển thị <strong>1-5</strong> trong <strong>128</strong> tài khoản</p>
+
+                    <div class="pagination">
+                        <button class="page-btn disabled">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+
+                        <span class="page-dots">...</span>
+                        <button class="page-btn">13</button>
+
+                        <button class="page-btn">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script th:src="@{/assets/js/admin-sidebar.js}"></script>
 </body>
+
 </html>

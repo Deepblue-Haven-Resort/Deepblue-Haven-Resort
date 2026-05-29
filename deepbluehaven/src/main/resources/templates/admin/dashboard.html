@@ -24,41 +24,41 @@
             <section class="stats-grid">
 
                 <article class="stat-card">
-                    <div class="stat-icon">
+                    <div class="stat-icon blue">
                         <i class="fa-solid fa-users"></i>
                     </div>
                     <div>
-                        <span>Total Accounts</span>
+                        <span>Total accounts</span>
                         <strong>128</strong>
                     </div>
                 </article>
 
                 <article class="stat-card">
-                    <div class="stat-icon">
+                    <div class="stat-icon green">
                         <i class="fa-solid fa-user-check"></i>
                     </div>
                     <div>
-                        <span>Active Accounts</span>
+                        <span>Active</span>
                         <strong>115</strong>
                     </div>
                 </article>
 
                 <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-user-shield"></i>
+                    <div class="stat-icon gold">
+                        <i class="fa-solid fa-user-tie"></i>
                     </div>
                     <div>
-                        <span>Staff Members</span>
+                        <span>Employees</span>
                         <strong>24</strong>
                     </div>
                 </article>
 
-                <article class="stat-card warning">
-                    <div class="stat-icon">
+                <article class="stat-card">
+                    <div class="stat-icon red">
                         <i class="fa-solid fa-user-lock"></i>
                     </div>
                     <div>
-                        <span>Locked Accounts</span>
+                        <span>Locked</span>
                         <strong>3</strong>
                     </div>
                 </article>
@@ -274,10 +274,10 @@
                         <h2><strong>Account List</strong></h2>
                     </div>
 
-                    <button class="btn btn-cta btn-medium">
+                   <a th:href="@{/admin/accounts/create}" class="btn btn-cta btn-medium">
                         <i class="fa-solid fa-plus"></i>
                         Create Account
-                    </button>
+                    </a>
                 </div>
 
                 <div class="filter-bar">
@@ -295,7 +295,7 @@
                         <div class="filter-menu">
                             <button type="button"><strong>All Roles</strong></button>
                             <button type="button"><strong>Admin</strong></button>
-                            <button type="button"><strong></strong>Manager</strong></button>
+                            <button type="button"><strong>Manager</strong></button>
                             <button type="button"><strong>Receptionist</strong></button>
                             <button type="button"><strong>Housekeeper</strong></button>
                         </div>
@@ -348,13 +348,15 @@
                                 <td>
                                     <div class="user-info">
                                         <div>
-                                            <strong>Trần Hoàng Nam</strong>
+                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
+                                                <strong>Trần Hoàng Nam</strong>
+                                            </a>
                                             <span>Housekeeper Account</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td>nam.housekeeping@deepblue.com</td>
-                                <td><span class="role housekeeping">Housekeeper</span></td>
+                                <td><span class="role housekeeper">Housekeeper</span></td>
                                 <td><span class="status status-success">Active</span></td>
                                 <td>21/05/2026</td>
                                 <td>
@@ -370,7 +372,9 @@
                                 <td>
                                     <div class="user-info">
                                         <div>
-                                            <strong>Lê Thanh Vy</strong>
+                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
+                                                <strong>Lê Thanh Vy</strong>
+                                            </a>
                                             <span>Manager Account</span>
                                         </div>
                                     </div>
@@ -392,7 +396,9 @@
                                 <td>
                                     <div class="user-info">
                                         <div>
-                                            <strong>Phạm Quốc Bảo</strong>
+                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
+                                                <strong>Phạm Quốc Bảo</strong>
+                                            </a>
                                             <span>Receptionist Account</span>
                                         </div>
                                     </div>
@@ -414,7 +420,9 @@
                                 <td>
                                     <div class="user-info">
                                         <div>
-                                            <strong>Đặng Hải Yến</strong>
+                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
+                                                <strong>Đặng Hải Yến</strong>
+                                            </a>
                                             <span>Admin Account</span>
                                         </div>
                                     </div>
@@ -436,7 +444,9 @@
                                 <td>
                                     <div class="user-info">
                                         <div>
-                                            <strong>Ngô Tuấn Kiệt</strong>
+                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
+                                                <strong>Nguyễn Văn Kiệt</strong>
+                                            </a>
                                             <span>Manager Account</span>
                                         </div>
                                     </div>
