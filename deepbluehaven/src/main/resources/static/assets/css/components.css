@@ -358,20 +358,77 @@
 .status-dot.locked {
     background: var(--error-600);
 }
+/* SOCIAL */
+.social-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-12);
+}
 
-/* Responsive */
-@media (max-width: 768px) {
-    .filter-bar {
-        flex-direction: column;
-        align-items: stretch;
-    }
+.social-btn {
+    width: 50px;
+    height: 50px;
 
-    .filter-dropdown,
-    .filter-btn {
-        width: 100%;
-    }
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    .filter-menu {
-        width: 100%;
-    }
+    border-radius: 50%;
+
+    font-size: 1.1rem;
+    box-shadow: var(--shadow-md);
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+/* Google - đỏ trắng */
+.social-btn--google {
+    color: var(--white);
+    background: var(--error-700);
+    border: var(--border-1) solid var(--error-300);
+}
+
+/* Facebook - xanh trắng */
+.social-btn--facebook {
+    color: var(--white);
+    background: var(--primary-700);
+    border: var(--border-1) solid var(--primary-300);
+}
+
+/* Apple - đen trắng */
+.social-btn--apple {
+    color: var(--white);
+    background: var(--neutral-900);
+    border: var(--border-1) solid var(--neutral-700);
+}
+
+.social-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Hover sáng hơn */
+.social-btn--google:hover {
+    background: var(--error-600);
+    border-color: var(--gold-400);
+}
+
+.social-btn--facebook:hover {
+    background: var(--primary-600);
+    border-color: var(--gold-400);
+}
+
+.social-btn--apple:hover {
+    background: var(--primary-900);
+    border-color: var(--gold-400);
+}
+
+.social-btn:active {
+    transform: scale(0.96);
 }

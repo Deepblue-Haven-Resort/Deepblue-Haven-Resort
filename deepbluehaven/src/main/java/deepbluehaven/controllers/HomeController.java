@@ -14,10 +14,6 @@ public class HomeController {
     public String home() {
         return "customer/home";
     }
-  @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
   @GetMapping("/rooms")
     public String roomsList() {
         return "customer/rooms-list";
