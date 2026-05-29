@@ -1,0 +1,49 @@
+<aside th:fragment="adminSidebar" class="admin-sidebar" id="adminSidebar">
+
+    <button class="sidebar-toggle" id="sidebarToggle" type="button">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <nav class="sidebar-menu">
+
+        <a th:href="@{/admin/dashboard}"
+           th:class="${activePage == 'dashboard'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a th:href="@{/admin/accounts}"
+           th:class="${activePage == 'accounts'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-users-gear"></i>
+            <span>Account Management</span>
+        </a>
+
+        <a th:href="@{/admin/roles}"
+           th:class="${activePage == 'roles'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-user-shield"></i>
+            <span>Role Management</span>
+        </a>
+
+        <a th:href="@{/admin/reports}"
+           th:class="${activePage == 'reports'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Reports</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-footer">
+
+        <a th:href="@{/settings}" class="sidebar-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+
+        <a th:href="@{/logout}" class="sidebar-item logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>

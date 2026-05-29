@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Forbidden | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/error.css}">
+</head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="error-page">
+        <section class="error-section">
+
+            <div class="error-image-wrap">
+                <img th:src="@{/assets/pic/403.png}" alt="403 Forbidden" class="error-image" />
+            </div>
+
+            <div class="error-content">
+                <span class="badge">403 · Private Access</span>
+
+                <h2>This area is reserved</h2>
+
+                <p>
+                    You don't have permission
+                    to enter this destination.
+                </p>
+
+                <div class="error-actions">
+                    <a th:href="@{/}" class="btn btn-cta btn-medium">
+                        <i class="fa-solid fa-house btn-icon"></i>
+                        <span>Home</span>
+                    </a>
+
+                    <a th:href="@{/rooms}" class="btn btn-luxury btn-medium">
+                        <i class="fa-solid fa-water-ladder btn-icon"></i>
+                        <span>Explore Rooms</span>
+                    </a>
+                </div>
+            </div>
+
+        </section>
+    </main>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>
