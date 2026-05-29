@@ -3,6 +3,7 @@ package deepbluehaven.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import deepbluehaven.pojo.enums.Amenity;
 import deepbluehaven.pojo.enums.RoomStatus;
 import deepbluehaven.pojo.enums.RoomTag;
 import deepbluehaven.pojo.enums.RoomType;
@@ -27,6 +28,16 @@ public class RoomDTO {
         @NotEmpty(message = "You must provide at least one tag")
         private List<RoomTag> tags;
 
+        @NotEmpty(message = "You must provide at least one amenity")
+        private List<Amenity> amenities;
+
+        private String planUrl;
+
+        @NotEmpty(message = "You must provide at least one highlight")
+        private List<RoomHighlightDTO.Request> highlights;
+
+        @Min(value = 0, message = "Area must be a positive number")
+        private Integer area;
 
         @NotBlank(message = "Description is strictly required")
         private String description;
@@ -67,6 +78,23 @@ public class RoomDTO {
         public void setTags(List<RoomTag> tags) { 
             this.tags = tags; }
 
+        public List<Amenity> getAmenities() { 
+            return amenities; }
+        public void setAmenities(List<Amenity> amenities) { 
+            this.amenities = amenities; }
+        public String getPlanUrl() { 
+            return planUrl; }
+        public void setPlanUrl(String planUrl) { 
+            this.planUrl = planUrl; }
+        public List<RoomHighlightDTO.Request> getHighlights() { 
+            return highlights; }
+        public void setHighlights(List<RoomHighlightDTO.Request> highlights) { 
+            this.highlights = highlights; }
+        public Integer getArea() { 
+            return area; }
+        public void setArea(Integer area) {
+            this.area = area; }
+
         public String getDescription() { 
             return description; }
         public void setDescription(String description) { 
@@ -99,6 +127,10 @@ public class RoomDTO {
         private String roomNumber;
         private RoomType roomType;
         private List<RoomTag> tags;
+        private List<Amenity> amenities;
+        private String planUrl;
+        private List<RoomHighlightDTO.Response> highlights;
+        private Integer area;
         private String description;
         private List<String> images;
         private RoomStatus status;
@@ -131,6 +163,23 @@ public class RoomDTO {
             return tags; }
         public void setTags(List<RoomTag> tags) { 
             this.tags = tags; }
+
+        public List<Amenity> getAmenities() { 
+            return amenities; }
+        public void setAmenities(List<Amenity> amenities) { 
+            this.amenities = amenities; }
+        public String getPlanUrl() { return planUrl; }
+        public void setPlanUrl(String planUrl) { 
+            this.planUrl = planUrl; }
+        public List<RoomHighlightDTO.Response> getHighlights() { 
+            return highlights; }
+        public void setHighlights(List<RoomHighlightDTO.Response> highlights) { 
+            this.highlights = highlights; }
+
+        public Integer getArea() { 
+            return area; }
+        public void setArea(Integer area) { 
+            this.area = area; }
 
         public String getDescription() { 
             return description; }

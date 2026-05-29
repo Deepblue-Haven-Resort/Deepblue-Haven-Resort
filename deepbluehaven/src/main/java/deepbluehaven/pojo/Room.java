@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import deepbluehaven.pojo.enums.Amenity;
 import deepbluehaven.pojo.enums.RoomStatus;
 import deepbluehaven.pojo.enums.RoomTag;
 import deepbluehaven.pojo.enums.RoomType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -56,6 +58,21 @@ public class Room {
     @Column(name = "image_url", length = 255)
     private List<String> images = new ArrayList<>();
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "room_amenities", joinColumns = @JoinColumn(name = "room_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "amenity", length = 50)
+    private List<Amenity> amenities = new ArrayList<>();
+
+    @Column(name = "plan_url", length = 500, nullable = true)
+    private String planUrl;
+
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<RoomHighlight> highlights = new ArrayList<>();
+
+    @Column(name = "area", nullable = true)
+    private Integer area;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 30)
     private RoomStatus status;
@@ -104,6 +121,24 @@ public class Room {
         return images; }
     public void setImages(List<String> images) { 
         this.images = images; }
+
+    public List<Amenity> getAmenities() { 
+        return amenities; }
+    public void setAmenities(List<Amenity> amenities) { 
+        this.amenities = amenities; }
+    public String getPlanUrl() { 
+        return planUrl; }
+    public void setPlanUrl(String planUrl) { 
+        this.planUrl = planUrl; }
+    public List<RoomHighlight> getHighlights() { 
+        return highlights; }
+    public void setHighlights(List<RoomHighlight> highlights) { 
+        this.highlights = highlights; }
+
+    public Integer getArea() { 
+        return area; }
+    public void setArea(Integer area) {
+        this.area = area; }
         
     public RoomStatus getStatus() { 
         return status; }
