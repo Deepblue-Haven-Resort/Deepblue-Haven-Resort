@@ -2,50 +2,45 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<article th:fragment="roomCard(
-            imagePath,
-            altText,
+<article
+        th:fragment="roomCard(
+            imageUrl,
+            imageAlt,
             badge,
             roomName,
             location,
-            tagIcon,
-            tagText,
+            icon,
+            statusText,
             tagClass,
             bedInfo,
             bathInfo,
             sizeInfo,
-            price,
+            priceText,
             priceValue,
-            resortKey,
-            typeKey,
+            resortValue,
+            typeValue,
             guestsValue,
-            viewKeys,
+            viewValue,
             ratingValue,
             detailUrl
         )"
-         class="room-card"
-         data-price="1250000"
-         data-resort="nha-trang"
-         data-type="premium"
-         data-guests="2"
-         data-view="ocean"
-         data-rating="4.8"
-         th:attr="data-price=${priceValue},
-                  data-resort=${resortKey},
-                  data-type=${typeKey},
-                  data-guests=${guestsValue},
-                  data-view=${viewKeys},
-                  data-rating=${ratingValue}">
-
+        class="room-card"
+        th:attr="
+            data-price=${priceValue},
+            data-resort=${resortValue},
+            data-type=${typeValue},
+            data-guests=${guestsValue},
+            data-view=${viewValue},
+            data-rating=${ratingValue}
+        "
+>
     <div class="room-card__media">
-        <img th:src="@{${imagePath}}"
-             th:alt="${altText}"
-             src="/images/rooms/ocean-deluxe.jpg"
-             alt="Room image">
+        <img th:src="@{${imageUrl}}" th:alt="${imageAlt}">
 
-        <span class="room-card__badge"
-              th:if="${badge != null and !#strings.isEmpty(badge)}"
-              th:text="${badge}">
+        <span
+                class="room-card__badge"
+                th:if="${badge != null and !#strings.isEmpty(badge)}"
+                th:text="${badge}">
             Best Seller
         </span>
     </div>
@@ -58,8 +53,8 @@
             </div>
 
             <span class="room-card__tag" th:classappend="${tagClass}">
-                <i th:class="${'fa-solid ' + tagIcon}" class="fa-solid fa-check"></i>
-                <span th:text="${tagText}">Available</span>
+                <i class="fa-solid" th:classappend="${icon}"></i>
+                <span th:text="${statusText}">Available</span>
             </span>
         </div>
 
@@ -82,13 +77,13 @@
 
         <div class="room-card__price">
             <span>Starting from</span>
-            <strong th:text="${price}">1,250,000 VND</strong>
+            <strong th:text="${priceText}">1,250,000 VND</strong>
             <small>/ night</small>
         </div>
 
-        <a th:href="@{${detailUrl}}"
-           href="/rooms/ocean-deluxe"
-           class="btn btn-cta btn-small room-card__action">
+        <a
+                th:href="@{${detailUrl}}"
+                class="btn btn-cta btn-small room-card__action">
             View Room
         </a>
     </div>

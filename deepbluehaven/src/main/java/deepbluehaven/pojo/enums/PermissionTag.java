@@ -1,6 +1,6 @@
 package deepbluehaven.pojo.enums;
 
-public enum RoleTag {
+public enum PermissionTag {
     VIEW_BOOKING,
     CREATE_BOOKING,
     CANCEL_BOOKING,

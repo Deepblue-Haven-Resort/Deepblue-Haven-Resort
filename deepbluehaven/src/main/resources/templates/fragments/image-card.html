@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<article th:fragment="imageCard(imageUrl, altText, title, description)"
+         class="room-gallery__item">
+
+    <img
+        th:src="${imageUrl}"
+        th:alt="${altText}"
+        class="room-gallery__image">
+
+    <div class="room-gallery__content">
+        <span class="room-gallery__label">
+            <i class="fa-solid fa-water"></i>
+            DeepBlue Haven
+        </span>
+
+        <h3 th:text="${title}">Ocean view</h3>
+
+        <p th:text="${description}">
+            A calm seaside view with relaxing resort atmosphere.
+        </p>
+    </div>
+
+</article>
+
+</body>
+</html>
