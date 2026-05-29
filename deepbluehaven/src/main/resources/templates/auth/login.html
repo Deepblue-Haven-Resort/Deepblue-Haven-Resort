@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Deep Blue Haven</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/auth/login.css}" />
+</head>
+
+<body class="login-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main class="login-page">
+        <section class="login-shell" aria-label="Deep Blue Haven login">
+            <aside class="login-visual">
+                <div class="login-visual__overlay"></div>
+
+                <a th:href="@{/}" href="/" class="login-brand" aria-label="Deep Blue Haven">
+                    <span class="login-brand__logo">
+                        <img th:src="@{/assets/pic/logo.png}" src="../static/assets/pic/logo.png"
+                             alt="Deep Blue Haven" />
+                    </span>
+                    <span class="login-brand__name">Deep Blue Haven</span>
+                </a>
+
+                <div class="login-visual__content">
+                    <div class="login-slider-dots" aria-hidden="true">
+                        <span class="is-active"></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <p class="login-kicker">Luxury Ocean Resort</p>
+                    <h1>Return to the blue ocean.</h1>
+                    <p>
+                        Sign in to manage your bookings, resort offers, and private experiences at Deep Blue Haven.
+                    </p>
+                </div>
+            </aside>
+
+            <section class="login-panel">
+                <div class="login-form-wrap">
+                    <div class="login-tabs" aria-label="Switch between login and registration">
+                        <a th:href="@{/login}" href="/login" class="login-tab is-active">Login</a>
+                        <a th:href="@{/register}" href="/register" class="login-tab">Register</a>
+                    </div>
+
+                    <div class="login-heading">
+                        <span class="login-heading__eyebrow">Welcome back</span>
+                        <h2>Login to your account</h2>
+                    </div>
+
+                    <p class="auth-alert auth-alert--error" th:if="${param.error}">
+                        Invalid email or password. Please try again.
+                    </p>
+
+                    <p class="auth-alert auth-alert--success" th:if="${param.logout}">
+                        You have successfully logged out.
+                    </p>
+
+                    <form class="login-form" th:action="@{/login}" action="/login" method="post">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}" />
+
+                        <label class="login-field" for="username">
+                            <span>Email</span>
+                            <input id="username" name="username" type="email" autocomplete="email"
+                                   placeholder="Enter your email" required />
+                        </label>
+
+                        <label class="login-field" for="password">
+                            <span>Password</span>
+                            <input id="password" name="password" type="password" autocomplete="current-password"
+                                   placeholder="Enter your password" required />
+
+                            <button class="password-toggle" type="button" aria-label="Show or hide password"
+                                    data-toggle-password="password">
+                                <i class="fa-regular fa-eye-slash"></i>
+                            </button>
+                        </label>
+
+                        <div class="login-options">
+                            <label class="remember-me">
+                                <input type="checkbox" name="remember-me" />
+                                <span>Remember me</span>
+                            </label>
+
+                            <a th:href="@{/forgot-password}" href="/forgot-password">Forgot password?</a>
+                        </div>
+
+                        <button class="btn btn-luxury btn-medium" type="submit">
+                            Login
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <div class="login-divider">
+                        <span></span>
+                        <p>Or login with</p>
+                        <span></span>
+                    </div>
+
+                    <div class="social-login" aria-label="Social login">
+                        <a href="#" class="social-btn social-btn--google" aria-label="Login with Google">
+                            <i class="fa-brands fa-google"></i>
+                        </a>
+
+                        <a href="#" class="social-btn social-btn--facebook" aria-label="Login with Facebook">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+
+                        <a href="#" class="social-btn social-btn--apple" aria-label="Login with Apple">
+                            <i class="fa-brands fa-apple"></i>
+                        </a>
+                    </div>
+
+                    <p class="login-register-note">
+                        Don’t have an account?
+                        <a th:href="@{/register}" href="/register">Create a new account</a>
+                    </p>
+                </div>
+            </section>
+        </section>
+
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
+    </main>
+
+    <script>
+        document.querySelectorAll('[data-toggle-password]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const input = document.getElementById(button.dataset.togglePassword);
+                const icon = button.querySelector('i');
+
+                if (!input) return;
+
+                const isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+
+                icon.classList.toggle('fa-eye', isHidden);
+                icon.classList.toggle('fa-eye-slash', !isHidden);
+            });
+        });
+    </script>
+</body>
+
+</html>
