@@ -358,3 +358,58 @@
 .status-dot.locked {
     background: var(--error-600);
 }
+
+
+@media (max-width: 469px) {
+    .filter-bar .filter-dropdown .filter-menu {
+        position: absolute;
+        top: calc(100% + 6px); 
+        left: 0;
+        
+        width: max-content; 
+        min-width: 100%; 
+        max-width: 85vw; 
+        
+        background: var(--surface-0, #ffffff);
+        border: 1px solid var(--primary-200);
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        padding: 6px;
+        z-index: 1000;
+        display: none; 
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .filter-bar .filter-dropdown.active .filter-menu {
+        display: flex;
+    }
+
+    .filter-bar .filter-dropdown .filter-menu button {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        
+        justify-content: flex-start; 
+        padding: 10px 16px; 
+        
+        background: transparent;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: var(--primary-800);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .filter-bar .filter-dropdown .filter-menu button strong {
+        color: inherit;
+    }
+
+    .filter-bar .filter-dropdown .filter-menu button:hover,
+    .filter-bar .filter-dropdown .filter-menu button:active,
+    .filter-bar .filter-dropdown .filter-menu button.active {
+        background: var(--primary-100);
+        color: var(--primary-700);     
+    }
+}
