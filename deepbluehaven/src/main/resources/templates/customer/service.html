@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services | Deepblue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" href="/assets/css/base.css">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}" href="/assets/css/components.css">
+    <link rel="stylesheet" th:href="@{/assets/css/toast.css}" href="/assets/css/toast.css">
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css" />
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css" />
+    <link rel="stylesheet" th:href="@{/assets/css/customer/rooms-list.css}" href="/assets/css/customer/rooms-list.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/service.css}" href="/assets/css/customer/service.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="rooms-list-page services-page">
+    <section class="rooms-shell">
+        <div class="container rooms-container rooms-content">
+
+            <!-- HERO -->
+            <section class="rooms-hero" aria-labelledby="services-title">
+                <p class="rooms-eyebrow">Hotel services</p>
+                <h1 id="services-title" class="rooms-title">
+                    Enhance your stay with curated services
+                </h1>
+                <p class="rooms-intro">
+                    Choose spa treatments, dining experiences, transport support and resort activities prepared for your booking.
+                </p>
+            </section>
+
+            <div class="rooms-layout services-layout">
+
+                <!-- LEFT SIDEBAR -->
+                <aside class="rooms-filter-sidebar services-sidebar" aria-label="Service filters and booking summary">
+
+                    <!-- FILTER BLOCK -->
+                    <div class="rooms-filter-panel">
+                        <div class="rooms-filter-heading">
+                            <span class="rooms-filter-heading__icon">
+                                <i class="fa-solid fa-sliders"></i>
+                            </span>
+                            <div>
+                                <h2>Filter Services</h2>
+                                <p>Find the right add-ons</p>
+                            </div>
+                        </div>
+
+                        <div class="rooms-filter-group">
+
+                            <details class="rooms-dropdown" data-filter="category">
+                                <summary aria-label="Select service category">
+                                    <span class="rooms-dropdown__copy">
+                                        <strong>Category</strong>
+                                        <small class="rooms-dropdown__value">All Categories</small>
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down rooms-dropdown__icon"></i>
+                                </summary>
+
+                                <div class="rooms-dropdown__menu">
+                                    <button type="button" class="rooms-dropdown__option is-active" data-value="all">
+                                        All Categories
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="food-beverage">
+                                        Food & Beverage
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="laundry">
+                                        Laundry
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="spa">
+                                        Spa
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="transport">
+                                        Transport
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="mini-bar">
+                                        Mini Bar
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="sport">
+                                        Sport
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="other">
+                                        Other
+                                    </button>
+                                </div>
+                            </details>
+
+                            <details class="rooms-dropdown" data-filter="type">
+                                <summary aria-label="Select service type">
+                                    <span class="rooms-dropdown__copy">
+                                        <strong>Type</strong>
+                                        <small class="rooms-dropdown__value">All Types</small>
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down rooms-dropdown__icon"></i>
+                                </summary>
+
+                                <div class="rooms-dropdown__menu">
+                                    <button type="button" class="rooms-dropdown__option is-active" data-value="all">
+                                        All Types
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="per-person">
+                                        Per person
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="per-room">
+                                        Per room
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="per-trip">
+                                        Per trip
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="per-order">
+                                        Per order
+                                    </button>
+                                </div>
+                            </details>
+
+                            <details class="rooms-dropdown" data-filter="status">
+                                <summary aria-label="Select service status">
+                                    <span class="rooms-dropdown__copy">
+                                        <strong>Status</strong>
+                                        <small class="rooms-dropdown__value">Active</small>
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down rooms-dropdown__icon"></i>
+                                </summary>
+
+                                <div class="rooms-dropdown__menu">
+                                    <button type="button" class="rooms-dropdown__option is-active" data-value="active">
+                                        Active
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="all">
+                                        All Status
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="out-of-stock">
+                                        Out of Stock
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="hidden">
+                                        Hidden
+                                    </button>
+                                </div>
+                            </details>
+
+                            <details class="rooms-dropdown" data-filter="sort">
+                                <summary aria-label="Sort services">
+                                    <span class="rooms-dropdown__copy">
+                                        <strong>Sort By</strong>
+                                        <small class="rooms-dropdown__value">Recommended</small>
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down rooms-dropdown__icon"></i>
+                                </summary>
+
+                                <div class="rooms-dropdown__menu">
+                                    <button type="button" class="rooms-dropdown__option is-active" data-value="recommended">
+                                        Recommended
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="lowest-price">
+                                        Lowest Price
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="highest-price">
+                                        Highest Price
+                                    </button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="name-az">
+                                        Name A-Z
+                                    </button>
+                                </div>
+                            </details>
+                        </div>
+
+                        <div class="rooms-price-filter">
+                            <div class="rooms-price-filter__header">
+                                <div class="rooms-dropdown__copy">
+                                    <strong>Service Price</strong>
+                                    <small class="rooms-price-filter__value">0 – 10 triệu</small>
+                                </div>
+                                <i class="fa-solid fa-tag rooms-price-filter__icon"></i>
+                            </div>
+
+                            <div class="rooms-price-slider">
+                                <div class="rooms-price-slider__track">
+                                    <div class="rooms-price-slider__fill" id="serviceSliderFill"></div>
+                                </div>
+
+                                <input
+                                    type="range"
+                                    id="servicePriceMin"
+                                    class="rooms-price-slider__input rooms-price-slider__input--min"
+                                    min="0"
+                                    max="10"
+                                    step="1"
+                                    value="0"
+                                    aria-label="Minimum service price"
+                                >
+
+                                <input
+                                    type="range"
+                                    id="servicePriceMax"
+                                    class="rooms-price-slider__input rooms-price-slider__input--max"
+                                    min="0"
+                                    max="10"
+                                    step="1"
+                                    value="10"
+                                    aria-label="Maximum service price"
+                                >
+                            </div>
+
+                            <div class="rooms-price-filter__labels">
+                                <span id="servicePriceMinLabel">0 triệu</span>
+                                <span id="servicePriceMaxLabel">10 triệu</span>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-cta btn-small rooms-filter-apply">
+                            Apply Filters
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- BOOKING INFO BLOCK - DEMO DATA ONLY -->
+                    <section class="booking-summary" data-booking-id="demo-booking-001" aria-label="Booking information">
+                        <div class="booking-summary__header">
+                            <span class="booking-summary__icon">
+                                <i class="fa-solid fa-receipt"></i>
+                            </span>
+                            <div>
+                                <h2>Booking Summary</h2>
+                                <p>Demo booking information</p>
+                            </div>
+                        </div>
+
+                        <div class="booking-summary__guest">
+                            <div>
+                                <span>Guest Name</span>
+                                <strong>Nguyen Minh Anh</strong>
+                            </div>
+
+                            <div>
+                                <span>Room</span>
+                                <strong>Ocean Deluxe Room - 302</strong>
+                            </div>
+                        </div>
+
+                        <div class="booking-summary__divider"></div>
+
+                        <div class="booking-summary__selected">
+                            <div class="booking-summary__title-row">
+                                <h3>Selected Services</h3>
+                                <span id="selectedServiceCount">0</span>
+                            </div>
+
+                            <div class="selected-service-list" id="selectedServiceList"></div>
+
+                            <p class="selected-service-empty" id="selectedServiceEmpty">
+                                No services selected yet.
+                            </p>
+                        </div>
+
+                        <div class="booking-summary__total">
+                            <span>Estimated total</span>
+                            <strong id="selectedServiceTotal">0 VND</strong>
+                        </div>
+
+                        <button type="button" class="btn btn-luxury btn-small booking-summary__action">
+                            Confirm Services
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                    </section>
+                </aside>
+
+                <!-- SERVICE DISPLAY SECTION -->
+                <section class="rooms-results services-results" aria-label="Available services">
+                    <div class="rooms-results__header">
+                        <div>
+                            <p class="rooms-results__eyebrow">Available services</p>
+                            <h2>
+                                <span id="servicesResultCount">6</span> services ready for your booking
+                            </h2>
+                        </div>
+
+                        <span class="rooms-results__chip">
+                            <i class="fa-solid fa-bell-concierge"></i>
+                            Deepblue Services
+                        </span>
+                    </div>
+
+                    <div class="services-grid" id="servicesGrid">
+
+                        <div th:replace="~{fragments/service-card :: serviceCard(
+                            '/images/services/ocean-breakfast.jpg',
+                            'Ocean Breakfast',
+                            'Food & Beverage',
+                            'Ocean Breakfast',
+                            'Per person',
+                            'ACTIVE',
+                            'service-card__status--available',
+                            'A fresh seaside breakfast set with tropical fruits, pastry and premium coffee.',
+                            'FOOD_BEVERAGE',
+                            'person',
+                            '450,000 VND',
+                            450000,
+                            'food-beverage',
+                            'per-person',
+                            'active',
+                            1
+                        )}"></div>
+
+                        <div th:replace="~{fragments/service-card :: serviceCard(
+                            '/images/services/spa-therapy.jpg',
+                            'Deep Sea Spa Therapy',
+                            'Spa',
+                            'Deep Sea Spa Therapy',
+                            'Per person',
+                            'ACTIVE',
+                            'service-card__status--available',
+                            'Relaxing ocean-inspired therapy with essential oils and warm stone treatment.',
+                            'SPA',
+                            'session',
+                            '1,200,000 VND',
+                            1200000,
+                            'spa',
+                            'per-person',
+                            'active',
+                            2
+                        )}"></div>
+
+                        <div th:replace="~{fragments/service-card :: serviceCard(
+                            '/images/services/airport-transfer.jpg',
+                            'Airport Transfer',
+                            'Transport',
+                            'Airport Transfer',
+                            'Per trip',
+                            'ACTIVE',
+                            'service-card__status--available',
+                            'Private transfer between the airport and Deepblue Haven with luggage support.',
+                            'TRANSPORT',
+                            'trip',
+                            '750,000 VND',
+                            750000,
+                            'transport',
+                            'per-trip',
+                            'active',
+                            3
+                        )}"></div>
+
+                        <div th:replace="~{fragments/service-card :: serviceCard(
+                            '/images/services/laundry-service.jpg',
+                            'Express Laundry',
+                            'Laundry',
+                            'Express Laundry',
+                            'Per order',
+                            'ACTIVE',
+                            'service-card__status--available',
+                            'Same-day laundry and ironing service for your resort stay.',
+                            'LAUNDRY',
+                            'order',
+                            '300,000 VND',
+                            300000,
+                            'laundry',
+                            'per-order',
+                            'active',
+                            4
+                        )}"></div>
+
+                        <div th:replace="~{fragments/service-card :: serviceCard(
+                            '/images/services/mini-bar.jpg',
+                            'Premium Mini Bar Set',
+                            'Mini Bar',
+                            'Premium Mini Bar Set',
+                            'Per room',
+                            'ACTIVE',
+                            'service-card__status--available',
+                            'A curated mini bar package with snacks, soft drinks and tropical refreshments.',
+                            'MINI_BAR',
+                            'room',
+                            '650,000 VND',
+                            650000,
+                            'mini-bar',
+                            'per-room',
+                            'active',
+                            5
+                        )}"></div>
+
+                        <div th:replace="~{fragments/service-card :: serviceCard(
+                            '/images/services/kayak.jpg',
+                            'Sunset Kayak Experience',
+                            'Sport',
+                            'Sunset Kayak Experience',
+                            'Per person',
+                            'OUT_OF_STOCK',
+                            'service-card__status--out-of-stock',
+                            'Guided kayak experience during sunset near the resort bay.',
+                            'SPORT',
+                            'person',
+                            '900,000 VND',
+                            900000,
+                            'sport',
+                            'per-person',
+                            'out-of-stock',
+                            6
+                        )}"></div>
+
+                    </div>
+
+                    <p class="rooms-empty-message" id="servicesEmptyMessage" hidden>
+                        No services match your filters. Try changing category, status or price range.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div class="toast-container" id="toastContainer"></div>
+<script th:src="@{/js/customer/service.js}" src="/js/customer/service.js"></script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

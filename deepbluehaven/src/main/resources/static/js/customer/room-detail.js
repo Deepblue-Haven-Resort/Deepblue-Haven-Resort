@@ -1,21 +1,25 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     initRoomToast();
     initRoomPlanTabs();
     initRoomGallery();
+
+    console.log("room-detail.js loaded");
 });
 
 /* =========================
    TOAST
 ========================= */
-
 function initRoomToast() {
-    const showRoomToast = function (type, title, message) {
+    const showRoomToast = (type, title, message) => {
         if (typeof showToast === "function") {
             showToast(type, title, message, {
                 theme: "dark",
                 duration: 3600
             });
+            return;
         }
+
+        console.log(`${title}: ${message}`);
     };
 
     const availabilityBtn = document.querySelector("[data-toast='availability']");
@@ -23,7 +27,7 @@ function initRoomToast() {
     const photosBtn = document.querySelector("[data-toast='photos']");
 
     if (availabilityBtn) {
-        availabilityBtn.addEventListener("click", function () {
+        availabilityBtn.addEventListener("click", () => {
             showRoomToast(
                 "success",
                 "Availability checked",
@@ -33,7 +37,7 @@ function initRoomToast() {
     }
 
     if (shareBtn) {
-        shareBtn.addEventListener("click", function () {
+        shareBtn.addEventListener("click", () => {
             showRoomToast(
                 "info",
                 "Share room",
@@ -43,7 +47,7 @@ function initRoomToast() {
     }
 
     if (photosBtn) {
-        photosBtn.addEventListener("click", function () {
+        photosBtn.addEventListener("click", () => {
             showRoomToast(
                 "info",
                 "Photo gallery",
@@ -56,102 +60,101 @@ function initRoomToast() {
 /* =========================
    ROOM PLAN TABS
 ========================= */
-
 function initRoomPlanTabs() {
     const tabs = document.querySelectorAll("[data-plan-tab]");
     const panels = document.querySelectorAll("[data-plan-panel]");
 
-    if (!tabs.length || !panels.length) return;
+    if (!tabs.length || !panels.length) {
+        return;
+    }
 
-    tabs.forEach(function (tab) {
-        tab.addEventListener("click", function () {
+    tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
             const target = tab.dataset.planTab;
 
-            tabs.forEach(function (item) {
-                item.classList.remove("is-active");
-            });
-
-            panels.forEach(function (panel) {
-                panel.classList.toggle("is-active", panel.dataset.planPanel === target);
-            });
-
+            tabs.forEach((item) => item.classList.remove("is-active"));
             tab.classList.add("is-active");
+
+            panels.forEach((panel) => {
+                panel.classList.toggle(
+                    "is-active",
+                    panel.dataset.planPanel === target
+                );
+            });
         });
     });
 }
 
-
+/* =========================
+   ROOM GALLERY SLIDER
+========================= */
 function initRoomGallery() {
     const gallery = document.querySelector("[data-room-gallery]");
 
-    if (!gallery) return;
+    if (!gallery) {
+        return;
+    }
 
-    const slides = Array.from(gallery.querySelectorAll(".room-gallery__item"));
+    let slides = Array.from(gallery.querySelectorAll(".room-gallery__item"));
+
+    /*
+       Nếu fragment image-card chưa có class .room-gallery__item,
+       JS vẫn bắt được các card ảnh phổ biến và gắn class vào để slider chạy.
+    */
+    if (!slides.length) {
+        slides = Array.from(
+            gallery.querySelectorAll(".image-card, [data-gallery-item], .room-image-card")
+        );
+
+        slides.forEach((slide) => slide.classList.add("room-gallery__item"));
+    }
+
     const prevBtn = gallery.querySelector(".room-gallery__nav--prev");
     const nextBtn = gallery.querySelector(".room-gallery__nav--next");
     const dotsWrap = gallery.querySelector(".room-gallery__dots");
 
-    if (!slides.length) return;
+    if (!slides.length) {
+        return;
+    }
 
     let currentIndex = 0;
 
-    function getLoopIndex(index) {
-        if (index < 0) {
-            return slides.length - 1;
-        }
-
-        if (index >= slides.length) {
-            return 0;
-        }
-
+    const getLoopIndex = (index) => {
+        if (index < 0) return slides.length - 1;
+        if (index >= slides.length) return 0;
         return index;
-    }
+    };
 
-    function getPrevIndex(index) {
-        return getLoopIndex(index - 1);
-    }
-
-    function getNextIndex(index) {
-        return getLoopIndex(index + 1);
-    }
-
-    function getFarPrevIndex(index) {
-        return getLoopIndex(index - 2);
-    }
-
-    function getFarNextIndex(index) {
-        return getLoopIndex(index + 2);
-    }
-
-    function renderDots() {
-        if (!dotsWrap) return;
+    const renderDots = () => {
+        if (!dotsWrap) {
+            return;
+        }
 
         dotsWrap.innerHTML = "";
 
-        slides.forEach(function (_, index) {
+        slides.forEach((_, index) => {
             const dot = document.createElement("button");
-
             dot.type = "button";
             dot.className = "room-gallery__dot";
-            dot.setAttribute("aria-label", "Go to photo " + (index + 1));
+            dot.setAttribute("aria-label", `Go to photo ${index + 1}`);
 
-            dot.addEventListener("click", function () {
+            dot.addEventListener("click", () => {
                 setActiveSlide(index);
             });
 
             dotsWrap.appendChild(dot);
         });
-    }
+    };
 
-    function setActiveSlide(index) {
+    const setActiveSlide = (index) => {
         currentIndex = getLoopIndex(index);
 
-        const prevIndex = getPrevIndex(currentIndex);
-        const nextIndex = getNextIndex(currentIndex);
-        const farPrevIndex = getFarPrevIndex(currentIndex);
-        const farNextIndex = getFarNextIndex(currentIndex);
+        const prevIndex = getLoopIndex(currentIndex - 1);
+        const nextIndex = getLoopIndex(currentIndex + 1);
+        const farPrevIndex = getLoopIndex(currentIndex - 2);
+        const farNextIndex = getLoopIndex(currentIndex + 2);
 
-        slides.forEach(function (slide, slideIndex) {
+        slides.forEach((slide, slideIndex) => {
             slide.classList.remove(
                 "is-active",
                 "is-prev",
@@ -173,27 +176,26 @@ function initRoomGallery() {
             }
         });
 
-        const dots = Array.from(gallery.querySelectorAll(".room-gallery__dot"));
-
-        dots.forEach(function (dot, dotIndex) {
+        const dots = gallery.querySelectorAll(".room-gallery__dot");
+        dots.forEach((dot, dotIndex) => {
             dot.classList.toggle("is-active", dotIndex === currentIndex);
         });
-    }
+    };
 
     if (prevBtn) {
-        prevBtn.addEventListener("click", function () {
+        prevBtn.addEventListener("click", () => {
             setActiveSlide(currentIndex - 1);
         });
     }
 
     if (nextBtn) {
-        nextBtn.addEventListener("click", function () {
+        nextBtn.addEventListener("click", () => {
             setActiveSlide(currentIndex + 1);
         });
     }
 
-    slides.forEach(function (slide, index) {
-        slide.addEventListener("click", function () {
+    slides.forEach((slide, index) => {
+        slide.addEventListener("click", () => {
             if (!slide.classList.contains("is-active")) {
                 setActiveSlide(index);
             }

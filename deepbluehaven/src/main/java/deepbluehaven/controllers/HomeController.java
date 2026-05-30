@@ -22,4 +22,8 @@ public class HomeController {
     public String roomDetail() {
         return "customer/room-detail";
     }
+  @GetMapping("/services")
+    public String services() {
+        return "customer/service";
+    }
 }
