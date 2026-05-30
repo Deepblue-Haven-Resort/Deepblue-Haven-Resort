@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<article
+    th:fragment="serviceCard(
+        imageUrl,
+        imageAlt,
+        badge,
+        serviceName,
+        typeText,
+        statusText,
+        statusClass,
+        description,
+        categoryText,
+        unitText,
+        priceText,
+        priceValue,
+        categoryValue,
+        typeValue,
+        statusValue,
+        serviceId
+    )"
+    class="service-card"
+    th:attr="
+        data-id=${serviceId},
+        data-category=${categoryValue},
+        data-type=${typeValue},
+        data-status=${statusValue},
+        data-price=${priceValue}
+    "
+>
+    <div class="service-card__media">
+        <img th:src="@{${imageUrl}}" th:alt="${imageAlt}">
+
+        <span class="service-card__badge" th:text="${badge}">
+            Food & Beverage
+        </span>
+    </div>
+
+    <div class="service-card__body">
+        <div class="service-card__top">
+            <div>
+                <p class="service-card__type" th:text="${typeText}">
+                    Per person
+                </p>
+
+                <h3 class="service-card__name" th:text="${serviceName}">
+                    Ocean Breakfast
+                </h3>
+            </div>
+
+            <span class="service-card__status" th:classappend="${statusClass}" th:text="${statusText}">
+                ACTIVE
+            </span>
+        </div>
+
+        <p class="service-card__desc" th:text="${description}">
+            Service description.
+        </p>
+
+        <div class="service-card__meta">
+            <span>
+                <i class="fa-solid fa-layer-group"></i>
+                <strong th:text="${categoryText}">Food</strong>
+            </span>
+
+            <span>
+                <i class="fa-solid fa-box"></i>
+                <strong th:text="${unitText}">person</strong>
+            </span>
+        </div>
+
+        <div class="service-card__footer">
+            <div class="service-card__price">
+                <span>Base price</span>
+                <strong th:text="${priceText}">450,000 VND</strong>
+                <small th:text="'/ ' + ${unitText}">/ person</small>
+            </div>
+
+            <button
+                type="button"
+                class="btn btn-cta btn-small service-card__action"
+                th:disabled="${statusValue != 'active'}">
+                <span th:text="${statusValue == 'active' ? 'Add Service' : 'Unavailable'}">
+                    Add Service
+                </span>
+                <i class="fa-solid" th:classappend="${statusValue == 'active' ? 'fa-plus' : 'fa-ban'}"></i>
+            </button>
+        </div>
+    </div>
+</article>
+
+</body>
+</html>
