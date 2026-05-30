@@ -1,0 +1,16 @@
+package deepbluehaven.repositories;
+
+import deepbluehaven.pojo.Customer;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
+
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
+
+    @Query("SELECT c FROM Customer c JOIN FETCH c.profile WHERE c.username = :username")
+    Optional<Customer> findByUsername(@Param("username") String username);
+
+    boolean existsByUsername(String username);
+}

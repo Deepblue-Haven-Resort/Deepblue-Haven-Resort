@@ -18,8 +18,9 @@
 
 <body class="auth-body">
     <header th:replace="~{fragments/header :: header}"></header>
-<div th:replace="~{auth/forgot-password-modal :: forgotPasswordModal}"></div>
-<div th:replace="~{auth/otp-modal :: otpModal}"></div>
+    <div th:replace="~{auth/forgot-password-modal :: forgotPasswordModal}"></div>
+    <div th:replace="~{auth/otp-modal :: otpModal}"></div>
+
     <main class="auth-page">
         <section class="auth-shell" aria-label="Login page">
 
@@ -60,23 +61,47 @@
                         <h2>Login to your account</h2>
                     </div>
 
-                    <form class="auth-form" th:action="@{/login}" action="/login" method="post">
-                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}"
-                            th:value="${_csrf.token}" />
+                    <p class="auth-alert auth-alert--error" th:if="${param.error}">
+                        Username or password is incorrect.
+                    </p>
+
+                    <p class="auth-alert auth-alert--success" th:if="${param.logout}">
+                        You have logged out successfully.
+                    </p>
+
+                    <form id="form-login"
+                          class="auth-form"
+                          th:action="@{/login}"
+                          method="post">
+
+                        <input type="hidden"
+                               th:if="${_csrf != null}"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}" />
 
                         <label class="auth-field" for="username">
-                            <span>Email</span>
-                            <input id="username" name="username" type="email" autocomplete="email"
-                                placeholder="Enter your email" required />
+                            <span>Username</span>
+                            <input id="username"
+                                   name="username"
+                                   type="text"
+                                   autocomplete="username"
+                                   placeholder="Enter your username"
+                                   required />
                         </label>
 
                         <label class="auth-field" for="password">
                             <span>Password</span>
-                            <input id="password" name="password" type="password" autocomplete="current-password"
-                                placeholder="Enter your password" required />
+                            <input id="password"
+                                   name="password"
+                                   type="password"
+                                   autocomplete="current-password"
+                                   placeholder="Enter your password"
+                                   required />
 
-                            <button class="auth-password-toggle" type="button" data-toggle-password="password"
-                                aria-label="Show or hide password">
+                            <button class="auth-password-toggle"
+                                    type="button"
+                                    data-toggle-password="password"
+                                    aria-label="Show or hide password">
                                 <i class="fa-regular fa-eye-slash"></i>
                             </button>
                         </label>
@@ -128,5 +153,8 @@
     </main>
 
     <footer th:replace="~{fragments/footer :: footer}"></footer>
-    <script th:src="@{/js/auth/login.js}"></script>
-     <script th:src="@{/js/auth/auth.js}"></script>
+
+    <script th:src="@{/js/login.js}"></script>
+    <script th:src="@{/js/auth/auth.js}"></script>
+</body>
+</html>
