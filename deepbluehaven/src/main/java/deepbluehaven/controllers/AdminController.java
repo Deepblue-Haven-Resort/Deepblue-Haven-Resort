@@ -13,25 +13,27 @@ public class AdminController {
         return "admin/dashboard";
     }
 
-    @GetMapping("/admin/roles")
-    public String roles(Model model) {
-        model.addAttribute("activePage", "roles");
-        return "admin/roles";
-    }
-
     @GetMapping("/admin/accounts")
     public String accounts(Model model) {
         model.addAttribute("activePage", "accounts");
         return "admin/accounts";
     }
+
     @GetMapping("/admin/profile-employee")
     public String profileEmployee(Model model) {
         model.addAttribute("activePage", "profile-employee");
         return "admin/profile-employee";
     }
-     @GetMapping("/admin/accounts/create")
+
+    @GetMapping("/admin/accounts/create")
     public String createEmployeeAccount(Model model) {
         model.addAttribute("activePage", "accounts");
         return "admin/create-employee";
+    }
+
+    @GetMapping("/admin/settings")
+    public String adminSettings(Model model) {
+        model.addAttribute("activePage", "settings");
+        return "admin/setting-admin";
     }
 }

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Settings | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/setting-admin.css}">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="admin-layout">
+    <div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+    <main class="admin-main">
+    <div class="setting-card">
+        <div class="setting-title">
+            <i class="fa-solid fa-palette"></i>
+            <h3>Appearance</h3>
+        </div>
+        <div class="setting-row">
+            <strong>Theme Mode</strong>
+            <div class="theme-switch">
+                <button class="theme-btn active">
+                    <i class="fa-solid fa-sun"></i>
+                    Light
+                </button>
+                <button class="theme-btn">
+                    <i class="fa-solid fa-moon"></i>
+                    Dark
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="setting-card">
+        <div class="setting-title">
+            <i class="fa-solid fa-language"></i>
+            <h3>Language & Region</h3>
+        </div>
+        <div class="setting-row">
+            <strong>Language</strong>
+            <select>
+                <option>English</option>
+                <option>Vietnamese</option>
+            </select>
+        </div>
+        <div class="setting-row">
+            <strong>Currency</strong>
+            <select>
+                <option>USD</option>
+                <option>VND</option>
+            </select>
+        </div>
+    </div>
+    <div class="setting-card">
+        <div class="setting-title">
+            <i class="fa-solid fa-bell"></i>
+            <h3>Notifications</h3>
+        </div>
+        <div class="setting-row">
+            <strong>Booking Alert</strong>
+            <label class="toggle">
+                <input type="checkbox" checked>
+                <span></span>
+            </label>
+        </div>
+        <div class="setting-row">
+            <strong>Payment Notification</strong>
+            <label class="toggle">
+                <input type="checkbox" checked>
+                <span></span>
+            </label>
+        </div>
+    </div>
+    <div class="setting-card">
+        <div class="setting-title">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h3>Security</h3>
+        </div>
+        <div class="setting-row">
+            <strong>Auto Logout</strong>
+            <label class="toggle">
+                <input type="checkbox">
+                <span></span>
+            </label>
+        </div>
+        <div class="setting-row">
+            <strong>Session Timeout</strong>
+            <select>
+                <option>15 minutes</option>
+                <option selected>30 minutes</option>
+                <option>60 minutes</option>
+            </select>
+        </div>
+    </div>
+    <div class="setting-card">
+        <div class="setting-title">
+            <i class="fa-solid fa-database"></i>
+            <h3>Data Management</h3>
+        </div>
+        <div class="button-group">
+            <button class="primary-btn">
+                <i class="fa-solid fa-download"></i>
+                Backup
+            </button>
+            <button class="secondary-btn">
+                Export
+            </button>
+        </div>
+    </div>
+
+    <div class="logout-card">
+        <button>
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </button>
+    </div>
+    </main>
+</div>
+</body>
+
+</html>
