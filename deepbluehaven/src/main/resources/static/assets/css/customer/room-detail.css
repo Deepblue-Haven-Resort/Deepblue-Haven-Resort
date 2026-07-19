@@ -458,25 +458,7 @@
     filter: saturate(1.06) contrast(1.02);
 }
 
-/* Responsive text */
-@media (max-width: 760px) {
-    .room-gallery-slider {
-        padding-inline: 44px;
-    }
 
-    .room-gallery__content {
-        padding: 64px var(--space-16) var(--space-16);
-    }
-
-    .room-gallery__content h3 {
-        font-size: 1.25rem;
-    }
-
-    .room-gallery__content p {
-        font-size: 0.82rem;
-        line-height: 1.45;
-    }
-}
 
 
 
@@ -802,6 +784,11 @@
     font-size: 1.8rem;
     line-height: 1;
 }
+.room-booking-card__head strong span {
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+}
 
 .room-booking-card__badge {
     min-height: 34px;
@@ -1049,4 +1036,171 @@
         opacity: 0;
         transform: translateX(24px) scale(0.98);
     }
+}
+/* =========================
+   RESPONSIVE — TABLET (<=1180px)
+========================= */
+@media (max-width: 1180px) {
+    .room-content {
+        grid-template-columns: 1fr;
+    }
+
+    .room-content__side {
+        position: static;
+        top: auto;
+    }
+
+    .room-gallery-slider .room-gallery__viewport {
+        height: 340px;
+    }
+
+    .room-gallery-slider .room-gallery__item.is-active {
+        width: clamp(380px, 58vw, 620px);
+        height: 320px;
+    }
+
+    .room-gallery-slider .room-gallery__item {
+        width: clamp(170px, 20vw, 240px);
+        height: 190px;
+    }
+
+    .room-rating-card {
+        grid-template-columns: minmax(0, 1fr) auto;
+        row-gap: var(--space-16);
+    }
+
+    .room-rating-card__reviews {
+        grid-column: 2;
+    }
+}
+
+@media (max-width: 760px) {
+    .room-gallery-slider {
+        padding-inline: 24px;
+    }
+
+    .room-gallery-slider .room-gallery__viewport {
+        height: 280px;
+    }
+
+    .room-gallery-slider .room-gallery__item.is-active {
+        width: clamp(240px, 78vw, 420px);
+        height: 250px;
+    }
+
+    .room-gallery-slider .room-gallery__item {
+        width: clamp(110px, 32vw, 170px);
+        height: 150px;
+    }
+
+    .room-gallery-slider .room-gallery__nav {
+        width: 40px;
+        height: 40px;
+    }
+
+    .room-gallery__content {
+        padding: 64px var(--space-16) var(--space-16);
+    }
+
+    .room-gallery__content h3 {
+        font-size: 1.25rem;
+    }
+
+    .room-gallery__content p {
+        font-size: 0.82rem;
+        line-height: 1.45;
+    }
+
+    .room-hero__top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-16);
+    }
+
+    .room-content {
+        margin-top: var(--space-32);
+        gap: var(--space-32);
+    }
+
+    .room-summary__head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-12);
+    }
+
+    .room-rating-card {
+        grid-template-columns: 1fr;
+        justify-items: start;
+        gap: var(--space-16);
+    }
+
+    .room-rating-card__score,
+    .room-rating-card__reviews {
+        align-items: flex-start;
+    }
+
+    .room-highlights,
+    .room-amenities {
+        grid-template-columns: 1fr;
+    }
+
+    .room-mini-stats {
+        gap: var(--space-8);
+    }
+}
+
+@media (max-width: 480px) {
+    .room-gallery {
+        width: 100vw;
+        margin-inline: calc(50% - 50vw);
+    }
+
+    .room-gallery-slider {
+        padding-inline: 0;
+    }
+
+    .room-gallery-slider .room-gallery__viewport {
+        overflow: hidden;
+    }
+
+    .room-gallery-slider .room-gallery__item.is-prev,
+    .room-gallery-slider .room-gallery__item.is-next {
+        display: none;
+    }
+
+    .room-gallery-slider .room-gallery__item.is-active {
+        width: 100vw;
+        height: 260px;
+        border-radius: 0;
+    }
+
+    .room-mini-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .room-mini-stats div:last-child {
+        grid-column: 1 / -1;
+    }
+    
+
+
+.room-gallery__content {
+    padding: 40px var(--space-16) var(--space-16);  
+}
+.footer-bottom {
+    flex-direction: row;       
+    flex-wrap: wrap;          
+    justify-content: flex-start;
+    align-items: center;
+    row-gap: 12px;
+}
+
+.footer-bottom p {
+    margin: 0;
+}
+
+.footer-bottom-links {
+    margin-left: auto;         
+    gap: 16px;
+}
 }

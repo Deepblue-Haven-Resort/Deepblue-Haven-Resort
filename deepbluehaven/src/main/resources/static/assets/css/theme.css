@@ -134,3 +134,14 @@
     --border-15: 1.5px;
     --border-3: 3px;
 }
+@media (max-width: 1024px) {
+    :root {
+        --grid-desktop-margin: var(--grid-tablet-margin);
+    }
+}
+
+@media (max-width: 640px) {
+    :root {
+        --grid-desktop-margin: var(--grid-mobile-margin);
+    }
+}
