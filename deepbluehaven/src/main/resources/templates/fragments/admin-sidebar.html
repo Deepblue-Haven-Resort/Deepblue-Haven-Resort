@@ -7,25 +7,16 @@
     <nav class="sidebar-menu">
 
         <a th:href="@{/admin/dashboard}"
-           th:class="${activePage == 'dashboard'} ? 'sidebar-item active' : 'sidebar-item'">
+            th:class="${activePage == 'dashboard'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-chart-line"></i>
             <span>Dashboard</span>
         </a>
 
-        <a th:href="@{/admin/accounts}"
-           th:class="${activePage == 'accounts'} ? 'sidebar-item active' : 'sidebar-item'">
+        <a th:href="@{/admin/accounts}" th:class="${activePage == 'accounts'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-users-gear"></i>
             <span>Account Management</span>
         </a>
-
-        <a th:href="@{/admin/roles}"
-           th:class="${activePage == 'roles'} ? 'sidebar-item active' : 'sidebar-item'">
-            <i class="fa-solid fa-user-shield"></i>
-            <span>Role Management</span>
-        </a>
-
-        <a th:href="@{/admin/reports}"
-           th:class="${activePage == 'reports'} ? 'sidebar-item active' : 'sidebar-item'">
+        <a th:href="@{/admin/reports}" th:class="${activePage == 'reports'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-file-lines"></i>
             <span>Reports</span>
         </a>
@@ -34,7 +25,7 @@
 
     <div class="sidebar-footer">
 
-        <a th:href="@{/settings}" class="sidebar-item">
+        <a th:href="@{/admin/settings}" th:class="${activePage == 'settings'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-gear"></i>
             <span>Settings</span>
         </a>
