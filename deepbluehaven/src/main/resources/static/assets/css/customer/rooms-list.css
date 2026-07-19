@@ -732,6 +732,22 @@ body {
     .room-card__media {
         height: 220px;
     }
+    .footer-bottom {
+    flex-direction: row;       
+    flex-wrap: wrap;           
+    justify-content: flex-start;
+    align-items: center;
+    row-gap: 12px;
+}
+
+.footer-bottom p {
+    margin: 0;
+}
+
+.footer-bottom-links {
+    margin-left: auto;         
+    gap: 16px;
+}
 }
 
 @media (max-width: 520px) {
