@@ -1,7 +1,9 @@
 <link rel="stylesheet" th:href="@{/assets/css/header.css}" />
 
-<div th:fragment="header" id="header" class="site-header"
-  th:data-user-id="${session.currentUser != null ? session.currentUser.id : ''}">
+<div th:fragment="header"
+     id="header"
+     class="site-header"
+     th:data-user-id="${session.loggedInCustomerId}">
   <a th:href="@{/}" class="header-logo" aria-label="Deep Blue Haven">
     <img th:src="@{/assets/pic/logo.png}" alt="Deep Blue Haven" />
   </a>
@@ -59,22 +61,56 @@
       </button>
 
       <div class="user-dropdown" id="userDropdown" role="menu">
-        <a th:href="@{/profile}" role="menuitem" class="">Profile</a>
-        <a th:href="@{/booking}" role="menuitem">Booking</a>
-        <a th:href="@{/booking/history}" role="menuitem">Booking History</a>
-        <a th:href="@{/favorites}" role="menuitem">Favorites</a>
 
-        <div class="divider"></div>
-
-        <a th:if="${session.currentUser == null}" th:href="@{/login}" role="menuitem">
+        <!-- Chưa đăng nhập -->
+        <a th:if="${session.loggedInCustomerId == null}"
+          th:href="@{/login}"
+          role="menuitem">
           Login
         </a>
 
-        <form th:if="${session.currentUser != null}" th:action="@{/logout}" method="post" class="logout-form">
-          <button type="submit" class="dropdown-logout" role="menuitem">
-            Logout
-          </button>
-        </form>
+        <!-- Đã đăng nhập -->
+        <th:block th:if="${session.loggedInCustomerId != null}">
+          <div class="user-info"
+              th:if="${session.customerName != null}">
+            <span th:text="${session.customerName}">Customer</span>
+          </div>
+
+          <a th:href="@{/profile}" role="menuitem">
+            Profile
+          </a>
+
+          <a th:href="@{/booking}" role="menuitem">
+            Booking
+          </a>
+
+          <a th:href="@{/booking/history}" role="menuitem">
+            Booking History
+          </a>
+
+          <a th:href="@{/favorites}" role="menuitem">
+            Favorites
+          </a>
+
+          <div class="divider"></div>
+
+          <form th:action="@{/logout}"
+                method="post"
+                class="logout-form">
+
+            <input type="hidden"
+                  th:if="${_csrf != null}"
+                  th:name="${_csrf.parameterName}"
+                  th:value="${_csrf.token}" />
+
+            <button type="submit"
+                    class="dropdown-logout"
+                    role="menuitem">
+              Logout
+            </button>
+          </form>
+        </th:block>
+
       </div>
     </div>
   </nav>

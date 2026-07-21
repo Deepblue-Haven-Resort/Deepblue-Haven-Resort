@@ -59,7 +59,7 @@
           <p class="caption-3">Chào mừng trở lại</p>
 
           <h2 class="heading-4">
-            <span th:text="${session.currentUser != null ? session.currentUser.fullName : 'Quý khách'}">
+            <span th:text="${session.loggedInCustomerId != null ? session.loggedInCustomerId.fullName : 'Quý khách'}">
               Quý khách
             </span>
           </h2>

@@ -68,6 +68,15 @@
                            th:name="${_csrf.parameterName}"
                            th:value="${_csrf.token}" />
 
+                    <label class="auth-field" for="username">
+                        <span>Username</span>
+                        <input id="username"
+                               name="username"
+                               type="text"
+                               placeholder="Enter your username"
+                               required />
+                    </label>
+
                     <label class="auth-field" for="fullName">
                         <span>Full name</span>
                         <input id="fullName"
@@ -79,15 +88,14 @@
                     </label>
 
                     <label class="auth-field" for="email">
-                        <span>Email / SĐT</span>
+                        <span>Email / Phone number</span>
                         <input id="email"
                                name="email"
                                type="email"
                                autocomplete="email"
-                               placeholder="Enter your email"
+                               placeholder="Enter your email/ phone number"
                                required />
                     </label>
-
                     
                     <label class="auth-field" for="password">
                         <span>Password</span>
