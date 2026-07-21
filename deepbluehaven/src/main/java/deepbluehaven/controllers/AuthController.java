@@ -1,15 +1,23 @@
 package deepbluehaven.controllers;
 
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import deepbluehaven.dto.RegisterDTO;
 import deepbluehaven.pojo.Customer;
 import deepbluehaven.pojo.Worker;
 import deepbluehaven.services.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class AuthController {
@@ -21,6 +29,7 @@ public class AuthController {
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
+
 
     @GetMapping("/login")
     public String loginPage(@RequestParam(value = "logout", required = false) String logout,
@@ -144,7 +153,23 @@ public class AuthController {
     }
 
     @GetMapping("/register")
-    public String registerPage() {
+    public String registerPage(Model model) {
+        if (!model.containsAttribute("registerForm")) {
+            model.addAttribute("registerForm", new RegisterDTO.Request());
+        }
         return "auth/register";
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterDTO.Request request) {
+        Customer customer = authService.registerCustomer(request);
+ 
+        Map<String, Object> body = Map.of(
+                "id", customer.getId(),
+                "username", customer.getUsername(),
+                "message", "Registration successful"
+        );
+ 
+        return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 }

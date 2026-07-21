@@ -3,6 +3,7 @@ package deepbluehaven.pojo;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,7 +15,13 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Customer_Profile")
+@Table(
+    name = "Customer_Profile",
+    check = @CheckConstraint(
+        name = "Check_email_or_phone",
+        constraint = "email IS NOT NULL OR phone_number IS NOT NULL"
+    )
+)
 public class CustomerProfile {
 
     @Id
@@ -32,7 +39,7 @@ public class CustomerProfile {
     @Column(name = "full_name", nullable = false, length = 120)
     private String fullName;
 
-    @Column(name = "phone_number", nullable = false, length = 20)
+    @Column(name = "phone_number", nullable = true, length = 20)
     private String phoneNumber;
 
     @Column(name = "email", nullable = true, length = 120)

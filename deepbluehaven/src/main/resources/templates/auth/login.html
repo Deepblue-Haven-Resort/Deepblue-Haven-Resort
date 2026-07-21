@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}" />
+    <meta name="_context_path" th:content="@{/}" />
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}" />
     <title>Login | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}" />
@@ -12,6 +15,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/footer.css}" />
     <link rel="stylesheet" th:href="@{/assets/css/components.css}" />
     <link rel="stylesheet" th:href="@{/assets/css/auth/auth.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/toast.css}" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
@@ -59,11 +63,7 @@
 
                     <div class="auth-heading">
                         <h2>Login to your account</h2>
-                    </div>
-
-                    <p class="auth-alert auth-alert--error" th:if="${param.error}">
-                        Username or password is incorrect.
-                    </p>
+                    </div>  
 
                     <p class="auth-alert auth-alert--success" th:if="${param.logout}">
                         You have logged out successfully.
@@ -154,7 +154,8 @@
 
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
-    <script th:src="@{/js/login.js}"></script>
+    <div th:replace="~{fragments/toast :: toast}"></div>
     <script th:src="@{/js/auth/auth.js}"></script>
+    <script th:src="@{/js/login.js}"></script>
 </body>
 </html>
