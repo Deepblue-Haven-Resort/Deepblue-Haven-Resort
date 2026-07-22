@@ -36,91 +36,74 @@ document.addEventListener("click", () => {
     });
 });
 
+
 const state = {
     search: "",
     role: "",
     status: "",
     page: 0,
 };
- 
+
 const accountTableBody = document.getElementById("accountTableBody");
 const accountSearchInput = document.getElementById("accountSearchInput");
 const roleFilterMenu = document.getElementById("roleFilterMenu");
 const statusFilterMenu = document.getElementById("statusFilterMenu");
 const accountTableSummary = document.getElementById("accountTableSummary");
 const accountPagination = document.getElementById("accountPagination");
- 
+
 function getApiUrl(path) {
     const contextPath = document.querySelector('meta[name="_context_path"]')?.content || "/";
     return contextPath + path;
 }
- 
+
 function getHeaders(extra = {}) {
     const token = document.querySelector('meta[name="_csrf"]')?.content;
     const header = document.querySelector('meta[name="_csrf_header"]')?.content;
- 
+
     const headers = { ...extra };
     if (token && header) headers[header] = token;
- 
+
     return headers;
 }
- 
+
 function notify(type, title, message) {
     if (typeof showToast === "function") {
         showToast(type, title, message);
     }
 }
- 
+
 async function loadStats() {
     try {
         const res = await fetch(getApiUrl("admin/accounts/stats"));
         if (!res.ok) return;
- 
+
         const stats = await res.json();
- 
+
         document.getElementById("statTotalAccounts").textContent = stats.totalAccounts;
         document.getElementById("statActive").textContent = stats.active;
         document.getElementById("statEmployees").textContent = stats.employees;
         document.getElementById("statLocked").textContent = stats.locked;
     } catch (err) {
-        notify("error", "Load failed", "Could not load dashboard stats.");
+        notify("error", "Load failed", "Could not load account stats.");
     }
 }
- 
-async function loadRoleDistribution() {
-    try {
-        const res = await fetch(getApiUrl("admin/accounts/role-distribution"));
-        if (!res.ok) return;
- 
-        const distribution = await res.json();
-        const total = Object.values(distribution).reduce((sum, n) => sum + n, 0);
- 
-        document.getElementById("donutTotalUsers").textContent = total;
-        document.getElementById("roleCountAdmin").textContent = distribution.ADMIN ?? 0;
-        document.getElementById("roleCountManager").textContent = distribution.MANAGER ?? 0;
-        document.getElementById("roleCountReceptionist").textContent = distribution.RECEPTIONIST ?? 0;
-        document.getElementById("roleCountHousekeeper").textContent = distribution.HOUSEKEEPER ?? 0;
-    } catch (err) {
-        notify("error", "Load failed", "Could not load role distribution.");
-    }
-}
- 
+
 async function loadAccounts() {
     if (!accountTableBody) return;
- 
+
     const params = new URLSearchParams();
     if (state.search) params.set("search", state.search);
     if (state.role) params.set("role", state.role);
     if (state.status) params.set("status", state.status);
     params.set("page", state.page);
- 
+
     try {
         const res = await fetch(getApiUrl(`admin/accounts/list?${params.toString()}`));
         if (!res.ok) {
             notify("error", "Load failed", "Could not load accounts.");
             return;
         }
- 
+
         const data = await res.json();
         renderTable(data.items);
         renderSummary(data);
@@ -129,21 +112,22 @@ async function loadAccounts() {
         notify("error", "Network error", "Could not reach the server.");
     }
 }
- 
+
 function renderTable(items) {
     accountTableBody.innerHTML = "";
- 
+
     if (!items || items.length === 0) {
-        accountTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No accounts found</td></tr>`;
+        accountTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No accounts found</td></tr>`;
         return;
     }
- 
+
     items.forEach((worker) => {
         const isActive = worker.status === "ACTIVE";
         const roleClass = (worker.role || "").toLowerCase();
         const statusClass = isActive ? "status-success" : "status-error";
         const statusLabel = isActive ? "Active" : "Locked";
         const roleLabel = worker.role ? worker.role.charAt(0) + worker.role.slice(1).toLowerCase() : "";
+
         let createdDateStr = "-";
         if (worker.createdAt) {
             if (Array.isArray(worker.createdAt)) {
@@ -154,6 +138,7 @@ function renderTable(items) {
                 createdDateStr = d.toLocaleDateString('vi-VN');
             }
         }
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>
@@ -170,25 +155,35 @@ function renderTable(items) {
             <td><span class="role ${roleClass}">${roleLabel}</span></td>
             <td><span class="status ${statusClass}">${statusLabel}</span></td>
             <td>${createdDateStr}</td>
+            <td>
+                <div class="action-group">
+                    <button class="edit-btn" data-id="${worker.id}"><i class="fa-solid fa-pen"></i></button>
+                    ${isActive
+                        ? `<button class="lock-btn" data-id="${worker.id}"><i class="fa-solid fa-lock"></i></button>`
+                        : `<button class="unlock-btn" data-id="${worker.id}"><i class="fa-solid fa-unlock"></i></button>`
+                    }
+                    <button class="delete-btn" data-id="${worker.id}"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </td>
         `;
         accountTableBody.appendChild(tr);
     });
 }
- 
+
 function renderSummary(data) {
     if (!accountTableSummary) return;
- 
+
     const from = data.totalItems === 0 ? 0 : data.currentPage * 5 + 1;
     const to = Math.min((data.currentPage + 1) * 5, data.totalItems);
- 
+
     accountTableSummary.innerHTML = `Hiển thị <strong>${from}-${to}</strong> trong <strong>${data.totalItems}</strong> tài khoản`;
 }
- 
+
 function renderPagination(data) {
     if (!accountPagination) return;
- 
+
     accountPagination.innerHTML = "";
- 
+
     const prevBtn = document.createElement("button");
     prevBtn.className = `page-btn${data.currentPage === 0 ? " disabled" : ""}`;
     prevBtn.innerHTML = `<i class="fa-solid fa-chevron-left"></i>`;
@@ -199,7 +194,7 @@ function renderPagination(data) {
         }
     });
     accountPagination.appendChild(prevBtn);
- 
+
     for (let i = 0; i < data.totalPages; i++) {
         const pageBtn = document.createElement("button");
         pageBtn.className = `page-btn${i === data.currentPage ? " active" : ""}`;
@@ -210,7 +205,7 @@ function renderPagination(data) {
         });
         accountPagination.appendChild(pageBtn);
     }
- 
+
     const nextBtn = document.createElement("button");
     nextBtn.className = `page-btn${data.currentPage >= data.totalPages - 1 ? " disabled" : ""}`;
     nextBtn.innerHTML = `<i class="fa-solid fa-chevron-right"></i>`;
@@ -222,13 +217,13 @@ function renderPagination(data) {
     });
     accountPagination.appendChild(nextBtn);
 }
- 
+
 function escapeHtml(str) {
     const div = document.createElement("div");
     div.textContent = str;
     return div.innerHTML;
 }
- 
+
 let searchDebounceTimer;
 if (accountSearchInput) {
     accountSearchInput.addEventListener("input", () => {
@@ -240,7 +235,7 @@ if (accountSearchInput) {
         }, 400);
     });
 }
- 
+
 if (roleFilterMenu) {
     roleFilterMenu.querySelectorAll("button").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -250,7 +245,7 @@ if (roleFilterMenu) {
         });
     });
 }
- 
+
 if (statusFilterMenu) {
     statusFilterMenu.querySelectorAll("button").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -260,29 +255,29 @@ if (statusFilterMenu) {
         });
     });
 }
- 
+
 if (accountTableBody) {
     accountTableBody.addEventListener("click", async (e) => {
         const editBtn = e.target.closest(".edit-btn");
         const lockBtn = e.target.closest(".lock-btn");
         const unlockBtn = e.target.closest(".unlock-btn");
         const deleteBtn = e.target.closest(".delete-btn");
- 
+
         if (editBtn) {
             window.location.href = getApiUrl(`admin/accounts/${editBtn.dataset.id}/edit`);
             return;
         }
- 
+
         if (lockBtn) {
             await changeStatus(lockBtn.dataset.id, "LOCKED");
             return;
         }
- 
+
         if (unlockBtn) {
             await changeStatus(unlockBtn.dataset.id, "ACTIVE");
             return;
         }
- 
+
         if (deleteBtn) {
             if (!confirm("This will hide the account from the list (soft-delete). The data stays in the database. Continue?")) {
                 return;
@@ -292,19 +287,19 @@ if (accountTableBody) {
         }
     });
 }
- 
+
 async function changeStatus(id, newStatus) {
     try {
         const res = await fetch(getApiUrl(`admin/accounts/${id}/status?status=${newStatus}`), {
             method: "PATCH",
             headers: getHeaders(),
         });
- 
+
         if (!res.ok) {
             notify("error", "Update failed", "Could not update account status.");
             return;
         }
- 
+
         notify("success", "Status updated", newStatus === "ACTIVE" ? "Account unlocked." : "Account locked.");
         loadAccounts();
         loadStats();
@@ -312,25 +307,25 @@ async function changeStatus(id, newStatus) {
         notify("error", "Network error", "Could not reach the server.");
     }
 }
- 
+
 async function deleteAccount(id) {
     try {
         const res = await fetch(getApiUrl(`admin/accounts/${id}`), {
             method: "DELETE",
             headers: getHeaders(),
         });
- 
+
         if (!res.ok) {
             let message = "Could not delete this account.";
             try {
                 const data = await res.json();
                 if (data.message) message = data.message;
-            } catch (_) {  }
- 
+            } catch (_) { /* no JSON body */ }
+
             notify("error", "Delete failed", message);
             return;
         }
- 
+
         notify("success", "Account deleted", "The account has been removed.");
         loadAccounts();
         loadStats();
@@ -338,7 +333,6 @@ async function deleteAccount(id) {
         notify("error", "Network error", "Could not reach the server.");
     }
 }
- 
+
 loadStats();
-loadRoleDistribution();
 loadAccounts();

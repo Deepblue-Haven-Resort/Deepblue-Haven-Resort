@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}" />
+    <meta name="_context_path" th:content="@{/}" />
     <title>Admin Dashboard | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
@@ -29,7 +32,7 @@
                     </div>
                     <div>
                         <span>Total accounts</span>
-                        <strong>128</strong>
+                        <strong id="statTotalAccounts">128</strong>
                     </div>
                 </article>
 
@@ -39,7 +42,7 @@
                     </div>
                     <div>
                         <span>Active</span>
-                        <strong>115</strong>
+                        <strong id="statActive">115</strong>
                     </div>
                 </article>
 
@@ -49,7 +52,7 @@
                     </div>
                     <div>
                         <span>Employees</span>
-                        <strong>24</strong>
+                        <strong id="statEmployees">24</strong>
                     </div>
                 </article>
 
@@ -59,7 +62,7 @@
                     </div>
                     <div>
                         <span>Locked</span>
-                        <strong>3</strong>
+                        <strong id="statLocked">3</strong>
                     </div>
                 </article>
 
@@ -76,9 +79,7 @@
                     </div>
 
                     <div class="chart-legend">
-                        <!-- Cột hiển thị số lượng người dùng được thêm mới mỗi ngày -->
                         <span><i class="legend-bar"></i> New Users</span>
-                        <!-- Đường biểu diễn số lượng phiên hoạt động hàng ngày -->
                         <span><i class="legend-line"></i> Active Sessions</span>
                     </div>
 
@@ -171,7 +172,7 @@
                     <div class="donut-wrap">
                         <div class="donut-chart"></div>
                         <div class="donut-center">
-                            <strong>128</strong>
+                            <strong id="donutTotalUsers">128</strong>
                             <span>Users</span>
                         </div>
                     </div>
@@ -183,7 +184,7 @@
                                 <span class="dot admin"></span>
                                 Admin
                             </span>
-                            <strong>104</strong>
+                            <strong id="roleCountAdmin">104</strong>
                         </div>
 
                         <div>
@@ -191,7 +192,7 @@
                                 <span class="dot staff"></span>
                                 Manager
                             </span>
-                            <strong>18</strong>
+                            <strong id="roleCountManager">18</strong>
                         </div>
 
                         <div>
@@ -199,7 +200,7 @@
                                 <span class="dot receptionist"></span>
                                 Receptionist
                             </span>
-                            <strong>6</strong>
+                            <strong id="roleCountReceptionist">6</strong>
                         </div>
 
                         <div>
@@ -207,7 +208,7 @@
                                 <span class="dot housekeeper"></span>
                                 Housekeeper
                             </span>
-                            <strong>10</strong>
+                            <strong id="roleCountHousekeeper">10</strong>
                         </div>
 
                     </div>
@@ -292,12 +293,12 @@
                             <i class="fa-solid fa-chevron-down"></i>
                         </button>
 
-                        <div class="filter-menu">
-                            <button type="button"><strong>All Roles</strong></button>
-                            <button type="button"><strong>Admin</strong></button>
-                            <button type="button"><strong>Manager</strong></button>
-                            <button type="button"><strong>Receptionist</strong></button>
-                            <button type="button"><strong>Housekeeper</strong></button>
+                        <div class="filter-menu" id="roleFilterMenu">
+                            <button type="button" data-role=""><strong>All Roles</strong></button>
+                            <button type="button" data-role="ADMIN"><strong>Admin</strong></button>
+                            <button type="button" data-role="MANAGER"><strong>Manager</strong></button>
+                            <button type="button" data-role="RECEPTIONIST"><strong>Receptionist</strong></button>
+                            <button type="button" data-role="HOUSEKEEPER"><strong>Housekeeper</strong></button>
                         </div>
                     </div>
 
@@ -308,21 +309,21 @@
                             <i class="fa-solid fa-chevron-down"></i>
                         </button>
 
-                        <div class="filter-menu">
+                        <div class="filter-menu" id="statusFilterMenu">
 
-                            <button>
+                            <button type="button" data-status="">
                                 <span class="status-dot all"></span>
                                 <strong>All Status</strong>
                             </button>
 
-                            <button>
+                            <button type="button" data-status="ACTIVE">
                                 <span class="status-dot active"></span>
                                 <strong></strong>Active</strong>
                             </button>
 
-                            <button>
-                                <span class="status-dot inactive"></span>
-                                <strong>Inactive</strong>
+                            <button type="button" data-status="LOCKED">
+                                <span class="status-dot locked"></span>
+                                <strong>Locked</strong>
                             </button>
 
                         </div>
@@ -339,11 +340,10 @@
                                 <th>Vai trò</th>
                                 <th>Trạng thái</th>
                                 <th>Ngày tạo</th>
-                                <th>Hành động</th>
                             </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody id="accountTableBody">
                             <tr>
                                 <td>
                                     <div class="user-info">
@@ -467,9 +467,9 @@
                     </table>
                 </div>
                 <div class="table-footer">
-                    <p>Hiển thị <strong>1-5</strong> trong <strong>128</strong> tài khoản</p>
+                    <p id="accountTableSummary">Hiển thị <strong>1-5</strong> trong <strong>128</strong> tài khoản</p>
 
-                    <div class="pagination">
+                    <div class="pagination" id="accountPagination">
                         <button class="page-btn disabled">
                             <i class="fa-solid fa-chevron-left"></i>
                         </button>

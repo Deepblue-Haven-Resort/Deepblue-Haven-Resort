@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}" />
+    <meta name="_context_path" th:content="@{/}" /> 
     <title>Accounts Management | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
@@ -29,7 +32,7 @@
                     </div>
                     <div>
                         <span>Total accounts</span>
-                        <strong>128</strong>
+                        <strong id="statTotalAccounts">128</strong>
                     </div>
                 </article>
 
@@ -39,7 +42,7 @@
                     </div>
                     <div>
                         <span>Active</span>
-                        <strong>115</strong>
+                        <strong id="statActive">115</strong>
                     </div>
                 </article>
 
@@ -49,7 +52,7 @@
                     </div>
                     <div>
                         <span>Employees</span>
-                        <strong>24</strong>
+                        <strong id="statEmployees">24</strong>
                     </div>
                 </article>
 
@@ -59,7 +62,7 @@
                     </div>
                     <div>
                         <span>Locked</span>
-                        <strong>3</strong>
+                        <strong id="statLocked">3</strong>
                     </div>
                 </article>
 
@@ -90,12 +93,12 @@
                             <i class="fa-solid fa-chevron-down"></i>
                         </button>
 
-                        <div class="filter-menu">
-                            <button type="button"><strong>All Roles</strong></button>
-                            <button type="button"><strong>Admin</strong></button>
-                            <button type="button"><strong></strong>Manager</strong></button>
-                            <button type="button"><strong>Receptionist</strong></button>
-                            <button type="button"><strong>Housekeeper</strong></button>
+                        <div class="filter-menu" id="roleFilterMenu">
+                            <button type="button" data-role=""><strong>All Roles</strong></button>
+                            <button type="button" data-role="ADMIN"><strong>Admin</strong></button>
+                            <button type="button" data-role="MANAGER"><strong>Manager</strong></button>
+                            <button type="button" data-role="RECEPTIONIST"><strong>Receptionist</strong></button>
+                            <button type="button" data-role="HOUSEKEEPER"><strong>Housekeeper</strong></button>
                         </div>
                     </div>
 
@@ -106,21 +109,21 @@
                             <i class="fa-solid fa-chevron-down"></i>
                         </button>
 
-                        <div class="filter-menu">
+                        <div class="filter-menu" id="statusFilterMenu">
 
                             <button>
                                 <span class="status-dot all"></span>
                                 <strong>All Status</strong>
                             </button>
 
-                            <button>
+                            <button type="button" data-status="ACTIVE">
                                 <span class="status-dot active"></span>
                                 <strong></strong>Active</strong>
                             </button>
 
-                            <button>
-                                <span class="status-dot inactive"></span>
-                                <strong>Inactive</strong>
+                            <button type="button" data-status="LOCKED">
+                                <span class="status-dot locked"></span>
+                                <strong>Locked</strong>
                             </button>
 
                         </div>
@@ -141,7 +144,7 @@
                             </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody id="accountTableBody">
                             <tr>
                                 <td>
                                     <div class="user-info">
@@ -265,9 +268,9 @@
                     </table>
                 </div>
                 <div class="table-footer">
-                    <p>Hiển thị <strong>1-5</strong> trong <strong>128</strong> tài khoản</p>
+                    <p id="accountTableSummary">Hiển thị <strong>1-5</strong> trong <strong>128</strong> tài khoản</p>
 
-                    <div class="pagination">
+                    <div class="pagination" id="accountPagination">
                         <button class="page-btn disabled">
                             <i class="fa-solid fa-chevron-left"></i>
                         </button>
@@ -287,8 +290,9 @@
 
         </main>
     </div>
-
-    <script th:src="@{/assets/js/admin-sidebar.js}"></script>
+    <div th:replace="~{fragments/toast :: toast}"></div>
+    <script th:src="@{/js/admin-sidebar.js}"></script>
+    <script th:src="@{/js/admin/accounts.js}"></script>
 </body>
 
 </html>
