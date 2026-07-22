@@ -9,6 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,17 +82,20 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private static final String SEED_SENTINEL = "seed_admin_001";
 
-    /**
-     * BCrypt hash của mật khẩu "password".
-     */
-    private static final String DEFAULT_PASSWORD_HASH =
-            "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
+    private static final String DEFAULT_PASSWORD = "password";
+
+    private final BCryptPasswordEncoder passwordEncoder;
+
 
     private static final LocalDate BASE_DATE = LocalDate.of(2026, 8, 1);
     private static final LocalDateTime BASE_TIME = LocalDateTime.of(2026, 7, 21, 8, 0);
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    public SeedDataRunner(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional
@@ -238,7 +242,7 @@ public class SeedDataRunner implements CommandLineRunner {
         for (int i = 0; i < 5; i++) {
             Worker worker = new Worker();
             worker.setUsername(i == 0 ? SEED_SENTINEL : String.format("seed_worker_%03d", i + 1));
-            worker.setPasswordHash(DEFAULT_PASSWORD_HASH);
+            worker.setPasswordHash(passwordEncoder.encode(DEFAULT_PASSWORD));
             worker.setStatus(WorkerStatus.values()[i % WorkerStatus.values().length]);
             persist(worker);
             workers.add(worker);
@@ -292,7 +296,7 @@ public class SeedDataRunner implements CommandLineRunner {
         for (int i = 0; i < 5; i++) {
             Customer customer = new Customer();
             customer.setUsername(String.format("seed_customer_%03d", i + 1));
-            customer.setPasswordHash(DEFAULT_PASSWORD_HASH);
+            customer.setPasswordHash(passwordEncoder.encode(DEFAULT_PASSWORD));
             persist(customer);
             customers.add(customer);
         }
