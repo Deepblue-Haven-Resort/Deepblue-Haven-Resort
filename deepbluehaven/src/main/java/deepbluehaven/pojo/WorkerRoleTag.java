@@ -12,16 +12,25 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "Worker_Role_Tag")
+@Table(
+        name = "Worker_Role_Tag",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_worker_permission",
+                        columnNames = {"worker_id", "permission_tag"}
+                )
+        }
+)
 public class WorkerRoleTag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "worker_id", nullable = false)
     private Worker worker;
 
@@ -32,23 +41,44 @@ public class WorkerRoleTag {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    public WorkerRoleTag() {}
+    public WorkerRoleTag() {
+    }
 
-    public Long getId() { 
-        return id; }
-    public void setId(Long id) { 
-        this.id = id; }
-    public Worker getWorker() { 
-        return worker; }
-    public void setWorker(Worker worker) { 
-        this.worker = worker; }
-    public PermissionTag getPermissionTag() { 
-        return permissionTag; }
+    public WorkerRoleTag(
+            Worker worker,
+            PermissionTag permissionTag,
+            String description) {
+
+        this.worker = worker;
+        this.permissionTag = permissionTag;
+        this.description = description;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Worker getWorker() {
+        return worker;
+    }
+
+    public void setWorker(Worker worker) {
+        this.worker = worker;
+    }
+
+    public PermissionTag getPermissionTag() {
+        return permissionTag;
+    }
+
     public void setPermissionTag(PermissionTag permissionTag) {
-        this.permissionTag = permissionTag; }
-    public String getDescription() { 
-        return description; }
-    public void setDescription(String description) { 
-        this.description = description; }
+        this.permissionTag = permissionTag;
+    }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

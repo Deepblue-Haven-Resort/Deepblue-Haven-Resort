@@ -57,7 +57,7 @@
                 <div class="auth-card">
 
                     <div class="auth-tabs">
-                        <a th:href="@{/login}" href="/login" class="auth-tab is-active">Login</a>
+                        <a th:href="@{/staff-login}" href="/staff-login" class="auth-tab is-active">Login</a>
                         <a th:href="@{/register}" href="/register" class="auth-tab">Register</a>
                     </div>
 
@@ -71,7 +71,7 @@
 
                     <form id="form-login"
                           class="auth-form"
-                          th:action="@{/login}"
+                          th:action="@{/staff-login}"
                           method="post">
 
                         <input type="hidden"
@@ -156,6 +156,6 @@
 
     <div th:replace="~{fragments/toast :: toast}"></div>
     <script th:src="@{/js/auth/auth.js}"></script>
-    <script th:src="@{/js/login.js}"></script>
+    <script th:src="@{/js/auth/login.js}"></script>
 </body>
 </html>

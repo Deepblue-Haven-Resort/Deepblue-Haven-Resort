@@ -1,4 +1,6 @@
 package deepbluehaven.pojo;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
@@ -31,33 +34,67 @@ public class Customer {
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private CustomerProfile profile;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<CustomerDiscount> discounts = new ArrayList<>();
 
-    public Customer() {}
+    public Customer() {
+    }
 
-    public Long getId() { 
-        return id; }
-    public void setId(Long id) { 
-        this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getUsername() { 
-        return username; }
-    public void setUsername(String username) { 
-        this.username = username; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getPasswordHash() { 
-        return passwordHash; }
-    public void setPasswordHash(String passwordHash) { 
-        this.passwordHash = passwordHash; }
+    public String getUsername() {
+        return username;
+    }
 
-    public CustomerProfile getProfile() { 
-        return profile; }
-    public void setProfile(CustomerProfile profile) { 
-        this.profile = profile; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public List<CustomerDiscount> getDiscounts() { 
-        return discounts; }
-    public void setDiscounts(List<CustomerDiscount> discounts) { 
-        this.discounts = discounts; }
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public CustomerProfile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(CustomerProfile profile) {
+        this.profile = profile;
+    }
+
+    public List<CustomerDiscount> getDiscounts() {
+        return discounts;
+    }
+
+    public void setDiscounts(List<CustomerDiscount> discounts) {
+        this.discounts = discounts;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @PrePersist
+    private void initializeCreatedAt() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 }
