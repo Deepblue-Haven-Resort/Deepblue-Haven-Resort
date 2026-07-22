@@ -32,39 +32,50 @@ document.addEventListener("DOMContentLoaded", () => {
     const roleConfig = {
         HOUSEKEEPER: {
             department: "HOUSEKEEPING",
-            level: "STAFF",
+            level: "1",
             badge: "Housekeeper",
             description: "Housekeeper can view assigned tasks, update cleaning progress and change room cleaning status.",
             preview: ["View own tasks", "Update task status", "Update room status"],
             permissions: [
-                "DASHBOARD_VIEW",
-                "ROOM_VIEW",
-                "ROOM_STATUS_UPDATE",
-                "TASK_VIEW",
-                "TASK_UPDATE"
+                "VIEW_TASK",
+                "UPDATE_TASK_STATUS"
             ]
         },
 
         RECEPTIONIST: {
             department: "RECEPTION",
-            level: "STAFF",
+            level: "2",
             badge: "Receptionist",
             description: "Receptionist can manage booking workflow, customer check-in/check-out and invoice viewing.",
             preview: ["Booking workflow", "Check-in/out", "View invoices"],
             permissions: [
-                "DASHBOARD_VIEW",
-                "ROOM_VIEW",
-                "BOOKING_VIEW",
-                "BOOKING_CREATE",
-                "BOOKING_UPDATE",
-                "CHECKIN_CHECKOUT",
-                "INVOICE_VIEW"
+                "VIEW_BOOKING",
+                "CREATE_BOOKING",
+                "CANCEL_BOOKING",
+                "CHECK_IN",
+                "CHECK_OUT",
+                "ASSIGN_ROOM",
+                "CREATE_SERVICE_ORDER",
+                "PROCESS_SERVICE_ORDER",
+                "CREATE_INVOICE",
+                "PROCESS_PAYMENT",
+                "APPLY_DISCOUNT",
+                "VIEW_TASK",
+                "UPDATE_TASK_STATUS",
+                "MANAGE_ROOM",
+                "MANAGE_SERVICE",
+                "MANAGE_INVENTORY",
+                "MANAGE_DISCOUNT",
+                "MANAGE_PRICING",
+                "MANAGE_MEMBERSHIP",
+                "VIEW_REPORT",
+                "MANAGE_COMMENT"
             ]
         },
 
         MANAGER: {
             department: "MANAGEMENT",
-            level: "MANAGER",
+            level: "3",
             badge: "Manager",
             description: "Manager can supervise operations, assign tasks, update rooms and view/export reports.",
             preview: ["Assign tasks", "View reports", "Manage operations"],
@@ -88,23 +99,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
         ADMIN: {
             department: "ADMINISTRATION",
-            level: "ADMIN",
+            level: "4",
             badge: "Admin",
             description: "Admin can manage employee accounts, permission levels and account security settings.",
             preview: ["Manage accounts", "Assign permissions", "Lock/unlock access"],
             permissions: [
-                "DASHBOARD_VIEW",
-                "ACCOUNT_VIEW",
-                "ACCOUNT_CREATE",
-                "ACCOUNT_UPDATE",
-                "ACCOUNT_LOCK",
-                "ROOM_VIEW",
-                "ROOM_UPDATE",
-                "BOOKING_VIEW",
-                "TASK_VIEW",
-                "INVOICE_VIEW",
-                "REPORT_VIEW",
-                "REPORT_EXPORT"
+                "VIEW_BOOKING",
+                "CREATE_BOOKING",
+                "CANCEL_BOOKING",
+                "CHECK_IN",
+                "CHECK_OUT",
+                "ASSIGN_ROOM",
+                "CREATE_SERVICE_ORDER",
+                "PROCESS_SERVICE_ORDER",
+                "CREATE_INVOICE",
+                "PROCESS_PAYMENT",
+                "APPLY_DISCOUNT",
+                "VIEW_TASK",
+                "UPDATE_TASK_STATUS",
+                "MANAGE_WORKER",
+                "MANAGE_ROOM",
+                "MANAGE_SERVICE",
+                "MANAGE_INVENTORY",
+                "MANAGE_DISCOUNT",
+                "MANAGE_PRICING",
+                "MANAGE_MEMBERSHIP",
+                "VIEW_REPORT",
+                "MANAGE_COMMENT"
             ]
         }
     };
@@ -121,9 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/\b\w/g, (char) => char.toUpperCase());
     };
 
-    /* ============================= */
-    /* DROPDOWN COMPONENT SUPPORT */
-    /* ============================= */
 
     const setDropdownValue = (inputId, value, triggerChange = true) => {
         const input = document.getElementById(inputId);

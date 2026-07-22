@@ -53,13 +53,14 @@ import deepbluehaven.pojo.enums.BookingStatus;
 import deepbluehaven.pojo.enums.CalculationType;
 import deepbluehaven.pojo.enums.ChatStatus;
 import deepbluehaven.pojo.enums.CustomerDiscountStatus;
+import deepbluehaven.pojo.enums.Department;
 import deepbluehaven.pojo.enums.DiscountType;
+import deepbluehaven.pojo.enums.Gender;
 import deepbluehaven.pojo.enums.InvoiceStatus;
 import deepbluehaven.pojo.enums.MessageType;
 import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.pojo.enums.PaymentMethod;
 import deepbluehaven.pojo.enums.PaymentType;
-import deepbluehaven.pojo.enums.PermissionTag;
 import deepbluehaven.pojo.enums.ReferenceType;
 import deepbluehaven.pojo.enums.Role;
 import deepbluehaven.pojo.enums.RoomStatus;
@@ -85,7 +86,6 @@ public class SeedDataRunner implements CommandLineRunner {
     private static final String DEFAULT_PASSWORD = "password";
 
     private final BCryptPasswordEncoder passwordEncoder;
-
 
     private static final LocalDate BASE_DATE = LocalDate.of(2026, 8, 1);
     private static final LocalDateTime BASE_TIME = LocalDateTime.of(2026, 7, 21, 8, 0);
@@ -140,8 +140,7 @@ public class SeedDataRunner implements CommandLineRunner {
         seedInvoiceStatusLogs(invoices, workers);
         seedPaymentTransactions(invoices);
 
-        List<ServiceOrder> serviceOrders =
-                seedServiceOrders(services, bookings, customers, workers);
+        List<ServiceOrder> serviceOrders = seedServiceOrders(services, bookings, customers, workers);
 
         seedComments(customers, resorts, rooms, services, workers);
 
@@ -161,8 +160,8 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private boolean isSeeded() {
         Long count = entityManager.createQuery(
-                        "select count(w) from Worker w where w.username = :username",
-                        Long.class)
+                "select count(w) from Worker w where w.username = :username",
+                Long.class)
                 .setParameter("username", SEED_SENTINEL)
                 .getSingleResult();
         return count > 0;
@@ -170,10 +169,10 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private List<MembershipTier> seedMembershipTiers() {
         TierStatus[] statuses = TierStatus.values();
-        int[] minimumPoints = {0, 1_000, 5_000, 15_000, 30_000};
-        String[] multipliers = {"1.00", "1.10", "1.25", "1.50", "2.00"};
-        String[] discountRates = {"0.00", "3.00", "5.00", "8.00", "12.00"};
-        int[] priorityDurations = {0, 15, 30, 45, 60};
+        int[] minimumPoints = { 0, 1_000, 5_000, 15_000, 30_000 };
+        String[] multipliers = { "1.00", "1.10", "1.25", "1.50", "2.00" };
+        String[] discountRates = { "0.00", "3.00", "5.00", "8.00", "12.00" };
+        int[] priorityDurations = { 0, 15, 30, 45, 60 };
 
         List<MembershipTier> tiers = new ArrayList<>();
         for (int i = 0; i < statuses.length; i++) {
@@ -193,11 +192,11 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private List<Resort> seedResorts() {
         String[][] data = {
-                {"Deep Blue Haven Đà Nẵng", "Võ Nguyên Giáp, Đà Nẵng"},
-                {"Deep Blue Haven Nha Trang", "Trần Phú, Nha Trang"},
-                {"Deep Blue Haven Phú Quốc", "Bãi Trường, Phú Quốc"},
-                {"Deep Blue Haven Quy Nhơn", "Ghềnh Ráng, Quy Nhơn"},
-                {"Deep Blue Haven Hạ Long", "Bãi Cháy, Hạ Long"}
+                { "Deep Blue Haven Đà Nẵng", "Võ Nguyên Giáp, Đà Nẵng" },
+                { "Deep Blue Haven Nha Trang", "Trần Phú, Nha Trang" },
+                { "Deep Blue Haven Phú Quốc", "Bãi Trường, Phú Quốc" },
+                { "Deep Blue Haven Quy Nhơn", "Ghềnh Ráng, Quy Nhơn" },
+                { "Deep Blue Haven Hạ Long", "Bãi Cháy, Hạ Long" }
         };
 
         List<Resort> resorts = new ArrayList<>();
@@ -239,11 +238,31 @@ public class SeedDataRunner implements CommandLineRunner {
     private List<Worker> seedWorkers() {
         List<Worker> workers = new ArrayList<>();
 
+        WorkerStatus[] statuses = WorkerStatus.values();
+
         for (int i = 0; i < 5; i++) {
+            WorkerStatus status = statuses[i % statuses.length];
+
             Worker worker = new Worker();
-            worker.setUsername(i == 0 ? SEED_SENTINEL : String.format("seed_worker_%03d", i + 1));
-            worker.setPasswordHash(passwordEncoder.encode(DEFAULT_PASSWORD));
-            worker.setStatus(WorkerStatus.values()[i % WorkerStatus.values().length]);
+            worker.setEmployeeCode(
+                    String.format("SEED-EMP-%03d", i + 1));
+
+            worker.setUsername(
+                    i == 0
+                            ? SEED_SENTINEL
+                            : String.format(
+                                    "seed_worker_%03d",
+                                    i + 1));
+
+            worker.setPasswordHash(
+                    passwordEncoder.encode(DEFAULT_PASSWORD));
+
+            worker.setStatus(status);
+            worker.setLocked(status == WorkerStatus.LOCKED);
+            worker.setForceChangePassword(false);
+            worker.setCreatedAt(
+                    BASE_TIME.minusDays(30L - i));
+
             persist(worker);
             workers.add(worker);
         }
@@ -262,6 +281,7 @@ public class SeedDataRunner implements CommandLineRunner {
         };
 
         Role[] roles = Role.values();
+        Gender[] genders = Gender.values();
         for (int i = 0; i < workers.size(); i++) {
             WorkerProfile profile = new WorkerProfile();
             profile.setWorker(workers.get(i));
@@ -270,6 +290,15 @@ public class SeedDataRunner implements CommandLineRunner {
             profile.setRoleLevel((i % 4) + 1);
             profile.setPhoneNumber(String.format("09110000%02d", i + 1));
             profile.setEmail("worker" + (i + 1) + "@deepbluehaven.test");
+            profile.setDepartment(defaultDepartment(roles[i % roles.length]));
+            profile.setGender(genders[i % genders.length]);
+            profile.setDateOfBirth(
+                    LocalDate.of(
+                            1985 + i,
+                            1 + i,
+                            10 + i));
+            profile.setAddress(
+                    "Địa chỉ nhân viên seed số " + (i + 1));
 
             workers.get(i).setProfile(profile);
             persist(profile);
@@ -277,16 +306,86 @@ public class SeedDataRunner implements CommandLineRunner {
         entityManager.flush();
     }
 
-    private void seedWorkerRoleTags(List<Worker> workers) {
-        PermissionTag[] permissions = PermissionTag.values();
-
-        for (int i = 0; i < permissions.length; i++) {
-            WorkerRoleTag roleTag = new WorkerRoleTag();
-            roleTag.setWorker(workers.get(i % workers.size()));
-            roleTag.setPermissionTag(permissions[i]);
-            roleTag.setDescription("Quyền seed: " + permissions[i].name());
-            persist(roleTag);
+    private int defaultRoleLevel(Role role) {
+        switch (role) {
+            case ADMIN:
+                return 4;
+            case MANAGER:
+                return 3;
+            case RECEPTIONIST:
+                return 2;
+            case HOUSEKEEPER:
+                return 1;
+            default:
+                throw new IllegalArgumentException(
+                        "Role không được hỗ trợ: " + role);
         }
+    }
+
+    private Department defaultDepartment(Role role) {
+        switch (role) {
+            case ADMIN:
+                return Department.ADMINISTRATION;
+            case MANAGER:
+                return Department.MANAGEMENT;
+            case RECEPTIONIST:
+                return Department.RECEPTION;
+            case HOUSEKEEPER:
+                return Department.HOUSEKEEPING;
+            default:
+                throw new IllegalArgumentException(
+                        "Role không được hỗ trợ: " + role);
+        }
+    }
+
+    private void seedWorkerRoleTags(List<Worker> workers) {
+        if (workers == null || workers.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Danh sách worker không được null hoặc rỗng");
+        }
+
+        for (Worker worker : workers) {
+            if (worker == null) {
+                throw new IllegalArgumentException(
+                        "Worker trong danh sách không được null");
+            }
+
+            WorkerProfile profile = worker.getProfile();
+
+            if (profile == null) {
+                throw new IllegalStateException(
+                        "Worker " + worker.getUsername()
+                                + " chưa có WorkerProfile");
+            }
+
+            Role role = profile.getRole();
+
+            if (role == null) {
+                throw new IllegalStateException(
+                        "Worker " + worker.getUsername()
+                                + " chưa được gán Role");
+            }
+
+            worker.applyDefaultPermissions(role);
+
+            for (WorkerRoleTag roleTag : worker.getRoleTags()) {
+                if (roleTag.getWorker() == null) {
+                    roleTag.setWorker(worker);
+                }
+
+                if (roleTag.getPermissionTag() == null) {
+                    throw new IllegalStateException(
+                            "Permission của worker "
+                                    + worker.getUsername()
+                                    + " không được null");
+                }
+
+                if (roleTag.getId() == null) {
+                    persist(roleTag);
+                }
+            }
+        }
+
         entityManager.flush();
     }
 
@@ -295,8 +394,18 @@ public class SeedDataRunner implements CommandLineRunner {
 
         for (int i = 0; i < 5; i++) {
             Customer customer = new Customer();
-            customer.setUsername(String.format("seed_customer_%03d", i + 1));
-            customer.setPasswordHash(passwordEncoder.encode(DEFAULT_PASSWORD));
+
+            customer.setUsername(
+                    String.format(
+                            "seed_customer_%03d",
+                            i + 1));
+
+            customer.setPasswordHash(
+                    passwordEncoder.encode(DEFAULT_PASSWORD));
+
+            customer.setCreatedAt(
+                    BASE_TIME.minusDays(20L - i));
+
             persist(customer);
             customers.add(customer);
         }
@@ -433,11 +542,11 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private List<TaskType> seedTaskTypes() {
         String[][] data = {
-                {"Dọn phòng", "Vệ sinh và chuẩn bị phòng"},
-                {"Kiểm tra phòng", "Kiểm tra phòng trước khi đón khách"},
-                {"Bảo trì điện", "Kiểm tra hệ thống điện"},
-                {"Bổ sung minibar", "Bổ sung hàng hóa minibar"},
-                {"Xử lý yêu cầu khách", "Xử lý yêu cầu phát sinh"}
+                { "Dọn phòng", "Vệ sinh và chuẩn bị phòng" },
+                { "Kiểm tra phòng", "Kiểm tra phòng trước khi đón khách" },
+                { "Bảo trì điện", "Kiểm tra hệ thống điện" },
+                { "Bổ sung minibar", "Bổ sung hàng hóa minibar" },
+                { "Xử lý yêu cầu khách", "Xử lý yêu cầu phát sinh" }
         };
 
         List<TaskType> taskTypes = new ArrayList<>();
@@ -481,7 +590,7 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private void seedPricingRules() {
         RoomType[] roomTypes = RoomType.values();
-        String[] multipliers = {"1.00", "1.15", "1.30", "1.50", "0.90"};
+        String[] multipliers = { "1.00", "1.15", "1.30", "1.50", "0.90" };
 
         for (int i = 0; i < 5; i++) {
             PricingRule rule = new PricingRule();
@@ -950,7 +1059,7 @@ public class SeedDataRunner implements CommandLineRunner {
     }
 
     private void seedInventoryTransactions(List<InventoryItem> inventoryItems) {
-        int[] changes = {50, -10, 100, -5, 75};
+        int[] changes = { 50, -10, 100, -5, 75 };
 
         for (int i = 0; i < inventoryItems.size(); i++) {
             InventoryTransaction transaction = new InventoryTransaction();

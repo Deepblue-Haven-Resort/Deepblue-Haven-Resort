@@ -1,0 +1,207 @@
+package deepbluehaven.services;
+
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import deepbluehaven.dto.WorkerCreateFormDTO;
+import deepbluehaven.pojo.Worker;
+import deepbluehaven.pojo.WorkerProfile;
+import deepbluehaven.pojo.WorkerRoleTag;
+import deepbluehaven.pojo.enums.Department;
+import deepbluehaven.pojo.enums.PermissionTag;
+import deepbluehaven.pojo.enums.Role;
+import deepbluehaven.repositories.WorkerRepository;
+
+@Service
+public class WorkerService {
+
+        private final WorkerRepository workerRepository;
+        private final BCryptPasswordEncoder passwordEncoder;
+
+        public WorkerService(
+                        WorkerRepository workerRepository,
+                        BCryptPasswordEncoder passwordEncoder) {
+
+                this.workerRepository = workerRepository;
+                this.passwordEncoder = passwordEncoder;
+        }
+
+        @Transactional
+        public Worker createWorker(WorkerCreateFormDTO form) {
+                String username = normalizeUsername(form.getUsername());
+                String employeeCode = normalizeEmployeeCode(form.getEmployeeCode());
+                String email = normalizeEmail(form.getEmail());
+
+                validateRoleDepartment(form.getRole(), form.getDepartment());
+                validateUniqueFields(username, employeeCode, email);
+
+                Worker worker = new Worker();
+                worker.setEmployeeCode(employeeCode);
+                worker.setUsername(username);
+                worker.setPasswordHash(passwordEncoder.encode(form.getPassword()));
+                worker.setStatus(form.getAccountStatus());
+                worker.setLocked(false);
+                worker.setForceChangePassword(true);
+
+                WorkerProfile profile = new WorkerProfile();
+                profile.setWorker(worker);
+                profile.setFullName(form.getFullName().trim());
+                profile.setRole(form.getRole());
+                profile.setRoleLevel(form.getPermissionLevel());
+                profile.setPhoneNumber(form.getPhone().trim());
+                profile.setEmail(email);
+                profile.setDepartment(form.getDepartment());
+                profile.setGender(form.getGender());
+                profile.setDateOfBirth(form.getDateOfBirth());
+                profile.setAddress(normalizeNullable(form.getAddress()));
+
+                // Luôn thiết lập cả hai phía của quan hệ.
+                worker.setProfile(profile);
+
+                Set<PermissionTag> permissions = resolvePermissions(form);
+                String sourceDescription = form.isUseDefaultPermissions()
+                                ? "Default permission of role " + form.getRole().name()
+                                : "Custom permission selected at worker creation";
+
+                for (PermissionTag permission : permissions) {
+                        WorkerRoleTag roleTag = new WorkerRoleTag();
+                        roleTag.setWorker(worker);
+                        roleTag.setPermissionTag(permission);
+                        roleTag.setDescription(sourceDescription);
+                        worker.getRoleTags().add(roleTag);
+                }
+
+                try {
+                        return workerRepository.saveAndFlush(worker);
+                } catch (DataIntegrityViolationException exception) {
+                        // Unique index vẫn là lớp bảo vệ cuối cùng trước race condition.
+                        throw new WorkerFormExceptionService(
+                                        "username",
+                                        "Username, employee ID or email already exists");
+                }
+        }
+
+        @Transactional(readOnly = true)
+        public Worker getWorker(Long workerId) {
+                if (workerId == null) {
+                        throw new IllegalArgumentException("Worker ID cannot be null");
+                }
+
+                return workerRepository.findWithProfileAndPermissionsById(workerId)
+                                .orElseThrow(() -> new IllegalArgumentException(
+                                                "Worker not found: " + workerId));
+        }
+
+        private Set<PermissionTag> resolvePermissions(WorkerCreateFormDTO form) {
+                if (form.isUseDefaultPermissions()) {
+                        return form.getRole().getDefaultPermissions();
+                }
+
+                if (form.getPermissions() == null || form.getPermissions().isEmpty()) {
+                        throw new WorkerFormExceptionService(
+                                        "permissions",
+                                        "Select at least one permission");
+                }
+
+                return EnumSet.copyOf(form.getPermissions());
+        }
+
+        private void validateUniqueFields(
+                        String username,
+                        String employeeCode,
+                        String email) {
+
+                if (workerRepository.existsByUsernameIgnoreCase(username)) {
+                        throw new WorkerFormExceptionService(
+                                        "username",
+                                        "Username already exists");
+                }
+
+                if (workerRepository.existsByEmployeeCodeIgnoreCase(employeeCode)) {
+                        throw new WorkerFormExceptionService(
+                                        "employeeCode",
+                                        "Employee ID already exists");
+                }
+
+                if (workerRepository.existsByProfile_EmailIgnoreCase(email)) {
+                        throw new WorkerFormExceptionService(
+                                        "email",
+                                        "Email already exists");
+                }
+        }
+
+        private void validateRoleDepartment(Role role, Department department) {
+                Department expectedDepartment = switch (role) {
+                        case HOUSEKEEPER -> Department.HOUSEKEEPING;
+                        case RECEPTIONIST -> Department.RECEPTION;
+                        case MANAGER -> Department.MANAGEMENT;
+                        case ADMIN -> Department.ADMINISTRATION;
+                };
+
+                if (department != expectedDepartment) {
+                        throw new WorkerFormExceptionService(
+                                        "department",
+                                        "Department does not match selected role");
+                }
+        }
+
+        private String normalizeUsername(String value) {
+                return value.trim().toLowerCase(Locale.ROOT);
+        }
+
+        private String normalizeEmployeeCode(String value) {
+                return value.trim().toUpperCase(Locale.ROOT);
+        }
+
+        private String normalizeEmail(String value) {
+                return value.trim().toLowerCase(Locale.ROOT);
+        }
+
+        private String normalizeNullable(String value) {
+                if (value == null || value.isBlank()) {
+                        return null;
+                }
+
+                return value.trim();
+        }
+
+        private Worker getWorkerWithPermissions(Long workerId) {
+                if (workerId == null) {
+                        throw new IllegalArgumentException(
+                                        "Worker id không được null");
+                }
+
+                return workerRepository
+                                .findWithPermissionsById(workerId)
+                                .orElseThrow(() -> new IllegalArgumentException(
+                                                "Không tìm thấy worker id " + workerId));
+        }
+
+        @Transactional
+        public void grantPermission(
+                        Long workerId,
+                        PermissionTag permission) {
+
+                Worker worker = getWorkerWithPermissions(workerId);
+
+                worker.addPermission(
+                                permission,
+                                "Permission được cấp thủ công");
+        }
+
+        @Transactional
+        public void revokePermission(
+                        Long workerId,
+                        PermissionTag permission) {
+
+                Worker worker = getWorkerWithPermissions(workerId);
+
+                worker.removePermission(permission);
+        }
+}

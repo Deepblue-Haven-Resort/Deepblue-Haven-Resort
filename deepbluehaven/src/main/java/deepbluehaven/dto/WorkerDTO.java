@@ -1,4 +1,5 @@
 package deepbluehaven.dto;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import deepbluehaven.pojo.enums.PermissionTag;
@@ -22,6 +23,8 @@ public class WorkerDTO {
         private Integer roleLevel;
         @NotNull(message = "At least one role tag is required")
         private List<PermissionTag> roleTags;
+
+        private LocalDateTime createdAt;
 
         public Request() {}
 
@@ -48,6 +51,14 @@ public class WorkerDTO {
             return roleTags; }
         public void setRoleTags(List<PermissionTag> roleTags) { 
             this.roleTags = roleTags; }
+
+        public LocalDateTime getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+        }
     }
 
     public static class Response {
@@ -60,6 +71,7 @@ public class WorkerDTO {
         private String email;
         private Integer roleLevel;
         private List<PermissionTag> roleTags;
+        private LocalDateTime createdAt;
 
         public Response() {}
 
@@ -85,6 +97,12 @@ public class WorkerDTO {
             return roleTags; }
         public void setRoleTags(List<PermissionTag> roleTags) { 
             this.roleTags = roleTags; }
+        public LocalDateTime getCreatedAt() {
+            return createdAt;
+        }
+        public void setCreatedAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+        }
     }
 
 }

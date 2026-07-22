@@ -1,5 +1,4 @@
-git status
-git log --oneline --decorate -5<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -84,7 +83,7 @@ git log --oneline --decorate -5<!DOCTYPE html>
                         </div>
                     </aside>
 
-                    <form class="wizard-form" id="createEmployeeForm" th:action="@{/admin/accounts/create}" method="post">
+                    <form class="wizard-form" id="createEmployeeForm" th:action="@{/admin/accounts/create}" th:object="${createWorkerForm}" method="post">
 
                         <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}"
                             th:value="${_csrf.token}">
@@ -108,7 +107,7 @@ git log --oneline --decorate -5<!DOCTYPE html>
                                 <div class="form-group">
                                     <label for="department">Department <span>*</span></label>
 
-                                    <input type="hidden" id="department" name="department" data-required>
+                                    <input type="hidden" id="department" th:field="*{department}" data-required>
 
                                     <div class="filter-dropdown form-filter-dropdown" data-input="department">
                                         <button class="filter-btn form-filter-btn" type="button">
@@ -142,7 +141,7 @@ git log --oneline --decorate -5<!DOCTYPE html>
                                 <div class="form-group">
                                     <label for="role">Role <span>*</span></label>
 
-                                    <input type="hidden" id="role" name="role" data-required>
+                                    <input type="hidden" id="role" th:field="*{role}" data-required>
 
                                     <div class="filter-dropdown form-filter-dropdown" data-input="role">
                                         <button class="filter-btn form-filter-btn" type="button">
@@ -176,7 +175,7 @@ git log --oneline --decorate -5<!DOCTYPE html>
                                 <div class="form-group">
                                     <label for="permissionLevel">Permission Level <span>*</span></label>
 
-                                    <input type="hidden" id="permissionLevel" name="permissionLevel" data-required>
+                                    <input type="hidden" id="permissionLevel" th:field="*{permissionLevel}" data-required>
 
                                     <div class="filter-dropdown form-filter-dropdown" data-input="permissionLevel">
                                         <button class="filter-btn form-filter-btn" type="button">
@@ -185,19 +184,19 @@ git log --oneline --decorate -5<!DOCTYPE html>
                                         </button>
 
                                         <div class="filter-menu form-filter-menu">
-                                            <button type="button" data-value="LV1">
+                                            <button type="button" data-value="1">
                                                 <strong>Level 1</strong>
                                             </button>
 
-                                            <button type="button" data-value="LV2">
+                                            <button type="button" data-value="2">
                                                 <strong>Level 2</strong>
                                             </button>
 
-                                            <button type="button" data-value="LV3">
+                                            <button type="button" data-value="3">
                                                 <strong>Level 3</strong>
                                             </button>
 
-                                            <button type="button" data-value="LV4">
+                                            <button type="button" data-value="4">
                                                 <strong>Level 4</strong>
                                             </button>
                                         </div>
@@ -210,7 +209,7 @@ git log --oneline --decorate -5<!DOCTYPE html>
                                 <div class="form-group">
                                     <label for="accountStatus">Account Status</label>
 
-                                    <input type="hidden" id="accountStatus" name="accountStatus" value="ACTIVE">
+                                    <input type="hidden" id="accountStatus" th:field="*{accountStatus}" value="ACTIVE" data-required>
 
                                     <div class="filter-dropdown form-filter-dropdown" data-input="accountStatus">
                                         <button class="filter-btn form-filter-btn" type="button">
@@ -270,8 +269,7 @@ git log --oneline --decorate -5<!DOCTYPE html>
 
                                 <div class="form-group">
                                     <label for="fullName">Full Name <span>*</span></label>
-                                    <input id="fullName" type="text" name="fullName"
-                                        placeholder="Example: Trần Hoàng Nam" data-required>
+                                    <input id="fullName" type="text" th:field="*{fullName}" placeholder="Trần Hoàng Nam" data-required>
                                     <small class="field-error"></small>
                                 </div>
 
@@ -279,7 +277,7 @@ git log --oneline --decorate -5<!DOCTYPE html>
                                 <div class="form-group">
                                     <label for="gender">Gender <span>*</span></label>
 
-                                    <input type="hidden" id="gender" name="gender" data-required>
+                                    <input type="hidden" id="gender" th:field="*{gender}" data-required>
 
                                     <div class="filter-dropdown form-filter-dropdown" data-input="gender">
                                         <button class="filter-btn form-filter-btn" type="button">
@@ -307,27 +305,27 @@ git log --oneline --decorate -5<!DOCTYPE html>
 
                                 <div class="form-group">
                                     <label for="dateOfBirth">Date of Birth <span>*</span></label>
-                                    <input id="dateOfBirth" type="date" name="dateOfBirth" data-required>
+                                    <input id="dateOfBirth" type="date" th:field="*{dateOfBirth}" data-required>
                                     <small class="field-error"></small>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="phone">Phone Number <span>*</span></label>
-                                    <input id="phone" type="tel" name="phone" placeholder="Example: 0902814800"
+                                    <input id="phone" type="tel" th:field="*{phone}" placeholder="Example: 0902814800"
                                         data-required data-phone>
                                     <small class="field-error"></small>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="email">Email <span>*</span></label>
-                                    <input id="email" type="email" name="email" placeholder="employee@deepblue.com"
+                                    <input id="email" type="email" th:field="*{email}" placeholder="employee@deepblue.com"
                                         data-required data-email>
                                     <small class="field-error"></small>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="address">Address</label>
-                                    <input id="address" type="text" name="address" placeholder="Da Nang, Viet Nam">
+                                    <input id="address" type="text" th:field="*{address}" placeholder="Da Nang, Viet Nam">
                                     <small class="field-hint">Optional but recommended for employee profile.</small>
                                 </div>
 
@@ -351,14 +349,14 @@ git log --oneline --decorate -5<!DOCTYPE html>
 
                                 <div class="form-group">
                                     <label for="employeeCode">Employee ID <span>*</span></label>
-                                    <input id="employeeCode" type="text" name="employeeCode" placeholder="EMP-HK-001"
+                                    <input id="employeeCode" type="text" th:field="*{employeeCode}" placeholder="EMP-HK-001"
                                         data-required>
                                     <small class="field-error"></small>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="username">Username <span>*</span></label>
-                                    <input id="username" type="text" name="username" placeholder="nam.housekeeping"
+                                    <input id="username" type="text" th:field="*{username}" placeholder="nam.housekeeping"
                                         data-required>
                                     <small class="field-error"></small>
                                 </div>
@@ -366,7 +364,7 @@ git log --oneline --decorate -5<!DOCTYPE html>
                                 <div class="form-group">
                                     <label for="password">Password <span>*</span></label>
                                     <div class="password-field">
-                                        <input id="password" type="password" name="password"
+                                        <input id="password" type="password" th:field="*{password}"
                                             placeholder="Enter password" data-required data-password>
                                         <button type="button" class="toggle-password" data-toggle-password="password">
                                             <i class="fa-solid fa-eye"></i>
@@ -378,7 +376,7 @@ git log --oneline --decorate -5<!DOCTYPE html>
                                 <div class="form-group">
                                     <label for="confirmPassword">Confirm Password <span>*</span></label>
                                     <div class="password-field">
-                                        <input id="confirmPassword" type="password" name="confirmPassword"
+                                        <input id="confirmPassword" type="password" th:field="*{confirmPassword}"
                                             placeholder="Confirm password" data-required data-confirm-password>
                                         <button type="button" class="toggle-password"
                                             data-toggle-password="confirmPassword">
@@ -406,7 +404,10 @@ git log --oneline --decorate -5<!DOCTYPE html>
 
                             <div class="permission-toolbar">
                                 <label class="use-default-permission">
-                                    <input type="checkbox" id="useDefaultPermissions" checked>
+                                    <input
+                                        type="checkbox"
+                                        id="useDefaultPermissions"
+                                        th:field="*{useDefaultPermissions}">
                                     <span>Use default permissions by selected role</span>
                                 </label>
 
@@ -417,194 +418,32 @@ git log --oneline --decorate -5<!DOCTYPE html>
                             </div>
 
                             <div class="permission-matrix">
-
-                                <div class="permission-module">
+                                <div class="permission-module"
+                                    th:each="permission : ${allPermissions}">
                                     <div class="module-info">
-                                        <i class="fa-solid fa-chart-line"></i>
+                                        <i class="fa-solid fa-shield-halved"></i>
                                         <div>
-                                            <strong>Dashboard</strong>
+                                            <strong
+                                                th:text="${#strings.capitalizeWords(
+                                                    #strings.toLowerCase(
+                                                        #strings.replace(permission.name(), '_', ' ')
+                                                    )
+                                                )}">
+                                                Permission
+                                            </strong>
                                         </div>
                                     </div>
 
                                     <div class="permission-checks">
                                         <label>
-                                            <input type="checkbox" name="permissions" value="DASHBOARD_VIEW">
-                                            View
+                                            <input
+                                                type="checkbox"
+                                                th:field="*{permissions}"
+                                                th:value="${permission}">
+                                            Enabled
                                         </label>
                                     </div>
                                 </div>
-
-                                <div class="permission-module">
-                                    <div class="module-info">
-                                        <i class="fa-solid fa-users-gear"></i>
-                                        <div>
-                                            <strong>Accounts</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="permission-checks">
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="ACCOUNT_VIEW">
-                                            View
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="ACCOUNT_CREATE">
-                                            Create
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="ACCOUNT_UPDATE">
-                                            Update
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="ACCOUNT_LOCK">
-                                            Lock
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="permission-module">
-                                    <div class="module-info">
-                                        <i class="fa-solid fa-bed"></i>
-                                        <div>
-                                            <strong>Rooms</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="permission-checks">
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="ROOM_VIEW">
-                                            View
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="ROOM_UPDATE">
-                                            Update
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="ROOM_STATUS_UPDATE">
-                                            Update Status
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="permission-module">
-                                    <div class="module-info">
-                                        <i class="fa-solid fa-calendar-check"></i>
-                                        <div>
-                                            <strong>Bookings</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="permission-checks">
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="BOOKING_VIEW">
-                                            View
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="BOOKING_CREATE">
-                                            Create
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="BOOKING_UPDATE">
-                                            Update
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="CHECKIN_CHECKOUT">
-                                            Check-in/out
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="permission-module">
-                                    <div class="module-info">
-                                        <i class="fa-solid fa-list-check"></i>
-                                        <div>
-                                            <strong>Tasks</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="permission-checks">
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="TASK_VIEW">
-                                            View
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="TASK_CREATE">
-                                            Create
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="TASK_ASSIGN">
-                                            Assign
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="TASK_UPDATE">
-                                            Update
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="TASK_INSPECT">
-                                            Inspect
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="permission-module">
-                                    <div class="module-info">
-                                        <i class="fa-solid fa-file-invoice-dollar"></i>
-                                        <div>
-                                            <strong>Invoices</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="permission-checks">
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="INVOICE_VIEW">
-                                            View
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="INVOICE_UPDATE">
-                                            Update
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="PAYMENT_CONFIRM">
-                                            Confirm Payment
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="permission-module">
-                                    <div class="module-info">
-                                        <i class="fa-solid fa-chart-pie"></i>
-                                        <div>
-                                            <strong>Reports</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="permission-checks">
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="REPORT_VIEW">
-                                            View
-                                        </label>
-
-                                        <label>
-                                            <input type="checkbox" name="permissions" value="REPORT_EXPORT">
-                                            Export
-                                        </label>
-                                    </div>
-                                </div>
-
                             </div>
 
                             <small class="permission-error" id="permissionError"></small>
@@ -739,7 +578,10 @@ git log --oneline --decorate -5<!DOCTYPE html>
                                 </div>
 
                                 <label class="confirm-card">
-                                    <input id="confirmCreate" type="checkbox">
+                                    <input
+                                        id="confirmCreate"
+                                        type="checkbox"
+                                        th:field="*{confirmCreate}">
                                     <span>
                                         I confirm that the information, role level and permissions are correct.
                                     </span>
