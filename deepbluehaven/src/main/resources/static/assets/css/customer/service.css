@@ -355,6 +355,11 @@
     white-space: nowrap;
 }
 
+.service-card__status--available {
+    background: var(--success-100, #e8f5e9);
+    color: var(--success-700, #2e7d32);
+}
+
 .service-card__status--out-of-stock {
     background: var(--warning-400);
     color: var(--neutral-900);

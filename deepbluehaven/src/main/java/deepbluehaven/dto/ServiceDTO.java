@@ -104,6 +104,8 @@ public class ServiceDTO {
         private BigDecimal basePrice;
         private String unit;
         private ServiceStatus status;
+        private String statusClass;
+        private String statusValue;
 
         public Response() {}
 
@@ -156,5 +158,21 @@ public class ServiceDTO {
             return status; }
         public void setStatus(ServiceStatus status) { 
             this.status = status; }
+
+        public String getStatusClass() {
+            return statusClass;
+        }
+
+        public void setStatusClass(String statusClass) {
+            this.statusClass = statusClass;
+        }
+
+        public String getStatusValue() {
+            return statusValue;
+        }
+        
+        public void setStatusValue(String statusValue) {
+            this.statusValue = statusValue;
+        }
     }
 }

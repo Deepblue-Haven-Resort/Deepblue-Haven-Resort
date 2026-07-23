@@ -57,7 +57,7 @@
                 <div class="auth-card">
 
                     <div class="auth-tabs">
-                        <a th:href="@{/staff-login}" href="/staff-login" class="auth-tab is-active">Login</a>
+                        <a th:href="@{/login}" href="/login" class="auth-tab is-active">Login</a>
                         <a th:href="@{/register}" href="/register" class="auth-tab">Register</a>
                     </div>
 
@@ -71,7 +71,7 @@
 
                     <form id="form-login"
                           class="auth-form"
-                          th:action="@{/staff-login}"
+                          th:action="@{/login}"
                           method="post">
 
                         <input type="hidden"
@@ -130,13 +130,13 @@
                     </div>
 
                     <div class="auth-social">
-                        <a href="#" class="auth-social-btn" aria-label="Login with Google">
+                        <a th:href="@{/oauth2/authorization/google}" class="auth-social-btn" aria-label="Register with Google">
                             <i class="fa-brands fa-google"></i>
                         </a>
-                        <a href="#" class="auth-social-btn" aria-label="Login with Facebook">
+                        <a th:href="@{/oauth2/authorization/facebook}" class="auth-social-btn" aria-label="Login with Facebook">
                             <i class="fa-brands fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="auth-social-btn" aria-label="Login with Apple">
+                        <a th:href="@{/oauth2/authorization/apple}" class="auth-social-btn" aria-label="Login with Apple">
                             <i class="fa-brands fa-apple"></i>
                         </a>
                     </div>

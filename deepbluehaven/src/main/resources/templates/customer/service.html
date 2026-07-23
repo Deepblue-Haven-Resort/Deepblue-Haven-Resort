@@ -287,7 +287,27 @@
                     </div>
 
                     <div class="services-grid" id="servicesGrid">
-
+                        <th:block th:each="svc : ${services}">
+                            <div th:replace="~{fragments/service-card :: serviceCard(
+                                '/assets/pic/default-service.png', 
+                                ${svc.name}, 
+                                ${svc.category}, 
+                                ${svc.name}, 
+                                |Per ${svc.unit}|, 
+                                ${svc.status}, 
+                                ${svc.statusClass}, 
+                                ${svc.description}, 
+                                ${svc.category}, 
+                                ${svc.unit}, 
+                                |${#numbers.formatDecimal(svc.basePrice, 0, 'COMMA', 0, 'POINT')} VND|, 
+                                ${svc.basePrice}, 
+                                ${#strings.toLowerCase(svc.category)}, 
+                                ${#strings.toLowerCase(svc.type)}, 
+                                ${svc.statusValue}, 
+                                ${svc.id}
+                            )}"></div>
+                        </th:block>
+                    <th:block th:remove="all">
                         <div th:replace="~{fragments/service-card :: serviceCard(
                             '/images/services/ocean-breakfast.jpg',
                             'Ocean Breakfast',
@@ -343,7 +363,8 @@
                             'per-trip',
                             'active',
                             3
-                        )}"></div>
+                        )}
+                        "></div>
 
                         <div th:replace="~{fragments/service-card :: serviceCard(
                             '/images/services/laundry-service.jpg',
@@ -382,7 +403,7 @@
                             'active',
                             5
                         )}"></div>
-
+                    </th:block>
                         <div th:replace="~{fragments/service-card :: serviceCard(
                             '/images/services/kayak.jpg',
                             'Sunset Kayak Experience',
