@@ -1,5 +1,6 @@
 package deepbluehaven.services;
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -80,6 +81,32 @@ public class AuthService {
             return customerRepository.save(customer);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
+        }
+    }
+
+    @Transactional
+    public Customer findOrCreateCustomerFromOAuth(String email, String fullName) {
+        if (email == null || email.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Google account has no email, cannot sign in.");
+        }
+        return customerRepository.findByUsername(email) .orElseGet(() -> createOAuthCustomer(email, fullName));
+    }
+ 
+    private Customer createOAuthCustomer(String email, String fullName) {
+        Customer customer = new Customer();
+        customer.setUsername(email);
+        String randomHiddenPassword = UUID.randomUUID().toString();
+        customer.setPasswordHash(passwordEncoder.encode(randomHiddenPassword));
+        CustomerProfile profile = new CustomerProfile();
+        profile.setCustomer(customer);
+        profile.setFullName((fullName == null || fullName.isBlank()) ? email : fullName);
+        profile.setEmail(email);
+        customer.setProfile(profile);
+        try {
+            return customerRepository.save(customer);
+        } catch (DataIntegrityViolationException e) {
+            return customerRepository.findByUsername(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not create or find account"));
         }
     }
  
