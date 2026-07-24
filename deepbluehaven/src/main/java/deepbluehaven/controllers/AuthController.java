@@ -119,7 +119,7 @@ public class AuthController {
         Worker worker = authService.loginWorker(username, password);
 
         if (worker == null) {
-            return "redirect:/login?error=true";
+            return "redirect:/staff-login?error=true";
         }
 
         HttpSession oldSession = request.getSession(false);
@@ -135,12 +135,7 @@ public class AuthController {
         session.setAttribute("workerName", worker.getProfile().getFullName());
         session.setMaxInactiveInterval(SESSION_TIMEOUT_SECONDS);
 
-        return switch (worker.getProfile().getRole()) {
-            case ADMIN -> "redirect:/admin/dashboard";
-            case MANAGER -> "redirect:/manager/dashboard";
-            case RECEPTIONIST -> "redirect:/receptionist/dashboard";
-            case HOUSEKEEPER -> "redirect:/housekeeper/dashboard";
-        };
+        return redirectWorkerByRole(worker.getProfile().getRole().name());
     }
 
     @GetMapping("/logout")
@@ -153,6 +148,18 @@ public class AuthController {
     public String logoutPost(HttpServletRequest request) {
         invalidateSession(request);
         return "redirect:/login?logout=true";
+    }
+
+    @GetMapping("/staff-logout")
+    public String logoutStaff(HttpServletRequest request) {
+        invalidateSession(request);
+        return "redirect:/staff-login?logout=true";
+    }
+
+    @PostMapping("/staff-logout")
+    public String logoutStaffPost(HttpServletRequest request) {
+        invalidateSession(request);
+        return "redirect:/staff-login?logout=true";
     }
 
     private void invalidateSession(HttpServletRequest request) {
