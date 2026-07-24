@@ -1,19 +1,23 @@
 package deepbluehaven.services;
 
 import java.text.NumberFormat;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import deepbluehaven.dto.AmenityViewDTO;
 import deepbluehaven.dto.ResortFilterOptionDTO;
 import deepbluehaven.dto.RoomCardViewDTO;
 import deepbluehaven.pojo.Resort;
 import deepbluehaven.pojo.Room;
+import deepbluehaven.pojo.enums.Amenity;
 import deepbluehaven.pojo.enums.RoomStatus;
 import deepbluehaven.pojo.enums.RoomTag;
 import deepbluehaven.repositories.RoomRepository;
@@ -125,5 +129,40 @@ public class RoomService {
         return input.trim().toLowerCase()
                 .replaceAll("[^a-z0-9\\s-]", "")
                 .replaceAll("\\s+", "-");
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Room> getRoomById(Long id) {
+        return roomRepository.findById(id);
+    }
+
+    private static final Map<Amenity, AmenityViewDTO> AMENITY_DISPLAY = new EnumMap<>(Amenity.class);
+    static {
+        AMENITY_DISPLAY.put(Amenity.WIFI, new AmenityViewDTO("fa-wifi", "High-speed Wi-Fi"));
+        AMENITY_DISPLAY.put(Amenity.SWIMMING_POOL, new AmenityViewDTO("fa-person-swimming", "Swimming pool"));
+        AMENITY_DISPLAY.put(Amenity.GYM, new AmenityViewDTO("fa-dumbbell", "Gym access"));
+        AMENITY_DISPLAY.put(Amenity.SPA, new AmenityViewDTO("fa-spa", "Spa access"));
+        AMENITY_DISPLAY.put(Amenity.PARKING, new AmenityViewDTO("fa-square-parking", "Parking"));
+        AMENITY_DISPLAY.put(Amenity.RESTAURANT, new AmenityViewDTO("fa-utensils", "Restaurant access"));
+        AMENITY_DISPLAY.put(Amenity.BAR, new AmenityViewDTO("fa-martini-glass", "Bar access"));
+        AMENITY_DISPLAY.put(Amenity.ROOM_SERVICE, new AmenityViewDTO("fa-bell-concierge", "Room service"));
+        AMENITY_DISPLAY.put(Amenity.LAUNDRY, new AmenityViewDTO("fa-shirt", "Laundry service"));
+        AMENITY_DISPLAY.put(Amenity.AIR_CONDITIONING, new AmenityViewDTO("fa-snowflake", "Air conditioning"));
+        AMENITY_DISPLAY.put(Amenity.MINI_BAR, new AmenityViewDTO("fa-martini-glass-citrus", "Mini bar"));
+        AMENITY_DISPLAY.put(Amenity.SAFE_BOX, new AmenityViewDTO("fa-vault", "Safety box"));
+        AMENITY_DISPLAY.put(Amenity.BATHTUB, new AmenityViewDTO("fa-bath", "Bathtub"));
+        AMENITY_DISPLAY.put(Amenity.BALCONY, new AmenityViewDTO("fa-door-open", "Private balcony"));
+        AMENITY_DISPLAY.put(Amenity.OCEAN_VIEW, new AmenityViewDTO("fa-water", "Ocean view"));
+        AMENITY_DISPLAY.put(Amenity.SMART_TV, new AmenityViewDTO("fa-tv", "Smart TV"));
+        AMENITY_DISPLAY.put(Amenity.COFFEE_MAKER, new AmenityViewDTO("fa-mug-hot", "Coffee maker"));
+        AMENITY_DISPLAY.put(Amenity.HAIR_DRYER, new AmenityViewDTO("fa-wind", "Hair dryer"));
+        AMENITY_DISPLAY.put(Amenity.IRON, new AmenityViewDTO("fa-shirt", "Iron"));
+        AMENITY_DISPLAY.put(Amenity.PET_FRIENDLY, new AmenityViewDTO("fa-paw", "Pet friendly"));
+    }
+ 
+    public List<AmenityViewDTO> getAmenityViews(Room room) {
+        return room.getAmenities().stream()
+                .map(AMENITY_DISPLAY::get)
+                .collect(Collectors.toList());
     }
 }

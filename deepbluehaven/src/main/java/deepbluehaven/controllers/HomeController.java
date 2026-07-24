@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import deepbluehaven.dto.ServiceDTO;
@@ -45,8 +46,14 @@ public class HomeController {
     }
 
     @GetMapping("/rooms/{id}")
-    public String roomDetail() {
-        return "customer/room-detail";
+    public String roomDetail(@PathVariable Long id, Model model) {
+        return roomService.getRoomById(id)
+                .map(room -> {
+                    model.addAttribute("room", room);
+                    model.addAttribute("roomAmenities", roomService.getAmenityViews(room));
+                    return "customer/room-detail";
+                })
+                .orElse("redirect:/404");
     }
 
     @GetMapping("/services")
