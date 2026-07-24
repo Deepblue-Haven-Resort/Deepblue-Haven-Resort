@@ -36,7 +36,7 @@ public class CustomerProfile {
     @Column(name = "birth_day", nullable = true)
     private LocalDate birthDay;
 
-    @Column(name = "full_name", nullable = false, length = 120)
+    @Column(name = "full_name", nullable = false, length = 50, columnDefinition = "NVARCHAR(50)")
     private String fullName;
 
     @Column(name = "phone_number", nullable = true, length = 20)

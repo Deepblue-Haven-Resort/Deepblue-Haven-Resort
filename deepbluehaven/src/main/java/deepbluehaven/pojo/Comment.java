@@ -47,7 +47,7 @@ public class Comment {
     @JoinColumn(name = "worker_id")
     private Worker worker;
 
-    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "content", length = 500, columnDefinition = "NVARCHAR(500)", nullable = false)
     private String content;
 
     @Column(name = "rating", nullable = false)

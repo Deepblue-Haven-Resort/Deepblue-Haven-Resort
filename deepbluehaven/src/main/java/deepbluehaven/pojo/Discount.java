@@ -1,5 +1,14 @@
 package deepbluehaven.pojo;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import deepbluehaven.pojo.enums.DiscountType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,13 +22,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "Discount")
@@ -40,7 +42,7 @@ public class Discount {
     @Column(name = "discount_value", nullable = false, precision = 15, scale = 2)
     private BigDecimal discountValue;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", length = 500, columnDefinition = "NVARCHAR(500)")
     private String description;
 
     @Column(name = "start_date", nullable = false)

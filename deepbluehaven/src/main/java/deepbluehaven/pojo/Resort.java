@@ -21,13 +21,13 @@ public class Resort {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 150)
+    @Column(name = "name", nullable = false, length = 150, columnDefinition = "NVARCHAR(150)")
     private String name;
 
-    @Column(name = "location", nullable = false, length = 255)
+    @Column(name = "location", nullable = false, length = 255, columnDefinition = "NVARCHAR(255)")
     private String location;
 
-    @Column(name = "script", columnDefinition = "TEXT")
+    @Column(name = "script", length = 500, columnDefinition = "NVARCHAR(500)")
     private String script;
 
     @OneToMany(mappedBy = "resort", fetch = FetchType.LAZY)

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}" />
+    <meta name="_context_path" th:content="@{/}" />
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}" />
+    <title>Login | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/auth/auth.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/toast.css}" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+
+<body class="auth-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+    <div th:replace="~{auth/forgot-password-modal :: forgotPasswordModal}"></div>
+    <div th:replace="~{auth/otp-modal :: otpModal}"></div>
+
+    <main class="auth-page">
+        <section class="auth-shell" aria-label="Login page">
+
+            <aside class="auth-visual">
+                <div class="auth-visual__overlay"></div>
+
+                <a th:href="@{/}" href="/" class="auth-brand">
+                    <span class="auth-brand__logo">
+                        <img th:src="@{/assets/pic/logo.png}" src="/assets/pic/logo.png" alt="Deep Blue Haven" />
+                    </span>
+                    <span class="auth-brand__name">Deep Blue Haven</span>
+                </a>
+
+                <div class="auth-visual__content">
+                    <div class="auth-dots">
+                        <span class="is-active"></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <p class="auth-kicker">Luxury Ocean Resort</p>
+                    <h1>Return to the blue ocean.</h1>
+                    <p>
+                        Sign in to manage your bookings, resort offers, and private experiences at Deep Blue Haven.
+                    </p>
+                </div>
+            </aside>
+
+            <section class="auth-panel">
+                <div class="auth-card">
+
+                    <div class="auth-heading">
+                        <h2>Login to your account</h2>
+                    </div>  
+
+                    <p class="auth-alert auth-alert--success" th:if="${param.logout}">
+                        You have logged out successfully.
+                    </p>
+
+                    <form id="form-login"
+                          class="auth-form"
+                          th:action="@{/staff-login}"
+                          method="post">
+
+                        <input type="hidden"
+                               th:if="${_csrf != null}"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}" />
+
+                        <label class="auth-field" for="username">
+                            <span>Username</span>
+                            <input id="username"
+                                   name="username"
+                                   type="text"
+                                   autocomplete="username"
+                                   placeholder="Enter your username"
+                                   required />
+                        </label>
+
+                        <label class="auth-field" for="password">
+                            <span>Password</span>
+                            <input id="password"
+                                   name="password"
+                                   type="password"
+                                   autocomplete="current-password"
+                                   placeholder="Enter your password"
+                                   required />
+
+                            <button class="auth-password-toggle"
+                                    type="button"
+                                    data-toggle-password="password"
+                                    aria-label="Show or hide password">
+                                <i class="fa-regular fa-eye-slash"></i>
+                            </button>
+                        </label>
+
+                        <div class="auth-options">
+                            <label class="auth-checkbox">
+                                <input type="checkbox" name="remember-me" />
+                                <span>Remember me</span>
+                            </label>
+
+                            <button type="button" class="auth-forgot-trigger" id="openForgotPassword">
+                                Forgot password?
+                            </button>
+                        </div>
+
+                        <button class="btn btn-luxury btn-medium auth-submit" type="submit">
+                            Login
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+        </section>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <div th:replace="~{fragments/toast :: toast}"></div>
+    <script th:src="@{/js/auth/auth.js}"></script>
+    <script th:src="@{/js/auth/login.js}"></script>
+</body>
+</html>
