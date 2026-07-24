@@ -17,7 +17,13 @@ const serviceFilterState = {
 const selectedServices = new Map();
 
 const serviceCategoryAliases = {
-    "food-beverage": ["food-beverage", "food_beverage", "food", "beverage", "fnb"],
+    "food-beverage": [
+        "food-beverage",
+        "food_beverage",
+        "food",
+        "beverage",
+        "fnb"
+    ],
     laundry: ["laundry"],
     spa: ["spa"],
     transport: ["transport", "transfer"],
@@ -27,20 +33,43 @@ const serviceCategoryAliases = {
 };
 
 const serviceTypeAliases = {
-    "per-person": ["per-person", "per_person", "person", "per pax", "per-pax"],
-    "per-room": ["per-room", "per_room", "room"],
-    "per-trip": ["per-trip", "per_trip", "trip"],
-    "per-order": ["per-order", "per_order", "order"]
+    "per-person": [
+        "per-person",
+        "per_person",
+        "person",
+        "per pax",
+        "per-pax"
+    ],
+    "per-room": [
+        "per-room",
+        "per_room",
+        "room"
+    ],
+    "per-trip": [
+        "per-trip",
+        "per_trip",
+        "trip"
+    ],
+    "per-order": [
+        "per-order",
+        "per_order",
+        "order"
+    ]
 };
 
 const serviceStatusAliases = {
     active: ["active"],
-    "out-of-stock": ["out-of-stock", "out_of_stock"],
+    "out-of-stock": [
+        "out-of-stock",
+        "out_of_stock"
+    ],
     hidden: ["hidden"]
 };
 
 function getServiceCards() {
-    return Array.from(document.querySelectorAll(".service-card"));
+    return Array.from(
+        document.querySelectorAll(".service-card")
+    );
 }
 
 function normalizeFilterValue(value) {
@@ -56,7 +85,7 @@ function toVnd(millionValue) {
 }
 
 function formatMillion(millionValue) {
-    return `${Number(millionValue || 0)} triệu`;
+    return `${Number(millionValue || 0)} million`;
 }
 
 function formatVnd(value) {
@@ -64,11 +93,15 @@ function formatVnd(value) {
 }
 
 function parseVnd(text) {
-    return Number(String(text || "").replace(/[^0-9]/g, "")) || 0;
+    return Number(
+        String(text || "").replace(/[^0-9]/g, "")
+    ) || 0;
 }
 
 function initServiceDropdowns() {
-    const dropdowns = document.querySelectorAll(".rooms-dropdown");
+    const dropdowns = document.querySelectorAll(
+        ".rooms-dropdown"
+    );
 
     if (!dropdowns.length) {
         return;
@@ -87,28 +120,47 @@ function initServiceDropdowns() {
             });
         });
 
-        const options = dropdown.querySelectorAll(".rooms-dropdown__option");
+        const options = dropdown.querySelectorAll(
+            ".rooms-dropdown__option"
+        );
 
         options.forEach((option) => {
             option.addEventListener("click", (event) => {
                 event.preventDefault();
 
                 const filterName = dropdown.dataset.filter;
-                const valueText = dropdown.querySelector(".rooms-dropdown__value");
-                const optionValue = normalizeFilterValue(option.dataset.value || "all");
 
-                if (filterName && Object.prototype.hasOwnProperty.call(serviceFilterState, filterName)) {
+                const valueText = dropdown.querySelector(
+                    ".rooms-dropdown__value"
+                );
+
+                const optionValue = normalizeFilterValue(
+                    option.dataset.value || "all"
+                );
+
+                if (
+                    filterName &&
+                    Object.prototype.hasOwnProperty.call(
+                        serviceFilterState,
+                        filterName
+                    )
+                ) {
                     serviceFilterState[filterName] = optionValue;
                 }
 
                 if (valueText) {
-                    valueText.textContent = option.textContent.trim();
+                    valueText.textContent =
+                        option.textContent.trim();
                 }
 
-                options.forEach((item) => item.classList.remove("is-active"));
+                options.forEach((item) => {
+                    item.classList.remove("is-active");
+                });
+
                 option.classList.add("is-active");
 
                 dropdown.removeAttribute("open");
+
                 applyServiceFilters();
             });
         });
@@ -119,18 +171,40 @@ function initServiceDropdowns() {
             return;
         }
 
-        dropdowns.forEach((dropdown) => dropdown.removeAttribute("open"));
+        dropdowns.forEach((dropdown) => {
+            dropdown.removeAttribute("open");
+        });
     });
 }
 
 function initServicePriceFilter() {
-    const priceMin = document.getElementById("servicePriceMin");
-    const priceMax = document.getElementById("servicePriceMax");
-    const priceSlider = document.querySelector(".rooms-price-slider");
-    const priceFill = document.getElementById("serviceSliderFill");
-    const priceMinLabel = document.getElementById("servicePriceMinLabel");
-    const priceMaxLabel = document.getElementById("servicePriceMaxLabel");
-    const priceValue = document.querySelector(".rooms-price-filter__value");
+    const priceMin = document.getElementById(
+        "servicePriceMin"
+    );
+
+    const priceMax = document.getElementById(
+        "servicePriceMax"
+    );
+
+    const priceSlider = document.querySelector(
+        ".rooms-price-slider"
+    );
+
+    const priceFill = document.getElementById(
+        "serviceSliderFill"
+    );
+
+    const priceMinLabel = document.getElementById(
+        "servicePriceMinLabel"
+    );
+
+    const priceMaxLabel = document.getElementById(
+        "servicePriceMaxLabel"
+    );
+
+    const priceValue = document.querySelector(
+        ".rooms-price-filter__value"
+    );
 
     if (!priceMin || !priceMax) {
         return;
@@ -142,16 +216,32 @@ function initServicePriceFilter() {
         step: Number(priceMin.step || 1)
     });
 
-    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+    const clamp = (value, min, max) => {
+        return Math.min(Math.max(value, min), max);
+    };
 
     const updatePriceUI = () => {
         const config = getConfig();
 
-        let minValue = Number(priceMin.value || config.min);
-        let maxValue = Number(priceMax.value || config.max);
+        let minValue = Number(
+            priceMin.value || config.min
+        );
 
-        minValue = clamp(minValue, config.min, config.max - config.step);
-        maxValue = clamp(maxValue, config.min + config.step, config.max);
+        let maxValue = Number(
+            priceMax.value || config.max
+        );
+
+        minValue = clamp(
+            minValue,
+            config.min,
+            config.max - config.step
+        );
+
+        maxValue = clamp(
+            maxValue,
+            config.min + config.step,
+            config.max
+        );
 
         if (minValue >= maxValue) {
             minValue = maxValue - config.step;
@@ -160,29 +250,47 @@ function initServicePriceFilter() {
         priceMin.value = String(minValue);
         priceMax.value = String(maxValue);
 
-        const minPercent = ((minValue - config.min) / (config.max - config.min)) * 100;
-        const maxPercent = ((maxValue - config.min) / (config.max - config.min)) * 100;
+        const minPercent =
+            ((minValue - config.min) /
+                (config.max - config.min)) *
+            100;
+
+        const maxPercent =
+            ((maxValue - config.min) /
+                (config.max - config.min)) *
+            100;
 
         if (priceFill) {
             priceFill.style.left = `${minPercent}%`;
-            priceFill.style.width = `${maxPercent - minPercent}%`;
+            priceFill.style.width =
+                `${maxPercent - minPercent}%`;
         }
 
         if (priceSlider) {
-            priceSlider.style.setProperty("--price-min-percent", `${minPercent}%`);
-            priceSlider.style.setProperty("--price-max-percent", `${maxPercent}%`);
+            priceSlider.style.setProperty(
+                "--price-min-percent",
+                `${minPercent}%`
+            );
+
+            priceSlider.style.setProperty(
+                "--price-max-percent",
+                `${maxPercent}%`
+            );
         }
 
         if (priceMinLabel) {
-            priceMinLabel.textContent = formatMillion(minValue);
+            priceMinLabel.textContent =
+                formatMillion(minValue);
         }
 
         if (priceMaxLabel) {
-            priceMaxLabel.textContent = formatMillion(maxValue);
+            priceMaxLabel.textContent =
+                formatMillion(maxValue);
         }
 
         if (priceValue) {
-            priceValue.textContent = `${formatMillion(minValue)} – ${formatMillion(maxValue)}`;
+            priceValue.textContent =
+                `${formatMillion(minValue)} – ${formatMillion(maxValue)}`;
         }
     };
 
@@ -192,7 +300,9 @@ function initServicePriceFilter() {
         const maxValue = Number(priceMax.value);
 
         if (minValue >= maxValue) {
-            priceMin.value = String(maxValue - config.step);
+            priceMin.value = String(
+                maxValue - config.step
+            );
         }
 
         updatePriceUI();
@@ -205,7 +315,9 @@ function initServicePriceFilter() {
         const maxValue = Number(priceMax.value);
 
         if (maxValue <= minValue) {
-            priceMax.value = String(minValue + config.step);
+            priceMax.value = String(
+                minValue + config.step
+            );
         }
 
         updatePriceUI();
@@ -216,7 +328,9 @@ function initServicePriceFilter() {
 }
 
 function initServiceFiltering() {
-    const applyButton = document.querySelector(".rooms-filter-apply");
+    const applyButton = document.querySelector(
+        ".rooms-filter-apply"
+    );
 
     getServiceCards().forEach((card, index) => {
         if (!card.dataset.order) {
@@ -225,19 +339,33 @@ function initServiceFiltering() {
     });
 
     if (applyButton) {
-        applyButton.addEventListener("click", (event) => {
-            event.preventDefault();
-            applyServiceFilters();
-            showServiceToast("info", "Filters applied", "The service list has been updated.");
-        });
+        applyButton.addEventListener(
+            "click",
+            (event) => {
+                event.preventDefault();
+
+                applyServiceFilters();
+
+                showServiceToast(
+                    "info",
+                    "Filters applied",
+                    "The service list has been updated."
+                );
+            }
+        );
     }
 
     applyServiceFilters();
 }
 
 function getSelectedServicePriceRange() {
-    const priceMin = document.getElementById("servicePriceMin");
-    const priceMax = document.getElementById("servicePriceMax");
+    const priceMin = document.getElementById(
+        "servicePriceMin"
+    );
+
+    const priceMax = document.getElementById(
+        "servicePriceMax"
+    );
 
     if (!priceMin || !priceMax) {
         return {
@@ -252,28 +380,51 @@ function getSelectedServicePriceRange() {
     };
 }
 
-function matchesWithAliases(cardValue, selectedValue, aliases = {}) {
-    if (selectedValue === "all" || selectedValue === "any") {
+function matchesWithAliases(
+    cardValue,
+    selectedValue,
+    aliases = {}
+) {
+    if (
+        selectedValue === "all" ||
+        selectedValue === "any"
+    ) {
         return true;
     }
 
-    const normalizedCardValue = normalizeFilterValue(cardValue);
-    const normalizedSelectedValue = normalizeFilterValue(selectedValue);
+    const normalizedCardValue =
+        normalizeFilterValue(cardValue);
 
-    if (normalizedCardValue === normalizedSelectedValue) {
+    const normalizedSelectedValue =
+        normalizeFilterValue(selectedValue);
+
+    if (
+        normalizedCardValue ===
+        normalizedSelectedValue
+    ) {
         return true;
     }
 
-    const aliasList = aliases[normalizedSelectedValue] || [];
+    const aliasList =
+        aliases[normalizedSelectedValue] || [];
 
     return aliasList.some((alias) => {
-        const normalizedAlias = normalizeFilterValue(alias);
-        return normalizedCardValue === normalizedAlias || normalizedCardValue.includes(normalizedAlias);
+        const normalizedAlias =
+            normalizeFilterValue(alias);
+
+        return (
+            normalizedCardValue === normalizedAlias ||
+            normalizedCardValue.includes(
+                normalizedAlias
+            )
+        );
     });
 }
 
 function sortServices() {
-    const grid = document.getElementById("servicesGrid") || document.querySelector(".services-grid");
+    const grid =
+        document.getElementById("servicesGrid") ||
+        document.querySelector(".services-grid");
 
     if (!grid) {
         return;
@@ -282,38 +433,96 @@ function sortServices() {
     const cards = getServiceCards();
 
     cards.sort((a, b) => {
-        const priceA = Number(a.dataset.price || 0);
-        const priceB = Number(b.dataset.price || 0);
-        const orderA = Number(a.dataset.order || 0);
-        const orderB = Number(b.dataset.order || 0);
-        const nameA = getServiceNameFromCard(a).toLowerCase();
-        const nameB = getServiceNameFromCard(b).toLowerCase();
+        const priceA = Number(
+            a.dataset.price || 0
+        );
 
-        if (serviceFilterState.sort === "lowest-price") return priceA - priceB;
-        if (serviceFilterState.sort === "highest-price") return priceB - priceA;
-        if (serviceFilterState.sort === "name-az") return nameA.localeCompare(nameB);
+        const priceB = Number(
+            b.dataset.price || 0
+        );
+
+        const orderA = Number(
+            a.dataset.order || 0
+        );
+
+        const orderB = Number(
+            b.dataset.order || 0
+        );
+
+        const nameA =
+            getServiceNameFromCard(a).toLowerCase();
+
+        const nameB =
+            getServiceNameFromCard(b).toLowerCase();
+
+        if (
+            serviceFilterState.sort ===
+            "lowest-price"
+        ) {
+            return priceA - priceB;
+        }
+
+        if (
+            serviceFilterState.sort ===
+            "highest-price"
+        ) {
+            return priceB - priceA;
+        }
+
+        if (
+            serviceFilterState.sort ===
+            "name-az"
+        ) {
+            return nameA.localeCompare(nameB);
+        }
 
         return orderA - orderB;
     });
 
-    cards.forEach((card) => grid.appendChild(card));
+    cards.forEach((card) => {
+        grid.appendChild(card);
+    });
 }
 
 function applyServiceFilters() {
-    const resultCount = document.getElementById("servicesResultCount");
-    const emptyMessage = document.getElementById("servicesEmptyMessage");
+    const resultCount = document.getElementById(
+        "servicesResultCount"
+    );
+
+    const emptyMessage = document.getElementById(
+        "servicesEmptyMessage"
+    );
+
     const cards = getServiceCards();
-    const { minPrice, maxPrice } = getSelectedServicePriceRange();
+
+    const {
+        minPrice,
+        maxPrice
+    } = getSelectedServicePriceRange();
 
     let visibleServices = 0;
 
     cards.forEach((card) => {
-        const servicePrice = Number(card.dataset.price || 0);
+        const servicePrice = Number(
+            card.dataset.price || 0
+        );
 
         const isMatch =
-            matchesWithAliases(card.dataset.category, serviceFilterState.category, serviceCategoryAliases) &&
-            matchesWithAliases(card.dataset.type, serviceFilterState.type, serviceTypeAliases) &&
-            matchesWithAliases(card.dataset.status, serviceFilterState.status, serviceStatusAliases) &&
+            matchesWithAliases(
+                card.dataset.category,
+                serviceFilterState.category,
+                serviceCategoryAliases
+            ) &&
+            matchesWithAliases(
+                card.dataset.type,
+                serviceFilterState.type,
+                serviceTypeAliases
+            ) &&
+            matchesWithAliases(
+                card.dataset.status,
+                serviceFilterState.status,
+                serviceStatusAliases
+            ) &&
             servicePrice >= minPrice &&
             servicePrice <= maxPrice;
 
@@ -327,18 +536,28 @@ function applyServiceFilters() {
     sortServices();
 
     if (resultCount) {
-        resultCount.textContent = String(visibleServices);
+        resultCount.textContent =
+            String(visibleServices);
     }
 
     if (emptyMessage) {
-        emptyMessage.hidden = visibleServices !== 0;
+        emptyMessage.hidden =
+            visibleServices !== 0;
     }
 }
 
 function initServiceSelection() {
-    const servicesGrid = document.getElementById("servicesGrid") || document.querySelector(".services-grid");
-    const selectedList = document.getElementById("selectedServiceList");
-    const confirmButton = document.querySelector(".booking-summary__action");
+    const servicesGrid =
+        document.getElementById("servicesGrid") ||
+        document.querySelector(".services-grid");
+
+    const selectedList = document.getElementById(
+        "selectedServiceList"
+    );
+
+    const confirmButton = document.getElementById(
+        "confirmServicesButton"
+    );
 
     if (selectedList) {
         selectedList.innerHTML = "";
@@ -347,79 +566,191 @@ function initServiceSelection() {
     renderSelectedServices();
 
     if (servicesGrid) {
-        servicesGrid.addEventListener("click", (event) => {
-            const button = event.target.closest(".service-card__action");
+        servicesGrid.addEventListener(
+            "click",
+            (event) => {
+                const button = event.target.closest(
+                    ".service-card__action"
+                );
 
-            if (!button) {
-                return;
+                if (!button) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                const card = button.closest(
+                    ".service-card"
+                );
+
+                if (!card) {
+                    return;
+                }
+
+                addSelectedService(card);
             }
-
-            event.preventDefault();
-
-            const card = button.closest(".service-card");
-
-            if (!card) {
-                return;
-            }
-
-            addSelectedService(card);
-        });
+        );
     }
 
     if (selectedList) {
-        selectedList.addEventListener("click", (event) => {
-            const removeButton = event.target.closest(".selected-service-item button");
+        selectedList.addEventListener(
+            "click",
+            (event) => {
+                const removeButton =
+                    event.target.closest(
+                        ".selected-service-item button"
+                    );
 
-            if (!removeButton) {
-                return;
+                if (!removeButton) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                const item = removeButton.closest(
+                    ".selected-service-item"
+                );
+
+                const serviceId =
+                    item?.dataset.id;
+
+                if (serviceId) {
+                    removeSelectedService(serviceId);
+                }
             }
-
-            event.preventDefault();
-
-            const item = removeButton.closest(".selected-service-item");
-            const serviceId = item?.dataset.id;
-
-            if (serviceId) {
-                removeSelectedService(serviceId);
-            }
-        });
+        );
     }
 
+    /*
+     * CHỈ THAY ĐỔI PHẦN CONFIRM:
+     * Không chuyển sang trang /services/confirm.
+     * Truyền dữ liệu sang popup hiện trong trang Services.
+     */
     if (confirmButton) {
-        confirmButton.addEventListener("click", (event) => {
-            event.preventDefault();
+        confirmButton.addEventListener(
+            "click",
+            (event) => {
+                event.preventDefault();
 
-            if (!selectedServices.size) {
-                showServiceToast("warning", "No service selected", "Please select at least one service before confirming.");
-                return;
+                if (!selectedServices.size) {
+                    showServiceToast(
+                        "warning",
+                        "No service selected",
+                        "Please select at least one service before confirming."
+                    );
+
+                    return;
+                }
+
+                const servicesForConfirmation =
+                    Array.from(
+                        selectedServices.values()
+                    ).map((service) => ({
+                        id: service.id,
+                        name: service.name,
+                        price: Number(
+                            service.price || 0
+                        ),
+                        priceText:
+                            service.priceText,
+                        unit: service.unit
+                    }));
+
+                const bookingSummary =
+                    document.querySelector(
+                        ".booking-summary"
+                    );
+
+                const guestInformation =
+                    bookingSummary?.querySelectorAll(
+                        ".booking-summary__guest > div"
+                    );
+
+                const bookingInformation = {
+                    bookingId:
+                        getSelectedBookingId(),
+
+                    guestName:
+                        guestInformation?.[0]
+                            ?.querySelector("strong")
+                            ?.textContent.trim() ||
+                        "",
+
+                    room:
+                        guestInformation?.[1]
+                            ?.querySelector("strong")
+                            ?.textContent.trim() ||
+                        ""
+                };
+
+                if (
+                    typeof window.openServiceConfirmationModal !==
+                    "function"
+                ) {
+                    console.error(
+                        "openServiceConfirmationModal is not available."
+                    );
+
+                    showServiceToast(
+                        "error",
+                        "Cannot open form",
+                        "The service confirmation popup could not be loaded."
+                    );
+
+                    return;
+                }
+
+                window.openServiceConfirmationModal(
+                    servicesForConfirmation,
+                    bookingInformation
+                );
             }
-
-            showServiceToast("success", "Services confirmed", `${selectedServices.size} service(s) have been added to this booking.`);
-        });
+        );
     }
 }
 
 function getServiceNameFromCard(card) {
-    return card.querySelector(".service-card__name")?.textContent.trim() || "Service";
+    return (
+        card.querySelector(
+            ".service-card__name"
+        )?.textContent.trim() ||
+        "Service"
+    );
 }
 
 function getServiceUnitFromCard(card) {
-    const unitText = card.querySelector(".service-card__price small")?.textContent || "";
-    return unitText.replace("/", "").trim() || "service";
+    const unitText =
+        card.querySelector(
+            ".service-card__price small"
+        )?.textContent || "";
+
+    return (
+        unitText.replace("/", "").trim() ||
+        "service"
+    );
 }
 
 function getServicePriceTextFromCard(card) {
-    return card.querySelector(".service-card__price strong")?.textContent.trim() || formatVnd(card.dataset.price);
+    return (
+        card.querySelector(
+            ".service-card__price strong"
+        )?.textContent.trim() ||
+        formatVnd(card.dataset.price)
+    );
 }
 
 function getServicePriceValueFromCard(card) {
-    const dataPrice = Number(card.dataset.price || 0);
+    const dataPrice = Number(
+        card.dataset.price || 0
+    );
 
     if (dataPrice > 0) {
         return dataPrice;
     }
 
-    return parseVnd(getServicePriceTextFromCard(card));
+    return parseVnd(
+        getServicePriceTextFromCard(card)
+    );
 }
 
 function getServiceIdFromCard(card) {
@@ -429,16 +760,24 @@ function getServiceIdFromCard(card) {
         return String(dataId);
     }
 
-    return normalizeFilterValue(getServiceNameFromCard(card));
+    return normalizeFilterValue(
+        getServiceNameFromCard(card)
+    );
 }
 
 function getSelectedBookingId() {
-    const bookingSummary = document.querySelector(".booking-summary[data-booking-id]");
+    const bookingSummary =
+        document.querySelector(
+            ".booking-summary[data-booking-id]"
+        );
+
     return bookingSummary?.dataset.bookingId || "";
 }
 
 function addSelectedService(card) {
-    const status = normalizeFilterValue(card.dataset.status);
+    const status = normalizeFilterValue(
+        card.dataset.status
+    );
 
     if (status !== "active") {
         showServiceToast(
@@ -446,44 +785,72 @@ function addSelectedService(card) {
             "Service unavailable",
             "This service is not available right now."
         );
+
         return;
     }
 
-    const serviceId = getServiceIdFromCard(card);
+    const serviceId =
+        getServiceIdFromCard(card);
 
     if (selectedServices.has(serviceId)) {
-        showServiceToast("info", "Already selected", "This service is already in your booking summary.");
+        showServiceToast(
+            "info",
+            "Already selected",
+            "This service is already in your booking summary."
+        );
+
         return;
     }
 
     selectedServices.set(serviceId, {
         id: serviceId,
         name: getServiceNameFromCard(card),
-        price: getServicePriceValueFromCard(card),
-        priceText: getServicePriceTextFromCard(card),
+        price: getServicePriceValueFromCard(
+            card
+        ),
+        priceText:
+            getServicePriceTextFromCard(card),
         unit: getServiceUnitFromCard(card)
     });
 
     updateCardButton(card, true);
     renderSelectedServices();
-    showServiceToast("success", "Service added", `${getServiceNameFromCard(card)} has been added to your booking.`);
+
+    showServiceToast(
+        "success",
+        "Service added",
+        `${getServiceNameFromCard(card)} has been added to your booking.`
+    );
 }
 
 function removeSelectedService(serviceId) {
-    selectedServices.delete(String(serviceId));
+    selectedServices.delete(
+        String(serviceId)
+    );
 
-    const card = getServiceCards().find((item) => getServiceIdFromCard(item) === String(serviceId));
+    const card = getServiceCards().find(
+        (item) =>
+            getServiceIdFromCard(item) ===
+            String(serviceId)
+    );
 
     if (card) {
         updateCardButton(card, false);
     }
 
     renderSelectedServices();
-    showServiceToast("info", "Service removed", "The service has been removed from your booking summary.");
+
+    showServiceToast(
+        "info",
+        "Service removed",
+        "The service has been removed from your booking summary."
+    );
 }
 
 function updateCardButton(card, isSelected) {
-    const button = card.querySelector(".service-card__action");
+    const button = card.querySelector(
+        ".service-card__action"
+    );
 
     if (!button) {
         return;
@@ -492,20 +859,36 @@ function updateCardButton(card, isSelected) {
     if (isSelected) {
         button.classList.remove("btn-cta");
         button.classList.add("btn-success");
-        button.innerHTML = 'Selected <i class="fa-solid fa-check"></i>';
+
+        button.innerHTML =
+            'Selected <i class="fa-solid fa-check"></i>';
+
         return;
     }
 
     button.classList.remove("btn-success");
     button.classList.add("btn-cta");
-    button.innerHTML = 'Add Service <i class="fa-solid fa-plus"></i>';
+
+    button.innerHTML =
+        'Add Service <i class="fa-solid fa-plus"></i>';
 }
 
 function renderSelectedServices() {
-    const selectedList = document.getElementById("selectedServiceList");
-    const selectedCount = document.getElementById("selectedServiceCount");
-    const selectedTotal = document.getElementById("selectedServiceTotal");
-    const selectedEmpty = document.getElementById("selectedServiceEmpty");
+    const selectedList = document.getElementById(
+        "selectedServiceList"
+    );
+
+    const selectedCount = document.getElementById(
+        "selectedServiceCount"
+    );
+
+    const selectedTotal = document.getElementById(
+        "selectedServiceTotal"
+    );
+
+    const selectedEmpty = document.getElementById(
+        "selectedServiceEmpty"
+    );
 
     if (!selectedList) {
         return;
@@ -514,48 +897,77 @@ function renderSelectedServices() {
     selectedList.innerHTML = "";
 
     selectedServices.forEach((service) => {
-        selectedList.appendChild(createSelectedServiceItem(service));
+        selectedList.appendChild(
+            createSelectedServiceItem(service)
+        );
     });
 
-    const total = Array.from(selectedServices.values()).reduce((sum, service) => {
-        return sum + Number(service.price || 0);
+    const total = Array.from(
+        selectedServices.values()
+    ).reduce((sum, service) => {
+        return sum + Number(
+            service.price || 0
+        );
     }, 0);
 
     if (selectedCount) {
-        selectedCount.textContent = String(selectedServices.size);
+        selectedCount.textContent =
+            String(selectedServices.size);
     }
 
     if (selectedTotal) {
-        selectedTotal.textContent = formatVnd(total);
+        selectedTotal.textContent =
+            formatVnd(total);
     }
 
     if (selectedEmpty) {
-        selectedEmpty.hidden = selectedServices.size !== 0;
+        selectedEmpty.hidden =
+            selectedServices.size !== 0;
     }
 }
 
 function createSelectedServiceItem(service) {
-    const item = document.createElement("article");
-    item.className = "selected-service-item";
+    const item =
+        document.createElement("article");
+
+    item.className =
+        "selected-service-item";
+
     item.dataset.id = service.id;
 
-    const content = document.createElement("div");
+    const content =
+        document.createElement("div");
 
-    const name = document.createElement("strong");
+    const name =
+        document.createElement("strong");
+
     name.textContent = service.name;
 
-    const price = document.createElement("span");
-    price.textContent = `${service.priceText} / ${service.unit}`;
+    const price =
+        document.createElement("span");
 
-    const hiddenInput = document.createElement("input");
+    price.textContent =
+        `${service.priceText} / ${service.unit}`;
+
+    const hiddenInput =
+        document.createElement("input");
+
     hiddenInput.type = "hidden";
     hiddenInput.name = "serviceIds";
     hiddenInput.value = service.id;
 
-    const removeButton = document.createElement("button");
+    const removeButton =
+        document.createElement("button");
+
     removeButton.type = "button";
-    removeButton.setAttribute("aria-label", `Remove ${service.name}`);
-    removeButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+
+    removeButton.setAttribute(
+        "aria-label",
+        `Remove ${service.name}`
+    );
+
+    removeButton.innerHTML =
+        '<i class="fa-solid fa-xmark"></i>';
 
     content.appendChild(name);
     content.appendChild(price);
@@ -567,8 +979,18 @@ function createSelectedServiceItem(service) {
     return item;
 }
 
-function showServiceToast(type = "info", title = "Notification", message = "") {
-    const container = document.getElementById("toastContainer") || document.querySelector(".toast-container");
+function showServiceToast(
+    type = "info",
+    title = "Notification",
+    message = ""
+) {
+    const container =
+        document.getElementById(
+            "toastContainer"
+        ) ||
+        document.querySelector(
+            ".toast-container"
+        );
 
     if (!container) {
         return;
@@ -577,37 +999,60 @@ function showServiceToast(type = "info", title = "Notification", message = "") {
     const iconMap = {
         success: "fa-circle-check",
         info: "fa-circle-info",
-        warning: "fa-triangle-exclamation",
+        warning:
+            "fa-triangle-exclamation",
         error: "fa-circle-xmark"
     };
 
-    const toast = document.createElement("div");
-    toast.className = `toast toast-${type}`;
+    const toast =
+        document.createElement("div");
+
+    toast.className =
+        `toast toast-${type}`;
 
     toast.innerHTML = `
         <div class="toast-icon">
             <i class="fa-solid ${iconMap[type] || iconMap.info}"></i>
         </div>
+
         <div class="toast-body">
             <strong class="toast-title"></strong>
             <p class="toast-message"></p>
         </div>
-        <button type="button" class="toast-close" aria-label="Close notification">
+
+        <button
+            type="button"
+            class="toast-close"
+            aria-label="Close notification"
+        >
             <i class="fa-solid fa-xmark"></i>
         </button>
     `;
 
-    toast.querySelector(".toast-title").textContent = title;
-    toast.querySelector(".toast-message").textContent = message;
+    toast.querySelector(
+        ".toast-title"
+    ).textContent = title;
 
-    const closeButton = toast.querySelector(".toast-close");
+    toast.querySelector(
+        ".toast-message"
+    ).textContent = message;
+
+    const closeButton =
+        toast.querySelector(".toast-close");
 
     const closeToast = () => {
         toast.classList.add("hide");
-        setTimeout(() => toast.remove(), 300);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
     };
 
-    closeButton.addEventListener("click", closeToast);
+    closeButton.addEventListener(
+        "click",
+        closeToast
+    );
+
     container.appendChild(toast);
 
     setTimeout(closeToast, 3200);
