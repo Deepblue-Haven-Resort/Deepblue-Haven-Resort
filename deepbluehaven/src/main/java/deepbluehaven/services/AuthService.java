@@ -1,5 +1,6 @@
 package deepbluehaven.services;
 
+import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -9,6 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.github.benmanes.caffeine.cache.Cache;
 
 import deepbluehaven.dto.RegisterDTO;
 import deepbluehaven.pojo.Customer;
@@ -24,13 +27,18 @@ public class AuthService {
     private final WorkerRepository workerRepository;
     private final CustomerRepository customerRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final Cache<String, String> otpCache;
+    private final Cache<String, Boolean> verifiedOtpCache;
+    private final NotificationService notificationService;
 
-    public AuthService(WorkerRepository workerRepository,
-                       CustomerRepository customerRepository,
-                       BCryptPasswordEncoder passwordEncoder) {
+    public AuthService(WorkerRepository workerRepository, CustomerRepository customerRepository, BCryptPasswordEncoder passwordEncoder, Cache<String, String> otpCache,
+                       Cache<String, Boolean> verifiedOtpCache, NotificationService notificationService) {
         this.workerRepository = workerRepository;
         this.customerRepository = customerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.otpCache = otpCache;
+        this.verifiedOtpCache = verifiedOtpCache;
+        this.notificationService = notificationService;
     }
 
     public Worker loginWorker(String username, String password) {
@@ -119,4 +127,56 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email or phone number format");
         }
     }
+
+    public void processForgotPassword(String identity) {
+        boolean exists = customerRepository.existsByIdentity(identity);
+        if (!exists) {
+            throw new RuntimeException("Account not found. Please check your information.");
+        }
+
+        String otp = String.format("%06d", new Random().nextInt(999999));
+        otpCache.put(identity, otp);
+
+        if (EMAIL_PATTERN.matcher(identity).matches()) {
+            notificationService.sendEmailOtp(identity, otp);
+        } 
+        // else if (PHONE_PATTERN.matcher(identity).matches()) {
+        //      notificationService.sendSmsOtp(identity, otp);
+        // } 
+        else {
+            throw new RuntimeException("Invalid identity format.");
+        }
+    }
+
+    public void verifyOtp(String identity, String otpCode) {
+        String cachedOtp = otpCache.getIfPresent(identity);
+        
+        if (cachedOtp == null) {
+            throw new RuntimeException("OTP has expired or not generated.");
+        }
+        if (!cachedOtp.equals(otpCode)) {
+            throw new RuntimeException("Invalid OTP code.");
+        }
+        
+        otpCache.invalidate(identity); 
+        verifiedOtpCache.put(identity, true); 
+    }
+
+    @Transactional
+    public void resetPassword(String identity, String newPassword) {
+        Boolean isVerified = verifiedOtpCache.getIfPresent(identity);
+        
+        if (isVerified == null || !isVerified) {
+            throw new RuntimeException("Unauthorized request. Please verify OTP first.");
+        }
+
+       Customer customer = customerRepository.findByIdentity(identity)
+            .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        customer.setPasswordHash(passwordEncoder.encode(newPassword));
+        customerRepository.save(customer);
+
+        verifiedOtpCache.invalidate(identity); 
+    }
+    
 }

@@ -191,17 +191,18 @@
                     <h3 class="heading-4">Room highlights</h3>
 
                     <div class="room-highlights">
-                        <article class="room-highlight">
+                        <article class="room-highlight" th:each="highlight : ${room != null ? room.highlights : null}">
                             <span>
-                                <i class="fa-solid fa-bed"></i>
+                                <i class="fa-solid fa-star"></i>
                             </span>
                             <div>
-                                <h4>Premium bedding</h4>
-                                <p>Soft linen, spacious layout and restful lighting.</p>
+                                <h4 th:text="${highlight.title}">Premium bedding</h4>
+                                <p th:text="${highlight.description}">Soft linen, spacious layout and restful lighting.</p>
                             </div>
                         </article>
 
-                        <article class="room-highlight">
+
+                        <article class="room-highlight" th:remove="all">
                             <span>
                                 <i class="fa-solid fa-person-swimming"></i>
                             </span>
@@ -211,7 +212,7 @@
                             </div>
                         </article>
 
-                        <article class="room-highlight">
+                        <article class="room-highlight" th:remove="all">
                             <span>
                                 <i class="fa-solid fa-wind"></i>
                             </span>
@@ -221,7 +222,7 @@
                             </div>
                         </article>
 
-                        <article class="room-highlight">
+                        <article class="room-highlight" th:remove="all">
                             <span>
                                 <i class="fa-solid fa-shield-halved"></i>
                             </span>
@@ -238,32 +239,32 @@
                     <h3 class="heading-4">Amenities</h3>
 
                     <div class="room-amenities">
-                        <div class="room-amenity">
-                            <i class="fa-solid fa-wifi"></i>
-                            High-speed Wi-Fi
+                        <div class="room-amenity" th:each="amenity : ${roomAmenities}">
+                            <i class="fa-solid" th:classappend="${amenity.icon}"></i>
+                            <span th:text="${amenity.label}">High-speed Wi-Fi</span>
                         </div>
 
-                        <div class="room-amenity">
+                        <div class="room-amenity" th:remove="all">
                             <i class="fa-solid fa-snowflake"></i>
                             Air conditioning
                         </div>
 
-                        <div class="room-amenity">
+                        <div class="room-amenity" th:remove="all">
                             <i class="fa-solid fa-tv"></i>
                             Smart TV
                         </div>
 
-                        <div class="room-amenity">
+                        <div class="room-amenity" th:remove="all">
                             <i class="fa-solid fa-bath"></i>
                             Private bathroom
                         </div>
 
-                        <div class="room-amenity">
+                        <div class="room-amenity" th:remove="all">
                             <i class="fa-solid fa-martini-glass-citrus"></i>
                             Mini bar
                         </div>
 
-                        <div class="room-amenity">
+                        <div class="room-amenity" th:remove="all">
                             <i class="fa-solid fa-vault"></i>
                             Safety box
                         </div>
