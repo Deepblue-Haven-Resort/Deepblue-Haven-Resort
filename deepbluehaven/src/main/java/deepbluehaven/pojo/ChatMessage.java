@@ -42,7 +42,7 @@ public class ChatMessage {
     @Column(name = "message_type", nullable = false, length = 20)
     private MessageType messageType = MessageType.TEXT;
 
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "content", nullable = false, length = 500, columnDefinition = "NVARCHAR(500)")
     private String content;
 
     @CreationTimestamp

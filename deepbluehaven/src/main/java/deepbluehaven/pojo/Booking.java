@@ -47,7 +47,7 @@ public class Booking {
     @Column(name = "total_amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
-    @Column(name = "note", columnDefinition = "TEXT")
+    @Column(name = "note", length = 500, columnDefinition = "NVARCHAR(500)")
     private String note;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

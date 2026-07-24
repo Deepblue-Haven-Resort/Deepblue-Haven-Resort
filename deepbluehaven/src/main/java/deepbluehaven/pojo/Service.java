@@ -34,10 +34,10 @@ public class Service {
     @JoinColumn(name = "resort_id", nullable = false)
     private Resort resort;
 
-    @Column(name = "name", nullable = false, length = 150)
+    @Column(name = "name", nullable = false, length = 150, columnDefinition = "NVARCHAR(150)")
     private String name;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", length = 500, columnDefinition = "NVARCHAR(500)")
     private String description;
 
     public List<String> getImages() { 
@@ -60,7 +60,7 @@ public class Service {
     @Column(name = "base_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal basePrice;
 
-    @Column(name = "unit", nullable = false, length = 50)
+    @Column(name = "unit", nullable = false, length = 50, columnDefinition = "NVARCHAR(50)")
     private String unit;
 
     @Enumerated(EnumType.STRING)

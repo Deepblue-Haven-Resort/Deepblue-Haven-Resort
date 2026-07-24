@@ -28,13 +28,13 @@ public class InventoryItem {
     @JoinColumn(name = "resort_id", nullable = false)
     private Resort resort;
 
-    @Column(name = "name", nullable = false, length = 150)
+    @Column(name = "name", nullable = false, length = 150, columnDefinition = "NVARCHAR(150)")
     private String name;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "unit", nullable = false, length = 50)
+    @Column(name = "unit", nullable = false, length = 50, columnDefinition = "NVARCHAR(50)")
     private String unit;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -38,7 +38,7 @@ public class WorkerRoleTag {
     @Column(name = "permission_tag", nullable = false, length = 50)
     private PermissionTag permissionTag;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", length = 500, columnDefinition = "NVARCHAR(500)")
     private String description;
 
     public WorkerRoleTag() {

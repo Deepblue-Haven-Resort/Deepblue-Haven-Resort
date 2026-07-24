@@ -30,11 +30,10 @@ public class AuthController {
         this.authService = authService;
     }
 
-
     @GetMapping("/login")
     public String loginPage(@RequestParam(value = "logout", required = false) String logout,
-                            @RequestParam(value = "error", required = false) String error,
-                            HttpServletRequest request) {
+            @RequestParam(value = "error", required = false) String error,
+            HttpServletRequest request) {
 
         if (logout != null || error != null) {
             return "auth/login";
@@ -43,28 +42,7 @@ public class AuthController {
         HttpSession session = request.getSession(false);
 
         if (session != null) {
-            Object workerId = session.getAttribute("loggedInWorkerId");
             Object customerId = session.getAttribute("loggedInCustomerId");
-
-            if (workerId != null) {
-                String role = (String) session.getAttribute("workerRole");
-
-                if ("ADMIN".equals(role)) {
-                    return "redirect:/admin/dashboard";
-                }
-
-                if ("MANAGER".equals(role)) {
-                    return "redirect:/manager/dashboard";
-                }
-
-                if ("RECEPTIONIST".equals(role)) {
-                    return "redirect:/receptionist/dashboard";
-                }
-
-                if ("HOUSEKEEPER".equals(role)) {
-                    return "redirect:/housekeeper/dashboard";
-                }
-            }
 
             if (customerId != null) {
                 return "redirect:/home";
@@ -76,8 +54,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public String loginCustomer(@RequestParam("username") String username,
-                                @RequestParam("password") String password,
-                                HttpServletRequest request) {
+            @RequestParam("password") String password,
+            HttpServletRequest request) {
 
         Customer customer = authService.loginCustomer(username, password);
 
@@ -100,10 +78,43 @@ public class AuthController {
         return "redirect:/home";
     }
 
+    @GetMapping("/staff-login")
+    public String staffLoginPage(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if (session == null) {
+            return "auth/staff-login";
+        }
+
+        if (session.getAttribute("loggedInWorkerId") != null) {
+            return redirectWorkerByRole((String) session.getAttribute("workerRole"));
+        }
+
+        if (session.getAttribute("loggedInCustomerId") != null) {
+            return "redirect:/home";
+        }
+
+        return "auth/staff-login";
+    }
+
+    private String redirectWorkerByRole(String role) {
+        if (role == null) {
+            return "redirect:/staff-login";
+        }
+
+        return switch (role) {
+            case "ADMIN" -> "redirect:/admin/dashboard";
+            case "MANAGER" -> "redirect:/manager/dashboard";
+            case "RECEPTIONIST" -> "redirect:/receptionist/dashboard";
+            case "HOUSEKEEPER" -> "redirect:/housekeeper/dashboard";
+            default -> "redirect:/staff-login?error=invalid-role";
+        };
+    }
+
     @PostMapping("/staff-login")
     public String loginStaff(@RequestParam("username") String username,
-                             @RequestParam("password") String password,
-                             HttpServletRequest request) {
+            @RequestParam("password") String password,
+            HttpServletRequest request) {
 
         Worker worker = authService.loginWorker(username, password);
 
@@ -163,13 +174,12 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterDTO.Request request) {
         Customer customer = authService.registerCustomer(request);
- 
+
         Map<String, Object> body = Map.of(
                 "id", customer.getId(),
                 "username", customer.getUsername(),
-                "message", "Registration successful"
-        );
- 
+                "message", "Registration successful");
+
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 }

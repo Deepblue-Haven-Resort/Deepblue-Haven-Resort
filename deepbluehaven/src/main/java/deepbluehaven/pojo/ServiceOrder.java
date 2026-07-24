@@ -1,5 +1,10 @@
 package deepbluehaven.pojo;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import deepbluehaven.pojo.enums.ServiceOrderStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,9 +17,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.CreationTimestamp;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Service_Order")
@@ -49,7 +51,7 @@ public class ServiceOrder {
     @Column(name = "total_price", nullable = false, precision = 15, scale = 2)
     private BigDecimal totalPrice;
 
-    @Column(name = "note", columnDefinition = "TEXT")
+    @Column(name = "note", length = 500, columnDefinition = "NVARCHAR(500)")
     private String note;
 
     @Enumerated(EnumType.STRING)

@@ -1,5 +1,9 @@
 package deepbluehaven.pojo;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import deepbluehaven.pojo.enums.ReferenceType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,8 +16,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.CreationTimestamp;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Customer_Loyalty_Log")
@@ -38,7 +40,7 @@ public class CustomerLoyaltyLog {
     @Column(name = "points_changed", nullable = false)
     private Integer pointsChanged;
 
-    @Column(name = "reason", nullable = false, length = 255)
+    @Column(name = "reason", nullable = false, length = 500, columnDefinition = "NVARCHAR(500)")
     private String reason;
 
     @CreationTimestamp

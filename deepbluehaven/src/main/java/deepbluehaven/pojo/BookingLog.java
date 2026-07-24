@@ -40,7 +40,7 @@ public class BookingLog {
     @Column(name = "current_status", nullable = false, length = 30)
     private BookingStatus currentStatus;
 
-    @Column(name = "note", columnDefinition = "TEXT")
+    @Column(name = "note", length = 500, columnDefinition = "NVARCHAR(500)")
     private String note;
 
     @CreationTimestamp

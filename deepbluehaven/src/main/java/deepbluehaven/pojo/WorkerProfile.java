@@ -29,7 +29,7 @@ public class WorkerProfile {
     @JoinColumn(name = "worker_id", nullable = false)
     private Worker worker;
 
-    @Column(name = "full_name", nullable = false, length = 120)
+    @Column(name = "full_name", nullable = false, length = 100, columnDefinition = "NVARCHAR(100)")
     private String fullName;
 
     @Enumerated(EnumType.STRING)
@@ -56,7 +56,7 @@ public class WorkerProfile {
     @Column(name = "email", nullable = true, length = 120)
     private String email;
 
-    @Column(name = "address", nullable = true, length = 255)
+    @Column(name = "address", nullable = true, length = 255, columnDefinition = "NVARCHAR(255)")
     private String address;
 
     public WorkerProfile() {
