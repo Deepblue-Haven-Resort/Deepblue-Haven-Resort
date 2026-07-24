@@ -547,6 +547,13 @@ body {
     color: #9a6a1f;
 }
 
+.room-card__tag--gray {
+    border-color: var(--neutral-300);
+    background: rgba(217, 234, 241, 0.64);
+    color: var(--neutral-700);
+}
+
+
 .room-card__features {
     margin-top: var(--space-24);
     padding-block: var(--space-16);

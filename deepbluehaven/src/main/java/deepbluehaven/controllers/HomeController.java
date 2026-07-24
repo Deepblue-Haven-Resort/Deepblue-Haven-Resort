@@ -9,14 +9,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import deepbluehaven.dto.ServiceDTO;
 import deepbluehaven.services.CustomerService;
+import deepbluehaven.services.RoomService;
 
 @Controller
 public class HomeController {
 
     private final CustomerService CustomerService;
+    private final RoomService roomService;
 
-    public HomeController(CustomerService CustomerService) {
+    public HomeController(CustomerService CustomerService, RoomService roomService) {
         this.CustomerService = CustomerService;
+        this.roomService = roomService;
     }
 
     @GetMapping("/")
@@ -35,7 +38,9 @@ public class HomeController {
     }
 
     @GetMapping("/rooms")
-    public String roomsList() {
+    public String roomsList(Model model) {
+        model.addAttribute("rooms", roomService.getAvailableRoomCards());
+        model.addAttribute("resortOptions", roomService.getResortFilterOptions());
         return "customer/rooms-list";
     }
 
