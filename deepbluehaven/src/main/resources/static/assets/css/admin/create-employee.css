@@ -8,16 +8,15 @@
     min-height: 100vh;
     display: flex;
     background:
-        radial-gradient(circle at top right, rgba(77, 168, 255, 0.16), transparent 32%),
-        radial-gradient(circle at bottom left, rgba(70, 199, 165, 0.14), transparent 30%),
+        radial-gradient(circle at top right, rgba(77, 168, 255, 0.18), transparent 35%),
         linear-gradient(180deg, var(--neutral-50) 0%, var(--primary-100) 100%);
 }
 
 .admin-main {
     flex: 1;
     min-width: 0;
-    margin-left: 304px;
-    padding: 28px 36px 44px;
+    padding: var(--space-24);
+    /* margin-left do admin-sidebar.css quản lý theo từng breakpoint */
 }
 
 .create-employee-page {
@@ -25,6 +24,7 @@
     margin: 0 auto;
     display: grid;
     gap: 22px;
+    min-height: calc(100vh - var(--space-24) * 2);
 }
 
 /* ============================= */
@@ -41,9 +41,9 @@
 .wizard-sidebar,
 .wizard-form {
     background: rgba(255, 255, 255, 0.94);
-    border: 1px solid rgba(77, 168, 255, 0.2);
+    border: var(--border-1) solid var(--primary-200);
     border-radius: 28px;
-    box-shadow: 0 22px 55px rgba(8, 28, 44, 0.09);
+    box-shadow: 0 22px 55px rgba(var(--shadow-color), 0.09);
     backdrop-filter: blur(14px);
 }
 
@@ -54,23 +54,24 @@
     height: 100%;
     align-self: stretch;
 }
+
 .wizard-form {
     position: relative;
     overflow: visible;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ============================= */
-/* LEFT SIDEBAR */
+/* LEFT SIDEBAR (WIZARD STEPS) */
 /* ============================= */
 
 .wizard-brand-card {
     display: flex;
     align-items: center;
     gap: 14px;
-
     padding: 16px;
     margin-bottom: 18px;
-
     border-radius: 22px;
     background:
         radial-gradient(circle at top right, rgba(77, 168, 255, 0.26), transparent 38%),
@@ -81,11 +82,9 @@
 .wizard-brand-icon {
     width: 48px;
     height: 48px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.16);
     color: var(--white);
@@ -108,18 +107,14 @@
 
 .wizard-step {
     width: 100%;
-
     display: grid;
     grid-template-columns: 38px minmax(0, 1fr);
     align-items: center;
     gap: 12px;
-
     padding: 12px;
-
-    border: 1px solid var(--primary-100);
+    border: var(--border-1) solid var(--primary-100);
     border-radius: 18px;
     background: var(--surface-0);
-
     text-align: left;
     cursor: pointer;
     transition: 0.22s ease;
@@ -128,15 +123,12 @@
 .wizard-step span {
     width: 38px;
     height: 38px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 14px;
     background: var(--primary-100);
     color: var(--primary-700);
-
     font-size: 0.88rem;
     font-weight: 900;
 }
@@ -151,7 +143,6 @@
 .wizard-step small {
     display: block;
     margin-top: 4px;
-
     color: var(--neutral-500);
     font-size: 0.74rem;
     font-weight: 700;
@@ -187,23 +178,19 @@
     display: grid;
     grid-template-columns: 40px minmax(0, 1fr);
     gap: 12px;
-
     margin-top: 18px;
     padding: 14px;
-
     border-radius: 20px;
     background: var(--success-100);
-    border: 1px solid var(--success-300);
+    border: var(--border-1) solid var(--success-300);
 }
 
 .wizard-security-note i {
     width: 40px;
     height: 40px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 14px;
     background: var(--surface-0);
     color: var(--success-700);
@@ -237,6 +224,7 @@
 
 .wizard-panel.active {
     display: block;
+    flex: 1 0 auto;
     animation: fadePanel 0.22s ease;
 }
 
@@ -245,7 +233,6 @@
         opacity: 0;
         transform: translateY(6px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -257,17 +244,14 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 22px;
-
     margin-bottom: 26px;
     padding-bottom: 22px;
-
-    border-bottom: 1px solid var(--primary-100);
+    border-bottom: var(--border-1) solid var(--primary-100);
 }
 
 .panel-heading span {
     display: inline-flex;
     margin-bottom: 7px;
-
     color: var(--primary-700);
     font-size: 0.74rem;
     font-weight: 900;
@@ -277,7 +261,6 @@
 
 .panel-heading h2 {
     margin: 0;
-
     font-family: var(--font-heading);
     color: var(--primary-900);
     font-size: clamp(1.8rem, 3vw, 2.4rem);
@@ -288,7 +271,6 @@
 .panel-heading p {
     max-width: 720px;
     margin: 9px 0 0;
-
     color: var(--neutral-600);
     font-size: 0.95rem;
     font-weight: 700;
@@ -298,15 +280,12 @@
 .panel-icon {
     width: 58px;
     height: 58px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 20px;
     background: var(--primary-100);
     color: var(--primary-700);
-
     font-size: 1.28rem;
     flex-shrink: 0;
 }
@@ -342,18 +321,13 @@
 .password-field input {
     width: 100%;
     height: 52px;
-
     padding: 0 16px;
-
-    border: 1px solid var(--primary-200);
+    border: var(--border-1) solid var(--primary-200);
     border-radius: 16px;
-
     background: var(--surface-0);
     color: var(--neutral-800);
-
     font-size: 0.95rem;
     font-weight: 760;
-
     outline: none;
     transition: 0.2s ease;
 }
@@ -380,7 +354,6 @@
 .field-error {
     display: none;
     min-height: 16px;
-
     color: var(--error-700);
     font-size: 0.76rem;
     font-weight: 800;
@@ -399,7 +372,6 @@
 
 /* ============================= */
 /* CREATE PAGE DROPDOWN OVERRIDE */
-/* Base dropdown lấy từ components.css */
 /* ============================= */
 
 .create-employee-page .form-filter-dropdown {
@@ -412,19 +384,14 @@
     width: 100%;
     min-width: 0;
     height: 52px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-
     padding: 0 16px;
-
     border-radius: 16px;
-
     font-size: 0.95rem;
     font-weight: 800;
-
     box-shadow: none;
     transform: none;
 }
@@ -432,7 +399,6 @@
 .create-employee-page .form-filter-btn .filter-label {
     min-width: 0;
     overflow: hidden;
-
     white-space: nowrap;
     text-overflow: ellipsis;
 }
@@ -449,20 +415,16 @@
 .create-employee-page .form-filter-menu {
     width: 100%;
     min-width: 100%;
-
     left: 0;
     right: 0;
     z-index: 999;
-
     padding: 8px;
-
 }
 
 .create-employee-page .form-filter-menu button {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-
     font-size: 0.9rem;
     font-weight: 800;
     text-align: left;
@@ -475,10 +437,8 @@
 .role-preview-card {
     margin-top: 26px;
     padding: 22px;
-
     border-radius: 24px;
-    border: 1px solid var(--primary-200);
-
+    border: var(--border-1) solid var(--primary-200);
     background:
         radial-gradient(circle at top right, rgba(77, 168, 255, 0.14), transparent 34%),
         linear-gradient(135deg, var(--primary-100), var(--surface-0));
@@ -493,7 +453,6 @@
 .preview-header span:first-child {
     display: block;
     margin-bottom: 6px;
-
     color: var(--primary-700);
     font-size: 0.72rem;
     font-weight: 900;
@@ -510,7 +469,6 @@
 
 .role-preview-card p {
     margin: 14px 0;
-
     color: var(--neutral-700);
     font-size: 0.92rem;
     font-weight: 700;
@@ -525,11 +483,9 @@
 
 .preview-permission-list span {
     padding: 8px 12px;
-
     border-radius: 999px;
     background: var(--surface-0);
-    border: 1px solid var(--primary-200);
-
+    border: var(--border-1) solid var(--primary-200);
     color: var(--primary-800);
     font-size: 0.76rem;
     font-weight: 900;
@@ -551,21 +507,16 @@
     position: absolute;
     top: 50%;
     right: 7px;
-
     width: 38px;
     height: 38px;
     transform: translateY(-50%);
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border: none;
     border-radius: 13px;
-
     background: var(--primary-100);
     color: var(--primary-700);
-
     cursor: pointer;
     transition: 0.2s ease;
 }
@@ -586,13 +537,10 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     gap: 12px;
-
     padding: 16px;
-
     border-radius: 20px;
-    border: 1px solid var(--primary-200);
+    border: var(--border-1) solid var(--primary-200);
     background: var(--surface-0);
-
     cursor: pointer;
     transition: 0.2s ease;
 }
@@ -619,7 +567,6 @@
 .setting-card span {
     display: block;
     margin-top: 5px;
-
     color: var(--neutral-600);
     font-size: 0.76rem;
     font-weight: 700;
@@ -635,20 +582,17 @@
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-
     margin-bottom: 18px;
     padding: 14px 16px;
-
     border-radius: 20px;
     background: var(--primary-100);
-    border: 1px solid var(--primary-200);
+    border: var(--border-1) solid var(--primary-200);
 }
 
 .use-default-permission {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-
     color: var(--primary-900);
     font-size: 0.88rem;
     font-weight: 900;
@@ -664,19 +608,15 @@
 .outline-btn {
     min-height: 38px;
     padding: 0 15px;
-
     display: inline-flex;
     align-items: center;
     gap: 8px;
-
     border-radius: 999px;
-    border: 1px solid var(--primary-200);
+    border: var(--border-1) solid var(--primary-200);
     background: var(--surface-0);
-
     color: var(--primary-800);
     font-size: 0.84rem;
     font-weight: 900;
-
     cursor: pointer;
     transition: 0.2s ease;
 }
@@ -696,13 +636,10 @@
     grid-template-columns: minmax(230px, 0.8fr) minmax(0, 1fr);
     gap: 16px;
     align-items: center;
-
     padding: 16px;
-
     border-radius: 20px;
-    border: 1px solid var(--primary-200);
+    border: var(--border-1) solid var(--primary-200);
     background: var(--surface-0);
-
     transition: 0.2s ease;
 }
 
@@ -720,11 +657,9 @@
 .module-info i {
     width: 42px;
     height: 42px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 14px;
     background: var(--primary-100);
     color: var(--primary-700);
@@ -740,7 +675,6 @@
 .module-info span {
     display: block;
     margin-top: 4px;
-
     color: var(--neutral-500);
     font-size: 0.76rem;
     font-weight: 700;
@@ -755,21 +689,16 @@
 
 .permission-checks label {
     min-height: 36px;
-
     display: inline-flex;
     align-items: center;
     gap: 7px;
-
     padding: 0 12px;
-
     border-radius: 999px;
     background: var(--primary-100);
-    border: 1px solid var(--primary-200);
-
+    border: var(--border-1) solid var(--primary-200);
     color: var(--primary-800);
     font-size: 0.76rem;
     font-weight: 900;
-
     cursor: pointer;
     transition: 0.2s ease;
 }
@@ -787,7 +716,6 @@
 .confirm-error {
     display: block;
     margin-top: 10px;
-
     color: var(--error-700);
     font-size: 0.78rem;
     font-weight: 800;
@@ -804,9 +732,8 @@
 
 .review-card {
     padding: 20px;
-
     border-radius: 22px;
-    border: 1px solid var(--primary-200);
+    border: var(--border-1) solid var(--primary-200);
     background: var(--surface-0);
 }
 
@@ -814,9 +741,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-
     margin: 0 0 16px;
-
     color: var(--primary-900);
     font-size: 0.96rem;
     font-weight: 900;
@@ -835,7 +760,6 @@
 .review-grid span {
     display: block;
     margin-bottom: 5px;
-
     color: var(--neutral-500);
     font-size: 0.74rem;
     font-weight: 850;
@@ -843,7 +767,6 @@
 
 .review-grid strong {
     display: block;
-
     color: var(--neutral-900);
     font-size: 0.92rem;
     font-weight: 900;
@@ -855,7 +778,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-
     color: var(--neutral-600);
     font-size: 0.88rem;
     font-weight: 750;
@@ -863,11 +785,9 @@
 
 .selected-permissions span {
     padding: 8px 12px;
-
     border-radius: 999px;
     background: var(--primary-100);
-    border: 1px solid var(--primary-200);
-
+    border: var(--border-1) solid var(--primary-200);
     color: var(--primary-800);
     font-size: 0.76rem;
     font-weight: 900;
@@ -877,13 +797,10 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     gap: 12px;
-
     padding: 16px;
-
     border-radius: 20px;
     background: var(--success-100);
-    border: 1px solid var(--success-300);
-
+    border: var(--border-1) solid var(--success-300);
     color: var(--success-700);
     font-size: 0.9rem;
     font-weight: 900;
@@ -904,17 +821,13 @@
 .wizard-actions {
     position: relative;
     z-index: 1;
-
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 12px;
-
     padding: 18px 30px;
-
-    border-top: 1px solid var(--primary-100);
+    border-top: var(--border-1) solid var(--primary-100);
     background: rgba(237, 247, 252, 0.76);
-
     border-radius: 0 0 28px 28px;
 }
 
@@ -923,23 +836,19 @@
 .draft-btn {
     min-height: 44px;
     padding: 0 18px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 9px;
-
     border-radius: 999px;
-
     font-size: 0.88rem;
     font-weight: 900;
-
     cursor: pointer;
     transition: 0.2s ease;
 }
 
 .primary-btn {
-    border: 1px solid var(--primary-600);
+    border: var(--border-1) solid var(--primary-600);
     background: linear-gradient(135deg, var(--primary-700), var(--primary-500));
     color: var(--white);
     box-shadow: 0 10px 22px rgba(20, 93, 160, 0.2);
@@ -953,7 +862,7 @@
 .secondary-btn,
 .draft-btn {
     background: var(--surface-0);
-    border: 1px solid var(--primary-200);
+    border: var(--border-1) solid var(--primary-200);
     color: var(--primary-800);
 }
 
@@ -963,88 +872,327 @@
     border-color: var(--primary-300);
 }
 
-/* ============================= */
-/* RESPONSIVE */
-/* ============================= */
+/* ==========================================
+   RESPONSIVE (Đồng bộ 100% Breakpoints với accounts.css)
+========================================== */
 
-@media (max-width: 1200px) {
+/* 1. Desktop nhỏ / Màn hình < 1400px */
+@media (max-width: 1399px) {
+    .admin-main {
+        padding: var(--space-16);
+    }
+
+    /* Thu gọn bớt cột dải bước bên trái để nhường không gian cho Form */
+    .wizard-shell {
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: 16px;
+    }
+
+    .wizard-panel {
+        padding: 22px;
+    }
+
+    /* Tối ưu khoảng cách trong Form */
+    .form-grid {
+        gap: 16px;
+    }
+
+    .form-group > input:not([type="hidden"]),
+    .form-group select,
+    .password-field input,
+    .create-employee-page .form-filter-btn {
+        height: 48px;
+        font-size: 0.9rem;
+    }
+
+    /* Đảm bảo dải nút dưới chân không bị tràn */
+    .wizard-actions {
+        padding: 14px 20px;
+        gap: 8px;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .draft-btn {
+        min-height: 40px;
+        padding: 0 14px;
+        font-size: 0.82rem;
+    }
+}
+
+/* 2. Tablet / Breakpoint chính (470px - 799px) - KHỚP 768px TRONG ẢNH */
+@media (min-width: 470px) and (max-width: 799px) {
+    .admin-layout {
+        min-height: 100vh;
+        align-items: stretch;
+    }
+
+    /* Ép Admin Sidebar kéo dài hết 100% chiều cao khung hình bên trái */
+    .admin-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+        z-index: 999 !important;
+    }
+
+    .admin-main {
+        margin-left: 88px !important; /* Đẩy lùi sang phải bằng đúng độ rộng Sidebar thu gọn */
+        padding: var(--space-12);
+    }
+
+    /* Chuyển Layout Wizard về 1 cột dọc để vừa khoảng trống */
     .wizard-shell {
         grid-template-columns: 1fr;
+        gap: var(--space-16);
     }
 
     .wizard-sidebar {
         position: static;
+        height: auto;
+        padding: var(--space-16);
     }
 
+    /* Thanh bước (Steps): xếp dọc 5 hàng cho vừa khung hình */
     .wizard-progress {
-        grid-template-columns: repeat(5, minmax(160px, 1fr));
-        overflow-x: auto;
-        padding-bottom: 4px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
     }
 
     .wizard-step {
-        min-width: 160px;
-    }
-}
-
-@media (max-width: 900px) {
-    .admin-main {
-        margin-left: 0;
-        padding: 20px;
+        width: 100%;
+        min-width: 0;
+        grid-template-columns: 32px minmax(0, 1fr);
+        padding: var(--space-10) var(--space-12);
     }
 
+    .wizard-step span {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+
+    .wizard-step strong {
+        font-size: 0.82rem;
+    }
+
+    .wizard-step small,
+    .wizard-security-note {
+        display: none; 
+    }
+
+    .wizard-panel {
+        padding: 24px 32px;
+    }
+
+    
     .form-grid,
     .security-grid,
     .review-grid {
         grid-template-columns: 1fr;
+        gap: var(--space-16);
     }
 
-    .permission-module {
-        grid-template-columns: 1fr;
+    .panel-heading {
+        flex-direction: column;
+        align-items: center;    
+        text-align: center;
+        gap: var(--space-12);
+        margin-bottom: var(--space-16);
+        padding-bottom: var(--space-16);
     }
 
+    /* Khung nút dưới cùng vừa vặn */
     .wizard-actions {
-        flex-wrap: wrap;
-        justify-content: stretch;
+        padding: var(--space-16);
+        justify-content: space-between;
+        gap: var(--space-8);
     }
 
     .primary-btn,
     .secondary-btn,
     .draft-btn {
         flex: 1;
+        min-height: 46px;
+        padding: 0 var(--space-12);
+        font-size: 0.85rem;
     }
 }
 
-@media (max-width: 560px) {
+
+/* ==========================================
+   3. MOBILE RESPONSIVE (Dưới 470px: Mobile S, M, L)
+========================================== */
+/* ==========================================
+   3. MOBILE RESPONSIVE (Dưới 470px: Mobile S, M, L)
+========================================== */
+@media (max-width: 469px) {
+
+    /* 1. RESET MAIN MARGIN & PADDING: Đưa lề về 0 vì Sidebar chính Admin đã nằm trên cùng */
     .admin-main {
-        padding: 14px;
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: var(--space-12) var(--space-8);
     }
 
-    .wizard-sidebar,
-    .wizard-panel {
-        padding: 18px;
-        border-radius: 22px;
-    }
-
+    /* 2. CHUYỂN WIZARD LAYOUT VỀ DẠNG 1 CỘT (Dải bước ở trên, Form ở dưới) */
     .wizard-shell {
-        gap: 16px;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    /* 3. KHUNG ACCOUNT SETUP (WIZARD SIDEBAR) */
+    .wizard-sidebar {
+        position: static;
+        height: auto;
+        padding: 12px;
+        border-radius: 18px;
+    }
+
+    .wizard-brand-card {
+        padding: 10px 12px;
+        margin-bottom: 12px;
+        border-radius: 14px;
+        gap: 10px;
+    }
+
+    .wizard-brand-card h2 {
+        font-size: 0.88rem;
+    }
+
+    .wizard-brand-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 0.95rem;
+        border-radius: 12px;
+    }
+
+    /* Hiển thị 5 hàng bước (Account Setup) xếp dòng từ trên xuống dưới như Tablet */
+    .wizard-progress {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        overflow-x: visible;
+    }
+
+    .wizard-step {
+        width: 100%;
+        min-width: 0;
+        display: grid;
+        grid-template-columns: 32px minmax(0, 1fr);
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 12px;
+    }
+
+    .wizard-step span {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+        border-radius: 10px;
+    }
+
+    .wizard-step strong {
+        font-size: 0.82rem;
+        line-height: 1.2;
+    }
+
+    /* Ẩn bớt ghi chú phụ để khung gọn gàng */
+    .wizard-step small,
+    .wizard-security-note {
+        display: none;
+    }
+
+    /* 4. KHUNG FORM NHẬP LIỆU BÊN DƯỚI (FIT KHUNG HÌNH MOBILE) */
+    .wizard-panel {
+        padding: 16px 12px;
+        border-radius: 18px;
     }
 
     .panel-heading {
         flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 8px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+    }
+
+    .panel-heading span {
+        font-size: 0.7rem;
+    }
+
+    .panel-heading h2 {
+        font-size: 1.25rem;
+    }
+
+    .panel-heading p {
+        font-size: 0.82rem;
     }
 
     .panel-icon {
-        width: 50px;
-        height: 50px;
+        width: 44px;
+        height: 44px;
+        font-size: 1.05rem;
+        border-radius: 14px;
+    }
+
+    /* Ép tất cả các lưới Input/Card về 1 cột */
+    .form-grid,
+    .security-grid,
+    .review-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    /* Tối ưu kích thước ô Input / Dropdown / Button vừa tay bấm */
+    .form-group > input:not([type="hidden"]),
+    .form-group select,
+    .password-field input,
+    .create-employee-page .form-filter-btn {
+        height: 44px;
+        padding: 0 12px;
+        font-size: 0.88rem;
+        border-radius: 12px;
+    }
+
+    .setting-card {
+        padding: 12px;
+        border-radius: 14px;
+    }
+
+    .permission-module {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 14px;
     }
 
     .permission-toolbar {
         flex-direction: column;
         align-items: stretch;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 14px;
     }
 
+    /* 5. CÁC NÚT THAO TÁC DƯỚI CÙNG */
     .wizard-actions {
-        padding: 16px 18px;
+        flex-direction: column-reverse;
+        gap: 8px;
+        padding: 12px;
+        border-radius: 0 0 18px 18px;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .draft-btn {
+        width: 100%;
+        min-height: 44px;
+        font-size: 0.85rem;
     }
 }
