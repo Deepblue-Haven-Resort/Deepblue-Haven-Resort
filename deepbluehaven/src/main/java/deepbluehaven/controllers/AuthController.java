@@ -195,7 +195,8 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
         try {
-            authService.processForgotPassword(request.get("identity"));
+            String identity = getRequiredValue(request, "identity");
+            authService.processForgotPassword(identity);
             return ResponseEntity.ok(Map.of("message", "OTP sent successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
@@ -206,7 +207,10 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<?> verifyOtp(@RequestBody Map<String, String> request) {
         try {
-            authService.verifyOtp(request.get("identity"), request.get("otp"));
+            String identity = getRequiredValue(request, "identity");
+            String otp = getRequiredValue(request, "otp");
+            authService.verifyOtp(identity, otp);
+
             return ResponseEntity.ok(Map.of("message", "OTP verified"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
@@ -217,10 +221,23 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
         try {
-            authService.resetPassword(request.get("identity"), request.get("newPassword"));
-            return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
+            String identity = getRequiredValue(request, "identity");
+
+            String newPassword = getRequiredValue(request, "newPassword");
+            authService.resetPassword(identity, newPassword);
+
+            return ResponseEntity.ok(
+                    Map.of("message", "Password reset successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
+    }
+
+    private String getRequiredValue(Map<String, String> request, String fieldName) {
+        String value = request.get(fieldName);
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(fieldName + " is required.");
+        }
+        return value;
     }
 }
