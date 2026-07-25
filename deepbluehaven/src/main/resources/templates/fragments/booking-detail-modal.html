@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<!-- =========================================
+     BOOKING DETAIL MODAL
+========================================= -->
+
+<div th:fragment="bookingDetailModal"
+     class="booking-detail-modal"
+     id="bookingDetailModal"
+     aria-hidden="true">
+
+    <!-- Overlay -->
+
+    <div class="booking-detail-modal__overlay"
+         data-close-booking-detail>
+    </div>
+
+    <!-- Modal dialog -->
+
+    <section class="booking-detail-modal__dialog"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="bookingDetailTitle"
+             aria-describedby="bookingDetailDescription"
+             tabindex="-1">
+
+        <!-- =====================================
+             HEADER
+        ====================================== -->
+
+        <header class="booking-detail-modal__header">
+
+            <div class="booking-detail-modal__header-content">
+
+                <div class="booking-detail-modal__header-icon">
+
+                    <i class="fa-regular fa-calendar-check"></i>
+
+                </div>
+
+                <div>
+
+                    <span class="booking-detail-modal__eyebrow">
+                        Reservation information
+                    </span>
+
+                    <h2 id="bookingDetailTitle">
+                        Booking Details
+                    </h2>
+
+                    <p id="bookingDetailDescription">
+
+                        Booking ID:
+
+                        <strong id="modalBookingCode">
+                            DBH-2026-001
+                        </strong>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <button type="button"
+                    class="booking-detail-modal__close"
+                    data-close-booking-detail
+                    aria-label="Close booking details">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </header>
+
+        <!-- =====================================
+             BODY
+        ====================================== -->
+
+        <div class="booking-detail-modal__body">
+
+            <!-- =================================
+                 BOOKING SUMMARY
+            ================================== -->
+
+            <section class="booking-detail-summary">
+
+                <div class="booking-detail-summary__main">
+
+                    <div class="booking-detail-summary__room-icon">
+
+                        <i class="fa-solid fa-bed"></i>
+
+                    </div>
+
+                    <div class="booking-detail-summary__room">
+
+                        <span class="booking-detail-status
+                                     booking-detail-status--pending"
+                              id="modalBookingStatus">
+
+                            Pending
+
+                        </span>
+
+                        <h3 id="modalRoomName">
+                            Deluxe Ocean View
+                        </h3>
+
+                        <p>
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+                            Deep Blue Haven Resort
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="booking-detail-summary__total">
+
+                    <span>Total amount</span>
+
+                    <strong id="modalSummaryTotal">
+                        $620
+                    </strong>
+
+                </div>
+
+            </section>
+
+            <!-- =================================
+                 STAY INFORMATION
+            ================================== -->
+
+            <section class="booking-detail-section">
+
+                <div class="booking-detail-section__heading">
+
+                    <div class="booking-detail-section__icon">
+
+                        <i class="fa-regular fa-calendar"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3>Stay Information</h3>
+
+                        <p>
+                            Information about the room and reservation period.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="booking-detail-information">
+
+                    <div class="booking-detail-information__item">
+
+                        <span>Check-in</span>
+
+                        <strong id="modalCheckIn">
+                            August 12, 2026
+                        </strong>
+
+                    </div>
+
+                    <div class="booking-detail-information__item">
+
+                        <span>Check-out</span>
+
+                        <strong id="modalCheckOut">
+                            August 15, 2026
+                        </strong>
+
+                    </div>
+
+                    <div class="booking-detail-information__item">
+
+                        <span>Length of stay</span>
+
+                        <strong id="modalNights">
+                            3 Nights
+                        </strong>
+
+                    </div>
+
+                    <div class="booking-detail-information__item">
+
+                        <span>Guests</span>
+
+                        <strong id="modalGuests">
+                            2 Adults
+                        </strong>
+
+                    </div>
+
+                    <div class="booking-detail-information__item">
+
+                        <span>Room type</span>
+
+                        <strong id="modalRoomType">
+                            Deluxe Room
+                        </strong>
+
+                    </div>
+
+                    <div class="booking-detail-information__item">
+
+                        <span>Room number</span>
+
+                        <strong id="modalRoomNumber">
+                            To be assigned
+                        </strong>
+
+                    </div>
+
+                    <div class="booking-detail-information__item">
+
+                        <span>Booked on</span>
+
+                        <strong id="modalBookedOn">
+                            July 20, 2026
+                        </strong>
+
+                    </div>
+
+                    <div class="booking-detail-information__item">
+
+                        <span>Payment status</span>
+
+                        <strong class="booking-payment-status"
+                                id="modalPaymentStatus">
+
+                            Unpaid
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- =================================
+                 GUEST INFORMATION
+            ================================== -->
+
+            <section class="booking-detail-section">
+
+                <div class="booking-detail-section__heading">
+
+                    <div class="booking-detail-section__icon">
+
+                        <i class="fa-regular fa-user"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3>Guest Information</h3>
+
+                        <p>
+                            Contact details associated with this reservation.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="booking-detail-guest">
+
+                    <div class="booking-detail-guest__item">
+
+                        <div class="booking-detail-guest__icon">
+
+                            <i class="fa-regular fa-user"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>Guest name</span>
+
+                            <strong id="modalGuestName">
+                                Nguyen Minh Anh
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="booking-detail-guest__item">
+
+                        <div class="booking-detail-guest__icon">
+
+                            <i class="fa-regular fa-envelope"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>Email address</span>
+
+                            <strong id="modalGuestEmail">
+                                guest@example.com
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="booking-detail-guest__item">
+
+                        <div class="booking-detail-guest__icon">
+
+                            <i class="fa-solid fa-phone"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>Phone number</span>
+
+                            <strong id="modalGuestPhone">
+                                +84 912 345 678
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- =================================
+                 BOOKING DETAILS
+                 Dữ liệu từ BookingDetail
+            ================================== -->
+
+            <section class="booking-detail-section">
+
+                <div class="booking-detail-section__heading">
+
+                    <div class="booking-detail-section__icon">
+
+                        <i class="fa-solid fa-list-check"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3>Booking Items</h3>
+
+                        <p>
+                            Room charges and services included in this booking.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="booking-detail-items"
+                     id="modalBookingDetailList">
+
+                    <!-- Header -->
+
+                    <div class="booking-detail-items__header">
+
+                        <span>Description</span>
+
+                        <span>Quantity</span>
+
+                        <span>Unit price</span>
+
+                        <span>Amount</span>
+
+                    </div>
+
+                    <!-- BookingDetail item mẫu -->
+
+                    <div class="booking-detail-items__row">
+
+                        <div class="booking-detail-items__description">
+
+                            <div class="booking-detail-items__item-icon">
+
+                                <i class="fa-solid fa-bed"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Room accommodation
+                                </strong>
+
+                                <span id="modalBookingDetailRoom">
+                                    Deluxe Ocean View
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <span id="modalRoomQuantity">
+                            3 nights
+                        </span>
+
+                        <span id="modalRoomUnitPrice">
+                            —
+                        </span>
+
+                        <strong id="modalRoomAmount">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <!-- Service rows được JavaScript hoặc Thymeleaf thêm vào đây -->
+
+                    <div class="booking-detail-items__empty"
+                         id="modalServiceEmpty">
+
+                        <i class="fa-solid fa-bell-concierge"></i>
+
+                        <span>
+                            No additional services have been added.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- =================================
+                 SPECIAL REQUEST
+            ================================== -->
+
+            <section class="booking-detail-section">
+
+                <div class="booking-detail-section__heading">
+
+                    <div class="booking-detail-section__icon">
+
+                        <i class="fa-regular fa-message"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3>Special Request</h3>
+
+                        <p>
+                            Requests submitted together with the booking.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="booking-special-request">
+
+                    <i class="fa-solid fa-quote-left"></i>
+
+                    <p id="modalSpecialRequest">
+                        No special requests were submitted for this booking.
+                    </p>
+
+                </div>
+
+            </section>
+
+            <!-- =================================
+                 PRICE SUMMARY
+            ================================== -->
+
+            <section class="booking-detail-section
+                            booking-detail-section--price">
+
+                <div class="booking-detail-section__heading">
+
+                    <div class="booking-detail-section__icon">
+
+                        <i class="fa-solid fa-receipt"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3>Price Summary</h3>
+
+                        <p>
+                            Current amount calculated for this reservation.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="booking-price-summary">
+
+                    <div class="booking-price-summary__row">
+
+                        <span>Room charge</span>
+
+                        <strong id="modalRoomCharge">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="booking-price-summary__row">
+
+                        <span>Service charge</span>
+
+                        <strong id="modalServiceCharge">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="booking-price-summary__row">
+
+                        <span>Taxes and fees</span>
+
+                        <strong id="modalTax">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="booking-price-summary__row
+                                booking-price-summary__row--discount">
+
+                        <span>Discount</span>
+
+                        <strong id="modalDiscount">
+                            —
+                        </strong>
+
+                    </div>
+
+                    <div class="booking-price-summary__row
+                                booking-price-summary__row--total">
+
+                        <span>Total amount</span>
+
+                        <strong id="modalTotal">
+                            $620
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+        <!-- =====================================
+             FOOTER ACTIONS
+        ====================================== -->
+
+        <footer class="booking-detail-modal__footer">
+
+            <div class="booking-detail-modal__footer-note">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <span id="modalActionNote">
+                    Review your booking information before taking an action.
+                </span>
+
+            </div>
+
+            <div class="booking-detail-modal__actions">
+
+                <!-- Chỉ hiện với trạng thái PENDING -->
+
+                <button type="button"
+                        class="btn btn-error btn-small booking-detail-action"
+                        id="cancelBookingBtn"
+                        hidden>
+
+                    <i class="fa-regular fa-circle-xmark"></i>
+
+                    Cancel Booking
+
+                </button>
+
+                <!-- Hiện với PENDING, CONFIRMED, CHECKED_IN -->
+
+                <a th:href="@{/services}"
+                   href="/services"
+                   class="btn btn-success btn-small booking-detail-action"
+                   id="bookServiceBtn">
+
+                    <i class="fa-solid fa-bell-concierge"></i>
+
+                    Book Services
+
+                </a>
+
+                <!-- Booking tương lai: Preview Invoice
+                     Booking hoàn thành: View Invoice -->
+
+                <button type="button"
+                        class="btn btn-cta btn-small booking-detail-action"
+                        id="viewInvoiceBtn">
+
+                    <i class="fa-regular fa-file-lines"></i>
+
+                    <span id="invoiceButtonText">
+                        Preview Invoice
+                    </span>
+
+                </button>
+
+            </div>
+
+        </footer>
+
+    </section>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="zalo-platform-site-verification" content="UFcI5VhVHpyVhi0O-ALpCdhNooQMeH5yC30s">
+
+    <title>Special Offers | Deep Blue Haven</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css">
+
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" href="/assets/css/base.css">
+
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css">
+
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css">
+
+    <link rel="stylesheet" th:href="@{/assets/css/customer/home.css}" href="/assets/css/customer/home.css">
+
+    <link rel="stylesheet" th:href="@{/assets/css/customer/offers.css}" href="/assets/css/customer/offers.css">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="offers-page">
+
+
+        <section class="offers-hero">
+
+            <div class="container offers-hero__container">
+
+                <div class="offers-hero__content">
+
+                    <span class="offers-eyebrow">
+                        <span></span>
+                        Deep Blue Haven Resort
+                    </span>
+
+                    <h1>
+                        Exclusive offers for your
+                        <em>perfect escape</em>
+                    </h1>
+
+                    <p>
+                        Discover seasonal packages, exclusive room rates and
+                        memorable resort experiences created for your coastal getaway.
+                    </p>
+
+                    <div class="offers-hero__actions">
+
+                        <a href="#offersList" class="btn btn-luxury btn-medium">
+
+                            Explore Offers
+
+                            <i class="fa-solid fa-arrow-down"></i>
+
+                        </a>
+
+                        <a th:href="@{/booking}" class="offers-outline-btn">
+
+                            Book Your Stay
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="offers-hero__visual">
+
+                    <div class="offers-hero__image">
+
+                        <img th:src="@{/assets/pic/room-1.jpg}" alt="Deep Blue Haven resort offer">
+
+                    </div>
+
+                    <div class="offers-discount">
+
+                        <span>Save up to</span>
+
+                        <strong>30%</strong>
+
+                        <small>Selected stays</small>
+
+                    </div>
+
+                    <div class="offers-floating-card">
+
+                        <i class="fa-solid fa-gift"></i>
+
+                        <div>
+                            <span>Exclusive Package</span>
+                            <strong>Summer Escape</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================
+         FILTER + OFFER LIST
+    ====================================== -->
+
+        <section class="offers-content" id="offersList">
+
+            <div class="container">
+
+                <div class="offers-section-heading">
+
+                    <div>
+
+                        <span class="offers-section-label">
+                            Curated experiences
+                        </span>
+
+                        <h2>Choose Your Special Offer</h2>
+
+                        <p>
+                            Find a package that matches your preferred resort experience.
+                        </p>
+
+                    </div>
+
+                    <span class="offers-result-count" id="offersResultCount">
+
+                        6 offers available
+
+                    </span>
+
+                </div>
+
+                <!-- Filter -->
+
+                <section class="offers-toolbar">
+
+                    <div class="offers-filter-tabs" role="tablist" aria-label="Offer filters">
+
+                        <button type="button" class="offers-filter-tab is-active" data-filter="all"
+                            aria-selected="true">
+
+                            <i class="fa-solid fa-layer-group"></i>
+
+                            All Offers
+
+                            <span>6</span>
+
+                        </button>
+
+                        <button type="button" class="offers-filter-tab" data-filter="rooms" aria-selected="false">
+
+                            <i class="fa-solid fa-bed"></i>
+
+                            Rooms
+
+                            <span>3</span>
+
+                        </button>
+
+                        <button type="button" class="offers-filter-tab" data-filter="dining" aria-selected="false">
+
+                            <i class="fa-solid fa-utensils"></i>
+
+                            Dining
+
+                            <span>1</span>
+
+                        </button>
+
+                        <button type="button" class="offers-filter-tab" data-filter="spa" aria-selected="false">
+
+                            <i class="fa-solid fa-spa"></i>
+
+                            Spa
+
+                            <span>1</span>
+
+                        </button>
+
+                        <button type="button" class="offers-filter-tab" data-filter="experiences" aria-selected="false">
+
+                            <i class="fa-solid fa-umbrella-beach"></i>
+
+                            Experiences
+
+                            <span>1</span>
+
+                        </button>
+
+                    </div>
+
+                    <div class="offers-search">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <input type="search" id="offersSearch" placeholder="Search offers...">
+
+                    </div>
+
+                </section>
+
+                <!-- Offer grid -->
+
+                <section class="offers-grid" id="offersGrid">
+
+                    <!-- OFFER 1 -->
+
+                    <article class="offer-card" data-category="rooms"
+                        data-search="Summer Ocean Escape room breakfast late checkout">
+
+                        <div class="offer-card__image">
+
+                            <img th:src="@{/assets/pic/room-1.jpg}" alt="Summer Ocean Escape">
+
+                            <span class="offer-card__badge offer-card__badge--primary">
+                                25% OFF
+                            </span>
+
+                            <button type="button" class="offer-card__favorite" aria-label="Save Summer Ocean Escape">
+
+                                <i class="fa-regular fa-heart"></i>
+
+                            </button>
+
+                        </div>
+
+                        <div class="offer-card__content">
+
+                            <div class="offer-card__category">
+
+                                <i class="fa-solid fa-bed"></i>
+
+                                Room Offer
+
+                            </div>
+
+                            <h3>Summer Ocean Escape</h3>
+
+                            <p>
+                                Enjoy an ocean-facing room with daily breakfast,
+                                welcome drinks and complimentary late check-out.
+                            </p>
+
+                            <ul class="offer-card__benefits">
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Daily breakfast for two
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Complimentary welcome drink
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Late check-out until 2:00 PM
+                                </li>
+
+                            </ul>
+
+                            <div class="offer-card__validity">
+
+                                <i class="fa-regular fa-calendar"></i>
+
+                                Valid until September 30, 2026
+
+                            </div>
+
+                            <div class="offer-card__footer">
+
+                                <div class="offer-card__price">
+
+                                    <span>Starting from</span>
+
+                                    <strong>$220</strong>
+
+                                    <small>/ night</small>
+
+                                </div>
+
+                                <a th:href="@{/offers/summer-ocean-escape}" class="offer-card__detail">
+
+                                    View Details
+
+                                    <i class="fa-solid fa-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- OFFER 2 -->
+
+                    <article class="offer-card" data-category="rooms"
+                        data-search="Stay Longer Save More three nights free room">
+
+                        <div class="offer-card__image">
+
+                            <img th:src="@{/assets/pic/room-2.jpg}" alt="Stay Longer Save More">
+
+                            <span class="offer-card__badge offer-card__badge--gold">
+                                STAY 3, PAY 2
+                            </span>
+
+                            <button type="button" class="offer-card__favorite" aria-label="Save Stay Longer Save More">
+
+                                <i class="fa-regular fa-heart"></i>
+
+                            </button>
+
+                        </div>
+
+                        <div class="offer-card__content">
+
+                            <div class="offer-card__category">
+
+                                <i class="fa-solid fa-moon"></i>
+
+                                Extended Stay
+
+                            </div>
+
+                            <h3>Stay Longer, Save More</h3>
+
+                            <p>
+                                Stay three nights at Deep Blue Haven and receive
+                                one complimentary night as part of your reservation.
+                            </p>
+
+                            <ul class="offer-card__benefits">
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    One complimentary night
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Daily resort breakfast
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Flexible arrival dates
+                                </li>
+
+                            </ul>
+
+                            <div class="offer-card__validity">
+
+                                <i class="fa-regular fa-calendar"></i>
+
+                                Valid until December 20, 2026
+
+                            </div>
+
+                            <div class="offer-card__footer">
+
+                                <div class="offer-card__price">
+
+                                    <span>Starting from</span>
+
+                                    <strong>$580</strong>
+
+                                    <small>/ package</small>
+
+                                </div>
+
+                                <a th:href="@{/offers/stay-longer-save-more}" class="offer-card__detail">
+
+                                    View Details
+
+                                    <i class="fa-solid fa-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- OFFER 3 -->
+
+                    <article class="offer-card" data-category="dining"
+                        data-search="Romantic Dining Experience dinner couple restaurant">
+
+                        <div class="offer-card__image">
+
+                            <img th:src="@{/assets/pic/room-3.jpg}" alt="Romantic Dining Experience">
+
+                            <span class="offer-card__badge offer-card__badge--error">
+                                COUPLE PACKAGE
+                            </span>
+
+                            <button type="button" class="offer-card__favorite"
+                                aria-label="Save Romantic Dining Experience">
+
+                                <i class="fa-regular fa-heart"></i>
+
+                            </button>
+
+                        </div>
+
+                        <div class="offer-card__content">
+
+                            <div class="offer-card__category offer-card__category--dining">
+
+                                <i class="fa-solid fa-utensils"></i>
+
+                                Dining
+
+                            </div>
+
+                            <h3>Romantic Dining Experience</h3>
+
+                            <p>
+                                Share a private seaside dinner featuring a curated
+                                menu, elegant decoration and premium service.
+                            </p>
+
+                            <ul class="offer-card__benefits">
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Private table by the beach
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Five-course dinner
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Romantic table decoration
+                                </li>
+
+                            </ul>
+
+                            <div class="offer-card__validity">
+
+                                <i class="fa-regular fa-calendar"></i>
+
+                                Available every evening
+
+                            </div>
+
+                            <div class="offer-card__footer">
+
+                                <div class="offer-card__price">
+
+                                    <span>Package price</span>
+
+                                    <strong>$190</strong>
+
+                                    <small>/ couple</small>
+
+                                </div>
+
+                                <a th:href="@{/offers/romantic-dining}" class="offer-card__detail">
+
+                                    View Details
+
+                                    <i class="fa-solid fa-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- OFFER 4 -->
+
+                    <article class="offer-card" data-category="spa"
+                        data-search="Ocean Wellness Retreat spa massage yoga treatment">
+
+                        <div class="offer-card__image">
+
+                            <img th:src="@{/assets/pic/room-4.jpg}" alt="Ocean Wellness Retreat">
+
+                            <span class="offer-card__badge offer-card__badge--success">
+                                20% OFF SPA
+                            </span>
+
+                            <button type="button" class="offer-card__favorite" aria-label="Save Ocean Wellness Retreat">
+
+                                <i class="fa-regular fa-heart"></i>
+
+                            </button>
+
+                        </div>
+
+                        <div class="offer-card__content">
+
+                            <div class="offer-card__category offer-card__category--spa">
+
+                                <i class="fa-solid fa-spa"></i>
+
+                                Wellness & Spa
+
+                            </div>
+
+                            <h3>Ocean Wellness Retreat</h3>
+
+                            <p>
+                                Restore your energy with an ocean-inspired wellness
+                                program featuring spa treatments and beach yoga.
+                            </p>
+
+                            <ul class="offer-card__benefits">
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    90-minute massage
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Morning beach yoga
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Healthy breakfast menu
+                                </li>
+
+                            </ul>
+
+                            <div class="offer-card__validity">
+
+                                <i class="fa-regular fa-calendar"></i>
+
+                                Valid until October 31, 2026
+
+                            </div>
+
+                            <div class="offer-card__footer">
+
+                                <div class="offer-card__price">
+
+                                    <span>Starting from</span>
+
+                                    <strong>$160</strong>
+
+                                    <small>/ guest</small>
+
+                                </div>
+
+                                <a th:href="@{/offers/ocean-wellness-retreat}" class="offer-card__detail">
+
+                                    View Details
+
+                                    <i class="fa-solid fa-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- OFFER 5 -->
+
+                    <article class="offer-card" data-category="experiences"
+                        data-search="Family Beach Getaway children family activities">
+
+                        <div class="offer-card__image">
+
+                            <img th:src="@{/assets/pic/room-5.jpg}" alt="Family Beach Getaway">
+
+                            <span class="offer-card__badge offer-card__badge--secondary">
+                                KIDS STAY FREE
+                            </span>
+
+                            <button type="button" class="offer-card__favorite" aria-label="Save Family Beach Getaway">
+
+                                <i class="fa-regular fa-heart"></i>
+
+                            </button>
+
+                        </div>
+
+                        <div class="offer-card__content">
+
+                            <div class="offer-card__category offer-card__category--experience">
+
+                                <i class="fa-solid fa-umbrella-beach"></i>
+
+                                Family Experience
+
+                            </div>
+
+                            <h3>Family Beach Getaway</h3>
+
+                            <p>
+                                Create memorable family moments with spacious
+                                accommodation and complimentary activities for children.
+                            </p>
+
+                            <ul class="offer-card__benefits">
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Children stay free
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Family breakfast included
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Complimentary kids activities
+                                </li>
+
+                            </ul>
+
+                            <div class="offer-card__validity">
+
+                                <i class="fa-regular fa-calendar"></i>
+
+                                Valid during selected dates
+
+                            </div>
+
+                            <div class="offer-card__footer">
+
+                                <div class="offer-card__price">
+
+                                    <span>Starting from</span>
+
+                                    <strong>$320</strong>
+
+                                    <small>/ night</small>
+
+                                </div>
+
+                                <a th:href="@{/offers/family-beach-getaway}" class="offer-card__detail">
+
+                                    View Details
+
+                                    <i class="fa-solid fa-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- OFFER 6 -->
+
+                    <article class="offer-card" data-category="rooms"
+                        data-search="Early Bird Offer advance booking save room">
+
+                        <div class="offer-card__image">
+
+                            <img th:src="@{/assets/pic/room-1.jpg}" alt="Early Bird Offer">
+
+                            <span class="offer-card__badge offer-card__badge--primary">
+                                SAVE 15%
+                            </span>
+
+                            <button type="button" class="offer-card__favorite" aria-label="Save Early Bird Offer">
+
+                                <i class="fa-regular fa-heart"></i>
+
+                            </button>
+
+                        </div>
+
+                        <div class="offer-card__content">
+
+                            <div class="offer-card__category">
+
+                                <i class="fa-regular fa-clock"></i>
+
+                                Advance Booking
+
+                            </div>
+
+                            <h3>Early Bird Offer</h3>
+
+                            <p>
+                                Plan your journey early and save when booking
+                                your stay at least 30 days before arrival.
+                            </p>
+
+                            <ul class="offer-card__benefits">
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Save 15% on room rates
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Complimentary breakfast
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Priority room selection
+                                </li>
+
+                            </ul>
+
+                            <div class="offer-card__validity">
+
+                                <i class="fa-regular fa-calendar"></i>
+
+                                Book at least 30 days in advance
+
+                            </div>
+
+                            <div class="offer-card__footer">
+
+                                <div class="offer-card__price">
+
+                                    <span>Starting from</span>
+
+                                    <strong>$185</strong>
+
+                                    <small>/ night</small>
+
+                                </div>
+
+                                <a th:href="@{/offers/early-bird}" class="offer-card__detail">
+
+                                    View Details
+
+                                    <i class="fa-solid fa-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- Empty state -->
+
+                    <div class="offers-empty" id="offersEmpty">
+
+                        <div class="offers-empty__icon">
+
+                            <i class="fa-solid fa-gift"></i>
+
+                        </div>
+
+                        <h3>No offers found</h3>
+
+                        <p>
+                            There are no offers matching your current filter.
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================
+         MEMBER BANNER
+    ====================================== -->
+
+        <section class="member-offer-section">
+
+            <div class="container">
+
+                <div class="member-offer">
+
+                    <div class="member-offer__decoration">
+
+                        <i class="fa-solid fa-gem"></i>
+
+                    </div>
+
+                    <div class="member-offer__content">
+
+                        <span>Blue Member Exclusive</span>
+
+                        <h2>
+                            Enjoy an additional 10% off
+                        </h2>
+
+                        <p>
+                            Blue Members receive exclusive room rates,
+                            priority booking and special resort privileges.
+                        </p>
+
+                    </div>
+
+                    <div class="member-offer__actions">
+
+                        <a th:href="@{/profile}" class="btn btn-luxury btn-small">
+
+                            View Membership
+
+                        </a>
+
+                        <a th:href="@{/booking}" class="member-offer__secondary">
+
+                            Book Now
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================
+         TERMS
+    ====================================== -->
+
+        <section class="offer-terms-section">
+
+            <div class="container">
+
+                <div class="offer-terms-heading">
+
+                    <span>Important information</span>
+
+                    <h2>Offer Terms & Conditions</h2>
+
+                    <p>
+                        Review the general conditions that apply to our resort offers.
+                    </p>
+
+                </div>
+
+                <div class="offer-accordion">
+
+                    <article class="offer-accordion__item">
+
+                        <button type="button" class="offer-accordion__button" aria-expanded="false">
+
+                            <span>
+
+                                <i class="fa-regular fa-calendar-check"></i>
+
+                                Booking conditions
+
+                            </span>
+
+                            <i class="fa-solid fa-plus"></i>
+
+                        </button>
+
+                        <div class="offer-accordion__content">
+
+                            <p>
+                                Offers are subject to availability at the time of
+                                reservation and may apply only to selected rooms,
+                                travel dates or minimum lengths of stay.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                    <article class="offer-accordion__item">
+
+                        <button type="button" class="offer-accordion__button" aria-expanded="false">
+
+                            <span>
+
+                                <i class="fa-solid fa-ban"></i>
+
+                                Cancellation policy
+
+                            </span>
+
+                            <i class="fa-solid fa-plus"></i>
+
+                        </button>
+
+                        <div class="offer-accordion__content">
+
+                            <p>
+                                Cancellation and modification conditions may differ
+                                depending on the selected offer. Please review the
+                                specific conditions before completing your booking.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                    <article class="offer-accordion__item">
+
+                        <button type="button" class="offer-accordion__button" aria-expanded="false">
+
+                            <span>
+
+                                <i class="fa-regular fa-credit-card"></i>
+
+                                Payment requirements
+
+                            </span>
+
+                            <i class="fa-solid fa-plus"></i>
+
+                        </button>
+
+                        <div class="offer-accordion__content">
+
+                            <p>
+                                Some promotional packages require full or partial
+                                payment when the reservation is confirmed.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                    <article class="offer-accordion__item">
+
+                        <button type="button" class="offer-accordion__button" aria-expanded="false">
+
+                            <span>
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                                Offer validity
+
+                            </span>
+
+                            <i class="fa-solid fa-plus"></i>
+
+                        </button>
+
+                        <div class="offer-accordion__content">
+
+                            <p>
+                                Offers cannot normally be combined with other
+                                promotions unless otherwise stated. Validity dates
+                                are displayed separately for each package.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script th:src="@{/assets/js/customer/offers.js}"></script>
+
+</body>
+
+</html>

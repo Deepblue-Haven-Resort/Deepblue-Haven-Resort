@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="zalo-platform-site-verification" content="UFcI5VhVHpyVhi0O-ALpCdhNooQMeH5yC30s" />
+  
+  <title>Deep Blue Haven Resort | Luxury Ocean Resort</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css" />
+  <link rel="stylesheet" th:href="@{/assets/css/base.css}" href="/assets/css/base.css" />
+  <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css" />
+  <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css" />
+  <link rel="stylesheet" th:href="@{/assets/css/customer/home.css}" href="/assets/css/customer/home.css" />
+  <link rel="stylesheet" th:href="@{/assets/css/customer/profile.css}" href="/assets/css/customer/profile.css" />
+
+</head>
+
+<body class="home-page">
+  <div th:replace="~{fragments/header :: header}"></div>
+
+
+<main class="customer-profile">
+
+    <div class="container">
+        <section class="profile-layout">
+
+            <!-- Sidebar -->
+            <aside class="profile-sidebar">
+
+                <div class="profile-user">
+
+                    <div class="profile-avatar">
+
+                        <!-- Avatar mặc định -->
+                        <i class="fa-regular fa-user"></i>
+
+                        <button type="button"
+                                class="profile-avatar__edit"
+                                aria-label="Change profile picture">
+
+                            <i class="fa-solid fa-camera"></i>
+
+                        </button>
+
+                    </div>
+
+                    <h2>Nguyen Minh Anh</h2>
+
+                    <p>minhanh@gmail.com</p>
+
+                    <span class="profile-member">
+                        <i class="fa-solid fa-gem"></i>
+                        Blue Member
+                    </span>
+
+                </div>
+
+                <nav class="profile-navigation"
+                     aria-label="Profile navigation">
+
+                    <button type="button"
+                            class="profile-navigation__item is-active"
+                            data-profile-tab="personal">
+
+                        <i class="fa-regular fa-user"></i>
+                        <span>Personal Information</span>
+
+                    </button>
+
+                    <button type="button"
+                            class="profile-navigation__item"
+                            data-profile-tab="bookings">
+
+                        <i class="fa-regular fa-calendar-check"></i>
+                        <span>My Bookings</span>
+
+                    </button>
+
+                    <button type="button"
+                            class="profile-navigation__item"
+                            data-profile-tab="preferences">
+
+                        <i class="fa-regular fa-heart"></i>
+                        <span>Preferences</span>
+
+                    </button>
+
+                    <button type="button"
+                            class="profile-navigation__item"
+                            data-profile-tab="security">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Security</span>
+
+                    </button>
+
+                </nav>
+
+                <div class="profile-sidebar__footer">
+
+                    <button type="button"
+                            class="profile-logout">
+
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        Logout
+
+                    </button>
+
+                </div>
+
+            </aside>
+
+            <!-- Nội dung chính -->
+            <div class="profile-content">
+
+                <!-- Personal Information -->
+                <section class="profile-panel is-active"
+                         id="personalPanel"
+                         data-profile-panel="personal">
+
+                    <div class="profile-panel__header">
+
+                        <div>
+                            <span class="profile-panel__label">
+                                Account details
+                            </span>
+
+                            <h2>Personal Information</h2>
+
+                            <p>
+                                Update your personal information and contact details.
+                            </p>
+                        </div>
+
+                        <button type="button"
+                                class="btn btn-cta btn-small"
+                                id="editProfileBtn">
+
+                            <i class="fa-regular fa-pen-to-square"></i>
+                            Edit Profile
+
+                        </button>
+
+                    </div>
+
+                    <form class="profile-form"
+                          id="profileForm">
+
+                        <div class="profile-form__grid">
+
+                            <div class="profile-field">
+
+                                <label for="firstName">
+                                    First Name
+                                </label>
+
+                                <div class="profile-input">
+
+                                    <i class="fa-regular fa-user"></i>
+
+                                    <input type="text"
+                                           id="firstName"
+                                           value="Minh Anh"
+                                           readonly>
+
+                                </div>
+
+                            </div>
+
+                            <div class="profile-field">
+
+                                <label for="lastName">
+                                    Last Name
+                                </label>
+
+                                <div class="profile-input">
+
+                                    <i class="fa-regular fa-user"></i>
+
+                                    <input type="text"
+                                           id="lastName"
+                                           value="Nguyen"
+                                           readonly>
+
+                                </div>
+
+                            </div>
+
+                            <div class="profile-field">
+
+                                <label for="email">
+                                    Email Address
+                                </label>
+
+                                <div class="profile-input">
+
+                                    <i class="fa-regular fa-envelope"></i>
+
+                                    <input type="email"
+                                           id="email"
+                                           value="minhanh@gmail.com"
+                                           readonly>
+
+                                </div>
+
+                            </div>
+
+                            <div class="profile-field">
+
+                                <label for="phone">
+                                    Phone Number
+                                </label>
+
+                                <div class="profile-input">
+
+                                    <i class="fa-solid fa-phone"></i>
+
+                                    <input type="tel"
+                                           id="phone"
+                                           value="+84 912 345 678"
+                                           readonly>
+
+                                </div>
+
+                            </div>
+
+                            <div class="profile-field">
+
+                                <label for="birthday">
+                                    Date of Birth
+                                </label>
+
+                                <div class="profile-input">
+
+                                    <i class="fa-regular fa-calendar"></i>
+
+                                    <input type="date"
+                                           id="birthday"
+                                           value="2002-08-20"
+                                           readonly>
+
+                                </div>
+
+                            </div>
+
+                            <div class="profile-field">
+
+                                <label for="gender">
+                                    Gender
+                                </label>
+
+                                <div class="profile-input">
+
+                                    <i class="fa-solid fa-venus-mars"></i>
+
+                                    <select id="gender"
+                                            disabled>
+
+                                        <option value="male">Male</option>
+
+                                        <option value="female"
+                                                selected>
+                                            Female
+                                        </option>
+
+                                        <option value="other">Other</option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                            <div class="profile-field profile-field--full">
+
+                                <label for="address">
+                                    Address
+                                </label>
+
+                                <div class="profile-input">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    <input type="text"
+                                           id="address"
+                                           value="Thu Duc City, Ho Chi Minh City, Vietnam"
+                                           readonly>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="profile-form__actions"
+                             id="profileFormActions">
+
+                            <button type="button"
+                                    class="profile-btn-outline"
+                                    id="cancelEditBtn">
+
+                                Cancel
+
+                            </button>
+
+                            <button type="submit"
+                                    class="btn btn-cta btn-small">
+
+                                <i class="fa-regular fa-floppy-disk"></i>
+                                Save Changes
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+                <!-- Booking overview -->
+                <section class="profile-overview">
+
+                    <div class="profile-overview__header">
+
+                        <div>
+                            <span class="profile-panel__label">
+                                Your activity
+                            </span>
+
+                            <h2>Booking Overview</h2>
+                        </div>
+
+                        <a th:href="@{/booking/history}"
+                           class="profile-view-link">
+
+                            View history
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+                    </div>
+
+                    <div class="profile-statistics">
+
+                        <article class="profile-stat-card">
+
+                            <div class="profile-stat-card__icon">
+                                <i class="fa-regular fa-calendar-check"></i>
+                            </div>
+
+                            <div>
+                                <strong>08</strong>
+                                <span>Total Bookings</span>
+                            </div>
+
+                        </article>
+
+                        <article class="profile-stat-card">
+
+                            <div class="profile-stat-card__icon">
+                                <i class="fa-solid fa-bed"></i>
+                            </div>
+
+                            <div>
+                                <strong>02</strong>
+                                <span>Upcoming Stays</span>
+                            </div>
+
+                        </article>
+
+                        <article class="profile-stat-card">
+
+                            <div class="profile-stat-card__icon">
+                                <i class="fa-regular fa-heart"></i>
+                            </div>
+
+                            <div>
+                                <strong>05</strong>
+                                <span>Saved Rooms</span>
+                            </div>
+
+                        </article>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<script th:src="@{/assets/js/customer-profile.js}"></script>
+
+</body>
+</html>
