@@ -1,0 +1,872 @@
+/* =========================================================
+   SERVICE CONFIRMATION POPUP
+   Sử dụng hoàn toàn biến từ theme.css
+   ========================================================= */
+
+/* Khóa scroll trang khi popup mở */
+body.service-confirmation-modal-open {
+    overflow: hidden;
+}
+
+/* Popup container */
+.service-confirmation-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: var(--space-24);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+/* Trạng thái popup mở */
+.service-confirmation-modal.is-open,
+.service-confirmation-modal[aria-hidden="false"] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Trạng thái popup đóng */
+.service-confirmation-modal[aria-hidden="true"] {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   BACKDROP
+   ========================================================= */
+
+.service-confirmation-modal__backdrop {
+    position: absolute;
+    inset: 0;
+
+    background: color-mix(
+        in srgb,
+        var(--primary-900) 72%,
+        transparent
+    );
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+
+/* =========================================================
+   POPUP DIALOG
+   ========================================================= */
+
+.service-confirmation-modal__dialog {
+    position: relative;
+    z-index: 1;
+
+    width: min(960px, 100%);
+    max-height: calc(100vh - var(--space-48));
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    padding: var(--space-32);
+
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-lg);
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--surface-0),
+            var(--primary-100)
+        );
+
+    box-shadow:
+        0 24px 64px rgba(var(--shadow-color), 0.22),
+        var(--shadow-xl);
+
+    transform: translateY(var(--space-24)) scale(0.98);
+
+    transition: transform 0.25s ease;
+}
+
+.service-confirmation-modal.is-open
+.service-confirmation-modal__dialog,
+.service-confirmation-modal[aria-hidden="false"]
+.service-confirmation-modal__dialog {
+    transform: translateY(0) scale(1);
+}
+
+
+/* Scrollbar */
+.service-confirmation-modal__dialog::-webkit-scrollbar {
+    width: var(--space-8);
+}
+
+.service-confirmation-modal__dialog::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.service-confirmation-modal__dialog::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: var(--primary-300);
+}
+
+.service-confirmation-modal__dialog::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-400);
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+.service-confirmation-modal__close {
+    position: absolute;
+    top: var(--space-16);
+    right: var(--space-16);
+    z-index: 5;
+
+    width: var(--space-40);
+    height: var(--space-40);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: 50%;
+
+    background: var(--primary-100);
+    color: var(--primary-800);
+
+    font-size: 1rem;
+
+    box-shadow: var(--shadow-md);
+
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.service-confirmation-modal__close:hover {
+    color: var(--white);
+    background: var(--primary-700);
+    border-color: var(--primary-700);
+
+    transform: rotate(90deg);
+}
+
+.service-confirmation-modal__close:active {
+    transform: rotate(90deg) scale(0.95);
+}
+
+
+/* =========================================================
+   RESET PANEL KHI NẰM TRONG POPUP
+   ========================================================= */
+
+.service-confirmation-modal .confirmation-panel {
+    width: 100%;
+    min-width: 0;
+    min-height: auto;
+
+    margin: 0;
+    padding: 0;
+
+    border: none;
+    border-radius: 0;
+
+    background: transparent;
+    box-shadow: none;
+
+    overflow: visible;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.service-confirmation__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-24);
+
+    padding: 0 var(--space-48) var(--space-24) 0;
+    margin-bottom: var(--space-24);
+
+    border-bottom: var(--border-1) solid var(--primary-200);
+}
+
+.service-confirmation__heading {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-16);
+
+    min-width: 0;
+}
+
+.service-confirmation__icon {
+    width: var(--space-56);
+    height: var(--space-56);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-md);
+
+    color: var(--primary-700);
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--primary-200),
+            var(--primary-100)
+        );
+
+    box-shadow: var(--shadow-md);
+}
+
+.service-confirmation__icon i {
+    font-size: 1.5rem;
+}
+
+.service-confirmation__header h1 {
+    margin: var(--space-4) 0 var(--space-8);
+
+    color: var(--primary-900);
+
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.service-confirmation__description {
+    max-width: 620px;
+    margin: 0;
+
+    color: var(--neutral-600);
+
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+}
+
+.service-confirmation-modal .rooms-results__eyebrow {
+    margin: 0;
+
+    color: var(--gold-500);
+
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.service-confirmation-modal .rooms-results__chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+
+    flex-shrink: 0;
+
+    min-height: var(--space-40);
+
+    padding-inline: var(--space-16);
+
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: 999px;
+
+    color: var(--primary-800);
+    background: var(--primary-100);
+
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.service-confirmation__form {
+    display: grid;
+    gap: var(--space-16);
+}
+
+
+/* =========================================================
+   FORM SECTIONS
+   ========================================================= */
+
+.confirmation-section {
+    padding: var(--space-24);
+
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-md);
+
+    background: var(--surface-0);
+
+    box-shadow: var(--shadow-md);
+}
+
+.confirmation-section__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-16);
+
+    margin-bottom: var(--space-16);
+}
+
+.confirmation-section__title > div > span {
+    display: block;
+
+    margin-bottom: var(--space-4);
+
+    color: var(--gold-500);
+
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.confirmation-section__title h2 {
+    margin: 0;
+
+    color: var(--primary-900);
+
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.confirmation-section__title > i {
+    color: var(--primary-700);
+    font-size: 1.25rem;
+}
+
+
+/* =========================================================
+   BOOKING INFORMATION
+   ========================================================= */
+
+.confirmation-information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-16);
+}
+
+.confirmation-field,
+.confirmation-textarea-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.confirmation-field > span,
+.confirmation-textarea-field > span {
+    color: var(--neutral-700);
+
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+}
+
+.confirmation-field input,
+.confirmation-textarea-field textarea {
+    width: 100%;
+
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-md);
+
+    color: var(--neutral-900);
+    background: var(--neutral-50);
+
+    font-family: var(--font-body);
+
+    transition:
+        border-color 0.25s ease,
+        background-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.confirmation-field input {
+    min-height: 3rem;
+    padding-inline: var(--space-16);
+}
+
+.confirmation-textarea-field textarea {
+    min-height: 7.5rem;
+
+    padding: var(--space-12) var(--space-16);
+
+    resize: vertical;
+}
+
+.confirmation-field input:focus,
+.confirmation-textarea-field textarea:focus {
+    border-color: var(--primary-600);
+    background: var(--surface-0);
+
+    box-shadow:
+        0 0 0 var(--space-4)
+        color-mix(
+            in srgb,
+            var(--primary-300) 45%,
+            transparent
+        );
+}
+
+.confirmation-field input[readonly] {
+    color: var(--neutral-600);
+    background: var(--primary-100);
+
+    cursor: default;
+}
+
+.confirmation-textarea-field small {
+    align-self: flex-end;
+
+    color: var(--neutral-500);
+
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+}
+
+
+/* =========================================================
+   SELECTED SERVICE COUNT
+   ========================================================= */
+
+.confirmation-service-count {
+    min-width: var(--space-40);
+    height: var(--space-40);
+
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 !important;
+
+    border-radius: 50%;
+
+    color: var(--primary-700) !important;
+    background: var(--primary-100);
+
+    font-family: var(--font-body);
+    font-size: 0.8125rem !important;
+    font-weight: 700;
+    letter-spacing: normal !important;
+}
+
+
+/* =========================================================
+   SELECTED SERVICES LIST
+   ========================================================= */
+
+.confirmation-service-list {
+    display: grid;
+    gap: var(--space-12);
+}
+
+.confirmation-service-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-16);
+
+    padding: var(--space-16);
+
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-md);
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--neutral-50),
+            var(--primary-100)
+        );
+}
+
+.confirmation-service-item__main {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+
+    min-width: 0;
+}
+
+.confirmation-service-item__icon {
+    width: var(--space-48);
+    height: var(--space-48);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    border-radius: var(--radius-md);
+
+    color: var(--primary-700);
+    background: var(--primary-200);
+}
+
+.confirmation-service-item__copy {
+    min-width: 0;
+}
+
+.confirmation-service-item__copy h3 {
+    margin: 0 0 var(--space-4);
+
+    overflow: hidden;
+
+    color: var(--primary-900);
+
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.confirmation-service-item__copy p {
+    margin: 0;
+
+    color: var(--neutral-500);
+
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+}
+
+.confirmation-service-item__price {
+    text-align: right;
+}
+
+.confirmation-service-item__price strong {
+    display: block;
+
+    color: var(--primary-800);
+
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 700;
+}
+
+.confirmation-service-item__price small {
+    display: block;
+
+    margin-top: var(--space-4);
+
+    color: var(--neutral-500);
+
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.confirmation-empty {
+    padding: var(--space-40) var(--space-24);
+
+    text-align: center;
+}
+
+.confirmation-empty > i {
+    margin-bottom: var(--space-12);
+
+    color: var(--primary-700);
+    font-size: 2rem;
+}
+
+.confirmation-empty h3 {
+    margin: 0 0 var(--space-8);
+
+    color: var(--primary-900);
+
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.confirmation-empty p {
+    max-width: 440px;
+
+    margin: 0 auto var(--space-24);
+
+    color: var(--neutral-600);
+
+    font-family: var(--font-body);
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   TOTAL
+   ========================================================= */
+
+.confirmation-total-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-24);
+
+    padding: var(--space-24);
+
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-md);
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary-100),
+            var(--secondary-100)
+        );
+}
+
+.confirmation-total-card span {
+    color: var(--neutral-700);
+
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+}
+
+.confirmation-total-card p {
+    margin: var(--space-4) 0 0;
+
+    color: var(--neutral-500);
+
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+}
+
+.confirmation-total-card strong {
+    flex-shrink: 0;
+
+    color: var(--primary-800);
+
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.confirmation-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-16);
+
+    padding-top: var(--space-4);
+}
+
+.confirmation-back-button {
+    min-height: 3rem;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+
+    padding-inline: var(--space-16);
+
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: 999px;
+
+    color: var(--primary-800);
+    background: var(--surface-0);
+
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 700;
+
+    transition:
+        color 0.25s ease,
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.confirmation-back-button:hover {
+    color: var(--primary-700);
+    background: var(--primary-100);
+    border-color: var(--primary-300);
+
+    transform: translateY(-1px);
+}
+
+.confirmation-back-button:active {
+    transform: scale(0.98);
+}
+
+.confirmation-submit-button {
+    min-width: 210px;
+    min-height: 3rem;
+
+    padding-inline: var(--space-24);
+
+    border-radius: 999px;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .service-confirmation-modal {
+        padding: var(--space-16);
+    }
+
+    .service-confirmation-modal__dialog {
+        max-height: calc(100vh - var(--space-32));
+
+        padding: var(--space-24);
+    }
+
+    .service-confirmation__header {
+        flex-direction: column;
+
+        padding-right: var(--space-48);
+    }
+
+    .service-confirmation-modal .rooms-results__chip {
+        align-self: flex-start;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+    .service-confirmation-modal {
+        align-items: flex-end;
+
+        padding: 0;
+    }
+
+    .service-confirmation-modal__dialog {
+        width: 100%;
+        max-height: 92vh;
+
+        padding:
+            var(--space-24)
+            var(--space-16)
+            var(--space-32);
+
+        border-radius:
+            var(--radius-lg)
+            var(--radius-lg)
+            0
+            0;
+
+        transform: translateY(100%);
+    }
+
+    .service-confirmation-modal.is-open
+    .service-confirmation-modal__dialog,
+    .service-confirmation-modal[aria-hidden="false"]
+    .service-confirmation-modal__dialog {
+        transform: translateY(0);
+    }
+
+    .service-confirmation-modal__close {
+        top: var(--space-12);
+        right: var(--space-12);
+    }
+
+    .service-confirmation__header {
+        padding-right: var(--space-40);
+        padding-bottom: var(--space-16);
+        margin-bottom: var(--space-16);
+    }
+
+    .service-confirmation__heading {
+        flex-direction: column;
+        gap: var(--space-12);
+    }
+
+    .service-confirmation__icon {
+        width: var(--space-48);
+        height: var(--space-48);
+    }
+
+    .service-confirmation__header h1 {
+        font-size: 2rem;
+    }
+
+    .confirmation-section {
+        padding: var(--space-16);
+    }
+
+    .confirmation-information-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .confirmation-service-item {
+        grid-template-columns: 1fr;
+    }
+
+    .confirmation-service-item__price {
+        padding-left: calc(var(--space-48) + var(--space-12));
+
+        text-align: left;
+    }
+
+    .confirmation-total-card {
+        align-items: flex-start;
+        flex-direction: column;
+
+        gap: var(--space-12);
+    }
+
+    .confirmation-total-card strong {
+        font-size: 1.5rem;
+    }
+
+    .confirmation-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .confirmation-submit-button,
+    .confirmation-back-button {
+        width: 100%;
+    }
+}

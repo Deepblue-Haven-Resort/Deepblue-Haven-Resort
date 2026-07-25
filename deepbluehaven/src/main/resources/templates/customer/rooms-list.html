@@ -19,15 +19,6 @@
 <main class="rooms-list-page">
     <section class="rooms-shell">
         <div class="container rooms-container rooms-content">
-
-            <section class="rooms-hero" aria-labelledby="rooms-title">
-                <p class="rooms-eyebrow">Stay by the sea</p>
-                <h1 id="rooms-title" class="rooms-title">Choose the room that Fits You</h1>
-                <p class="rooms-intro">
-                    Explore ocean-inspired rooms, suites and private villas designed for calm stays at Deepblue Haven.
-                </p>
-            </section>
-
             <div class="rooms-layout">
 
                 <!-- LEFT STICKY FILTER -->
@@ -55,9 +46,10 @@
 
                                 <div class="rooms-dropdown__menu">
                                     <button type="button" class="rooms-dropdown__option is-active" data-value="all">All Resorts</button>
-                                    <button type="button" class="rooms-dropdown__option" data-value="nha-trang">Deepblue Haven Nha Trang</button>
-                                    <button type="button" class="rooms-dropdown__option" data-value="phu-quoc">Deepblue Haven Phu Quoc</button>
-                                    <button type="button" class="rooms-dropdown__option" data-value="da-nang">Deepblue Haven Da Nang</button>
+                                    <button type="button" class="rooms-dropdown__option"
+                                            th:each="resort : ${resortOptions}"
+                                            th:attr="data-value=${resort.value}"
+                                            th:text="${resort.label}">Deepblue Haven Nha Trang</button>
                                 </div>
                             </details>
 
@@ -138,7 +130,7 @@
                             <div class="rooms-price-filter__header">
                                 <div class="rooms-dropdown__copy">
                                     <strong>Price Range</strong>
-                                    <small class="rooms-price-filter__value">0 – 100 triệu / đêm</small>
+                                    <small class="rooms-price-filter__value">0 – 100 million / night</small>
                                 </div>
                                 <i class="fa-solid fa-tag rooms-price-filter__icon"></i>
                             </div>
@@ -164,8 +156,8 @@
                             </div>
 
                             <div class="rooms-price-filter__labels">
-                                <span id="priceMinLabel">0 triệu</span>
-                                <span id="priceMaxLabel">100 triệu</span>
+                                <span id="priceMinLabel">0 million</span>
+                                <span id="priceMaxLabel">100 million</span>
                             </div>
                         </div>
 
@@ -181,7 +173,7 @@
                     <div class="rooms-results__header">
                         <div>
                             <p class="rooms-results__eyebrow">Available rooms</p>
-                            <h2><span id="roomsResultCount">6</span> rooms found for your stay</h2>
+                            <h2><span id="roomsResultCount" th:text="${#lists.size(rooms)}">6</span> rooms found for your stay</h2>
                         </div>
 
                         <span class="rooms-results__chip">
@@ -191,137 +183,149 @@
                     </div>
 
                     <div class="rooms-grid" id="roomsGrid">
-                        <div th:replace="~{fragments/room-card :: roomCard(
-                            '/images/rooms/ocean-deluxe.jpg',
-                            'Ocean Deluxe Room',
-                            'Best Seller',
-                            'Ocean Deluxe',
-                            'Ocean Wing, Deepblue Haven Nha Trang',
-                            'fa-check',
-                            'Available',
-                            'room-card__tag--blue',
-                            '1 King Bed',
-                            '1 Bathroom',
-                            '42m²',
-                            '1,250,000 VND',
-                            1250000,
-                            'nha-trang',
-                            'premium',
-                            2,
-                            'ocean',
-                            4.8,
-                            '/rooms/ocean-deluxe'
-                        )}"></div>
+                        <th:block th:each="room : ${rooms}">
+                            <div th:replace="~{fragments/room-card :: roomCard(
+                                ${room.imageUrl}, ${room.imageAlt}, ${room.badge}, ${room.roomName}, ${room.location},
+                                ${room.icon}, ${room.statusText}, ${room.tagClass}, ${room.bedInfo}, ${room.bathInfo},
+                                ${room.sizeInfo}, ${room.priceText}, ${room.priceValue}, ${room.resortValue},
+                                ${room.typeValue}, ${room.guestsValue}, ${room.viewValue}, ${room.ratingValue},
+                                ${room.detailUrl}
+                            )}">
+                            </div>
+                        </th:block>
+                        <th:block th:remove="all">
+                            <div th:replace="~{fragments/room-card :: roomCard(
+                                '/images/rooms/ocean-deluxe.jpg',
+                                'Ocean Deluxe Room',
+                                'Best Seller',
+                                'Ocean Deluxe',
+                                'Ocean Wing, Deepblue Haven Nha Trang',
+                                'fa-check',
+                                'Available',
+                                'room-card__tag--blue',
+                                '1 King Bed',
+                                '1 Bathroom',
+                                '42m²',
+                                '1,250,000 VND',
+                                1250000,
+                                'nha-trang',
+                                'premium',
+                                2,
+                                'ocean',
+                                4.8,
+                                '/rooms/ocean-deluxe'
+                            )}"></div>
 
-                        <div th:replace="~{fragments/room-card :: roomCard(
-                            '/images/rooms/garden-suite.jpg',
-                            'Garden Suite',
-                            '',
-                            'Garden Suite',
-                            'Garden Wing, Deepblue Haven Phu Quoc',
-                            'fa-leaf',
-                            'Quiet Stay',
-                            'room-card__tag--green',
-                            '2 Beds',
-                            '1 Bathroom',
-                            '56m²',
-                            '1,650,000 VND',
-                            1650000,
-                            'phu-quoc',
-                            'suite',
-                            3,
-                            'garden',
-                            4.6,
-                            '/rooms/garden-suite'
-                        )}"></div>
+                            <div th:replace="~{fragments/room-card :: roomCard(
+                                '/images/rooms/garden-suite.jpg',
+                                'Garden Suite',
+                                '',
+                                'Garden Suite',
+                                'Garden Wing, Deepblue Haven Phu Quoc',
+                                'fa-leaf',
+                                'Quiet Stay',
+                                'room-card__tag--green',
+                                '2 Beds',
+                                '1 Bathroom',
+                                '56m²',
+                                '1,650,000 VND',
+                                1650000,
+                                'phu-quoc',
+                                'suite',
+                                3,
+                                'garden',
+                                4.6,
+                                '/rooms/garden-suite'
+                            )}"></div>
 
-                        <div th:replace="~{fragments/room-card :: roomCard(
-                            '/images/rooms/pool-view.jpg',
-                            'Pool View Room',
-                            '',
-                            'Pool View Room',
-                            'Poolside Area, Deepblue Haven Da Nang',
-                            'fa-water-ladder',
-                            'Pool View',
-                            'room-card__tag--blue',
-                            '1 Queen Bed',
-                            '1 Bathroom',
-                            '48m²',
-                            '1,450,000 VND',
-                            1450000,
-                            'da-nang',
-                            'standard',
-                            2,
-                            'pool',
-                            4.5,
-                            '/rooms/pool-view'
-                        )}"></div>
+                            <div th:replace="~{fragments/room-card :: roomCard(
+                                '/images/rooms/pool-view.jpg',
+                                'Pool View Room',
+                                '',
+                                'Pool View Room',
+                                'Poolside Area, Deepblue Haven Da Nang',
+                                'fa-water-ladder',
+                                'Pool View',
+                                'room-card__tag--blue',
+                                '1 Queen Bed',
+                                '1 Bathroom',
+                                '48m²',
+                                '1,450,000 VND',
+                                1450000,
+                                'da-nang',
+                                'standard',
+                                2,
+                                'pool',
+                                4.5,
+                                '/rooms/pool-view'
+                            )}"></div>
 
-                        <div th:replace="~{fragments/room-card :: roomCard(
-                            '/images/rooms/family-suite.jpg',
-                            'Family Suite',
-                            'Family Choice',
-                            'Family Suite',
-                            'Family Wing, Deepblue Haven Nha Trang',
-                            'fa-users',
-                            'Family',
-                            'room-card__tag--gold',
-                            '3 Beds',
-                            '2 Bathrooms',
-                            '72m²',
-                            '2,350,000 VND',
-                            2350000,
-                            'nha-trang',
-                            'suite',
-                            4,
-                            'garden,pool',
-                            4.7,
-                            '/rooms/family-suite'
-                        )}"></div>
+                            <div th:replace="~{fragments/room-card :: roomCard(
+                                '/images/rooms/family-suite.jpg',
+                                'Family Suite',
+                                'Family Choice',
+                                'Family Suite',
+                                'Family Wing, Deepblue Haven Nha Trang',
+                                'fa-users',
+                                'Family',
+                                'room-card__tag--gold',
+                                '3 Beds',
+                                '2 Bathrooms',
+                                '72m²',
+                                '2,350,000 VND',
+                                2350000,
+                                'nha-trang',
+                                'suite',
+                                4,
+                                'garden,pool',
+                                4.7,
+                                '/rooms/family-suite'
+                            )}"></div>
 
-                        <div th:replace="~{fragments/room-card :: roomCard(
-                            '/images/rooms/premium-suite.jpg',
-                            'Premium Sea Suite',
-                            'Limited',
-                            'Premium Sea Suite',
-                            'Sea Front, Deepblue Haven Phu Quoc',
-                            'fa-crown',
-                            'Premium',
-                            'room-card__tag--gold',
-                            '1 King Bed',
-                            '2 Bathrooms',
-                            '86m²',
-                            '3,200,000 VND',
-                            3200000,
-                            'phu-quoc',
-                            'premium',
-                            2,
-                            'ocean,partial-ocean',
-                            4.9,
-                            '/rooms/premium-suite'
-                        )}"></div>
+                            <div th:replace="~{fragments/room-card :: roomCard(
+                                '/images/rooms/premium-suite.jpg',
+                                'Premium Sea Suite',
+                                'Limited',
+                                'Premium Sea Suite',
+                                'Sea Front, Deepblue Haven Phu Quoc',
+                                'fa-crown',
+                                'Premium',
+                                'room-card__tag--gold',
+                                '1 King Bed',
+                                '2 Bathrooms',
+                                '86m²',
+                                '3,200,000 VND',
+                                3200000,
+                                'phu-quoc',
+                                'premium',
+                                2,
+                                'ocean,partial-ocean',
+                                4.9,
+                                '/rooms/premium-suite'
+                            )}"></div>
 
-                        <div th:replace="~{fragments/room-card :: roomCard(
-                            '/images/rooms/private-villa.jpg',
-                            'Private Villa',
-                            '',
-                            'Private Villa',
-                            'Villa Zone, Deepblue Haven Da Nang',
-                            'fa-spa',
-                            'Private',
-                            'room-card__tag--green',
-                            '2 King Beds',
-                            '2 Bathrooms',
-                            '120m²',
-                            '4,850,000 VND',
-                            4850000,
-                            'da-nang',
-                            'president',
-                            4,
-                            'beachfront,ocean',
-                            5.0,
-                            '/rooms/private-villa'
-                        )}"></div>
+                            <div th:replace="~{fragments/room-card :: roomCard(
+                                '/images/rooms/private-villa.jpg',
+                                'Private Villa',
+                                '',
+                                'Private Villa',
+                                'Villa Zone, Deepblue Haven Da Nang',
+                                'fa-spa',
+                                'Private',
+                                'room-card__tag--green',
+                                '2 King Beds',
+                                '2 Bathrooms',
+                                '120m²',
+                                '4,850,000 VND',
+                                4850000,
+                                'da-nang',
+                                'president',
+                                4,
+                                'beachfront,ocean',
+                                5.0,
+                                '/rooms/private-villa'
+                            )}"></div>
+                        </th:block>
                     </div>
 
                     <p class="rooms-empty-message" id="roomsEmptyMessage" hidden>

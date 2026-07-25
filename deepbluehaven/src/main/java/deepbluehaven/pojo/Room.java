@@ -50,7 +50,7 @@ public class Room {
     @Column(name = "tag", length = 30)
     private List<RoomTag> tags = new ArrayList<>();
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", length = 500, columnDefinition = "NVARCHAR(500)")
     private String description;
 
     @ElementCollection(fetch = FetchType.LAZY)

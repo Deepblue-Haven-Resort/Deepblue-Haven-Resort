@@ -71,10 +71,6 @@
 
         <!-- Đã đăng nhập -->
         <th:block th:if="${session.loggedInCustomerId != null}">
-          <div class="user-info"
-              th:if="${session.customerName != null}">
-            <span th:text="${session.customerName}">Customer</span>
-          </div>
 
           <a th:href="@{/profile}" role="menuitem">
             Profile

@@ -1,5 +1,6 @@
 package deepbluehaven.services;
 
+import java.text.Normalizer;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,12 +42,18 @@ public class WorkerService {
 
     @Transactional
     public Worker createWorker(WorkerCreateFormDTO form) {
-        String username = normalizeUsername(form.getUsername());
-        String employeeCode = normalizeEmployeeCode(form.getEmployeeCode());
-        String email = normalizeEmail(form.getEmail());
-
         validateRoleDepartment(form.getRole(), form.getDepartment());
-        validateUniqueFields(username, employeeCode, email);
+
+        String email = normalizeEmail(form.getEmail());
+        validateUniqueEmail(email);
+
+        WorkerIdentity identity = buildAvailableIdentity(form.getFullName(), form.getRole());
+        String username = identity.username();
+        String employeeCode = identity.employeeCode();
+
+
+        form.setEmployeeCode(employeeCode);
+        form.setUsername(username);
 
         Worker worker = new Worker();
         worker.setEmployeeCode(employeeCode);
@@ -117,19 +124,94 @@ public class WorkerService {
         return EnumSet.copyOf(form.getPermissions());
     }
 
-    private void validateUniqueFields(String username, String employeeCode, String email) {
-
-        if (workerRepository.existsByUsernameIgnoreCase(username)) {
-            throw new WorkerFormExceptionService("username", "Username already exists");
-        }
-
-        if (workerRepository.existsByEmployeeCodeIgnoreCase(employeeCode)) {
-                throw new WorkerFormExceptionService("employeeCode", "Employee ID already exists");
-        }
-
+    private void validateUniqueEmail(String email) {
         if (workerRepository.existsByProfile_EmailIgnoreCase(email)) {
                 throw new WorkerFormExceptionService("email", "Email already exists");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, String> generateWorkerIdentity(String fullName, Role role) {
+        if (fullName == null || fullName.isBlank()) {
+                throw new IllegalArgumentException("Full name is required to generate account identity");
+        }
+        if (role == null) {
+                throw new IllegalArgumentException("Role is required to generate account identity");
+        }
+
+        WorkerIdentity identity = buildAvailableIdentity(fullName, role);
+        Map<String, String> result = new LinkedHashMap<>();
+        result.put("employeeCode", identity.employeeCode());
+        result.put("username", identity.username());
+        return result;
+    }
+
+    private WorkerIdentity buildAvailableIdentity(String fullName, Role role) {
+        String employeeCode = generateEmployeeCode(role);
+        String username = generateUsername(fullName, role);
+        return new WorkerIdentity(employeeCode, username);
+    }
+
+    private String generateEmployeeCode(Role role) {
+        String roleCode = switch (role) {
+            case HOUSEKEEPER -> "HK";
+            case RECEPTIONIST -> "RC";
+            case MANAGER -> "MG";
+            case ADMIN -> "AD";
+        };
+
+        long sequence = Math.max(workerRepository.countByProfile_Role(role) + 1, 1);
+        String candidate;
+
+        do {
+                candidate = String.format(Locale.ROOT, "EMP-%s-%03d", roleCode, sequence++);
+        } while (workerRepository.existsByEmployeeCodeIgnoreCase(candidate));
+
+        return candidate;
+    }
+
+    private String generateUsername(String fullName, Role role) {
+        String base = toUsernameSlug(fullName);
+
+        if (base.isBlank()) {
+                base = role.name().toLowerCase(Locale.ROOT);
+        }
+
+        base = limitLength(base, 100);
+        String candidate = base;
+        int suffix = 2;
+
+        while (workerRepository.existsByUsernameIgnoreCase(candidate)) {
+                String suffixText = "." + suffix++;
+                candidate = limitLength(base, 100 - suffixText.length()) + suffixText;
+        }
+
+        return candidate;
+    }
+
+    private String toUsernameSlug(String fullName) {
+        String normalized = Normalizer.normalize(fullName.trim(), Normalizer.Form.NFD)
+                        .replaceAll("\\p{M}+", "")
+                        .replace('đ', 'd')
+                        .replace('Đ', 'D')
+                        .toLowerCase(Locale.ROOT);
+
+        return normalized
+                        .replaceAll("[^a-z0-9]+", ".")
+                        .replaceAll("\\.{2,}", ".")
+                        .replaceAll("^\\.|\\.$", "");
+    }
+
+    private String limitLength(String value, int maxLength) {
+        if (value.length() <= maxLength) {
+                return value;
+        }
+
+        String limited = value.substring(0, maxLength);
+        return limited.replaceAll("\\.$", "");
+    }
+
+    private record WorkerIdentity(String employeeCode, String username) {
     }
 
     private void validateRoleDepartment(Role role, Department department) {
@@ -143,14 +225,6 @@ public class WorkerService {
         if (department != expectedDepartment) {
             throw new WorkerFormExceptionService("department", "Department does not match selected role");
         }
-    }
-
-    private String normalizeUsername(String value) {
-        return value.trim().toLowerCase(Locale.ROOT);
-    }
-
-    private String normalizeEmployeeCode(String value) {
-        return value.trim().toUpperCase(Locale.ROOT);
     }
 
     private String normalizeEmail(String value) {

@@ -27,13 +27,16 @@ function initForgotPasswordFlow() {
 
     const forgotModal = document.getElementById("forgotPasswordModal");
     const otpModal = document.getElementById("otpModal");
+    const resetModal = document.getElementById("resetPasswordModal");
 
     const forgotPasswordForm = document.getElementById("forgotPasswordForm");
     const otpForm = document.getElementById("otpForm");
+    const resetPasswordForm = document.getElementById("resetPasswordForm");
 
     const forgotIdentityInput = document.getElementById("forgotIdentity");
     const forgotIdentityError = document.getElementById("forgotIdentityError");
     const otpError = document.getElementById("otpError");
+    const resetError = document.getElementById("resetPasswordError");
 
     const forgotPreviewValue = document.getElementById("forgotPreviewValue");
     const backToForgotModal = document.getElementById("backToForgotModal");
@@ -41,7 +44,10 @@ function initForgotPasswordFlow() {
 
     const otpInputs = document.querySelectorAll(".auth-otp__input");
 
-    if (!openForgotBtn || !forgotModal || !otpModal) return;
+    let currentIdentity = "";
+
+    if (!openForgotBtn || !forgotModal || !otpModal || !resetModal) 
+        return; 
 
     openForgotBtn.addEventListener("click", () => {
         openModal(forgotModal);
@@ -62,7 +68,14 @@ function initForgotPasswordFlow() {
         });
     });
 
-    forgotPasswordForm?.addEventListener("submit", (event) => {
+    document.querySelectorAll("[data-close-reset]").forEach((button) => {
+        button.addEventListener("click", () => {
+            closeModal(resetModal);
+            resetResetForm();
+        });
+    });
+
+    forgotPasswordForm?.addEventListener("submit", async (event) => {
         event.preventDefault();
 
         const identity = forgotIdentityInput.value.trim();
@@ -80,30 +93,73 @@ function initForgotPasswordFlow() {
             return;
         }
 
-        forgotPreviewValue.textContent = identity;
+        const submitBtn = forgotPasswordForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
 
-        closeModal(forgotModal);
-        openModal(otpModal);
+        try {
+            const response = await fetch('/deepbluehaven/api/auth/forgot-password', {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify({ identity: identity })
+            });
 
-        setTimeout(() => otpInputs[0]?.focus(), 100);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Account not found or network error.");
+            }
+
+            currentIdentity = identity;
+            forgotPreviewValue.textContent = identity;
+            
+            closeModal(forgotModal);
+            openModal(otpModal);
+            setTimeout(() => otpInputs[0]?.focus(), 100);
+
+        } catch (error) {
+            forgotIdentityError.textContent = error.message;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Send code <i class="fa-solid fa-arrow-right"></i>';
+        }
     });
 
     backToForgotModal?.addEventListener("click", () => {
         closeModal(otpModal);
         openModal(forgotModal);
-
         setTimeout(() => forgotIdentityInput?.focus(), 100);
     });
 
-    resendOtpBtn?.addEventListener("click", () => {
+    resendOtpBtn?.addEventListener("click", async () => {
         otpError.textContent = "";
-        alert("A new OTP code has been sent.");
+        resendOtpBtn.disabled = true;
+        resendOtpBtn.textContent = "Sending...";
+        
+        try {
+            const response = await fetch('/deepbluehaven/api/auth/forgot-password', {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify({ identity: currentIdentity })
+            });
+            if (!response.ok) 
+                throw new Error();
+            if (typeof showToast === 'function') {
+                showToast("success", "Success", "A new OTP code has been sent.");
+            } 
+            else {
+                alert("A new OTP code has been sent.");
+            }
+        } catch (error) {
+            otpError.textContent = "Failed to resend OTP. Please try again.";
+        } finally {
+            resendOtpBtn.disabled = false;
+            resendOtpBtn.textContent = "Resend code";
+        }
     });
 
     otpInputs.forEach((input, index) => {
         input.addEventListener("input", () => {
             input.value = input.value.replace(/\D/g, "").slice(0, 1);
-
             if (input.value && index < otpInputs.length - 1) {
                 otpInputs[index + 1].focus();
             }
@@ -117,30 +173,21 @@ function initForgotPasswordFlow() {
 
         input.addEventListener("paste", (event) => {
             event.preventDefault();
-
-            const pasted = event.clipboardData
-                .getData("text")
-                .replace(/\D/g, "")
-                .slice(0, otpInputs.length);
-
+            const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, otpInputs.length);
             pasted.split("").forEach((char, i) => {
                 if (otpInputs[i]) {
                     otpInputs[i].value = char;
                 }
             });
-
             const focusIndex = Math.min(pasted.length, otpInputs.length - 1);
             otpInputs[focusIndex]?.focus();
         });
     });
 
-    otpForm?.addEventListener("submit", (event) => {
+    otpForm?.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        const otpValue = Array.from(otpInputs)
-            .map((input) => input.value)
-            .join("");
-
+        const otpValue = Array.from(otpInputs).map((input) => input.value).join("");
         otpError.textContent = "";
 
         if (otpValue.length !== 6) {
@@ -148,11 +195,81 @@ function initForgotPasswordFlow() {
             return;
         }
 
-        alert("OTP verified successfully!");
+        const submitBtn = otpForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
 
-        closeModal(otpModal);
-        resetForgotForm();
-        resetOtpForm();
+        try {
+            const response = await fetch('/deepbluehaven/api/auth/verify-otp', {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify({ identity: currentIdentity, otp: otpValue })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Invalid or expired OTP.");
+            }
+
+            closeModal(otpModal);
+            openModal(resetModal);
+            setTimeout(() => document.getElementById("newPassword")?.focus(), 100);
+
+        } catch (error) {
+            otpError.textContent = error.message;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Verify OTP <i class="fa-solid fa-check"></i>';
+        }
+    });
+
+    resetPasswordForm?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword = document.getElementById("confirmNewPassword").value;
+        
+        if (resetError) resetError.textContent = "";
+
+        if (newPassword !== confirmPassword) {
+            if (resetError) resetError.textContent = "Passwords do not match!";
+            return;
+        }
+
+        const submitBtn = resetPasswordForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Resetting...';
+
+        try {
+            const response = await fetch('/deepbluehaven/api/auth/reset-password', {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify({ identity: currentIdentity, newPassword: newPassword })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Failed to reset password.");
+            }
+
+            if (typeof showToast === 'function') {
+                showToast("success", "Success", "Password reset successfully! Please login.");
+            } 
+            else {
+                alert("Password reset successfully! Please login with your new password.");
+            }
+            closeModal(resetModal);
+            resetForgotForm();
+            resetOtpForm();
+            resetResetForm();
+            window.location.reload(); 
+
+        } catch (error) {
+            if (resetError) resetError.textContent = error.message;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Reset Password';
+        }
     });
 
     document.addEventListener("keydown", (event) => {
@@ -166,6 +283,11 @@ function initForgotPasswordFlow() {
         if (otpModal.classList.contains("is-open")) {
             closeModal(otpModal);
             resetOtpForm();
+        }
+
+        if (resetModal.classList.contains("is-open")) {
+            closeModal(resetModal);
+            resetResetForm();
         }
     });
 
@@ -204,10 +326,26 @@ function initForgotPasswordFlow() {
         });
     }
 
+    function resetResetForm() {
+        resetPasswordForm?.reset();
+        if (resetError) resetError.textContent = "";
+    }
+
     function isValidEmailOrPhone(value) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneRegex = /^[0-9+\s().-]{8,20}$/;
 
         return emailRegex.test(value) || phoneRegex.test(value);
+    }
+
+    function getHeaders() {
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+        
+        const headers = { 'Content-Type': 'application/json' };
+        if (csrfToken && csrfHeader) {
+            headers[csrfHeader] = csrfToken;
+        }
+        return headers;
     }
 }

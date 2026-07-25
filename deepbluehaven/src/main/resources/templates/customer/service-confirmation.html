@@ -1,0 +1,211 @@
+<div
+    xmlns:th="http://www.thymeleaf.org"
+    th:fragment="serviceConfirmationModal"
+    id="serviceConfirmationModal"
+    class="service-confirmation-modal"
+    aria-hidden="true"
+>
+    <!-- NỀN MỜ -->
+    <div
+        class="service-confirmation-modal__backdrop"
+        data-confirmation-close
+    ></div>
+
+    <!-- HỘP POPUP -->
+    <div
+        class="service-confirmation-modal__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="serviceConfirmationTitle"
+    >
+        <button
+            type="button"
+            class="service-confirmation-modal__close"
+            data-confirmation-close
+            aria-label="Close confirmation form"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <section
+            class="rooms-results services-results confirmation-panel"
+            aria-label="Confirm selected services"
+        >
+            <div class="service-confirmation__header">
+                <div class="service-confirmation__heading">
+                    <span class="service-confirmation__icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </span>
+
+                    <div>
+                        <h1 id="serviceConfirmationTitle">
+                            Confirm Your Services
+                        </h1>
+                    </div>
+                </div>
+
+                <span class="rooms-results__chip">
+                    <i class="fa-solid fa-bell-concierge"></i>
+                    Deepblue Services
+                </span>
+            </div>
+
+            <form
+                id="serviceConfirmationForm"
+                class="service-confirmation__form"
+                th:action="@{/services/confirm}"
+                method="post"
+            >
+                <input
+                    type="hidden"
+                    id="selectedServicesJson"
+                    name="selectedServicesJson"
+                >
+
+                <!-- BOOKING INFORMATION -->
+                <section class="confirmation-section">
+                    <div class="confirmation-section__title">
+                        <div>
+                            <span>Booking information</span>
+                            <h2>Guest details</h2>
+                        </div>
+
+                        <i class="fa-regular fa-address-card"></i>
+                    </div>
+
+                    <div class="confirmation-information-grid">
+                        <label class="confirmation-field">
+                            <span>Guest name</span>
+
+                            <input
+                                type="text"
+                                id="confirmationGuestName"
+                                name="guestName"
+                                readonly
+                            >
+                        </label>
+
+                        <label class="confirmation-field">
+                            <span>Room</span>
+
+                            <input
+                                type="text"
+                                id="confirmationRoom"
+                                name="room"
+                                readonly
+                            >
+                        </label>
+
+                        <label class="confirmation-field">
+                            <span>Service date</span>
+
+                            <input
+                                type="date"
+                                id="serviceDate"
+                                name="serviceDate"
+                                required
+                            >
+                        </label>
+
+                        <label class="confirmation-field">
+                            <span>Preferred time</span>
+
+                            <input
+                                type="time"
+                                id="serviceTime"
+                                name="serviceTime"
+                            >
+                        </label>
+                    </div>
+                </section>
+
+                <!-- SELECTED SERVICES -->
+                <section class="confirmation-section">
+                    <div class="confirmation-section__title">
+                        <div>
+                            <span>Your selection</span>
+                            <h2>Selected services</h2>
+                        </div>
+
+                        <span
+                            class="confirmation-service-count"
+                            id="confirmationServiceCount"
+                        >
+                            0
+                        </span>
+                    </div>
+
+                    <div
+                        id="confirmationServiceList"
+                        class="confirmation-service-list"
+                    ></div>
+                </section>
+
+                <!-- NOTE -->
+                <section class="confirmation-section">
+                    <div class="confirmation-section__title">
+                        <div>
+                            <span>Additional request</span>
+                            <h2>Special notes</h2>
+                        </div>
+
+                        <i class="fa-regular fa-message"></i>
+                    </div>
+
+                    <label class="confirmation-textarea-field">
+                        <span>
+                            Let us know if you have any special request
+                        </span>
+
+                        <textarea
+                            name="note"
+                            id="confirmationNote"
+                            rows="4"
+                            maxlength="500"
+                            placeholder="Example: Please deliver breakfast at 8:00 AM..."
+                        ></textarea>
+
+                        <small>Maximum 500 characters</small>
+                    </label>
+                </section>
+
+                <!-- TOTAL -->
+                <section class="confirmation-total-card">
+                    <div>
+                        <span>Estimated total</span>
+
+                        <p>
+                            Final charges may vary depending on additional
+                            requests.
+                        </p>
+                    </div>
+
+                    <strong id="confirmationTotal">
+                        0 VND
+                    </strong>
+                </section>
+
+                <!-- ACTIONS -->
+                <div class="confirmation-actions">
+                    <button
+                        type="button"
+                        class="confirmation-back-button"
+                        data-confirmation-close
+                    >
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Continue Editing
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="submitServiceConfirmation"
+                        class="btn btn-luxury confirmation-submit-button"
+                    >
+                        Confirm Booking
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>

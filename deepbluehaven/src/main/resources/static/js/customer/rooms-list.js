@@ -23,7 +23,7 @@ function toVnd(millionValue) {
 }
 
 function formatMillion(millionValue) {
-    return `${Number(millionValue || 0)} triệu`;
+    return `${Number(millionValue || 0)} million`;
 }
 
 function initRoomsDropdowns() {
@@ -140,7 +140,7 @@ function initRoomsPriceFilter() {
         }
 
         if (priceValue) {
-            priceValue.textContent = `${formatMillion(minValue)} – ${formatMillion(maxValue)} / đêm`;
+            priceValue.textContent = `${formatMillion(minValue)} – ${formatMillion(maxValue)} / night`;
         }
     };
 

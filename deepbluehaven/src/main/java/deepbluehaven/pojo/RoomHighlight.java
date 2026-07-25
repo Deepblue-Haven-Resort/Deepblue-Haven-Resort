@@ -22,10 +22,10 @@ public class RoomHighlight {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @Column(name = "title", nullable = false, length = 100)
+    @Column(name = "title", nullable = false, length = 100, columnDefinition = "NVARCHAR(100)")
     private String title;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", length = 500, columnDefinition = "NVARCHAR(500)")
     private String description;
 
     public RoomHighlight() {}
@@ -39,5 +39,4 @@ public class RoomHighlight {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    // Table: room_highlight  // FK: room_id
 }

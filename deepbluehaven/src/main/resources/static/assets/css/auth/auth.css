@@ -963,3 +963,10 @@
         gap: 4px;
     }
 }
+.auth-social-btn--zalo img {
+    width: 28px;
+    height: 28px;
+
+    display: block;
+    object-fit: contain;
+}

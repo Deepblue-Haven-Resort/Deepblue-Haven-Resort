@@ -21,7 +21,7 @@ public class Supplier {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 150)
+    @Column(name = "name", nullable = false, length = 150, columnDefinition = "NVARCHAR(150)")
     private String name;
 
     @Column(name = "phone_number", nullable = false, length = 20)
@@ -30,7 +30,7 @@ public class Supplier {
     @Column(name = "email", nullable = false, length = 120)
     private String email;
 
-    @Column(name = "address", nullable = false, length = 255)
+    @Column(name = "address", nullable = false, length = 255, columnDefinition = "NVARCHAR(255)")
     private String address;
 
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY)
