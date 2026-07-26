@@ -1,3 +1,6 @@
+/* ==========================================
+   1. BASE LAYOUT & PANEL
+========================================== */
 .admin-layout {
     min-height: 100vh;
     display: flex;
@@ -8,24 +11,49 @@
 
 .admin-main {
     flex: 1;
-    margin-left: 304px;
+    min-width: 0;
     padding: var(--space-24);
+    /* margin-left do admin-sidebar.css quản lý theo từng breakpoint */
 }
 
+/* ACCOUNT PANEL */
+.account-panel {
+    padding: var(--space-32);
+    background: var(--surface-0);
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+}
 
-/* STATS */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: var(--space-24);
     margin-bottom: var(--space-24);
 }
 
+.panel-header h2 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    color: var(--primary-800);
+    margin: 0;
+}
+
+.panel-header p {
+    margin-top: 6px;
+    color: #6f8190;
+}
+
+/* ==========================================
+   2. STATS GRID & STAT CARDS
+========================================== */
+.stats-grid,
 .account-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-16);
-    margin: var(--space-24) 0;
+    gap: var(--space-24);
+    margin-bottom: var(--space-24);
 }
 
 .stat-card {
@@ -38,6 +66,7 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     transition: 0.3s ease;
+    min-width: 0; /* Tránh vỡ layout Flexbox/Grid */
 }
 
 .stat-card:hover {
@@ -102,50 +131,14 @@
     color: var(--neutral-500);
 }
 
-.account-panel {
-    padding: 28px;
-    border-radius: 28px;
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(15, 61, 94, 0.08);
-    box-shadow: 0 24px 60px rgba(8, 32, 51, 0.08);
-}
-
-.panel-header h2 {
-    margin: 0;
-    font-size: 1.7rem;
-    color: #082033;
-}
-
-.panel-header p {
-    margin-top: 6px;
-    color: #6f8190;
-}
-
-/* ACCOUNT PANEL */
-.account-panel {
-    padding: var(--space-32);
-    background: var(--surface-0);
-    border: var(--border-1) solid var(--primary-200);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
-}
-
-.panel-header {
+/* ==========================================
+   3. FILTER BAR & DROPDOWN
+========================================== */
+.filter-bar {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-24);
+    gap: var(--space-16);
     margin-bottom: var(--space-24);
 }
-
-.panel-header h2 {
-    font-family: var(--font-heading);
-    font-size: 2rem;
-    color: var(--primary-800);
-}
-
-/* FILTER */
-.filter-bar { display: flex; gap: var(--space-16); margin-bottom: var(--space-24); }
 
 .search-box {
     flex: 1;
@@ -246,7 +239,9 @@
 .status-dot.active { background: var(--success-600); }
 .status-dot.inactive { background: var(--warning-500); }
 
-/* TABLE */
+/* ==========================================
+   4. TABLE & USER ACTIONS
+========================================== */
 .table-wrapper { overflow-x: auto; }
 
 .account-table { width: 100%; border-collapse: collapse; }
@@ -269,10 +264,20 @@
 .account-table tbody tr { transition: 0.25s ease; }
 .account-table tbody tr:hover { background: var(--primary-100); }
 
-/* USER */
+/* USER INFO */
 .user-info { display: flex; align-items: center; gap: var(--space-12); }
 .user-info strong { display: block; color: var(--neutral-900); }
 .user-info span { color: var(--neutral-700); font-size: 0.875rem; }
+
+.user-name-link { text-decoration: none; }
+.user-name-link strong {
+    color: var(--neutral-900);
+    transition: 0.25s ease;
+}
+.user-name-link:hover strong {
+    color: var(--primary-700);
+    text-decoration: underline;
+}
 
 /* ROLE BADGE */
 .role,
@@ -294,7 +299,7 @@
 .status-success { background: var(--success-100); color: var(--success-700); }
 .status-error { background: var(--error-100); color: var(--error-700); }
 
-/* ACTION */
+/* ACTION BUTTONS */
 .action-group { display: flex; gap: var(--space-8); }
 
 .action-group button {
@@ -319,7 +324,9 @@
     box-shadow: var(--shadow-md);
 }
 
-/* TABLE FOOTER */
+/* ==========================================
+   5. TABLE FOOTER & PAGINATION
+========================================== */
 .table-footer {
     display: flex;
     align-items: center;
@@ -338,7 +345,6 @@
 
 .table-footer p strong { color: var(--primary-800); font-weight: 800; }
 
-/* PAGINATION */
 .pagination { display: flex; align-items: center; gap: 6px; }
 
 .page-btn {
@@ -386,17 +392,166 @@
     color: var(--neutral-500);
     font-weight: 800;
 }
-/* click name user -> profile */
-.user-name-link {
-    text-decoration: none;
+
+/* ==========================================
+   6. RESPONSIVE MEDIA QUERIES (Đặt ở cuối file)
+========================================== */
+@media (max-width: 1399px) {
+    .admin-main {
+        padding: var(--space-16);
+    }
+
+    .stats-grid,
+    .account-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-16);
+    }
 }
 
-.user-name-link strong {
-    color: var(--neutral-900);
-    transition: 0.25s ease;
+@media (min-width: 470px) and (max-width: 799px) {
+    .admin-main {
+        padding: var(--space-12);
+    }
+
+    .stat-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: var(--space-16);
+    }
+
+    .stat-card strong {
+        font-size: clamp(1.5rem, 5vw, 2rem);
+        margin: var(--space-8) 0;
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.15rem;
+    }
+
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-12);
+    }
+
+    .filter-bar {
+        flex-direction: column;
+    }
+
+    .filter-dropdown,
+    .filter-btn {
+        width: 100%;
+    }
+
+    .filter-btn {
+        justify-content: space-between;
+    }
+
+    .filter-menu {
+        left: 0;
+        right: 0;
+        width: 100%;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .account-table {
+        min-width: 700px;
+    }
+
+    .table-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-12);
+    }
 }
 
-.user-name-link:hover strong {
-    color: var(--primary-700);
-    text-decoration: underline;
+/* Tối ưu riêng cho Màn hình điện thoại nhỏ (320px & 375px) */
+@media (max-width: 469px) {
+    .admin-main {
+        padding: var(--space-12) var(--space-8);
+    }
+
+    /* Tạo layout 2x2 cho 4 stat-card */
+    .stats-grid,
+    .account-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .stat-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 8px;
+        gap: 6px;
+    }
+
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+
+    .stat-card strong {
+        font-size: 1.25rem;
+        margin: 2px 0;
+        word-break: break-word;
+    }
+
+    .stat-card span {
+        font-size: 0.72rem;
+        line-height: 1.2;
+    }
+
+    .account-panel {
+        padding: var(--space-16);
+        border-radius: var(--radius-lg);
+    }
+
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-12);
+    }
+
+    .filter-bar {
+        flex-direction: column;
+    }
+
+    .filter-dropdown,
+    .filter-btn {
+        width: 100%;
+    }
+
+    .filter-btn {
+        justify-content: space-between;
+    }
+
+    .filter-menu {
+        left: 0;
+        right: 0;
+        width: 100%;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .account-table {
+        min-width: 680px;
+    }
+
+    .table-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-12);
+    }
 }

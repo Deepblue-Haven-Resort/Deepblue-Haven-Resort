@@ -1,5 +1,9 @@
 package deepbluehaven.pojo;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import deepbluehaven.pojo.enums.TierStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,9 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "Membership_Tier")
@@ -40,7 +41,7 @@ public class MembershipTier {
     @Column(name = "priority_duration", nullable = false)
     private Integer priorityDuration;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", length = 500, columnDefinition = "NVARCHAR(500)")
     private String description;
 
     @OneToMany(mappedBy = "membershipTier", fetch = FetchType.LAZY)

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import deepbluehaven.dto.RegisterDTO;
 import deepbluehaven.pojo.Customer;
@@ -30,11 +31,10 @@ public class AuthController {
         this.authService = authService;
     }
 
-
     @GetMapping("/login")
     public String loginPage(@RequestParam(value = "logout", required = false) String logout,
-                            @RequestParam(value = "error", required = false) String error,
-                            HttpServletRequest request) {
+            @RequestParam(value = "error", required = false) String error,
+            HttpServletRequest request) {
 
         if (logout != null || error != null) {
             return "auth/login";
@@ -43,28 +43,7 @@ public class AuthController {
         HttpSession session = request.getSession(false);
 
         if (session != null) {
-            Object workerId = session.getAttribute("loggedInWorkerId");
             Object customerId = session.getAttribute("loggedInCustomerId");
-
-            if (workerId != null) {
-                String role = (String) session.getAttribute("workerRole");
-
-                if ("ADMIN".equals(role)) {
-                    return "redirect:/admin/dashboard";
-                }
-
-                if ("MANAGER".equals(role)) {
-                    return "redirect:/manager/dashboard";
-                }
-
-                if ("RECEPTIONIST".equals(role)) {
-                    return "redirect:/receptionist/dashboard";
-                }
-
-                if ("HOUSEKEEPER".equals(role)) {
-                    return "redirect:/housekeeper/dashboard";
-                }
-            }
 
             if (customerId != null) {
                 return "redirect:/home";
@@ -76,8 +55,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public String loginCustomer(@RequestParam("username") String username,
-                                @RequestParam("password") String password,
-                                HttpServletRequest request) {
+            @RequestParam("password") String password,
+            HttpServletRequest request) {
 
         Customer customer = authService.loginCustomer(username, password);
 
@@ -100,15 +79,48 @@ public class AuthController {
         return "redirect:/home";
     }
 
+    @GetMapping("/staff-login")
+    public String staffLoginPage(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if (session == null) {
+            return "auth/staff-login";
+        }
+
+        if (session.getAttribute("loggedInWorkerId") != null) {
+            return redirectWorkerByRole((String) session.getAttribute("workerRole"));
+        }
+
+        if (session.getAttribute("loggedInCustomerId") != null) {
+            return "redirect:/home";
+        }
+
+        return "auth/staff-login";
+    }
+
+    private String redirectWorkerByRole(String role) {
+        if (role == null) {
+            return "redirect:/staff-login";
+        }
+
+        return switch (role) {
+            case "ADMIN" -> "redirect:/admin/dashboard";
+            case "MANAGER" -> "redirect:/manager/dashboard";
+            case "RECEPTIONIST" -> "redirect:/receptionist/dashboard";
+            case "HOUSEKEEPER" -> "redirect:/housekeeper/dashboard";
+            default -> "redirect:/staff-login?error=invalid-role";
+        };
+    }
+
     @PostMapping("/staff-login")
     public String loginStaff(@RequestParam("username") String username,
-                             @RequestParam("password") String password,
-                             HttpServletRequest request) {
+            @RequestParam("password") String password,
+            HttpServletRequest request) {
 
         Worker worker = authService.loginWorker(username, password);
 
         if (worker == null) {
-            return "redirect:/login?error=true";
+            return "redirect:/staff-login?error=true";
         }
 
         HttpSession oldSession = request.getSession(false);
@@ -124,12 +136,7 @@ public class AuthController {
         session.setAttribute("workerName", worker.getProfile().getFullName());
         session.setMaxInactiveInterval(SESSION_TIMEOUT_SECONDS);
 
-        return switch (worker.getProfile().getRole()) {
-            case ADMIN -> "redirect:/admin/dashboard";
-            case MANAGER -> "redirect:/manager/dashboard";
-            case RECEPTIONIST -> "redirect:/receptionist/dashboard";
-            case HOUSEKEEPER -> "redirect:/housekeeper/dashboard";
-        };
+        return redirectWorkerByRole(worker.getProfile().getRole().name());
     }
 
     @GetMapping("/logout")
@@ -142,6 +149,18 @@ public class AuthController {
     public String logoutPost(HttpServletRequest request) {
         invalidateSession(request);
         return "redirect:/login?logout=true";
+    }
+
+    @GetMapping("/staff-logout")
+    public String logoutStaff(HttpServletRequest request) {
+        invalidateSession(request);
+        return "redirect:/staff-login?logout=true";
+    }
+
+    @PostMapping("/staff-logout")
+    public String logoutStaffPost(HttpServletRequest request) {
+        invalidateSession(request);
+        return "redirect:/staff-login?logout=true";
     }
 
     private void invalidateSession(HttpServletRequest request) {
@@ -163,13 +182,62 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterDTO.Request request) {
         Customer customer = authService.registerCustomer(request);
- 
+
         Map<String, Object> body = Map.of(
                 "id", customer.getId(),
                 "username", customer.getUsername(),
-                "message", "Registration successful"
-        );
- 
+                "message", "Registration successful");
+
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
+    }
+
+    @PostMapping("/api/auth/forgot-password")
+    @ResponseBody
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        try {
+            String identity = getRequiredValue(request, "identity");
+            authService.processForgotPassword(identity);
+            return ResponseEntity.ok(Map.of("message", "OTP sent successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/auth/verify-otp")
+    @ResponseBody
+    public ResponseEntity<?> verifyOtp(@RequestBody Map<String, String> request) {
+        try {
+            String identity = getRequiredValue(request, "identity");
+            String otp = getRequiredValue(request, "otp");
+            authService.verifyOtp(identity, otp);
+
+            return ResponseEntity.ok(Map.of("message", "OTP verified"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/auth/reset-password")
+    @ResponseBody
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        try {
+            String identity = getRequiredValue(request, "identity");
+
+            String newPassword = getRequiredValue(request, "newPassword");
+            authService.resetPassword(identity, newPassword);
+
+            return ResponseEntity.ok(
+                    Map.of("message", "Password reset successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    private String getRequiredValue(Map<String, String> request, String fieldName) {
+        String value = request.get(fieldName);
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(fieldName + " is required.");
+        }
+        return value;
     }
 }

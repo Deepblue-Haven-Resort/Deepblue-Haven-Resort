@@ -18,10 +18,7 @@ public class HomeController {
     private final CustomerService customerService;
     private final RoomService roomService;
 
-    public HomeController(
-            CustomerService customerService,
-            RoomService roomService) {
-
+    public HomeController(CustomerService customerService, RoomService roomService) {
         this.customerService = customerService;
         this.roomService = roomService;
     }
@@ -43,35 +40,17 @@ public class HomeController {
 
     @GetMapping("/rooms")
     public String roomsList(Model model) {
-
-        model.addAttribute(
-                "rooms",
-                roomService.getAvailableRoomCards()
-        );
-
-        model.addAttribute(
-                "resortOptions",
-                roomService.getResortFilterOptions()
-        );
-
+        model.addAttribute("rooms", roomService.getAvailableRoomCards());
+        model.addAttribute("resortOptions", roomService.getResortFilterOptions());
         return "customer/rooms-list";
     }
 
     @GetMapping("/rooms/{id}")
-    public String roomDetail(
-            @PathVariable Long id,
-            Model model) {
-
+    public String roomDetail(@PathVariable Long id, Model model) {
         return roomService.getRoomById(id)
                 .map(room -> {
-
                     model.addAttribute("room", room);
-
-                    model.addAttribute(
-                            "roomAmenities",
-                            roomService.getAmenityViews(room)
-                    );
-
+                    model.addAttribute("roomAmenities", roomService.getAmenityViews(room));
                     return "customer/room-detail";
                 })
                 .orElse("redirect:/404");
@@ -80,11 +59,8 @@ public class HomeController {
     @GetMapping("/services")
     public String showServices(Model model) {
 
-        List<ServiceDTO.Response> services =
-                customerService.getVisibleServices();
-
+        List<ServiceDTO.Response> services = customerService.getVisibleServices();
         model.addAttribute("services", services);
-
         return "customer/service";
     }
 

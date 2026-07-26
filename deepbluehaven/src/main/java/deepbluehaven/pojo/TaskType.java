@@ -15,10 +15,10 @@ public class TaskType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100, columnDefinition = "NVARCHAR(100)")
     private String name;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", length = 500, columnDefinition = "NVARCHAR(500)")
     private String description;
 
     @Column(name = "required_level", nullable = false)

@@ -26,7 +26,7 @@ public class InventoryTransaction {
     @Column(name = "change_amount", nullable = false)
     private Integer changeAmount;
 
-    @Column(name = "reason", nullable = false, length = 255)
+    @Column(name = "reason", nullable = false, length = 255, columnDefinition = "NVARCHAR(255)")
     private String reason;
 
     public InventoryTransaction() {}

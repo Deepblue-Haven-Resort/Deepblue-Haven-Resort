@@ -65,20 +65,8 @@ public class WorkerCreateFormDTO {
     @Size(max = 255, message = "Address cannot exceed 255 characters")
     private String address;
 
-    @NotBlank(message = "Employee ID is required")
-    @Size(max = 50, message = "Employee ID cannot exceed 50 characters")
-    @Pattern(
-            regexp = "^[A-Za-z0-9._-]+$",
-            message = "Employee ID may contain letters, numbers, dot, underscore and hyphen"
-    )
     private String employeeCode;
 
-    @NotBlank(message = "Username is required")
-    @Size(max = 100, message = "Username cannot exceed 100 characters")
-    @Pattern(
-            regexp = "^[A-Za-z0-9._-]+$",
-            message = "Username may contain letters, numbers, dot, underscore and hyphen"
-    )
     private String username;
 
     @NotBlank(message = "Password is required")
@@ -96,7 +84,7 @@ public class WorkerCreateFormDTO {
      * true: backend bỏ qua permissions gửi lên và dùng quyền mặc định của Role.
      * false: backend dùng chính xác tập permissions do admin chọn.
      */
-    private boolean useDefaultPermissions = true;
+    private boolean useDefaultPermissions = false;
 
     private Set<PermissionTag> permissions =
             EnumSet.noneOf(PermissionTag.class);
