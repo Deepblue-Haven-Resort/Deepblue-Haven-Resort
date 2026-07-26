@@ -15,16 +15,9 @@ public class NotificationService {
 
     public void sendEmailOtp(String toEmail, String otp) {
         SimpleMailMessage message = new SimpleMailMessage();
-
         message.setTo(toEmail);
-        message.setSubject(
-                "Deep Blue Haven - OTP Verification"
-        );
-        message.setText(
-                "Your OTP code is: " + otp
-                        + ".\nThis code will expire in 3 minutes."
-        );
-
+        message.setSubject("Deep Blue Haven - OTP Verification");
+        message.setText("Your OTP code is: " + otp + ".\nThis code will expire in 3 minutes.");
         mailSender.send(message);
     }
 }

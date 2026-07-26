@@ -15,11 +15,11 @@ import deepbluehaven.services.RoomService;
 @Controller
 public class HomeController {
 
-    private final CustomerService CustomerService;
+    private final CustomerService customerService;
     private final RoomService roomService;
 
-    public HomeController(CustomerService CustomerService, RoomService roomService) {
-        this.CustomerService = CustomerService;
+    public HomeController(CustomerService customerService, RoomService roomService) {
+        this.customerService = customerService;
         this.roomService = roomService;
     }
 
@@ -58,13 +58,42 @@ public class HomeController {
 
     @GetMapping("/services")
     public String showServices(Model model) {
-        List<ServiceDTO.Response> services = CustomerService.getVisibleServices();
+
+        List<ServiceDTO.Response> services = customerService.getVisibleServices();
         model.addAttribute("services", services);
         return "customer/service";
     }
-/* vi trong code co method="post" */
+
     @PostMapping("/services/confirm")
     public String confirmServices() {
         return "redirect:/services";
+    }
+
+    @GetMapping("/profile")
+    public String showCustomerProfile() {
+        return "customer/profile";
+    }
+
+    @GetMapping("/booking/history")
+    public String showBookingHistory() {
+        return "customer/booking-history";
+    }
+
+    @GetMapping("/offers")
+    public String showOffers() {
+        return "customer/offers";
+    }
+
+    @GetMapping("/offers/{offerCode}")
+    public String showOfferDetail(
+            @PathVariable String offerCode,
+            Model model) {
+
+        model.addAttribute(
+                "offerCode",
+                offerCode
+        );
+
+        return "customer/offer-detail";
     }
 }
