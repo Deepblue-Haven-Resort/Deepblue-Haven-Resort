@@ -4,46 +4,17 @@
 
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <meta name="zalo-platform-site-verification"
-          content="UFcI5VhVHpyVhi0O-ALpCdhNooQMeH5yC30s">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking History | Deep Blue Haven</title>
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <link rel="stylesheet"
-          th:href="@{/assets/css/theme.css}"
-          href="/assets/css/theme.css">
-
-    <link rel="stylesheet"
-          th:href="@{/assets/css/base.css}"
-          href="/assets/css/base.css">
-
-    <link rel="stylesheet"
-          th:href="@{/assets/css/header.css}"
-          href="/assets/css/header.css">
-
-    <link rel="stylesheet"
-          th:href="@{/assets/css/footer.css}"
-          href="/assets/css/footer.css">
-
-    <link rel="stylesheet"
-          th:href="@{/assets/css/customer/home.css}"
-          href="/assets/css/customer/home.css">
-
-    <link rel="stylesheet"
-          th:href="@{/assets/css/customer/booking-history.css}"
-          href="/assets/css/customer/booking-history.css">
-
-    <!-- CSS của modal booking detail -->
-    <link rel="stylesheet"
-          th:href="@{/assets/css/customer/booking-detail-modal.css}"
-          href="/assets/css/customer/booking-detail-modal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" href="/assets/css/base.css">
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css">
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/home.css}" href="/assets/css/customer/home.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/booking-history.css}" href="/assets/css/customer/booking-history.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/booking-detail-modal.css}" href="/assets/css/customer/booking-detail-modal.css">
 </head>
 
 <body class="home-page">
@@ -53,10 +24,6 @@
 <main class="booking-history-page">
 
     <div class="container">
-
-        <!-- =====================================
-             FILTER
-        ====================================== -->
 
         <section class="booking-history-toolbar">
 
@@ -140,146 +107,129 @@
 
         </section>
 
-        <!-- =====================================
-             BOOKING LIST
-        ====================================== -->
-
-        <section class="booking-history-list"
-                 id="bookingHistoryList">
-
-            <!-- =================================
-                 BOOKING 1
-                 TƯƠNG LAI - PENDING
-            ================================== -->
-
+        <section class="booking-history-list" id="bookingHistoryList">
             <article class="booking-history-card"
-                     data-status="upcoming"
-                     data-booking-status="PENDING"
-                     data-search="DBH-2026-001 Deluxe Ocean View Pending">
+                    th:each="b : ${bookings}"
+                    th:data-status="${b.timeGroup}"
+                    th:data-booking-status="${b.rawStatus}"
+                    th:data-search="|${b.bookingCode} ${b.roomName} ${b.statusText}|">
 
                 <div class="booking-history-card__image">
-
                     <img th:src="@{/assets/pic/room-1.jpg}"
-                         src="/assets/pic/room-1.jpg"
-                         alt="Deluxe Ocean View room">
+                        src="/assets/pic/room-1.jpg"
+                        th:alt="${b.roomName}">
 
-                    <span class="booking-status booking-status--upcoming">
+                    <span th:class="|booking-status ${b.statusClass}|"
+                        th:text="${b.statusText}">
                         Pending
                     </span>
-
                 </div>
 
                 <div class="booking-history-card__content">
 
                     <div class="booking-history-card__top">
-
                         <div>
-
-                            <span class="booking-id">
+                            <span class="booking-id" th:text="|Booking ID: ${b.bookingCode}|">
                                 Booking ID: DBH-2026-001
                             </span>
 
-                            <h2>Deluxe Ocean View</h2>
+                            <h2 th:text="${b.roomName}">Deluxe Ocean View</h2>
 
                             <p class="booking-location">
-
                                 <i class="fa-solid fa-location-dot"></i>
-
                                 Deep Blue Haven Resort
-
                             </p>
 
+                            <p th:if="${b.needsManualCheckIn}" class="booking-manual-checkin">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                Chưa check-in thủ công
+                            </p>
                         </div>
 
                         <div class="booking-price">
-
                             <span>Estimated amount</span>
-
-                            <strong>$620</strong>
-
+                            <strong th:text="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|">
+                                6,200,000 VND
+                            </strong>
+                            <small class="booking-price-usd"
+                                th:text="|($${b.totalAmountUsd} USD)|">
+                                ($248 USD)
+                            </small>
                         </div>
-
                     </div>
 
                     <div class="booking-information">
 
                         <div class="booking-information__item">
-
                             <i class="fa-regular fa-calendar"></i>
-
                             <div>
                                 <span>Check-in</span>
-                                <strong>August 12, 2026</strong>
+                                <strong th:text="${b.checkIn != null ? #temporals.format(b.checkIn, 'MMMM dd, yyyy', new java.util.Locale('en')) : 'N/A'}">
+                                    August 12, 2026
+                                </strong>
                             </div>
-
                         </div>
 
                         <div class="booking-information__item">
-
                             <i class="fa-regular fa-calendar-check"></i>
-
                             <div>
                                 <span>Check-out</span>
-                                <strong>August 15, 2026</strong>
+                                <strong th:text="${b.checkOut != null ? #temporals.format(b.checkOut, 'MMMM dd, yyyy', new java.util.Locale('en')) : 'N/A'}">
+                                    August 15, 2026
+                                </strong>
                             </div>
-
                         </div>
 
                         <div class="booking-information__item">
-
                             <i class="fa-solid fa-user-group"></i>
-
                             <div>
                                 <span>Guests</span>
-                                <strong>2 Adults</strong>
+                                <strong>2 Guests</strong>
                             </div>
-
                         </div>
 
                         <div class="booking-information__item">
-
                             <i class="fa-solid fa-moon"></i>
-
                             <div>
                                 <span>Stay</span>
-                                <strong>3 Nights</strong>
+                                <strong th:text="|${b.nights} ${b.nights > 1 ? 'Nights' : 'Night'}|">
+                                    3 Nights
+                                </strong>
                             </div>
-
                         </div>
 
                     </div>
 
                     <div class="booking-history-card__footer">
 
-                        <span class="booking-created-date">
+                        <span class="booking-created-date" th:text="${b.bookedOn != null ? 'Booked on ' + #temporals.format(b.bookedOn, 'MMMM dd, yyyy', new java.util.Locale('en')) : ''}">
                             Booked on July 20, 2026
                         </span>
-
                         <button type="button"
                                 class="booking-detail-link js-open-booking-detail"
                                 aria-haspopup="dialog"
-
-                                data-booking-code="DBH-2026-001"
-                                data-booking-status="PENDING"
-                                data-time-group="upcoming"
-
-                                data-room-name="Deluxe Ocean View"
-                                data-room-type="Deluxe Room"
-                                data-room-number="To be assigned"
-
-                                data-check-in="August 12, 2026"
-                                data-check-out="August 15, 2026"
-                                data-guests="2 Adults"
-                                data-nights="3 Nights"
-
-                                data-booked-on="July 20, 2026"
-                                data-payment-status="Unpaid"
-                                data-total="$620">
+                                th:data-booking-code="${b.bookingCode}"
+                                th:data-booking-status="${b.rawStatus}"
+                                th:data-time-group="${b.timeGroup}"
+                                th:data-room-name="${b.roomName}"
+                                th:data-room-type="${b.roomType}"
+                                th:data-room-number="${b.roomNumber}"
+                                th:data-check-in="${b.checkIn != null ? #temporals.format(b.checkIn, 'MMMM dd, yyyy') : ''}"
+                                th:data-check-out="${b.checkOut != null ? #temporals.format(b.checkOut, 'MMMM dd, yyyy') : ''}"
+                                th:data-nights="|${b.nights} Nights|"
+                                th:data-booked-on="${b.bookedOn != null ? #temporals.format(b.bookedOn, 'MMMM dd, yyyy') : ''}"
+                                th:data-payment-status="Paid"
+                                th:data-total="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|"
+                                th:data-unit-price="${b.pricePerNightVnd != null ? #numbers.formatDecimal(b.pricePerNightVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}"
+                                th:data-room-amount="${b.roomChargeVnd != null ? #numbers.formatDecimal(b.roomChargeVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}"
+                                th:data-special-request="${b.specialRequest != null && !b.specialRequest.isBlank() ? b.specialRequest : 'No special requests were submitted for this booking.'}"
+                                th:data-room-charge="${b.roomChargeVnd != null ? #numbers.formatDecimal(b.roomChargeVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}"
+                                th:data-service-charge="${b.serviceChargeVnd != null && b.serviceChargeVnd > 0 ? #numbers.formatDecimal(b.serviceChargeVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}"
+                                th:data-tax="${b.taxVnd != null && b.taxVnd > 0 ? #numbers.formatDecimal(b.taxVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}"
+                                th:data-discount="${b.discountVnd != null && b.discountVnd > 0 ? '-' + #numbers.formatDecimal(b.discountVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}">
 
                             View Details
-
                             <i class="fa-solid fa-arrow-right"></i>
-
                         </button>
 
                     </div>
@@ -288,598 +238,15 @@
 
             </article>
 
-            <!-- =================================
-                 BOOKING 2
-                 TƯƠNG LAI - CONFIRMED
-            ================================== -->
-
-            <article class="booking-history-card"
-                     data-status="upcoming"
-                     data-booking-status="CONFIRMED"
-                     data-search="DBH-2026-002 Private Pool Villa Confirmed">
-
-                <div class="booking-history-card__image">
-
-                    <img th:src="@{/assets/pic/room-2.jpg}"
-                         src="/assets/pic/room-2.jpg"
-                         alt="Private Pool Villa">
-
-                    <span class="booking-status booking-status--upcoming">
-                        Confirmed
-                    </span>
-
-                </div>
-
-                <div class="booking-history-card__content">
-
-                    <div class="booking-history-card__top">
-
-                        <div>
-
-                            <span class="booking-id">
-                                Booking ID: DBH-2026-002
-                            </span>
-
-                            <h2>Private Pool Villa</h2>
-
-                            <p class="booking-location">
-
-                                <i class="fa-solid fa-location-dot"></i>
-
-                                Deep Blue Haven Resort
-
-                            </p>
-
-                        </div>
-
-                        <div class="booking-price">
-
-                            <span>Estimated amount</span>
-
-                            <strong>$980</strong>
-
-                        </div>
-
-                    </div>
-
-                    <div class="booking-information">
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-regular fa-calendar"></i>
-
-                            <div>
-                                <span>Check-in</span>
-                                <strong>September 05, 2026</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-regular fa-calendar-check"></i>
-
-                            <div>
-                                <span>Check-out</span>
-                                <strong>September 09, 2026</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-solid fa-user-group"></i>
-
-                            <div>
-                                <span>Guests</span>
-                                <strong>4 Guests</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-solid fa-moon"></i>
-
-                            <div>
-                                <span>Stay</span>
-                                <strong>4 Nights</strong>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="booking-history-card__footer">
-
-                        <span class="booking-created-date">
-                            Booked on July 22, 2026
-                        </span>
-
-                        <button type="button"
-                                class="booking-detail-link js-open-booking-detail"
-                                aria-haspopup="dialog"
-
-                                data-booking-code="DBH-2026-002"
-                                data-booking-status="CONFIRMED"
-                                data-time-group="upcoming"
-
-                                data-room-name="Private Pool Villa"
-                                data-room-type="Villa"
-                                data-room-number="Villa V08"
-
-                                data-check-in="September 05, 2026"
-                                data-check-out="September 09, 2026"
-                                data-guests="4 Guests"
-                                data-nights="4 Nights"
-
-                                data-booked-on="July 22, 2026"
-                                data-payment-status="Deposit paid"
-                                data-total="$980">
-
-                            View Details
-
-                            <i class="fa-solid fa-arrow-right"></i>
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-            <!-- =================================
-                 BOOKING 3
-                 HIỆN TẠI - CHECKED IN
-            ================================== -->
-
-            <article class="booking-history-card"
-                     data-status="current"
-                     data-booking-status="CHECKED_IN"
-                     data-search="DBH-2026-003 Premium Garden Suite Checked In">
-
-                <div class="booking-history-card__image">
-
-                    <img th:src="@{/assets/pic/room-3.jpg}"
-                         src="/assets/pic/room-3.jpg"
-                         alt="Premium Garden Suite">
-
-                    <span class="booking-status
-                                 booking-status--upcoming
-                                 booking-status--current">
-                        Checked In
-                    </span>
-
-                </div>
-
-                <div class="booking-history-card__content">
-
-                    <div class="booking-history-card__top">
-
-                        <div>
-
-                            <span class="booking-id">
-                                Booking ID: DBH-2026-003
-                            </span>
-
-                            <h2>Premium Garden Suite</h2>
-
-                            <p class="booking-location">
-
-                                <i class="fa-solid fa-location-dot"></i>
-
-                                Deep Blue Haven Resort
-
-                            </p>
-
-                        </div>
-
-                        <div class="booking-price">
-
-                            <span>Current amount</span>
-
-                            <strong>$750</strong>
-
-                        </div>
-
-                    </div>
-
-                    <div class="booking-information">
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-regular fa-calendar"></i>
-
-                            <div>
-                                <span>Check-in</span>
-                                <strong>July 24, 2026</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-regular fa-calendar-check"></i>
-
-                            <div>
-                                <span>Check-out</span>
-                                <strong>July 27, 2026</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-solid fa-user-group"></i>
-
-                            <div>
-                                <span>Guests</span>
-                                <strong>2 Adults</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-solid fa-moon"></i>
-
-                            <div>
-                                <span>Stay</span>
-                                <strong>3 Nights</strong>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="booking-history-card__footer">
-
-                        <span class="booking-created-date">
-                            Checked in on July 24, 2026
-                        </span>
-
-                        <button type="button"
-                                class="booking-detail-link js-open-booking-detail"
-                                aria-haspopup="dialog"
-
-                                data-booking-code="DBH-2026-003"
-                                data-booking-status="CHECKED_IN"
-                                data-time-group="current"
-
-                                data-room-name="Premium Garden Suite"
-                                data-room-type="Garden Suite"
-                                data-room-number="Suite G12"
-
-                                data-check-in="July 24, 2026"
-                                data-check-out="July 27, 2026"
-                                data-guests="2 Adults"
-                                data-nights="3 Nights"
-
-                                data-booked-on="July 10, 2026"
-                                data-payment-status="Partially paid"
-                                data-total="$750">
-
-                            View Details
-
-                            <i class="fa-solid fa-arrow-right"></i>
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-            <!-- =================================
-                 BOOKING 4
-                 QUÁ KHỨ - COMPLETED
-            ================================== -->
-
-            <article class="booking-history-card"
-                     data-status="completed"
-                     data-booking-status="COMPLETED"
-                     data-search="DBH-2026-004 Beachfront Suite Completed">
-
-                <div class="booking-history-card__image">
-
-                    <img th:src="@{/assets/pic/room-4.jpg}"
-                         src="/assets/pic/room-4.jpg"
-                         alt="Beachfront Suite">
-
-                    <span class="booking-status booking-status--completed">
-                        Completed
-                    </span>
-
-                </div>
-
-                <div class="booking-history-card__content">
-
-                    <div class="booking-history-card__top">
-
-                        <div>
-
-                            <span class="booking-id">
-                                Booking ID: DBH-2026-004
-                            </span>
-
-                            <h2>Beachfront Suite</h2>
-
-                            <p class="booking-location">
-
-                                <i class="fa-solid fa-location-dot"></i>
-
-                                Deep Blue Haven Resort
-
-                            </p>
-
-                        </div>
-
-                        <div class="booking-price">
-
-                            <span>Total amount</span>
-
-                            <strong>$440</strong>
-
-                        </div>
-
-                    </div>
-
-                    <div class="booking-information">
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-regular fa-calendar"></i>
-
-                            <div>
-                                <span>Check-in</span>
-                                <strong>June 10, 2026</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-regular fa-calendar-check"></i>
-
-                            <div>
-                                <span>Check-out</span>
-                                <strong>June 12, 2026</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-solid fa-user-group"></i>
-
-                            <div>
-                                <span>Guests</span>
-                                <strong>2 Adults</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-solid fa-moon"></i>
-
-                            <div>
-                                <span>Stay</span>
-                                <strong>2 Nights</strong>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="booking-history-card__footer">
-
-                        <span class="booking-created-date">
-                            Completed on June 12, 2026
-                        </span>
-
-                        <button type="button"
-                                class="booking-detail-link js-open-booking-detail"
-                                aria-haspopup="dialog"
-
-                                data-booking-code="DBH-2026-004"
-                                data-booking-status="COMPLETED"
-                                data-time-group="completed"
-
-                                data-room-name="Beachfront Suite"
-                                data-room-type="Beachfront Suite"
-                                data-room-number="Suite B05"
-
-                                data-check-in="June 10, 2026"
-                                data-check-out="June 12, 2026"
-                                data-guests="2 Adults"
-                                data-nights="2 Nights"
-
-                                data-booked-on="May 28, 2026"
-                                data-payment-status="Paid"
-                                data-total="$440">
-
-                            View Details
-
-                            <i class="fa-solid fa-arrow-right"></i>
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-            <!-- =================================
-                 BOOKING 5
-                 ĐÃ HỦY
-            ================================== -->
-
-            <article class="booking-history-card"
-                     data-status="cancelled"
-                     data-booking-status="CANCELLED"
-                     data-search="DBH-2026-005 Family Ocean Villa Cancelled">
-
-                <div class="booking-history-card__image">
-
-                    <img th:src="@{/assets/pic/room-5.jpg}"
-                         src="/assets/pic/room-5.jpg"
-                         alt="Family Ocean Villa">
-
-                    <span class="booking-status booking-status--cancelled">
-                        Cancelled
-                    </span>
-
-                </div>
-
-                <div class="booking-history-card__content">
-
-                    <div class="booking-history-card__top">
-
-                        <div>
-
-                            <span class="booking-id">
-                                Booking ID: DBH-2026-005
-                            </span>
-
-                            <h2>Family Ocean Villa</h2>
-
-                            <p class="booking-location">
-
-                                <i class="fa-solid fa-location-dot"></i>
-
-                                Deep Blue Haven Resort
-
-                            </p>
-
-                        </div>
-
-                        <div class="booking-price">
-
-                            <span>Original amount</span>
-
-                            <strong>$1,120</strong>
-
-                        </div>
-
-                    </div>
-
-                    <div class="booking-information">
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-regular fa-calendar"></i>
-
-                            <div>
-                                <span>Planned check-in</span>
-                                <strong>February 20, 2026</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-regular fa-calendar-check"></i>
-
-                            <div>
-                                <span>Planned check-out</span>
-                                <strong>February 24, 2026</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-solid fa-user-group"></i>
-
-                            <div>
-                                <span>Guests</span>
-                                <strong>4 Guests</strong>
-                            </div>
-
-                        </div>
-
-                        <div class="booking-information__item">
-
-                            <i class="fa-solid fa-ban"></i>
-
-                            <div>
-                                <span>Cancelled</span>
-                                <strong>February 18, 2026</strong>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="booking-history-card__footer">
-
-                        <span class="booking-created-date">
-                            Cancelled on February 18, 2026
-                        </span>
-
-                        <button type="button"
-                                class="booking-detail-link js-open-booking-detail"
-                                aria-haspopup="dialog"
-
-                                data-booking-code="DBH-2026-005"
-                                data-booking-status="CANCELLED"
-                                data-time-group="cancelled"
-
-                                data-room-name="Family Ocean Villa"
-                                data-room-type="Family Villa"
-                                data-room-number="Not assigned"
-
-                                data-check-in="February 20, 2026"
-                                data-check-out="February 24, 2026"
-                                data-guests="4 Guests"
-                                data-nights="4 Nights"
-
-                                data-booked-on="February 05, 2026"
-                                data-payment-status="Refunded"
-                                data-total="$1,120">
-
-                            View Details
-
-                            <i class="fa-solid fa-arrow-right"></i>
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-            <!-- =================================
-                 EMPTY STATE
-            ================================== -->
-
-            <div class="booking-history-empty"
-                 id="bookingHistoryEmpty">
-
+            <div class="booking-history-empty" id="bookingHistoryEmpty">
                 <div class="booking-history-empty__icon">
-
                     <i class="fa-regular fa-calendar-xmark"></i>
-
                 </div>
-
                 <h2>No bookings found</h2>
-
-                <p>
-                    There are no bookings matching your current filter.
-                </p>
-
+                <p>There are no bookings matching your current filter.</p>
             </div>
 
         </section>
-
-        <!-- =====================================
-             PAGINATION
-        ====================================== -->
 
         <nav class="booking-pagination"
              id="bookingPagination"
@@ -919,8 +286,8 @@
 <div th:replace="~{fragments/booking-detail-modal :: bookingDetailModal}">
 </div>
 
-<script th:src="@{/assets/js/customer/booking-history.js}"
-        src="/assets/js/customer/booking-history.js">
+<script th:src="@{/js/customer/booking-history.js}"
+        src="/js/customer/booking-history.js">
 </script>s
 </body>
 </html>

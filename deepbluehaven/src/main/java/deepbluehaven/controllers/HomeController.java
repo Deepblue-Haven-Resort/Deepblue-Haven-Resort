@@ -8,19 +8,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import deepbluehaven.dto.BookingHistoryDTO;
 import deepbluehaven.dto.ServiceDTO;
+import deepbluehaven.services.BookingService;
 import deepbluehaven.services.CustomerService;
 import deepbluehaven.services.RoomService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class HomeController {
 
     private final CustomerService customerService;
     private final RoomService roomService;
+    private final BookingService bookingService;
 
-    public HomeController(CustomerService customerService, RoomService roomService) {
+
+    public HomeController(CustomerService customerService, RoomService roomService, BookingService bookingService) {
         this.customerService = customerService;
         this.roomService = roomService;
+        this.bookingService = bookingService;
     }
 
     @GetMapping("/")
@@ -75,7 +82,17 @@ public class HomeController {
     }
 
     @GetMapping("/booking/history")
-    public String showBookingHistory() {
+    public String bookingHistory(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("loggedInCustomerId") == null) {
+            return "redirect:/login";
+        }
+
+        Long currentCustomerId = (Long) session.getAttribute("loggedInCustomerId");
+
+        List<BookingHistoryDTO.Response> bookings = bookingService.getBookingHistoryByCustomer(currentCustomerId);
+        model.addAttribute("bookings", bookings);   
         return "customer/booking-history";
     }
 
