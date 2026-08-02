@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    /* =========================================
-       BOOKING FILTER, SEARCH AND PAGINATION
-    ========================================= */
 
     const filterButtons = document.querySelectorAll(
         ".booking-filter-tab"
@@ -31,11 +28,32 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentFilter = "all";
     let currentPage = 1;
 
-    /*
-     * Để 3 booking mỗi trang để dễ kiểm tra.
-     * Khi kết nối dữ liệu thật có thể đổi thành 5 hoặc 10.
-     */
-    const itemsPerPage = 3;
+    const itemsPerPage = 5;
+
+    function updateFilterBadges() {
+        const counts = {
+            all: bookingCards.length,
+            upcoming: 0,
+            current: 0,
+            completed: 0,
+            cancelled: 0
+        };
+
+        bookingCards.forEach(function (card) {
+            const status = card.dataset.status || "";
+            if (counts.hasOwnProperty(status)) {
+                counts[status]++;
+            }
+        });
+
+        filterButtons.forEach(function (button) {
+            const filter = button.dataset.filter || "all";
+            const badge = button.querySelector("span");
+            if (badge && counts.hasOwnProperty(filter)) {
+                badge.textContent = counts[filter];
+            }
+        });
+    }
 
     function getFilteredBookings() {
         const keyword = searchInput
@@ -67,9 +85,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         paginationNumbers.innerHTML = "";
 
-        /*
-         * Chỉ có một trang thì ẩn pagination.
-         */
         pagination.hidden = totalPages <= 1;
 
         if (totalPages <= 1) {
@@ -125,10 +140,6 @@ document.addEventListener("DOMContentLoaded", function () {
             filteredBookings.length / itemsPerPage
         );
 
-        /*
-         * Tránh currentPage vượt quá tổng số trang
-         * sau khi người dùng lọc hoặc tìm kiếm.
-         */
         if (totalPages > 0 && currentPage > totalPages) {
             currentPage = totalPages;
         }
@@ -143,16 +154,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const endIndex =
             startIndex + itemsPerPage;
 
-        /*
-         * Ẩn toàn bộ booking trước.
-         */
         bookingCards.forEach(function (card) {
             card.hidden = true;
         });
 
-        /*
-         * Chỉ hiển thị booking thuộc trang hiện tại.
-         */
         filteredBookings
             .slice(startIndex, endIndex)
             .forEach(function (card) {
@@ -190,9 +195,6 @@ document.addEventListener("DOMContentLoaded", function () {
             currentFilter =
                 button.dataset.filter || "all";
 
-            /*
-             * Khi đổi filter thì quay về trang đầu.
-             */
             currentPage = 1;
 
             updateBookingList();
@@ -234,11 +236,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-
-    /* =========================================
-       BOOKING DETAIL MODAL
-    ========================================= */
-
     const bookingModal = document.getElementById(
         "bookingDetailModal"
     );
@@ -278,6 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
             PENDING: "Pending",
             CONFIRMED: "Confirmed",
             CHECKED_IN: "Checked In",
+            CHECKED_OUT: "Completed",
             COMPLETED: "Completed",
             CANCELLED: "Cancelled"
         };
@@ -302,6 +300,7 @@ document.addEventListener("DOMContentLoaded", function () {
             PENDING: "booking-detail-status--pending",
             CONFIRMED: "booking-detail-status--confirmed",
             CHECKED_IN: "booking-detail-status--current",
+            CHECKED_OUT: "booking-detail-status--completed",
             COMPLETED: "booking-detail-status--completed",
             CANCELLED: "booking-detail-status--cancelled"
         };
@@ -326,105 +325,38 @@ document.addEventListener("DOMContentLoaded", function () {
         const bookingStatus =
             button.dataset.bookingStatus || "";
 
-        setElementText(
-            "modalBookingCode",
-            bookingCode
-        );
+        setElementText("modalBookingCode", bookingCode);
+        setElementText("modalBookingStatus", formatBookingStatus(bookingStatus));
+        setElementText("modalRoomName", button.dataset.roomName);
+        setElementText("modalBookingDetailRoom", button.dataset.roomName);
+        setElementText("modalRoomType", button.dataset.roomType);
+        setElementText("modalRoomNumber", button.dataset.roomNumber);
+        setElementText("modalCheckIn", button.dataset.checkIn);
+        setElementText("modalCheckOut", button.dataset.checkOut);
+        setElementText("modalGuests", button.dataset.guests || "2 Guests");
+        setElementText("modalNights", button.dataset.nights);
+        setElementText("modalRoomQuantity", button.dataset.nights);
+        setElementText("modalBookedOn", button.dataset.bookedOn);
+        setElementText("modalPaymentStatus", button.dataset.paymentStatus);
+        setElementText("modalSummaryTotal", button.dataset.total);
+        setElementText("modalTotal", button.dataset.total);
 
-        setElementText(
-            "modalBookingStatus",
-            formatBookingStatus(bookingStatus)
-        );
+        setElementText("modalRoomUnitPrice", button.dataset.unitPrice || "—");
+        setElementText("modalRoomAmount", button.dataset.roomAmount || "—");
+        setElementText("modalSpecialRequest", button.dataset.specialRequest || "No special requests were submitted for this booking.");
+        setElementText("modalRoomCharge", button.dataset.roomCharge || "—");
+        setElementText("modalServiceCharge", button.dataset.serviceCharge || "0 VND");
+        setElementText("modalTax", button.dataset.tax || "0 VND");
+        setElementText("modalDiscount", button.dataset.discount || "0 VND");
 
-        setElementText(
-            "modalRoomName",
-            button.dataset.roomName
-        );
+        const statusElement = document.getElementById("modalBookingStatus");
+        updateStatusClass(statusElement, bookingStatus);
 
-        setElementText(
-            "modalBookingDetailRoom",
-            button.dataset.roomName
-        );
-
-        setElementText(
-            "modalRoomType",
-            button.dataset.roomType
-        );
-
-        setElementText(
-            "modalRoomNumber",
-            button.dataset.roomNumber
-        );
-
-        setElementText(
-            "modalCheckIn",
-            button.dataset.checkIn
-        );
-
-        setElementText(
-            "modalCheckOut",
-            button.dataset.checkOut
-        );
-
-        setElementText(
-            "modalGuests",
-            button.dataset.guests
-        );
-
-        setElementText(
-            "modalNights",
-            button.dataset.nights
-        );
-
-        setElementText(
-            "modalRoomQuantity",
-            button.dataset.nights
-        );
-
-        setElementText(
-            "modalBookedOn",
-            button.dataset.bookedOn
-        );
-
-        setElementText(
-            "modalPaymentStatus",
-            button.dataset.paymentStatus
-        );
-
-        setElementText(
-            "modalSummaryTotal",
-            button.dataset.total
-        );
-
-        setElementText(
-            "modalTotal",
-            button.dataset.total
-        );
-
-        const statusElement = document.getElementById(
-            "modalBookingStatus"
-        );
-
-        updateStatusClass(
-            statusElement,
-            bookingStatus
-        );
-
-        /*
-         * Chỉ booking PENDING được hủy.
-         */
         if (cancelBookingButton) {
-            cancelBookingButton.hidden =
-                bookingStatus !== "PENDING";
-
-            cancelBookingButton.dataset.bookingCode =
-                bookingCode;
+            cancelBookingButton.hidden = bookingStatus !== "PENDING";
+            cancelBookingButton.dataset.bookingCode = bookingCode;
         }
 
-        /*
-         * Cho phép đặt dịch vụ với booking tương lai
-         * hoặc booking đang diễn ra.
-         */
         const canBookService = [
             "PENDING",
             "CONFIRMED",
@@ -432,8 +364,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ].includes(bookingStatus);
 
         if (bookServiceButton) {
-            bookServiceButton.hidden =
-                !canBookService;
+            bookServiceButton.hidden = !canBookService;
 
             if (canBookService) {
                 const serviceUrl = new URL(
@@ -446,42 +377,27 @@ document.addEventListener("DOMContentLoaded", function () {
                     bookingCode
                 );
 
-                bookServiceButton.href =
-                    serviceUrl.toString();
+                bookServiceButton.href = serviceUrl.toString();
             }
         }
 
-        /*
-         * Booking hiện tại/tương lai: Preview Invoice.
-         * Booking quá khứ: View Invoice.
-         */
         if (invoiceButtonText) {
             const isPastBooking = [
                 "COMPLETED",
+                "CHECKED_OUT",
                 "CANCELLED"
             ].includes(bookingStatus);
 
-            invoiceButtonText.textContent =
-                isPastBooking
-                    ? "View Invoice"
-                    : "Preview Invoice";
+            invoiceButtonText.textContent = isPastBooking
+                ? "View Invoice"
+                : "Preview Invoice";
         }
 
         bookingModal.classList.add("is-open");
+        bookingModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("booking-modal-open");
 
-        bookingModal.setAttribute(
-            "aria-hidden",
-            "false"
-        );
-
-        document.body.classList.add(
-            "booking-modal-open"
-        );
-
-        const dialog = bookingModal.querySelector(
-            ".booking-detail-modal__dialog"
-        );
-
+        const dialog = bookingModal.querySelector(".booking-detail-modal__dialog");
         if (dialog) {
             dialog.focus();
         }
@@ -493,15 +409,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         bookingModal.classList.remove("is-open");
-
-        bookingModal.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-        document.body.classList.remove(
-            "booking-modal-open"
-        );
+        bookingModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("booking-modal-open");
 
         if (activeBookingButton) {
             activeBookingButton.focus();
@@ -517,10 +426,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     closeDetailButtons.forEach(function (button) {
-        button.addEventListener(
-            "click",
-            closeBookingModal
-        );
+        button.addEventListener("click", closeBookingModal);
     });
 
     document.addEventListener("keydown", function (event) {
@@ -534,37 +440,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (cancelBookingButton) {
-        cancelBookingButton.addEventListener(
-            "click",
-            function () {
-                const bookingCode =
-                    cancelBookingButton.dataset.bookingCode;
+        cancelBookingButton.addEventListener("click", function () {
+            const bookingCode = cancelBookingButton.dataset.bookingCode;
+            const confirmed = window.confirm(
+                `Are you sure you want to cancel booking ${bookingCode}?`
+            );
 
-                const confirmed = window.confirm(
-                    `Are you sure you want to cancel booking ${bookingCode}?`
-                );
-
-                if (!confirmed) {
-                    return;
-                }
-
-                /*
-                 * Đây mới là xử lý giao diện tĩnh.
-                 * Sau này thay bằng POST request tới backend.
-                 */
-                window.alert(
-                    `Booking ${bookingCode} has been cancelled.`
-                );
-
-                closeBookingModal();
+            if (!confirmed) {
+                return;
             }
-        );
+
+            window.alert(`Booking ${bookingCode} has been cancelled.`);
+            closeBookingModal();
+        });
     }
 
-
-    /* =========================================
-       INITIAL RENDER
-    ========================================= */
-
-    updateBookingList();
+    updateFilterBadges(); 
+    updateBookingList();  
 });
