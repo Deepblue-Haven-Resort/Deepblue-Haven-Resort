@@ -12,6 +12,7 @@ import deepbluehaven.dto.BookingHistoryDTO;
 import deepbluehaven.dto.ServiceDTO;
 import deepbluehaven.services.BookingService;
 import deepbluehaven.services.CustomerService;
+import deepbluehaven.services.DiscountService;
 import deepbluehaven.services.RoomService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -22,13 +23,15 @@ public class HomeController {
     private final CustomerService customerService;
     private final RoomService roomService;
     private final BookingService bookingService;
+    private final DiscountService discountService;
 
-
-    public HomeController(CustomerService customerService, RoomService roomService, BookingService bookingService) {
+    public HomeController(CustomerService customerService, RoomService roomService, BookingService bookingService, DiscountService discountService) {
         this.customerService = customerService;
         this.roomService = roomService;
         this.bookingService = bookingService;
+        this.discountService = discountService;
     }
+
 
     @GetMapping("/")
     public String index() {
@@ -97,20 +100,18 @@ public class HomeController {
     }
 
     @GetMapping("/offers")
-    public String showOffers() {
+    public String showOffers(Model model) {
+        model.addAttribute("offers", discountService.getActiveOffers());
         return "customer/offers";
     }
 
     @GetMapping("/offers/{offerCode}")
-    public String showOfferDetail(
-            @PathVariable String offerCode,
-            Model model) {
-
-        model.addAttribute(
-                "offerCode",
-                offerCode
-        );
-
-        return "customer/offer-detail";
+    public String showOfferDetail(@PathVariable String offerCode, Model model) {
+        return discountService.getOfferByCode(offerCode)
+                .map(offer -> {
+                    model.addAttribute("offer", offer);
+                    return "fragments/offer-detail :: offerDetail";
+                })
+                .orElse("redirect:/404");
     }
 }
