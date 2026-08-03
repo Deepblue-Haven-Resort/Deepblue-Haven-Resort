@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="admin-layout">
+
+    <div th:replace="~{fragments/housekeeper-sidebar :: housekeeperSidebar}"></div>
+
+    <main class="admin-main">
+
+        <section class="account-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2><strong>Housekeeper Staff Profile</strong></h2>
+                    <p>Personal details, department assignment, and work schedule</p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 280px 1fr; gap: var(--space-24);">
+
+                <div style="background: var(--primary-100); border: var(--border-1) solid var(--primary-200); padding: var(--space-24); border-radius: var(--radius-lg); text-align: center;">
+                    <div style="width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-700), var(--primary-500)); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto var(--space-16); box-shadow: var(--shadow-lg);">
+                        <i class="fa-solid fa-user-nurse"></i>
+                    </div>
+                    <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary-800); margin-bottom: var(--space-4);">Pham An</h3>
+                    <p style="color: var(--neutral-600); font-size: 0.9rem; margin-bottom: var(--space-16);">Housekeeper Staff</p>
+                    <span class="status status-success">ACTIVE</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-24); background: var(--surface-0); border: var(--border-1) solid var(--primary-200); padding: var(--space-24); border-radius: var(--radius-lg);">
+                    <div>
+                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Employee Code</span>
+                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--neutral-900); margin-top: var(--space-4);">EMP-HK-007</p>
+                    </div>
+
+                    <div>
+                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Department</span>
+                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--neutral-900); margin-top: var(--space-4);">Housekeeping</p>
+                    </div>
+
+                    <div>
+                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Phone Number</span>
+                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--neutral-900); margin-top: var(--space-4);">+84 912 345 678</p>
+                    </div>
+
+                    <div>
+                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Work Email</span>
+                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--neutral-900); margin-top: var(--space-4);">phaman.hk@deepbluehaven.com</p>
+                    </div>
+
+                    <div>
+                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Duty Shift</span>
+                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--primary-700); margin-top: var(--space-4);">Morning Shift (07:00 AM - 03:30 PM)</p>
+                    </div>
+
+                    <div>
+                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Assigned Area</span>
+                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--neutral-900); margin-top: var(--space-4);">Block B (Floors 1 & 2)</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script th:src="@{/js/admin-sidebar.js}"></script>
+</body>
+</html>

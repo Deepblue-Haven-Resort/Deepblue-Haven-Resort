@@ -8,6 +8,15 @@ import org.springframework.stereotype.Service;
 public class NotificationService {
 
     private final JavaMailSender mailSender;
+    
+    @Value("${esms.api.key:}")
+    private String apiKey;
+
+    @Value("${esms.api.secret:}")
+    private String secretKey;
+
+    @Value("${esms.api.brandname:}")
+    private String brandname;
 
     public NotificationService(JavaMailSender mailSender) {
         this.mailSender = mailSender;

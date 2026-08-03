@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tasks | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="admin-layout">
+
+    <div th:replace="~{fragments/housekeeper-sidebar :: housekeeperSidebar}"></div>
+
+    <main class="admin-main">
+
+        <section class="account-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2><strong>My Assigned Tasks</strong></h2>
+                </div>
+                <button class="btn btn-small btn-cta">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Report Issue
+                </button>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search tasks by code or room number...">
+                </div>
+
+                <div class="filter-dropdown">
+                    <button class="filter-btn" type="button">
+                        <span class="filter-label"><strong>All Status</strong></span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-menu">
+                        <button type="button"><strong>All Tasks</strong></button>
+                        <button type="button"><strong>Pending</strong></button>
+                        <button type="button"><strong>Cleaning</strong></button>
+                        <button type="button"><strong>Maintenance</strong></button>
+                        <button type="button"><strong>Completed</strong></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="account-table">
+                    <thead>
+                    <tr>
+                        <th>Task ID</th>
+                        <th>Room</th>
+                        <th>Task Type</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Time</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td><strong>#HK-201</strong></td>
+                        <td>
+                            <div class="task-room">
+                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
+                                <div>
+                                    <strong>Room 204</strong>
+                                    <span>Deluxe Ocean View</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Checkout Room Cleaning</td>
+                        <td><span class="role housekeeper">High</span></td>
+                        <td><span class="status status-warning">PENDING</span></td>
+                        <td>10:30 AM</td>
+                        <td>
+                            <button class="btn btn-small btn-cta"><i class="fa-solid fa-play"></i> Start</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>#HK-202</strong></td>
+                        <td>
+                            <div class="task-room">
+                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
+                                <div>
+                                    <strong>Room 118</strong>
+                                    <span>Superior Twin</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Bed Linen Change & Routine</td>
+                        <td><span class="role manager">Medium</span></td>
+                        <td><span class="status status-info">CLEANING</span></td>
+                        <td>11:15 AM</td>
+                        <td>
+                            <button class="btn btn-small btn-success"><i class="fa-solid fa-check"></i> Complete</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>#HK-203</strong></td>
+                        <td>
+                            <div class="task-room">
+                                <div class="room-icon"><i class="fa-solid fa-shower"></i></div>
+                                <div>
+                                    <strong>Room 305</strong>
+                                    <span>Ocean Suite</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Towel & Minibar Restock</td>
+                        <td><span class="role admin">Low</span></td>
+                        <td><span class="status status-info">CLEANING</span></td>
+                        <td>11:45 AM</td>
+                        <td>
+                            <button class="btn btn-small btn-success"><i class="fa-solid fa-check"></i> Complete</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>#HK-204</strong></td>
+                        <td>
+                            <div class="task-room">
+                                <div class="room-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                                <div>
+                                    <strong>Room 412</strong>
+                                    <span>Executive Suite</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Low Shower Pressure Inspection</td>
+                        <td><span class="role housekeeper">High</span></td>
+                        <td><span class="status status-error">MAINTENANCE</span></td>
+                        <td>12:00 PM</td>
+                        <td>
+                            <button class="btn btn-small btn-warning"><i class="fa-solid fa-eye"></i> Details</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script th:src="@{/js/admin-sidebar.js}"></script>
+</body>
+</html>

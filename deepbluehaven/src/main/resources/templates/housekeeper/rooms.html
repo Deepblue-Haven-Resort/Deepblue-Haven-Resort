@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Status | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="admin-layout">
+
+    <div th:replace="~{fragments/housekeeper-sidebar :: housekeeperSidebar}"></div>
+
+    <main class="admin-main">
+
+        <section class="account-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2><strong>Room Status Map</strong></h2>
+                </div>
+            </div>
+
+            <!-- FILTER BAR -->
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search by room number or type...">
+                </div>
+
+                <div class="filter-dropdown">
+                    <button class="filter-btn" type="button">
+                        <span class="filter-label"><strong>All Statuses</strong></span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-menu">
+                        <button type="button"><strong>All (24)</strong></button>
+                        <button type="button"><strong>Cleaning (CLEANING)</strong></button>
+                        <button type="button"><strong>Available (AVAILABLE)</strong></button>
+                        <button type="button"><strong>Occupied (OCCUPIED)</strong></button>
+                        <button type="button"><strong>Maintenance (MAINTENANCE)</strong></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROOM GRID -->
+            <div class="stats-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+
+                <article class="chart-card">
+                    <div class="card-header">
+                        <div>
+                            <h2><strong>Room 101</strong></h2>
+                            <small style="color: var(--neutral-600);">Superior King - Floor 1</small>
+                        </div>
+                        <span class="status status-success">AVAILABLE</span>
+                    </div>
+                    <div style="margin-bottom: var(--space-16);">
+                        <p style="font-size: 0.9rem; color: var(--neutral-700);"><strong>Last cleaned:</strong> 09:15 AM</p>
+                        <p style="font-size: 0.85rem; color: var(--neutral-500); margin-top: 4px;">Ready for guests</p>
+                    </div>
+                    <div style="border-top: var(--border-1) solid var(--neutral-200); padding-top: var(--space-16); display: flex; justify-content: flex-end;">
+                        <button class="btn btn-small btn-cta" style="opacity: 0.65;"><i class="fa-solid fa-pen"></i> Update</button>
+                    </div>
+                </article>
+
+                <article class="chart-card">
+                    <div class="card-header">
+                        <div>
+                            <h2><strong>Room 102</strong></h2>
+                            <small style="color: var(--neutral-600);">Superior Twin - Floor 1</small>
+                        </div>
+                        <span class="status status-info">CLEANING</span>
+                    </div>
+                    <div style="margin-bottom: var(--space-16);">
+                        <p style="font-size: 0.9rem; color: var(--neutral-700);"><strong>Note:</strong> Guest checked out</p>
+                        <p style="font-size: 0.85rem; color: var(--neutral-500); margin-top: 4px;">Cleaning in progress</p>
+                    </div>
+                    <div style="border-top: var(--border-1) solid var(--neutral-200); padding-top: var(--space-16); display: flex; justify-content: flex-end;">
+                        <button class="btn btn-small btn-success"><i class="fa-solid fa-check"></i> Complete</button>
+                    </div>
+                </article>
+
+                <article class="chart-card">
+                    <div class="card-header">
+                        <div>
+                            <h2><strong>Room 204</strong></h2>
+                            <small style="color: var(--neutral-600);">Deluxe Ocean View - Floor 2</small>
+                        </div>
+                        <span class="status status-warning">PENDING</span>
+                    </div>
+                    <div style="margin-bottom: var(--space-16);">
+                        <p style="font-size: 0.9rem; color: var(--neutral-700);"><strong>Note:</strong> Clean before 02:00 PM</p>
+                        <p style="font-size: 0.85rem; color: var(--neutral-500); margin-top: 4px;">Awaiting housekeeper</p>
+                    </div>
+                    <div style="border-top: var(--border-1) solid var(--neutral-200); padding-top: var(--space-16); display: flex; justify-content: flex-end;">
+                        <button class="btn btn-small btn-cta"><i class="fa-solid fa-play"></i> Start Cleaning</button>
+                    </div>
+                </article>
+
+                <article class="chart-card">
+                    <div class="card-header">
+                        <div>
+                            <h2><strong>Room 305</strong></h2>
+                            <small style="color: var(--neutral-600);">Ocean Suite - Floor 3</small>
+                        </div>
+                        <span class="status status-error">MAINTENANCE</span>
+                    </div>
+                    <div style="margin-bottom: var(--space-16);">
+                        <p style="font-size: 0.9rem; color: var(--neutral-700);"><strong>Issue:</strong> Loud AC noise</p>
+                        <p style="font-size: 0.85rem; color: var(--neutral-500); margin-top: 4px;">Maintenance team inspecting</p>
+                    </div>
+                    <div style="border-top: var(--border-1) solid var(--neutral-200); padding-top: var(--space-16); display: flex; justify-content: flex-end;">
+                        <button class="btn btn-small btn-warning"><i class="fa-solid fa-eye"></i> Details</button>
+                    </div>
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script th:src="@{/js/admin-sidebar.js}"></script>
+</body>
+</html>

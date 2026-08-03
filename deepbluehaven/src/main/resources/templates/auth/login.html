@@ -58,7 +58,7 @@
                 <div class="auth-card">
 
                     <div class="auth-tabs">
-                        <a th:href="@{/login}" href="/login" class="auth-tab is-active">Login</a>
+                        <a th:href="@{/login}" href="/staff-login" class="auth-tab is-active">Login</a>
                         <a th:href="@{/register}" href="/register" class="auth-tab">Register</a>
                     </div>
 
@@ -66,7 +66,7 @@
                         <h2>Login to your account</h2>
                     </div>
 
-                    <form id="form-login" class="auth-form" th:action="@{/login}" method="post">
+                    <form id="form-login" class="auth-form" th:action="@{/staff-login}" method="post">
 
                         <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}"
                             th:value="${_csrf.token}" />

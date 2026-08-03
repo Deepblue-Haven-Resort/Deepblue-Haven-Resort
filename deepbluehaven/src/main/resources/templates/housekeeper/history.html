@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task History | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="admin-layout">
+
+    <div th:replace="~{fragments/housekeeper-sidebar :: housekeeperSidebar}"></div>
+
+    <main class="admin-main">
+
+        <section class="account-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2><strong>Completed Task History</strong></h2>
+                </div>
+                <button class="btn btn-small btn-cta">
+                    <i class="fa-solid fa-file-export"></i> Export Log
+                </button>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="account-table">
+                    <thead>
+                    <tr>
+                        <th>Log ID</th>
+                        <th>Room</th>
+                        <th>Task</th>
+                        <th>Completion Time</th>
+                        <th>Inspector</th>
+                        <th>Result</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td><strong>#LOG-8801</strong></td>
+                        <td>
+                            <div class="task-room">
+                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
+                                <div><strong>Room 101</strong><span>Superior King</span></div>
+                            </div>
+                        </td>
+                        <td>New Arrival Cleaning</td>
+                        <td>Today, 09:15 AM</td>
+                        <td>Tran Hoang Nam (Manager)</td>
+                        <td><span class="status status-success"><i class="fa-solid fa-star"></i> VIP Standard</span></td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>#LOG-8795</strong></td>
+                        <td>
+                            <div class="task-room">
+                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
+                                <div><strong>Room 202</strong><span>Deluxe Twin</span></div>
+                            </div>
+                        </td>
+                        <td>Checkout Cleaning</td>
+                        <td>Today, 08:30 AM</td>
+                        <td>Le Thanh Vy (Manager)</td>
+                        <td><span class="status status-success"><i class="fa-solid fa-check"></i> Passed</span></td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>#LOG-8760</strong></td>
+                        <td>
+                            <div class="task-room">
+                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
+                                <div><strong>Room 301</strong><span>Ocean Suite</span></div>
+                            </div>
+                        </td>
+                        <td>VIP Cleaning & Anniversary Flowers</td>
+                        <td>Yesterday, 03:45 PM</td>
+                        <td>Tran Hoang Nam (Manager)</td>
+                        <td><span class="status status-success"><i class="fa-solid fa-star"></i> VIP Standard</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script th:src="@{/js/admin-sidebar.js}"></script>
+</body>
+</html>
