@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking History | Deep Blue Haven</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" href="/assets/css/base.css">
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css">
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/home.css}" href="/assets/css/customer/home.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/booking-history.css}" href="/assets/css/customer/booking-history.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/booking-detail-modal.css}" href="/assets/css/customer/booking-detail-modal.css">
+</head>
+
+<body class="home-page">
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="booking-history-page">
+
+    <div class="container">
+
+        <section class="booking-history-toolbar">
+
+            <div class="booking-filter-tabs"
+                 role="tablist"
+                 aria-label="Booking filters">
+
+                <button type="button"
+                        class="booking-filter-tab is-active"
+                        data-filter="all"
+                        role="tab"
+                        aria-selected="true">
+
+                    All
+
+                    <span>5</span>
+
+                </button>
+
+                <button type="button"
+                        class="booking-filter-tab"
+                        data-filter="upcoming"
+                        role="tab"
+                        aria-selected="false">
+
+                    Upcoming
+
+                    <span>2</span>
+
+                </button>
+
+                <button type="button"
+                        class="booking-filter-tab"
+                        data-filter="current"
+                        role="tab"
+                        aria-selected="false">
+
+                    Current
+
+                    <span>1</span>
+
+                </button>
+
+                <button type="button"
+                        class="booking-filter-tab"
+                        data-filter="completed"
+                        role="tab"
+                        aria-selected="false">
+
+                    Completed
+
+                    <span>1</span>
+
+                </button>
+
+                <button type="button"
+                        class="booking-filter-tab"
+                        data-filter="cancelled"
+                        role="tab"
+                        aria-selected="false">
+
+                    Cancelled
+
+                    <span>1</span>
+
+                </button>
+
+            </div>
+
+            <div class="booking-search">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input type="search"
+                       id="bookingSearch"
+                       placeholder="Search booking ID or room..."
+                       aria-label="Search booking ID or room"
+                       autocomplete="off">
+
+            </div>
+
+        </section>
+
+        <section class="booking-history-list" id="bookingHistoryList">
+            <article class="booking-history-card"
+                    th:each="b : ${bookings}"
+                    th:data-status="${b.timeGroup}"
+                    th:data-booking-status="${b.rawStatus}"
+                    th:data-search="|${b.bookingCode} ${b.roomName} ${b.statusText}|">
+
+                <div class="booking-history-card__image">
+                    <img th:src="@{/assets/pic/room-1.jpg}"
+                        src="/assets/pic/room-1.jpg"
+                        th:alt="${b.roomName}">
+
+                    <span th:class="|booking-status ${b.statusClass}|"
+                        th:text="${b.statusText}">
+                        Pending
+                    </span>
+                </div>
+
+                <div class="booking-history-card__content">
+
+                    <div class="booking-history-card__top">
+                        <div>
+                            <span class="booking-id" th:text="|Booking ID: ${b.bookingCode}|">
+                                Booking ID: DBH-2026-001
+                            </span>
+
+                            <h2 th:text="${b.roomName}">Deluxe Ocean View</h2>
+
+                            <p class="booking-location">
+                                <i class="fa-solid fa-location-dot"></i>
+                                Deep Blue Haven Resort
+                            </p>
+
+                            <p th:if="${b.needsManualCheckIn}" class="booking-manual-checkin">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                Chưa check-in thủ công
+                            </p>
+                        </div>
+
+                        <div class="booking-price">
+                            <span>Estimated amount</span>
+                            <strong th:text="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|">
+                                6,200,000 VND
+                            </strong>
+                            <small class="booking-price-usd"
+                                th:text="|($${b.totalAmountUsd} USD)|">
+                                ($248 USD)
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="booking-information">
+
+                        <div class="booking-information__item">
+                            <i class="fa-regular fa-calendar"></i>
+                            <div>
+                                <span>Check-in</span>
+                                <strong th:text="${b.checkIn != null ? #temporals.format(b.checkIn, 'MMMM dd, yyyy', new java.util.Locale('en')) : 'N/A'}">
+                                    August 12, 2026
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="booking-information__item">
+                            <i class="fa-regular fa-calendar-check"></i>
+                            <div>
+                                <span>Check-out</span>
+                                <strong th:text="${b.checkOut != null ? #temporals.format(b.checkOut, 'MMMM dd, yyyy', new java.util.Locale('en')) : 'N/A'}">
+                                    August 15, 2026
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div class="booking-information__item">
+                            <i class="fa-solid fa-user-group"></i>
+                            <div>
+                                <span>Guests</span>
+                                <strong>2 Guests</strong>
+                            </div>
+                        </div>
+
+                        <div class="booking-information__item">
+                            <i class="fa-solid fa-moon"></i>
+                            <div>
+                                <span>Stay</span>
+                                <strong th:text="|${b.nights} ${b.nights > 1 ? 'Nights' : 'Night'}|">
+                                    3 Nights
+                                </strong>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="booking-history-card__footer">
+
+                        <span class="booking-created-date" th:text="${b.bookedOn != null ? 'Booked on ' + #temporals.format(b.bookedOn, 'MMMM dd, yyyy', new java.util.Locale('en')) : ''}">
+                            Booked on July 20, 2026
+                        </span>
+                        <button type="button"
+                                class="booking-detail-link js-open-booking-detail"
+                                aria-haspopup="dialog"
+                                th:data-booking-code="${b.bookingCode}"
+                                th:data-booking-status="${b.rawStatus}"
+                                th:data-time-group="${b.timeGroup}"
+                                th:data-room-name="${b.roomName}"
+                                th:data-room-type="${b.roomType}"
+                                th:data-room-number="${b.roomNumber}"
+                                th:data-check-in="${b.checkIn != null ? #temporals.format(b.checkIn, 'MMMM dd, yyyy') : ''}"
+                                th:data-check-out="${b.checkOut != null ? #temporals.format(b.checkOut, 'MMMM dd, yyyy') : ''}"
+                                th:data-nights="|${b.nights} Nights|"
+                                th:data-booked-on="${b.bookedOn != null ? #temporals.format(b.bookedOn, 'MMMM dd, yyyy') : ''}"
+                                th:data-payment-status="Paid"
+                                th:data-total="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|"
+                                th:data-unit-price="${b.pricePerNightVnd != null ? #numbers.formatDecimal(b.pricePerNightVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}"
+                                th:data-room-amount="${b.roomChargeVnd != null ? #numbers.formatDecimal(b.roomChargeVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}"
+                                th:data-special-request="${b.specialRequest != null && !b.specialRequest.isBlank() ? b.specialRequest : 'No special requests were submitted for this booking.'}"
+                                th:data-room-charge="${b.roomChargeVnd != null ? #numbers.formatDecimal(b.roomChargeVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}"
+                                th:data-service-charge="${b.serviceChargeVnd != null && b.serviceChargeVnd > 0 ? #numbers.formatDecimal(b.serviceChargeVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}"
+                                th:data-tax="${b.taxVnd != null && b.taxVnd > 0 ? #numbers.formatDecimal(b.taxVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}"
+                                th:data-discount="${b.discountVnd != null && b.discountVnd > 0 ? '-' + #numbers.formatDecimal(b.discountVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}">
+
+                            View Details
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            <div class="booking-history-empty" id="bookingHistoryEmpty">
+                <div class="booking-history-empty__icon">
+                    <i class="fa-regular fa-calendar-xmark"></i>
+                </div>
+                <h2>No bookings found</h2>
+                <p>There are no bookings matching your current filter.</p>
+            </div>
+
+        </section>
+
+        <nav class="booking-pagination"
+             id="bookingPagination"
+             aria-label="Booking history pagination">
+
+            <button type="button"
+                    class="booking-pagination__control"
+                    id="bookingPrevPage"
+                    aria-label="Previous page">
+
+                <i class="fa-solid fa-chevron-left"></i>
+
+                Previous
+
+            </button>
+
+            <div class="booking-pagination__numbers"
+                 id="bookingPaginationNumbers">
+            </div>
+
+            <button type="button"
+                    class="booking-pagination__control"
+                    id="bookingNextPage"
+                    aria-label="Next page">
+
+                Next
+
+                <i class="fa-solid fa-chevron-right"></i>
+
+            </button>
+
+        </nav>
+
+    </div>
+
+</main>
+<div th:replace="~{fragments/booking-detail-modal :: bookingDetailModal}">
+</div>
+
+<script th:src="@{/js/customer/booking-history.js}"
+        src="/js/customer/booking-history.js">
+</script>s
+</body>
+</html>

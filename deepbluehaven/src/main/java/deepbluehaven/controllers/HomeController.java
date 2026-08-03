@@ -8,20 +8,30 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import deepbluehaven.dto.BookingHistoryDTO;
 import deepbluehaven.dto.ServiceDTO;
+import deepbluehaven.services.BookingService;
 import deepbluehaven.services.CustomerService;
+import deepbluehaven.services.DiscountService;
 import deepbluehaven.services.RoomService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class HomeController {
 
-    private final CustomerService CustomerService;
+    private final CustomerService customerService;
     private final RoomService roomService;
+    private final BookingService bookingService;
+    private final DiscountService discountService;
 
-    public HomeController(CustomerService CustomerService, RoomService roomService) {
-        this.CustomerService = CustomerService;
+    public HomeController(CustomerService customerService, RoomService roomService, BookingService bookingService, DiscountService discountService) {
+        this.customerService = customerService;
         this.roomService = roomService;
+        this.bookingService = bookingService;
+        this.discountService = discountService;
     }
+
 
     @GetMapping("/")
     public String index() {
@@ -58,13 +68,50 @@ public class HomeController {
 
     @GetMapping("/services")
     public String showServices(Model model) {
-        List<ServiceDTO.Response> services = CustomerService.getVisibleServices();
+
+        List<ServiceDTO.Response> services = customerService.getVisibleServices();
         model.addAttribute("services", services);
         return "customer/service";
     }
-/* vi trong code co method="post" */
+
     @PostMapping("/services/confirm")
     public String confirmServices() {
         return "redirect:/services";
+    }
+
+    @GetMapping("/profile")
+    public String showCustomerProfile() {
+        return "customer/profile";
+    }
+
+    @GetMapping("/booking/history")
+    public String bookingHistory(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("loggedInCustomerId") == null) {
+            return "redirect:/login";
+        }
+
+        Long currentCustomerId = (Long) session.getAttribute("loggedInCustomerId");
+
+        List<BookingHistoryDTO.Response> bookings = bookingService.getBookingHistoryByCustomer(currentCustomerId);
+        model.addAttribute("bookings", bookings);   
+        return "customer/booking-history";
+    }
+
+    @GetMapping("/offers")
+    public String showOffers(Model model) {
+        model.addAttribute("offers", discountService.getActiveOffers());
+        return "customer/offers";
+    }
+
+    @GetMapping("/offers/{offerCode}")
+    public String showOfferDetail(@PathVariable String offerCode, Model model) {
+        return discountService.getOfferByCode(offerCode)
+                .map(offer -> {
+                    model.addAttribute("offer", offer);
+                    return "fragments/offer-detail :: offerDetail";
+                })
+                .orElse("redirect:/404");
     }
 }
