@@ -10,10 +10,10 @@ public class NotificationService {
 
     private final JavaMailSender mailSender;
     
-    @Value("${esms.api.key}")
+    @Value("${esms.api.key:}")
     private String apiKey;
 
-    @Value("${esms.api.secret}")
+    @Value("${esms.api.secret:}")
     private String secretKey;
 
     @Value("${esms.api.brandname:}")

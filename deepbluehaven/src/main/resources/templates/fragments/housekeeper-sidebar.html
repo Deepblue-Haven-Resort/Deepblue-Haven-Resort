@@ -1,0 +1,55 @@
+<aside th:fragment="housekeeperSidebar" class="admin-sidebar" id="adminSidebar">
+
+    <button class="sidebar-toggle" id="sidebarToggle" type="button">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <nav class="sidebar-menu">
+
+        <a th:href="@{/housekeeper/dashboard}"
+           th:class="${activePage == 'dashboard'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a th:href="@{/housekeeper/tasks}"
+           th:class="${activePage == 'tasks'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-broom"></i>
+            <span>My Tasks</span>
+        </a>
+
+        <a th:href="@{/housekeeper/rooms}"
+           th:class="${activePage == 'rooms'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-bed"></i>
+            <span>Room Status</span>
+        </a>
+
+        <a th:href="@{/housekeeper/history}"
+           th:class="${activePage == 'history'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Task History</span>
+        </a>
+
+        <a th:href="@{/housekeeper/profile}"
+           th:class="${activePage == 'profile'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-user"></i>
+            <span>My Profile</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-footer">
+
+        <a th:href="@{/settings}" class="sidebar-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+
+        <a th:href="@{/staff-logout}" class="sidebar-item logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>

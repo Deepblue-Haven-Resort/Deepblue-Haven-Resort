@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Housekeeper Dashboard | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="admin-layout">
+
+    <div th:replace="~{fragments/housekeeper-sidebar :: housekeeperSidebar}"></div>
+
+    <main class="admin-main">
+
+        <!-- HERO BANNER -->
+        <section class="dashboard-hero">
+            <div>
+                <span class="page-label">Housekeeping Workspace</span>
+                <h1>Welcome back, Housekeeper</h1>
+                <p>You have 4 pending tasks today. Please update room status after completing each room.</p>
+            </div>
+        </section>
+
+        <!-- KPI STATS GRID -->
+        <section class="stats-grid">
+
+            <article class="stat-card">
+                <div class="stat-icon gold">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                </div>
+                <div>
+                    <span>Pending Tasks</span>
+                    <strong>4</strong>
+                    <small>New assignments</small>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fa-solid fa-broom"></i>
+                </div>
+                <div>
+                    <span>In-Progress</span>
+                    <strong>2</strong>
+                    <small>Rooms being cleaned</small>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon red">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                </div>
+                <div>
+                    <span>Maintenance</span>
+                    <strong>1</strong>
+                    <small>Technical issues</small>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <span>Completed Today</span>
+                    <strong>9</strong>
+                    <small>Inspected & Verified</small>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- TASK PANEL -->
+        <section class="account-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2><strong>Today's Assigned Tasks</strong></h2>
+                    <p>List of rooms requiring cleaning or maintenance support</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-12);">
+                    <button class="btn btn-small btn-cta" onclick="window.location.reload();">
+                        <i class="fa-solid fa-rotate"></i> Refresh
+                    </button>
+                    <a th:href="@{/housekeeper/tasks}" class="btn btn-small btn-cta">
+                        View All <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search tasks...">
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="account-table">
+                    <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>Task</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Deadline</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td>
+                            <div class="task-room">
+                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
+                                <div>
+                                    <strong>Room 204</strong>
+                                    <span>Deluxe Ocean View</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Checkout Room Cleaning</td>
+                        <td><span class="role housekeeper">High</span></td>
+                        <td><span class="status status-warning">PENDING</span></td>
+                        <td>10:30 AM</td>
+                        <td>
+                            <button class="btn btn-small btn-cta"><i class="fa-solid fa-play"></i> Start Task</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="task-room">
+                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
+                                <div>
+                                    <strong>Room 118</strong>
+                                    <span>Superior Twin</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Routine Room Cleaning</td>
+                        <td><span class="role manager">Medium</span></td>
+                        <td><span class="status status-info">CLEANING</span></td>
+                        <td>11:15 AM</td>
+                        <td>
+                            <button class="btn btn-small btn-success"><i class="fa-solid fa-check"></i> Complete</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="task-room">
+                                <div class="room-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                                <div>
+                                    <strong>Room 305</strong>
+                                    <span>Ocean Suite</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>AC Leakage Issue Reported</td>
+                        <td><span class="role housekeeper">High</span></td>
+                        <td><span class="status status-error">MAINTENANCE</span></td>
+                        <td>01:00 PM</td>
+                        <td>
+                            <button class="btn btn-small btn-warning"><i class="fa-solid fa-eye"></i> Track</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="task-room">
+                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
+                                <div>
+                                    <strong>Room 410</strong>
+                                    <span>Deluxe Garden View</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>VIP Arrival Cleaning</td>
+                        <td><span class="role admin">Low</span></td>
+                        <td><span class="status status-success">INSPECTED</span></td>
+                        <td>09:45 AM</td>
+                        <td>
+                            <button class="btn btn-small btn-cta" disabled style="opacity:0.65;">Approved</button>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script th:src="@{/js/admin-sidebar.js}"></script>
+</body>
+</html>
