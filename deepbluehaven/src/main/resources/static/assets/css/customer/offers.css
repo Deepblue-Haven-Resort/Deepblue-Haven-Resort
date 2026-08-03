@@ -1275,3 +1275,180 @@
         padding-left: 0;
     }
 }
+
+/* Offer Detail Modal Popup */
+.offer-detail-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.offer-detail-modal[aria-hidden="false"],
+.offer-detail-modal.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.offer-detail-modal__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(6px);
+}
+
+.offer-detail-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 680px;
+    background: #ffffff;
+    border-radius: 20px;
+    border-top: 5px solid var(--primary-600, #0284c7);
+    padding: 32px 36px;
+    box-shadow: 0 30px 60px -12px rgba(15, 23, 42, 0.35);
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.offer-detail-modal[aria-hidden="false"] .offer-detail-modal__dialog,
+.offer-detail-modal.is-visible .offer-detail-modal__dialog {
+    transform: translateY(0) scale(1);
+}
+
+.offer-detail-modal__close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f5f9;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.2s, color 0.2s, transform 0.25s ease;
+}
+
+.offer-detail-modal__close:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    transform: rotate(90deg);
+}
+
+.offer-detail-modal__header {
+    margin-bottom: 20px;
+    padding-right: 48px;
+}
+
+.offer-detail-modal__top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.offer-detail-modal__top-row .offers-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--primary-700, #0284c7);
+    text-transform: uppercase;
+}
+
+.offer-detail-modal__badge {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+    color: #ffffff !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    padding: 6px 16px !important;
+    border-radius: 999px !important;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25) !important;
+}
+
+.offer-detail-modal__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 4px 0 12px 0;
+    letter-spacing: -0.02em;
+}
+
+.offer-detail-modal__description {
+    color: #475569;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin-bottom: 24px;
+}
+
+.offer-detail-modal__info-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 20px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    padding: 20px 24px;
+    border-radius: 14px;
+    margin-bottom: 28px;
+}
+
+@media (max-width: 600px) {
+    .offer-detail-modal__info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.offer-detail-modal__info-item .info-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.offer-detail-modal__info-item .info-value {
+    color: #0f172a;
+    font-size: 1.05rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.offer-detail-modal__footer {
+    display: flex;
+    gap: 14px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.offer-detail-modal__footer .btn-luxury {
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.offer-detail-modal__footer .btn-luxury:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(217, 119, 6, 0.35);
+}
+

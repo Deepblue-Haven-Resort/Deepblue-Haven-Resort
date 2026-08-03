@@ -1,12 +1,13 @@
 package deepbluehaven.dto;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import deepbluehaven.pojo.enums.DiscountType;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class DiscountDTO {
 
@@ -235,5 +236,60 @@ public class DiscountDTO {
             return createdById; }
         public void setCreatedById(Long createdById) { 
             this.createdById = createdById; }
+
+        private String category = "rooms";
+        private String categoryLabel = "Room Offer";
+        private String categoryIcon = "fa-bed";
+        private String badgeText;
+        private String badgeClass = "offer-card__badge--primary";
+        private String validityText;
+        private String priceText;
+        private String imageUrl = "/assets/pic/room-1.jpg";
+        private String searchContent;
+
+        public String getCategory() { 
+            return category; }
+        public void setCategory(String category) { 
+            this.category = category; }
+
+        public String getCategoryLabel() { 
+            return categoryLabel; }
+        public void setCategoryLabel(String categoryLabel) { 
+            this.categoryLabel = categoryLabel; }
+
+        public String getCategoryIcon() { 
+            return categoryIcon; }
+        public void setCategoryIcon(String categoryIcon) { 
+            this.categoryIcon = categoryIcon; }
+
+        public String getBadgeText() { 
+            return badgeText; }
+        public void setBadgeText(String badgeText) { 
+            this.badgeText = badgeText; }
+
+        public String getBadgeClass() { 
+            return badgeClass; }
+        public void setBadgeClass(String badgeClass) { 
+            this.badgeClass = badgeClass; }
+
+        public String getValidityText() { 
+            return validityText; }
+        public void setValidityText(String validityText) { 
+            this.validityText = validityText; }
+
+        public String getPriceText() { 
+            return priceText; }
+        public void setPriceText(String priceText) { 
+            this.priceText = priceText; }
+
+        public String getImageUrl() { 
+            return imageUrl; }
+        public void setImageUrl(String imageUrl) { 
+            this.imageUrl = imageUrl; }
+
+        public String getSearchContent() { 
+            return searchContent; }
+        public void setSearchContent(String searchContent) { 
+            this.searchContent = searchContent; }
     }
 }
