@@ -27,9 +27,9 @@
                 <div>
                     <h2><strong>Completed Task History</strong></h2>
                 </div>
-                <button class="btn btn-small btn-cta">
+                <a th:href="@{/housekeeper/history/export}" class="btn btn-small btn-cta btn-link-clean">
                     <i class="fa-solid fa-file-export"></i> Export Log
-                </button>
+                </a>
             </div>
 
             <div class="table-wrapper">
@@ -38,7 +38,7 @@
                     <tr>
                         <th>Log ID</th>
                         <th>Room</th>
-                        <th>Task</th>
+                        <th class="text-left">Task</th>
                         <th>Completion Time</th>
                         <th>Inspector</th>
                         <th>Result</th>
@@ -46,46 +46,31 @@
                     </thead>
 
                     <tbody>
-                    <tr>
-                        <td><strong>#LOG-8801</strong></td>
+                    <tr th:each="item : ${historyTasks}">
+                        <td><strong th:text="${item.taskCode}">#LOG-8801</strong></td>
                         <td>
                             <div class="task-room">
                                 <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
-                                <div><strong>Room 101</strong><span>Superior King</span></div>
+                                <div>
+                                    <strong th:text="${item.roomNumber}">Room 101</strong>
+                                    <span th:text="${item.roomType}">Superior King</span>
+                                </div>
                             </div>
                         </td>
-                        <td>New Arrival Cleaning</td>
-                        <td>Today, 09:15 AM</td>
-                        <td>Tran Hoang Nam (Manager)</td>
-                        <td><span class="status status-success"><i class="fa-solid fa-star"></i> VIP Standard</span></td>
+                        <td class="text-left" th:text="${item.action}">New Arrival Cleaning</td>
+                        <td th:text="${item.timeText}">Today, 09:15 AM</td>
+                        <td th:text="${item.assignedByName}">Tran Hoang Nam (Manager)</td>
+                        <td>
+                            <span class="status status-success">
+                                <i class="fa-solid fa-check"></i> <span th:text="${item.resultText}">Passed</span>
+                            </span>
+                        </td>
                     </tr>
 
-                    <tr>
-                        <td><strong>#LOG-8795</strong></td>
-                        <td>
-                            <div class="task-room">
-                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
-                                <div><strong>Room 202</strong><span>Deluxe Twin</span></div>
-                            </div>
+                    <tr th:if="${#lists.isEmpty(historyTasks)}">
+                        <td colspan="6" class="table-empty-row">
+                            No completed housekeeping history found.
                         </td>
-                        <td>Checkout Cleaning</td>
-                        <td>Today, 08:30 AM</td>
-                        <td>Le Thanh Vy (Manager)</td>
-                        <td><span class="status status-success"><i class="fa-solid fa-check"></i> Passed</span></td>
-                    </tr>
-
-                    <tr>
-                        <td><strong>#LOG-8760</strong></td>
-                        <td>
-                            <div class="task-room">
-                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
-                                <div><strong>Room 301</strong><span>Ocean Suite</span></div>
-                            </div>
-                        </td>
-                        <td>VIP Cleaning & Anniversary Flowers</td>
-                        <td>Yesterday, 03:45 PM</td>
-                        <td>Tran Hoang Nam (Manager)</td>
-                        <td><span class="status status-success"><i class="fa-solid fa-star"></i> VIP Standard</span></td>
                     </tr>
                     </tbody>
                 </table>
@@ -97,5 +82,6 @@
 </div>
 
 <script th:src="@{/js/admin-sidebar.js}"></script>
+<script th:src="@{/js/housekeeper/history.js}"></script>
 </body>
 </html>
