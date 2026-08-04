@@ -4,32 +4,30 @@ document.addEventListener("DOMContentLoaded", function () {
     const profileForm = document.getElementById("profileForm");
     const formActions = document.getElementById("profileFormActions");
 
+    function getApiUrl(path) {
+        let ctx = document.querySelector('meta[name="_context_path"]')?.content;
+        if (!ctx || ctx === "/") {
+            const match = window.location.pathname.match(/^\/([^\/]+)/);
+            ctx = (match && match[1] === "deepbluehaven") ? "/" + match[1] : "";
+        }
+        return ctx.replace(/\/$/, "") + (path.startsWith("/") ? path : "/" + path);
+    }
+
     if (!editButton || !profileForm) {
         return;
     }
 
     const inputs = profileForm.querySelectorAll("input");
-    const selects = profileForm.querySelectorAll("select");
 
     const initialValues = {};
-
     inputs.forEach(function (input) {
         initialValues[input.id] = input.value;
-    });
-
-    selects.forEach(function (select) {
-        initialValues[select.id] = select.value;
     });
 
     function enableEditing() {
         inputs.forEach(function (input) {
             input.removeAttribute("readonly");
         });
-
-        selects.forEach(function (select) {
-            select.removeAttribute("disabled");
-        });
-
         editButton.style.display = "none";
         formActions.classList.add("is-visible");
     }
@@ -38,11 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
         inputs.forEach(function (input) {
             input.setAttribute("readonly", true);
         });
-
-        selects.forEach(function (select) {
-            select.setAttribute("disabled", true);
-        });
-
         editButton.style.display = "inline-flex";
         formActions.classList.remove("is-visible");
     }
@@ -50,10 +43,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function restoreInitialValues() {
         inputs.forEach(function (input) {
             input.value = initialValues[input.id];
-        });
-
-        selects.forEach(function (select) {
-            select.value = initialValues[select.id];
         });
     }
 
@@ -66,19 +55,50 @@ document.addEventListener("DOMContentLoaded", function () {
         disableEditing();
     });
 
-    profileForm.addEventListener("submit", function (event) {
+    profileForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
-        inputs.forEach(function (input) {
-            initialValues[input.id] = input.value;
-        });
+        const fullName = document.getElementById("fullName")?.value || "";
+        const email = document.getElementById("email")?.value || "";
+        const phoneNumber = document.getElementById("phone")?.value || "";
+        const birthDay = document.getElementById("birthday")?.value || null;
 
-        selects.forEach(function (select) {
-            initialValues[select.id] = select.value;
-        });
+        const payload = {
+            fullName: fullName,
+            email: email,
+            phoneNumber: phoneNumber,
+            birthDay: birthDay
+        };
 
-        disableEditing();
+        try {
+            const response = await fetch(getApiUrl("/api/profile/update"), {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
 
-        alert("Profile information updated successfully.");
+            const data = await response.json();
+
+            if (data.success) {
+                alert("Cập nhật thông tin cá nhân thành công!");
+
+                inputs.forEach(function (input) {
+                    initialValues[input.id] = input.value;
+                });
+
+                const sidebarFullName = document.getElementById("sidebarFullName");
+                const sidebarEmail = document.getElementById("sidebarEmail");
+                if (sidebarFullName) sidebarFullName.textContent = fullName;
+                if (sidebarEmail) sidebarEmail.textContent = email;
+
+                disableEditing();
+            } else {
+                alert(data.message || "Cập nhật không thành công.");
+            }
+        } catch (err) {
+            alert("Đã xảy ra lỗi khi gửi thông tin cập nhật.");
+        }
     });
 });

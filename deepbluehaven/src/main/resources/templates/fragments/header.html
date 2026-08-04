@@ -1,4 +1,5 @@
 <link rel="stylesheet" th:href="@{/assets/css/header.css}" />
+<meta name="_context_path" th:content="@{/}" />
 
 <div th:fragment="header"
      id="header"
@@ -9,12 +10,12 @@
   </a>
 
   <nav class="header-menu" id="menu" aria-label="Main menu">
-    <a class="header-link is-active" th:href="@{/}">Home</a>
-    <a class="header-link " th:href="@{/rooms}">Rooms</a>
-    <a class="header-link" th:href="@{/services}">Services</a>
-    <a class="header-link" th:href="@{/offers}">Offers</a>
-    <a class="header-link" th:href="@{/about}">About Us</a>
-    <a class="header-link" th:href="@{/contact}">Contact</a>
+    <a class="header-link" th:classappend="${activePage == 'home' ? 'is-active' : ''}" th:href="@{/}">Home</a>
+    <a class="header-link" th:classappend="${activePage == 'rooms' ? 'is-active' : ''}" th:href="@{/rooms}">Rooms</a>
+    <a class="header-link" th:classappend="${activePage == 'services' ? 'is-active' : ''}" th:href="@{/services}">Services</a>
+    <a class="header-link" th:classappend="${activePage == 'offers' ? 'is-active' : ''}" th:href="@{/offers}">Offers</a>
+    <a class="header-link" th:classappend="${activePage == 'about' ? 'is-active' : ''}" th:href="@{/about}">About Us</a>
+    <a class="header-link" th:classappend="${activePage == 'contact' ? 'is-active' : ''}" th:href="@{/contact}">Contact</a>
   </nav>
 
   <nav class="header-actions" id="action" aria-label="User actions">
@@ -28,9 +29,14 @@
       <div class="notify-head">
         <div class="notify-title">Notifications</div>
 
-        <button class="notify-close" id="notifyClose" type="button" aria-label="Close notifications">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="notify-mark-all" id="notifyMarkAll" type="button" title="Đánh dấu tất cả là đã xem">
+            <i class="fa-solid fa-check-double"></i> Đã xem
+          </button>
+          <button class="notify-close" id="notifyClose" type="button" aria-label="Close notifications">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
       </div>
 
       <div class="notify-tabs" role="tablist" aria-label="Notification filters">
@@ -50,7 +56,7 @@
       </a>
     </div>
 
-    <a class=" btn btn-cta btn-small" th:href="@{/booking}" aria-label="Booking">
+    <a class="btn btn-cta btn-small" th:href="@{/rooms}" aria-label="Booking">
       Booking
     </a>
 
@@ -72,19 +78,19 @@
         <!-- Đã đăng nhập -->
         <th:block th:if="${session.loggedInCustomerId != null}">
 
-          <a th:href="@{/profile}" role="menuitem">
+          <a th:classappend="${activePage == 'profile' ? 'is-active' : ''}" th:href="@{/profile}" role="menuitem">
             Profile
           </a>
 
-          <a th:href="@{/booking}" role="menuitem">
+          <a th:classappend="${activePage == 'rooms' ? 'is-active' : ''}" th:href="@{/rooms}" role="menuitem">
             Booking
           </a>
 
-          <a th:href="@{/booking/history}" role="menuitem">
+          <a th:classappend="${activePage == 'booking-history' ? 'is-active' : ''}" th:href="@{/booking/history}" role="menuitem">
             Booking History
           </a>
 
-          <a th:href="@{/favorites}" role="menuitem">
+          <a th:classappend="${activePage == 'favorites' ? 'is-active' : ''}" th:href="@{/favorites}" role="menuitem">
             Favorites
           </a>
 
@@ -110,4 +116,6 @@
       </div>
     </div>
   </nav>
+
+  <script th:src="@{/js/header.js}" src="/js/header.js"></script>
 </div>

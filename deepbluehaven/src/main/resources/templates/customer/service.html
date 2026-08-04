@@ -22,7 +22,25 @@
 
 <body>
 
-    <div th:replace="~{fragments/header :: header}"></div>
+    <div th:replace="~{fragments/header :: header(activePage='services')}"></div>
+
+    <div th:if="${!hasValidBooking}" class="no-booking-notice-overlay" style="position: fixed; inset: 0; background: rgba(10, 37, 64, 0.65); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(6px);">
+        <div style="background: #fff; border-radius: 24px; max-width: 500px; padding: 40px 32px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <div style="width: 76px; height: 76px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 20px;">
+                <i class="fa-solid fa-bed"></i>
+            </div>
+            <h2 style="font-family: var(--font-heading, sans-serif); font-size: 1.5rem; color: #0f172a; margin-bottom: 12px; font-weight: 700;">Chưa Có Đơn Đặt Phòng Hợp Lệ</h2>
+            <p style="color: #64748b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px;">
+                Dịch vụ trải nghiệm của Deepblue Haven chỉ dành cho quý khách có đơn đặt phòng đang hoạt động (Pending, Confirmed, Checked In). Quý khách vui lòng đặt phòng trước khi chọn dịch vụ!
+            </p>
+            <div style="display: flex; gap: 14px; justify-content: center;">
+                <a th:href="@{/rooms}" class="btn btn-cta" style="padding: 12px 24px; font-weight: 700; border-radius: 12px;">
+                    <i class="fa-solid fa-hotel"></i> Khám Phá & Đặt Phòng Ngay
+                </a>
+                <a th:href="@{/home}" class="btn btn-secondary" style="padding: 12px 20px; border-radius: 12px;">Trang Chủ</a>
+            </div>
+        </div>
+    </div>
 
     <main class="rooms-list-page services-page">
         <section class="rooms-shell">
@@ -200,8 +218,7 @@
                             </button>
                         </div>
 
-                        <!-- BOOKING INFO BLOCK - DEMO DATA ONLY -->
-                        <section class="booking-summary" data-booking-id="demo-booking-001"
+                        <section class="booking-summary" th:data-booking-id="${selectedBooking != null ? selectedBooking.bookingCode : 'demo-booking-001'}"
                             aria-label="Booking information">
                             <div class="booking-summary__header">
                                 <span class="booking-summary__icon">
@@ -209,20 +226,31 @@
                                 </span>
                                 <div>
                                     <h2>Booking Summary</h2>
-                                    <p>Demo booking information</p>
+                                    <p th:text="${selectedBooking != null ? 'Booking ID: ' + selectedBooking.bookingCode : 'Demo booking information'}">Demo booking information</p>
                                 </div>
                             </div>
 
                             <div class="booking-summary__guest">
                                 <div>
                                     <span>Guest Name</span>
-                                    <strong>Nguyen Minh Anh</strong>
+                                    <strong th:text="${session.customerName != null ? session.customerName : 'Guest'}">Nguyen Minh Anh</strong>
                                 </div>
 
                                 <div>
                                     <span>Room</span>
-                                    <strong>Ocean Deluxe Room - 302</strong>
+                                    <strong th:text="${selectedBooking != null ? selectedBooking.roomName : 'Ocean Deluxe Room'}">Ocean Deluxe Room - 302</strong>
                                 </div>
+                            </div>
+
+                            <div th:if="${customerBookings != null && !customerBookings.isEmpty()}" style="margin-top: 12px;">
+                                <label style="font-size: 0.78rem; font-weight: 700; color: #555;">Select Active Booking:</label>
+                                <select id="bookingSelectDropdown" onchange="window.location.href='?bookingCode=' + this.value" style="width: 100%; padding: 6px 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 0.85rem; margin-top: 4px; background: #fff;">
+                                    <option th:each="bk : ${customerBookings}"
+                                            th:value="${bk.bookingCode}"
+                                            th:text="|${bk.bookingCode} - ${bk.roomName}|"
+                                            th:selected="${selectedBooking != null && selectedBooking.bookingCode == bk.bookingCode}">
+                                    </option>
+                                </select>
                             </div>
 
                             <div class="booking-summary__divider"></div>

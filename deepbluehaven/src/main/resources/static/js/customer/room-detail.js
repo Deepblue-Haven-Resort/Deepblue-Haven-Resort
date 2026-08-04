@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initRoomToast();
     initRoomPlanTabs();
     initRoomGallery();
+    initRoomBookingForm();
 
     console.log("room-detail.js loaded");
 });
@@ -204,4 +205,50 @@ function initRoomGallery() {
 
     renderDots();
     setActiveSlide(currentIndex);
+}
+
+function initRoomBookingForm() {
+    const form = document.getElementById("roomBookingForm");
+    if (!form) return;
+
+    function getApiUrl(path) {
+        let ctx = document.querySelector('meta[name="_context_path"]')?.content;
+        if (!ctx || ctx === "/") {
+            const match = window.location.pathname.match(/^\/([^\/]+)/);
+            ctx = (match && match[1] === "deepbluehaven") ? "/" + match[1] : "";
+        }
+        return ctx.replace(/\/$/, "") + (path.startsWith("/") ? path : "/" + path);
+    }
+
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const roomId = formData.get("roomId");
+        const checkIn = formData.get("checkIn");
+        const checkOut = formData.get("checkOut");
+
+        try {
+            const res = await fetch(getApiUrl(`/api/booking/create?roomId=${roomId}&checkIn=${checkIn}&checkOut=${checkOut}`), {
+                method: "POST"
+            });
+            const data = await res.json();
+
+            if (res.status === 401 || !data.success) {
+                if (data.redirectUrl) {
+                    alert("Vui lòng đăng nhập tài khoản để thực hiện đặt phòng.");
+                    window.location.href = getApiUrl(data.redirectUrl);
+                } else {
+                    alert(data.message || "Đặt phòng không thành công.");
+                }
+                return;
+            }
+
+            alert(`Đặt phòng thành công! Mã đơn: ${data.bookingCode}`);
+            if (data.redirectUrl) {
+                window.location.href = getApiUrl(data.redirectUrl);
+            }
+        } catch (err) {
+            alert("Đã xảy ra lỗi kết nối khi đặt phòng.");
+        }
+    });
 }

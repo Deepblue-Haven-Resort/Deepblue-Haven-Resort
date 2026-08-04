@@ -7,8 +7,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import deepbluehaven.dto.BookingHistoryDTO;
+import deepbluehaven.dto.CustomerProfileDTO;
 import deepbluehaven.dto.ServiceDTO;
 import deepbluehaven.services.BookingService;
 import deepbluehaven.services.CustomerService;
@@ -67,10 +69,40 @@ public class HomeController {
     }
 
     @GetMapping("/services")
-    public String showServices(Model model) {
-
+    public String showServices(@RequestParam(value = "bookingCode", required = false) String bookingCode, Model model, HttpServletRequest request) {
         List<ServiceDTO.Response> services = customerService.getVisibleServices();
         model.addAttribute("services", services);
+
+        HttpSession session = request.getSession(false);
+        boolean hasValidBooking = false;
+
+        if (session != null && session.getAttribute("loggedInCustomerId") != null) {
+            Long customerId = (Long) session.getAttribute("loggedInCustomerId");
+            List<BookingHistoryDTO.Response> validBookings = bookingService.getValidBookingsByCustomer(customerId);
+
+            if (validBookings != null && !validBookings.isEmpty()) {
+                hasValidBooking = true;
+                model.addAttribute("customerBookings", validBookings);
+
+                BookingHistoryDTO.Response selectedBooking = null;
+                if (bookingCode != null && !bookingCode.isBlank()) {
+                    selectedBooking = bookingService.getBookingByCode(bookingCode, customerId);
+                    if (selectedBooking != null) {
+                        deepbluehaven.pojo.enums.BookingStatus st = selectedBooking.getRawStatus();
+                        if (st == deepbluehaven.pojo.enums.BookingStatus.CANCELLED || st == deepbluehaven.pojo.enums.BookingStatus.CHECKED_OUT || st == deepbluehaven.pojo.enums.BookingStatus.COMPLETED) {
+                            selectedBooking = null;
+                        }
+                    }
+                }
+                if (selectedBooking == null) {
+                    selectedBooking = validBookings.get(0);
+                }
+                model.addAttribute("selectedBooking", selectedBooking);
+                model.addAttribute("selectedBookingCode", selectedBooking.getBookingCode());
+            }
+        }
+
+        model.addAttribute("hasValidBooking", hasValidBooking);
         return "customer/service";
     }
 
@@ -80,7 +112,20 @@ public class HomeController {
     }
 
     @GetMapping("/profile")
-    public String showCustomerProfile() {
+    public String showCustomerProfile(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loggedInCustomerId") == null) {
+            return "redirect:/login";
+        }
+        Long customerId = (Long) session.getAttribute("loggedInCustomerId");
+        CustomerProfileDTO.Response profile = customerService.getCustomerProfile(customerId);
+        model.addAttribute("profile", profile);
+
+        int totalBookings = bookingService.getBookingHistoryByCustomer(customerId).size();
+        int upcomingStays = bookingService.getValidBookingsByCustomer(customerId).size();
+        model.addAttribute("totalBookingsCount", totalBookings);
+        model.addAttribute("upcomingStaysCount", upcomingStays);
+
         return "customer/profile";
     }
 

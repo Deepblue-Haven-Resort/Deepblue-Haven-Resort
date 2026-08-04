@@ -63,6 +63,9 @@ public class Worker {
     @OneToMany(mappedBy = "worker", fetch = FetchType.LAZY)
     private List<WorkerRoomAssignmentLog> assignmentLogs = new ArrayList<>();
 
+    @OneToMany(mappedBy = "worker", fetch = FetchType.LAZY)
+    private List<Notification> notifications = new ArrayList<>();
+
     public Worker() {
     }
 
@@ -120,6 +123,14 @@ public class Worker {
 
     public void setAssignmentLogs(List<WorkerRoomAssignmentLog> assignmentLogs) {
         this.assignmentLogs = assignmentLogs;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
     }
 
     public boolean hasPermission(PermissionTag permission) {

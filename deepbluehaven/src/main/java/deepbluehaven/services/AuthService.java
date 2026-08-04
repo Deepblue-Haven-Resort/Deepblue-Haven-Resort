@@ -73,9 +73,9 @@ public class AuthService {
                 .orElse(null);
     }
 
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
 
-    private static final Pattern PHONE_PATTERN = Pattern.compile("^0[0-9]{9}$");
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^0[0-9]{9,10}$");
 
     @Transactional
     public Customer registerCustomer(RegisterDTO.Request dto) {
@@ -314,9 +314,15 @@ public class AuthService {
         String phone = value.replaceAll("[\\s().-]", "");
 
         if (phone.startsWith("+84")) {
-            phone = "0" + phone.substring(3);
+            phone = phone.substring(3);
         } else if (phone.startsWith("84")) {
-            phone = "0" + phone.substring(2);
+            phone = phone.substring(2);
+        }
+
+        if (phone.startsWith("0")) {
+            phone = phone.replaceAll("^0+", "0");
+        } else if (!phone.isEmpty()) {
+            phone = "0" + phone;
         }
 
         if (!PHONE_PATTERN.matcher(phone).matches()) {
