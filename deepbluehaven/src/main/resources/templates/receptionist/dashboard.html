@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receptionist Dashboard | Deep Blue Haven</title>
+
+    <!-- Reusing 100% existing system CSS -->
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="admin-layout">
+
+    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
+
+    <main class="admin-main">
+
+        <!-- HERO BANNER -->
+        <section class="dashboard-hero">
+            <div>
+                <h1>Welcome back, Receptionist</h1>
+            </div>
+        </section>
+
+        <!-- KPI STATS GRID -->
+        <section class="stats-grid">
+
+            <article class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fa-solid fa-door-open"></i>
+                </div>
+                <div>
+                    <span>Today's Check-ins</span>
+                    <strong>12</strong>
+                    <small>Arriving guests</small>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon gold">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </div>
+                <div>
+                    <span>Today's Check-outs</span>
+                    <strong>8</strong>
+                    <small>Departing guests</small>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fa-solid fa-bed"></i>
+                </div>
+                <div>
+                    <span>Available Rooms</span>
+                    <strong>18</strong>
+                    <small>Ready for booking</small>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon red">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <div>
+                    <span>Total Reservations</span>
+                    <strong>45</strong>
+                    <small>Confirmed bookings</small>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- RECENT BOOKINGS & CHECK-IN PANEL -->
+        <section class="account-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2><strong>Recent Reservations & Check-ins</strong></h2>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-12);">
+                    <button class="btn btn-small btn-cta" onclick="window.location.reload();">
+                        Refresh
+                    </button>
+                    <a th:href="@{/receptionist/bookings}" class="btn btn-small btn-cta">
+                        View All
+                    </a>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search by guest name or booking code...">
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="account-table">
+                    <thead>
+                    <tr>
+                        <th>Booking Ref</th>
+                        <th>Guest Name</th>
+                        <th>Room</th>
+                        <th>Dates</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td><strong>#BK-9021</strong></td>
+                        <td>
+                            <div class="user-info">
+                                <div>
+                                    <strong>Alexander Wright</strong>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Room 304 - Ocean Villa</td>
+                        <td>Aug 03 - Aug 06</td>
+                        <td><span class="status status-success">CONFIRMED</span></td>
+                        <td>
+                            <button class="btn btn-small btn-success">Check-in</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>#BK-9018</strong></td>
+                        <td>
+                            <div class="user-info">
+                                <div>
+                                    <strong>Sophia Martinez</strong>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Room 112 - Deluxe Twin</td>
+                        <td>Aug 01 - Aug 03</td>
+                        <td><span class="status status-info">CHECKED_IN</span></td>
+                        <td>
+                            <button class="btn btn-small btn-error">Check-out</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>#BK-9015</strong></td>
+                        <td>
+                            <div class="user-info">
+                                <div>
+                                    <strong>David Chen</strong>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Room 401 - Presidential Suite</td>
+                        <td>Aug 03 - Aug 08</td>
+                        <td><span class="status status-warning">PENDING</span></td>
+                        <td>
+                            <button class="btn btn-small btn-success">Check-in</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>#BK-8990</strong></td>
+                        <td>
+                            <div class="user-info">
+                                <div>
+                                    <strong>Elena Rostova</strong>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Room 205 - Garden View</td>
+                        <td>Jul 30 - Aug 03</td>
+                        <td><span class="status status-error">CANCELLED</span></td>
+                        <td>
+                            <button class="btn btn-small btn-cta" disabled style="opacity: 0.65;">Closed</button>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <p>Showing <strong>1-4</strong> of <strong>12</strong> entries</p>
+
+                <div class="pagination">
+                    <button type="button" class="page-btn disabled">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <button type="button" class="page-btn active">1</button>
+                    <button type="button" class="page-btn">2</button>
+                    <button type="button" class="page-btn">3</button>
+
+                    <button type="button" class="page-btn">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script th:src="@{/js/admin-sidebar.js}"></script>
+</body>
+</html>

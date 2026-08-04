@@ -27,8 +27,8 @@
                 <div>
                     <h2><strong>Completed Task History</strong></h2>
                 </div>
-                <a th:href="@{/housekeeper/history/export}" class="btn btn-small btn-cta btn-link-clean">
-                    <i class="fa-solid fa-file-export"></i> Export Log
+                <a th:href="@{/housekeeper/history/export}" class="btn btn-small btn-cta">
+                    Export Log
                 </a>
             </div>
 
@@ -38,7 +38,7 @@
                     <tr>
                         <th>Log ID</th>
                         <th>Room</th>
-                        <th class="text-left">Task</th>
+                        <th>Task</th>
                         <th>Completion Time</th>
                         <th>Inspector</th>
                         <th>Result</th>
@@ -50,20 +50,17 @@
                         <td><strong th:text="${item.taskCode}">#LOG-8801</strong></td>
                         <td>
                             <div class="task-room">
-                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
                                 <div>
                                     <strong th:text="${item.roomNumber}">Room 101</strong>
                                     <span th:text="${item.roomType}">Superior King</span>
                                 </div>
                             </div>
                         </td>
-                        <td class="text-left" th:text="${item.action}">New Arrival Cleaning</td>
+                        <td th:text="${item.action}">New Arrival Cleaning</td>
                         <td th:text="${item.timeText}">Today, 09:15 AM</td>
                         <td th:text="${item.assignedByName}">Tran Hoang Nam (Manager)</td>
                         <td>
-                            <span class="status status-success">
-                                <i class="fa-solid fa-check"></i> <span th:text="${item.resultText}">Passed</span>
-                            </span>
+                            <span class="status status-success" th:text="${item.resultText}">Passed</span>
                         </td>
                     </tr>
 
@@ -74,6 +71,22 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="table-footer">
+                <p>Hiển thị <strong>1-5</strong> trong số <strong th:text="${#lists.size(historyTasks)}">12</strong> công việc hoàn thành</p>
+                <div class="pagination">
+                    <button type="button" class="page-btn disabled">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="page-btn active">1</button>
+                    <button type="button" class="page-btn">2</button>
+                    <span class="page-dots">...</span>
+                    <button type="button" class="page-btn">3</button>
+                    <button type="button" class="page-btn">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
 
         </section>

@@ -575,14 +575,24 @@ public class SeedDataRunner implements CommandLineRunner {
         TaskStatus[] statuses = TaskStatus.values();
         List<Task> tasks = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
             Task task = new Task();
-            task.setRoom(rooms.get(i));
-            task.setTaskType(taskTypes.get(i));
+            task.setRoom(rooms.get(i % rooms.size()));
+            task.setTaskType(taskTypes.get(i % taskTypes.size()));
             task.setAssignedBy(workers.get(0));
-            task.setAssignedTo(workers.get((i + 1) % workers.size()));
+            // Gán cho Pham An (index 3) để hiển thị trên dashboard của housekeeper
+            task.setAssignedTo(workers.size() > 3 ? workers.get(3) : workers.get(i % workers.size()));
             task.setStatus(statuses[i % statuses.length]);
-            task.setAction("SEED_TASK_" + statuses[i % statuses.length].name());
+            
+            String[] actions = {
+                "Bed Linen Change & Routine",
+                "Checkout Room Cleaning",
+                "Towel & Minibar Restock",
+                "Low Shower Pressure Inspection",
+                "Deep Clean After Maintenance",
+                "Air Conditioner Filter Wash"
+            };
+            task.setAction(actions[i % actions.length]);
             task.setTimestamp(BASE_TIME.plusHours(i));
             persist(task);
             tasks.add(task);

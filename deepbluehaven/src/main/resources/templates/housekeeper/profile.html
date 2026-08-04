@@ -9,7 +9,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/profile-employee.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -21,55 +21,108 @@
 
     <main class="admin-main">
 
-        <section class="account-panel">
+        <section class="account-profile-card">
 
-            <div class="panel-header">
-                <div>
-                    <h2><strong>Housekeeper Staff Profile</strong></h2>
-                    <p>Personal details, department assignment, and work schedule</p>
-                </div>
-            </div>
-
-            <div class="profile-grid-container">
-
-                <div class="profile-card-left">
-                    <div class="profile-avatar-wrapper">
-                        <i class="fa-solid fa-user-nurse"></i>
-                    </div>
-                    <h3 class="profile-name" th:text="${worker?.profile?.fullName ?: 'Housekeeper Staff'}">Pham An</h3>
-                    <p class="profile-subtitle" th:text="${worker?.profile?.role?.name() ?: 'HOUSEKEEPER'}">Housekeeper Staff</p>
-                    <span class="status status-success" th:text="${worker?.status?.name() ?: 'ACTIVE'}">ACTIVE</span>
+            <aside class="profile-sidebar-card">
+                <div class="profile-avatar">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=400&q=80"
+                         alt="Housekeeper avatar">
                 </div>
 
-                <div class="profile-card-right">
-                    <div>
-                        <span class="profile-info-label">Employee Code</span>
-                        <p class="profile-info-value" th:text="${worker?.employeeCode ?: 'EMP-HK-001'}">EMP-HK-007</p>
+                <h2 th:text="${worker?.profile?.fullName ?: 'Pham An'}">Pham An</h2>
+                <p>Housekeeper Staff</p>
+
+                <div class="profile-experience-box">
+                    <div class="experience-item">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <div>
+                            <span>Years of Experience</span>
+                            <strong>3 years</strong>
+                        </div>
                     </div>
 
-                    <div>
-                        <span class="profile-info-label">Department</span>
-                        <p class="profile-info-value" th:text="${worker?.profile?.department?.name() ?: 'HOUSEKEEPING'}">Housekeeping</p>
+                    <div class="experience-item">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <div>
+                            <span>Account Created</span>
+                            <strong>15/03/2023</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-badges">
+                    <span class="status status-success" th:text="${worker?.status?.name() ?: 'Active'}">Active</span>
+                    <span class="role housekeeper">Housekeeper</span>
+                </div>
+            </aside>
+
+            <div class="profile-content-card">
+
+                <div class="profile-info-section">
+                    <div class="section-heading">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Personal Information</span>
                     </div>
 
-                    <div>
-                        <span class="profile-info-label">Phone Number</span>
-                        <p class="profile-info-value" th:text="${worker?.profile?.phoneNumber ?: '+84 912 345 678'}">+84 912 345 678</p>
+                    <div class="profile-info-grid">
+                        <div class="profile-info-item">
+                            <span>Full Name</span>
+                            <strong th:text="${worker?.profile?.fullName ?: 'Pham An'}">Pham An</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Gender</span>
+                            <strong>Female</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Date of Birth</span>
+                            <strong>10/07/1996</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Phone Number</span>
+                            <strong th:text="${worker?.profile?.phoneNumber ?: '+84 912 345 678'}">+84 912 345 678</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Work Email</span>
+                            <strong th:text="${worker?.profile?.email ?: 'phaman.hk@deepbluehaven.com'}">phaman.hk@deepbluehaven.com</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Address</span>
+                            <strong>Da Nang, Viet Nam</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-info-section">
+                    <div class="section-heading">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>Employee Information</span>
                     </div>
 
-                    <div>
-                        <span class="profile-info-label">Work Email</span>
-                        <p class="profile-info-value" th:text="${worker?.profile?.email ?: 'phaman.hk@deepbluehaven.com'}">phaman.hk@deepbluehaven.com</p>
-                    </div>
-
-                    <div>
-                        <span class="profile-info-label">Duty Shift</span>
-                        <p class="profile-info-value-accent">Morning Shift (07:00 AM - 03:30 PM)</p>
-                    </div>
-
-                    <div>
-                        <span class="profile-info-label">Assigned Area</span>
-                        <p class="profile-info-value">Block B (Floors 1 & 2)</p>
+                    <div class="profile-info-grid">
+                        <div class="profile-info-item">
+                            <span>Employee Code</span>
+                            <strong th:text="${worker?.employeeCode ?: 'EMP-HK-007'}">EMP-HK-007</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Department</span>
+                            <strong th:text="${worker?.profile?.department?.name() ?: 'Housekeeping'}">Housekeeping</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Duty Shift</span>
+                            <strong>Morning Shift (07:00 AM - 03:30 PM)</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Assigned Area</span>
+                            <strong>Block B (Floors 1 &amp; 2)</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Start Date</span>
+                            <strong>15/03/2023</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Role</span>
+                            <strong>Housekeeper</strong>
+                        </div>
                     </div>
                 </div>
 

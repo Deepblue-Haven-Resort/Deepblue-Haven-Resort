@@ -50,6 +50,21 @@ public class HousekeeperController {
         return "housekeeper/dashboard";
     }
 
+    @GetMapping("/housekeeper/tasks")
+    public String tasks(Model model, HttpSession session) {
+        Long workerId = getLoggedInWorkerId(session);
+        List<TaskDTO.Response> todayTasks = housekeeperService.getTodayTasks(workerId);
+        model.addAttribute("activePage", "tasks");
+        model.addAttribute("todayTasks", todayTasks);
+        return "housekeeper/tasks";
+    }
+
+    @GetMapping("/housekeeper/rooms")
+    public String rooms(Model model) {
+        model.addAttribute("activePage", "rooms");
+        return "housekeeper/rooms";
+    }
+
     @GetMapping("/housekeeper/history")
     public String history(Model model, HttpSession session) {
         Long workerId = getLoggedInWorkerId(session);

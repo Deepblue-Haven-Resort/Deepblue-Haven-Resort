@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-in / Out Management | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="admin-layout">
+
+    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
+
+    <main class="admin-main">
+
+        <section class="account-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2><strong>Front Desk Check-in & Check-out Desk</strong></h2>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-12);">
+                    <button class="btn btn-small btn-success">
+                        Walk-in Check-in
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search by guest name, passport, or room number...">
+                </div>
+
+                <div class="filter-dropdown">
+                    <button class="filter-btn" type="button">
+                        <span class="filter-label"><strong>All Actions</strong></span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-menu">
+                        <button type="button"><strong>All Arrivals & Departures</strong></button>
+                        <button type="button"><strong>Pending Check-in</strong></button>
+                        <button type="button"><strong>Checked In</strong></button>
+                        <button type="button"><strong>Pending Check-out</strong></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="account-table">
+                    <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Guest Info</th>
+                        <th>Room Number</th>
+                        <th>Arrival / Departure</th>
+                        <th>Payment Status</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td><strong>#BK-9021</strong></td>
+                        <td>
+                            <div class="user-info">
+                                <div>
+                                    <strong>Alexander Wright</strong>
+                                    <span>Passport: US-9920148</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Room 304 - Ocean Villa</td>
+                        <td>Aug 03, 14:00 PM</td>
+                        <td><span class="status status-success">PAID</span></td>
+                        <td>
+                            <button class="btn btn-small btn-success">Issue Key & Check-in</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>#BK-9018</strong></td>
+                        <td>
+                            <div class="user-info">
+                                <div>
+                                    <strong>Sophia Martinez</strong>
+                                    <span>ID: 07919823019</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Room 112 - Deluxe Twin</td>
+                        <td>Aug 03, 12:00 PM (Out)</td>
+                        <td><span class="status status-success">PAID</span></td>
+                        <td>
+                            <button class="btn btn-small btn-error">Process Check-out</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>#BK-9025</strong></td>
+                        <td>
+                            <div class="user-info">
+                                <div>
+                                    <strong>Michael Chang</strong>
+                                    <span>Passport: HK-881029</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Room 208 - Superior King</td>
+                        <td>Aug 03, 15:30 PM</td>
+                        <td><span class="status status-warning">UNPAID</span></td>
+                        <td>
+                            <button class="btn btn-small btn-warning">Collect & Check-in</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>#BK-8995</strong></td>
+                        <td>
+                            <div class="user-info">
+                                <div>
+                                    <strong>Emma Watson</strong>
+                                    <span>Passport: UK-449102</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Room 502 - Penthouse</td>
+                        <td>Aug 03, 11:00 AM (Out)</td>
+                        <td><span class="status status-info">DEPOSIT_ONLY</span></td>
+                        <td>
+                            <button class="btn btn-small btn-error">Settle & Check-out</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <p>Showing <strong>1-4</strong> of <strong>20</strong> entries</p>
+
+                <div class="pagination">
+                    <button type="button" class="page-btn disabled">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <button type="button" class="page-btn active">1</button>
+                    <button type="button" class="page-btn">2</button>
+                    <button type="button" class="page-btn">3</button>
+
+                    <button type="button" class="page-btn">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script th:src="@{/js/admin-sidebar.js}"></script>
+</body>
+</html>
