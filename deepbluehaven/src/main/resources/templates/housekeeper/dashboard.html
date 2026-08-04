@@ -21,16 +21,14 @@
 
     <main class="admin-main">
 
-        <!-- HERO BANNER -->
         <section class="dashboard-hero">
             <div>
                 <span class="page-label">Housekeeping Workspace</span>
-                <h1>Welcome back, Housekeeper</h1>
-                <p>You have 4 pending tasks today. Please update room status after completing each room.</p>
+                <h1>Welcome back, <span th:text="${worker?.profile?.fullName ?: 'Housekeeper'}">Housekeeper</span></h1>
+                <p>You have <strong th:text="${stats?.pendingCount ?: 0}">0</strong> pending tasks today. Please update room status after completing each room.</p>
             </div>
         </section>
 
-        <!-- KPI STATS GRID -->
         <section class="stats-grid">
 
             <article class="stat-card">
@@ -39,7 +37,7 @@
                 </div>
                 <div>
                     <span>Pending Tasks</span>
-                    <strong>4</strong>
+                    <strong th:text="${stats?.pendingCount ?: 0}">0</strong>
                     <small>New assignments</small>
                 </div>
             </article>
@@ -50,7 +48,7 @@
                 </div>
                 <div>
                     <span>In-Progress</span>
-                    <strong>2</strong>
+                    <strong th:text="${stats?.cleaningCount ?: 0}">0</strong>
                     <small>Rooms being cleaned</small>
                 </div>
             </article>
@@ -61,7 +59,7 @@
                 </div>
                 <div>
                     <span>Maintenance</span>
-                    <strong>1</strong>
+                    <strong th:text="${stats?.maintenanceCount ?: 0}">0</strong>
                     <small>Technical issues</small>
                 </div>
             </article>
@@ -72,14 +70,13 @@
                 </div>
                 <div>
                     <span>Completed Today</span>
-                    <strong>9</strong>
+                    <strong th:text="${stats?.completedCount ?: 0}">0</strong>
                     <small>Inspected & Verified</small>
                 </div>
             </article>
 
         </section>
 
-        <!-- TASK PANEL -->
         <section class="account-panel">
 
             <div class="panel-header">
@@ -87,11 +84,11 @@
                     <h2><strong>Today's Assigned Tasks</strong></h2>
                     <p>List of rooms requiring cleaning or maintenance support</p>
                 </div>
-                <div style="display: flex; align-items: center; gap: var(--space-12);">
+                <div class="panel-header-actions">
                     <button class="btn btn-small btn-cta" onclick="window.location.reload();">
                         <i class="fa-solid fa-rotate"></i> Refresh
                     </button>
-                    <a th:href="@{/housekeeper/tasks}" class="btn btn-small btn-cta">
+                    <a th:href="@{/housekeeper/tasks}" class="btn btn-small btn-cta btn-link-clean">
                         View All <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
@@ -109,7 +106,7 @@
                     <thead>
                     <tr>
                         <th>Room</th>
-                        <th>Task</th>
+                        <th class="text-left">Task</th>
                         <th>Priority</th>
                         <th>Status</th>
                         <th>Deadline</th>
@@ -118,79 +115,38 @@
                     </thead>
 
                     <tbody>
-                    <tr>
+                    <tr th:each="task : ${todayTasks}">
                         <td>
                             <div class="task-room">
                                 <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
                                 <div>
-                                    <strong>Room 204</strong>
-                                    <span>Deluxe Ocean View</span>
+                                    <strong th:text="${task.roomNumber}">Room 204</strong>
+                                    <span th:text="${task.roomType}">Deluxe Ocean View</span>
                                 </div>
                             </div>
                         </td>
-                        <td>Checkout Room Cleaning</td>
-                        <td><span class="role housekeeper">High</span></td>
-                        <td><span class="status status-warning">PENDING</span></td>
-                        <td>10:30 AM</td>
+                        <td class="text-left" th:text="${task.action}">Checkout Room Cleaning</td>
+                        <td><span class="role" th:classappend="${task.priorityClass}" th:text="${task.priority}">High</span></td>
+                        <td><span class="status" th:classappend="${task.statusClass}" th:text="${task.statusLabel}">PENDING</span></td>
+                        <td th:text="${task.timeText}">10:30 AM</td>
                         <td>
-                            <button class="btn btn-small btn-cta"><i class="fa-solid fa-play"></i> Start Task</button>
+                            <form th:if="${task.statusLabel == 'PENDING'}" th:action="@{/housekeeper/tasks/{id}/start(id=${task.id})}" method="post" class="inline-action-form">
+                                <button type="submit" class="btn btn-small btn-cta"><i class="fa-solid fa-play"></i> Start Task</button>
+                            </form>
+
+                            <form th:if="${task.statusLabel == 'CLEANING'}" th:action="@{/housekeeper/tasks/{id}/complete(id=${task.id})}" method="post" class="inline-action-form">
+                                <button type="submit" class="btn btn-small btn-success"><i class="fa-solid fa-check"></i> Complete</button>
+                            </form>
+
+                            <button th:if="${task.statusLabel == 'INSPECTED'}" class="btn btn-small btn-cta btn-disabled-approved" disabled>Approved</button>
+
+                            <button th:if="${task.statusLabel != 'PENDING' and task.statusLabel != 'CLEANING' and task.statusLabel != 'INSPECTED'}" class="btn btn-small btn-warning"><i class="fa-solid fa-eye"></i> Track</button>
                         </td>
                     </tr>
 
-                    <tr>
-                        <td>
-                            <div class="task-room">
-                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
-                                <div>
-                                    <strong>Room 118</strong>
-                                    <span>Superior Twin</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Routine Room Cleaning</td>
-                        <td><span class="role manager">Medium</span></td>
-                        <td><span class="status status-info">CLEANING</span></td>
-                        <td>11:15 AM</td>
-                        <td>
-                            <button class="btn btn-small btn-success"><i class="fa-solid fa-check"></i> Complete</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="task-room">
-                                <div class="room-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-                                <div>
-                                    <strong>Room 305</strong>
-                                    <span>Ocean Suite</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>AC Leakage Issue Reported</td>
-                        <td><span class="role housekeeper">High</span></td>
-                        <td><span class="status status-error">MAINTENANCE</span></td>
-                        <td>01:00 PM</td>
-                        <td>
-                            <button class="btn btn-small btn-warning"><i class="fa-solid fa-eye"></i> Track</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="task-room">
-                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
-                                <div>
-                                    <strong>Room 410</strong>
-                                    <span>Deluxe Garden View</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>VIP Arrival Cleaning</td>
-                        <td><span class="role admin">Low</span></td>
-                        <td><span class="status status-success">INSPECTED</span></td>
-                        <td>09:45 AM</td>
-                        <td>
-                            <button class="btn btn-small btn-cta" disabled style="opacity:0.65;">Approved</button>
+                    <tr th:if="${#lists.isEmpty(todayTasks)}">
+                        <td colspan="6" class="table-empty-row">
+                            No assigned tasks found for today.
                         </td>
                     </tr>
 
@@ -204,5 +160,6 @@
 </div>
 
 <script th:src="@{/js/admin-sidebar.js}"></script>
+<script th:src="@{/js/housekeeper/dashboard.js}"></script>
 </body>
 </html>
