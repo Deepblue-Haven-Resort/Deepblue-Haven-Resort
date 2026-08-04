@@ -27,9 +27,7 @@
                 <div>
                     <h2><strong>My Assigned Tasks</strong></h2>
                 </div>
-                <button class="btn btn-small btn-cta">
-                    <i class="fa-solid fa-triangle-exclamation"></i> Report Issue
-                </button>
+                <button class="btn btn-small btn-error">Report Issue</button>
             </div>
 
             <div class="filter-bar">
@@ -59,7 +57,7 @@
                     <tr>
                         <th>Task ID</th>
                         <th>Room</th>
-                        <th class="text-left">Task Type</th>
+                        <th>Task Type</th>
                         <th>Priority</th>
                         <th>Status</th>
                         <th>Time</th>
@@ -68,87 +66,58 @@
                     </thead>
 
                     <tbody>
-                    <tr>
-                        <td><strong>#HK-201</strong></td>
+                    <tr th:each="task : ${todayTasks}">
+                        <td><strong th:text="${'#HK-' + task.id}">#HK-201</strong></td>
                         <td>
                             <div class="task-room">
-                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
                                 <div>
-                                    <strong>Room 204</strong>
-                                    <span>Deluxe Ocean View</span>
+                                    <strong th:text="${task.roomNumber}">Room 204</strong>
+                                    <span th:text="${task.roomType}">Deluxe Ocean View</span>
                                 </div>
                             </div>
                         </td>
-                        <td class="text-left">Checkout Room Cleaning</td>
-                        <td><span class="role housekeeper">High</span></td>
-                        <td><span class="status status-warning">PENDING</span></td>
-                        <td>10:30 AM</td>
+                        <td th:text="${task.action}">Checkout Room Cleaning</td>
+                        <td><span class="role" th:classappend="${task.priorityClass}" th:text="${task.priority}">High</span></td>
+                        <td><span class="status" th:classappend="${task.statusClass}" th:text="${task.statusLabel}">PENDING</span></td>
+                        <td th:text="${task.timeText}">10:30 AM</td>
                         <td>
-                            <button class="btn btn-small btn-cta"><i class="fa-solid fa-play"></i> Start</button>
+                            <form th:if="${task.statusLabel == 'PENDING'}" th:action="@{/housekeeper/tasks/{id}/start(id=${task.id})}" method="post" class="inline-action-form">
+                                <button type="submit" class="btn btn-small btn-cta badge">Start</button>
+                            </form>
+
+                            <form th:if="${task.statusLabel == 'CLEANING'}" th:action="@{/housekeeper/tasks/{id}/complete(id=${task.id})}" method="post" class="inline-action-form">
+                                <button type="submit" class="btn btn-small btn-success badge">Complete</button>
+                            </form>
+
+                            <button th:if="${task.statusLabel == 'INSPECTED'}" class="btn btn-small btn-luxury badge" disabled>Approved</button>
+
+                            <button th:if="${task.statusLabel != 'PENDING' and task.statusLabel != 'CLEANING' and task.statusLabel != 'INSPECTED'}" class="btn btn-small btn-warning badge">Track</button>
                         </td>
                     </tr>
 
-                    <tr>
-                        <td><strong>#HK-202</strong></td>
-                        <td>
-                            <div class="task-room">
-                                <div class="room-icon"><i class="fa-solid fa-bed"></i></div>
-                                <div>
-                                    <strong>Room 118</strong>
-                                    <span>Superior Twin</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Bed Linen Change & Routine</td>
-                        <td><span class="role manager">Medium</span></td>
-                        <td><span class="status status-info">CLEANING</span></td>
-                        <td>11:15 AM</td>
-                        <td>
-                            <button class="btn btn-small btn-success"><i class="fa-solid fa-check"></i> Complete</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td><strong>#HK-203</strong></td>
-                        <td>
-                            <div class="task-room">
-                                <div class="room-icon"><i class="fa-solid fa-shower"></i></div>
-                                <div>
-                                    <strong>Room 305</strong>
-                                    <span>Ocean Suite</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Towel & Minibar Restock</td>
-                        <td><span class="role admin">Low</span></td>
-                        <td><span class="status status-info">CLEANING</span></td>
-                        <td>11:45 AM</td>
-                        <td>
-                            <button class="btn btn-small btn-success"><i class="fa-solid fa-check"></i> Complete</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td><strong>#HK-204</strong></td>
-                        <td>
-                            <div class="task-room">
-                                <div class="room-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-                                <div>
-                                    <strong>Room 412</strong>
-                                    <span>Executive Suite</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Low Shower Pressure Inspection</td>
-                        <td><span class="role housekeeper">High</span></td>
-                        <td><span class="status status-error">MAINTENANCE</span></td>
-                        <td>12:00 PM</td>
-                        <td>
-                            <button class="btn btn-small btn-warning"><i class="fa-solid fa-eye"></i> Details</button>
+                    <tr th:if="${#lists.isEmpty(todayTasks)}">
+                        <td colspan="7" class="table-empty-row">
+                            No assigned tasks found.
                         </td>
                     </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="table-footer">
+                <p>Hiển thị <strong>1-5</strong> trong số <strong th:text="${#lists.size(todayTasks)}">15</strong> công việc</p>
+                <div class="pagination">
+                    <button type="button" class="page-btn disabled">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="page-btn active">1</button>
+                    <button type="button" class="page-btn">2</button>
+                    <span class="page-dots">...</span>
+                    <button type="button" class="page-btn">3</button>
+                    <button type="button" class="page-btn">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
 
         </section>
@@ -157,5 +126,6 @@
 </div>
 
 <script th:src="@{/js/admin-sidebar.js}"></script>
+<script th:src="@{/js/housekeeper/tasks.js}"></script>
 </body>
 </html>

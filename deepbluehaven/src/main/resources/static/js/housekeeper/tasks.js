@@ -1,7 +1,6 @@
 (function () {
-    function initDashboard() {
-        const searchInput = document.querySelector(".filter-bar .search-box input");
-        const tableRows = Array.from(document.querySelectorAll(".account-table tbody tr"));
+    function initPagination(tableSelector, rowSelector, itemsPerPage) {
+        const tableRows = Array.from(document.querySelectorAll(rowSelector));
         const paginationContainer = document.querySelector(".pagination");
         const summaryText = document.querySelector(".table-footer p strong");
 
@@ -9,35 +8,37 @@
 
         let filteredRows = [...tableRows];
         let currentPage = 1;
-        const pageSize = 5;
 
         function updateTable() {
             const totalItems = filteredRows.length;
-            const totalPages = Math.ceil(totalItems / pageSize) || 1;
+            const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
 
             if (currentPage > totalPages) currentPage = totalPages;
             if (currentPage < 1) currentPage = 1;
 
-            // Show/Hide rows based on current page
-            const startIndex = (currentPage - 1) * pageSize;
-            const endIndex = startIndex + pageSize;
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
 
             tableRows.forEach(row => row.style.display = "none");
             filteredRows.slice(startIndex, endIndex).forEach(row => row.style.display = "");
 
-            // Update footer summary text
             if (summaryText) {
                 const summaryParent = summaryText.parentNode;
                 const from = totalItems === 0 ? 0 : startIndex + 1;
                 const to = Math.min(endIndex, totalItems);
-                summaryParent.innerHTML = `Hiển thị <strong>${from}-${to}</strong> trong số <strong>${totalItems}</strong> công việc`;
+                
+                // Trực quan hóa phần text tiếng Việt tương tự Admin
+                if (summaryParent.textContent.includes("hoàn thành")) {
+                    summaryParent.innerHTML = `Hiển thị <strong>${from}-${to}</strong> trong số <strong>${totalItems}</strong> công việc hoàn thành`;
+                } else {
+                    summaryParent.innerHTML = `Hiển thị <strong>${from}-${to}</strong> trong số <strong>${totalItems}</strong> công việc`;
+                }
             }
 
-            // Render Pagination Buttons
             if (paginationContainer) {
                 paginationContainer.innerHTML = "";
 
-                // Prev Button
+                // Prev
                 const prevBtn = document.createElement("button");
                 prevBtn.type = "button";
                 prevBtn.className = `page-btn${currentPage === 1 ? " disabled" : ""}`;
@@ -50,7 +51,7 @@
                 });
                 paginationContainer.appendChild(prevBtn);
 
-                // Page Number Buttons
+                // Numbers
                 for (let i = 1; i <= totalPages; i++) {
                     const pageBtn = document.createElement("button");
                     pageBtn.type = "button";
@@ -63,7 +64,7 @@
                     paginationContainer.appendChild(pageBtn);
                 }
 
-                // Next Button
+                // Next
                 const nextBtn = document.createElement("button");
                 nextBtn.type = "button";
                 nextBtn.className = `page-btn${currentPage === totalPages ? " disabled" : ""}`;
@@ -78,7 +79,8 @@
             }
         }
 
-        // Search Filter Integration
+        // Search Input
+        const searchInput = document.querySelector(".filter-bar .search-box input");
         if (searchInput) {
             searchInput.addEventListener("input", function () {
                 const keyword = this.value.toLowerCase().trim();
@@ -90,16 +92,10 @@
             });
         }
 
-        const btnRefresh = document.querySelector(".panel-header button");
-        if (btnRefresh) {
-            btnRefresh.addEventListener("click", function () {
-                window.location.reload();
-            });
-        }
-
-        // Initialize First Render
         updateTable();
     }
 
-    document.addEventListener("DOMContentLoaded", initDashboard);
+    document.addEventListener("DOMContentLoaded", function () {
+        initPagination(".account-table", ".account-table tbody tr", 5);
+    });
 })();

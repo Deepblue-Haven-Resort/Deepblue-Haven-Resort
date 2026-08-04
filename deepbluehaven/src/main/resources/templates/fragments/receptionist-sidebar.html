@@ -1,0 +1,55 @@
+<aside th:fragment="receptionistSidebar" class="admin-sidebar" id="adminSidebar">
+
+    <button class="sidebar-toggle" id="sidebarToggle" type="button">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <nav class="sidebar-menu">
+
+        <a th:href="@{/receptionist/dashboard}"
+           th:class="${activePage == 'dashboard'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a th:href="@{/receptionist/checkin}"
+           th:class="${activePage == 'checkin'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-key"></i>
+            <span>Check-in / Out</span>
+        </a>
+
+        <a th:href="@{/receptionist/bookings}"
+           th:class="${activePage == 'bookings'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Bookings</span>
+        </a>
+
+        <a th:href="@{/receptionist/guests}"
+           th:class="${activePage == 'guests'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-users"></i>
+            <span>Guest Directory</span>
+        </a>
+
+        <a th:href="@{/receptionist/profile}"
+           th:class="${activePage == 'profile'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-user"></i>
+            <span>My Profile</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-footer">
+
+        <a th:href="@{/settings}" class="sidebar-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+
+        <a th:href="@{/staff-logout}" class="sidebar-item logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>
