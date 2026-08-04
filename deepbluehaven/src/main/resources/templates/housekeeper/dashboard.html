@@ -71,7 +71,7 @@
                 <div>
                     <span>Completed Today</span>
                     <strong th:text="${stats?.completedCount ?: 0}">0</strong>
-                    <small>Inspected &amp; Verified</small>
+                    <small>Inspected & Verified</small>
                 </div>
             </article>
 
@@ -84,7 +84,7 @@
                     <h2><strong>Today's Assigned Tasks</strong></h2>
                     <p>List of rooms requiring cleaning or maintenance support</p>
                 </div>
-                <div style="display: flex; gap: var(--space-12); align-items: center;">
+                <div class="pagination">
                     <button class="btn btn-small btn-cta" onclick="window.location.reload();">
                         Refresh
                     </button>
@@ -129,17 +129,17 @@
                         <td><span class="status" th:classappend="${task.statusClass}" th:text="${task.statusLabel}">PENDING</span></td>
                         <td th:text="${task.timeText}">10:30 AM</td>
                         <td>
-                            <form th:if="${task.statusLabel == 'PENDING'}" th:action="@{/housekeeper/tasks/{id}/start(id=${task.id})}" method="post" class="inline-action-form" style="width: 100%;">
-                                <button type="submit" class="btn btn-small btn-cta" style="width: 100%;">Start Task</button>
+                            <form th:if="${task.statusLabel == 'PENDING'}" th:action="@{/housekeeper/tasks/{id}/start(id=${task.id})}" method="post" class="inline-action-form">
+                                <button type="submit" class="btn btn-small btn-cta badge">Start Task</button>
                             </form>
 
-                            <form th:if="${task.statusLabel == 'CLEANING'}" th:action="@{/housekeeper/tasks/{id}/complete(id=${task.id})}" method="post" class="inline-action-form" style="width: 100%;">
-                                <button type="submit" class="btn btn-small btn-success" style="width: 100%;">Complete</button>
+                            <form th:if="${task.statusLabel == 'CLEANING'}" th:action="@{/housekeeper/tasks/{id}/complete(id=${task.id})}" method="post" class="inline-action-form">
+                                <button type="submit" class="btn btn-small btn-success badge">Complete</button>
                             </form>
 
-                            <button th:if="${task.statusLabel == 'INSPECTED'}" class="btn btn-small btn-luxury" style="width: 100%;" disabled>Approved</button>
+                            <button th:if="${task.statusLabel == 'INSPECTED'}" class="btn btn-small btn-luxury badge" disabled>Approved</button>
 
-                            <button th:if="${task.statusLabel != 'PENDING' and task.statusLabel != 'CLEANING' and task.statusLabel != 'INSPECTED'}" class="btn btn-small btn-warning" style="width: 100%;">Track</button>
+                            <button th:if="${task.statusLabel != 'PENDING' and task.statusLabel != 'CLEANING' and task.statusLabel != 'INSPECTED'}" class="btn btn-small btn-warning badge">Track</button>
                         </td>
                     </tr>
 
