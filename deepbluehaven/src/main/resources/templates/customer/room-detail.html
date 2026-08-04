@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_context_path" th:content="@{/}" />
     <title th:text="${room != null ? 'Room ' + room.roomNumber + ' | DeepBlue Haven' : 'Room Detail | DeepBlue Haven'}">
         Room Detail | DeepBlue Haven
     </title>
@@ -20,7 +21,7 @@
 </head>
 
 <body>
-    <div th:replace="~{fragments/header :: header}"></div>
+    <div th:replace="~{fragments/header :: header(activePage='rooms')}"></div>
 <div class="room-detail-page">
 
 
@@ -293,34 +294,38 @@
                         </span>
                     </div>
 
-                    <div class="room-booking-card__form">
-                        <label>
-                            Check in
-                            <input type="date" name="checkIn">
-                        </label>
+                    <form id="roomBookingForm">
+                        <input type="hidden" name="roomId" th:value="${room != null ? room.id : 1}">
+                        <div class="room-booking-card__form">
+                            <label>
+                                Check in
+                                <input type="date" name="checkIn" id="bookCheckIn" required>
+                            </label>
 
-                        <label>
-                            Check out
-                            <input type="date" name="checkOut">
-                        </label>
+                            <label>
+                                Check out
+                                <input type="date" name="checkOut" id="bookCheckOut" required>
+                            </label>
 
-                        <label>
-                            Guests
-                            <select name="guests">
-                                <option value="1">1 guest</option>
-                                <option value="2">2 guests</option>
-                                <option value="3">3 guests</option>
-                                <option value="4" selected>4 guests</option>
-                            </select>
-                        </label>
-                    </div>
+                            <label>
+                                Guests
+                                <select name="guests">
+                                    <option value="1">1 guest</option>
+                                    <option value="2">2 guests</option>
+                                    <option value="3">3 guests</option>
+                                    <option value="4" selected>4 guests</option>
+                                </select>
+                            </label>
+                        </div>
 
-                    <button class="btn btn-cta btn-medium room-booking-card__button"
-                            type="button"
-                            data-toast="availability">
-                        <i class="fa-regular fa-calendar-check btn-icon"></i>
-                        Check availability
-                    </button>
+                        <button class="btn btn-cta btn-medium room-booking-card__button"
+                                type="submit"
+                                id="btnBookRoomNow"
+                                style="width: 100%; margin-top: 16px;">
+                            <i class="fa-regular fa-calendar-check btn-icon"></i>
+                            Book This Room Now
+                        </button>
+                    </form>
                 </section>
 
                 <section class="room-plan-card">

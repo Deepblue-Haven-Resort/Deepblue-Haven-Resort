@@ -30,6 +30,12 @@
             <span>Task History</span>
         </a>
 
+        <a th:href="@{/housekeeper/notifications}"
+           th:class="${activePage == 'notifications'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-bell"></i>
+            <span>Notifications</span>
+        </a>
+
         <a th:href="@{/housekeeper/profile}"
            th:class="${activePage == 'profile'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-user"></i>

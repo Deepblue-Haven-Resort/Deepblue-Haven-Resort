@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Deep Blue Haven Resort | Luxury Ocean Resort</title>
+  <meta name="_context_path" th:content="@{/}" />
+
+  <title>Customer Profile | DeepBlue Haven Resort</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
@@ -18,8 +19,7 @@
 </head>
 
 <body class="home-page">
-  <div th:replace="~{fragments/header :: header}"></div>
-
+  <div th:replace="~{fragments/header :: header(activePage='profile')}"></div>
 
 <main class="customer-profile">
 
@@ -32,27 +32,21 @@
                 <div class="profile-user">
 
                     <div class="profile-avatar">
-
-                        <!-- Avatar mặc định -->
                         <i class="fa-regular fa-user"></i>
-
                         <button type="button"
                                 class="profile-avatar__edit"
                                 aria-label="Change profile picture">
-
                             <i class="fa-solid fa-camera"></i>
-
                         </button>
-
                     </div>
 
-                    <h2>Nguyen Minh Anh</h2>
+                    <h2 id="sidebarFullName" th:text="${profile != null && profile.fullName != null ? profile.fullName : 'Guest Profile'}">Guest Profile</h2>
 
-                    <p>minhanh@gmail.com</p>
+                    <p id="sidebarEmail" th:text="${profile != null && profile.email != null ? profile.email : 'guest@deepbluehaven.com'}">guest@deepbluehaven.com</p>
 
                     <span class="profile-member">
                         <i class="fa-solid fa-gem"></i>
-                        Blue Member
+                        <span th:text="${profile != null && profile.segment != null ? profile.segment : 'Blue Member'}">Blue Member</span>
                     </span>
 
                 </div>
@@ -69,44 +63,25 @@
 
                     </button>
 
-                    <button type="button"
-                            class="profile-navigation__item"
-                            data-profile-tab="bookings">
+                    <a th:href="@{/booking/history}"
+                       class="profile-navigation__item"
+                       style="text-decoration: none;">
 
                         <i class="fa-regular fa-calendar-check"></i>
                         <span>My Bookings</span>
 
-                    </button>
-
-                    <button type="button"
-                            class="profile-navigation__item"
-                            data-profile-tab="preferences">
-
-                        <i class="fa-regular fa-heart"></i>
-                        <span>Preferences</span>
-
-                    </button>
-
-                    <button type="button"
-                            class="profile-navigation__item"
-                            data-profile-tab="security">
-
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>Security</span>
-
-                    </button>
+                    </a>
 
                 </nav>
 
                 <div class="profile-sidebar__footer">
 
-                    <button type="button"
-                            class="profile-logout">
-
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        Logout
-
-                    </button>
+                    <form th:action="@{/logout}" method="post" style="width: 100%;">
+                        <button type="submit" class="profile-logout" style="width: 100%; border: none; background: transparent; cursor: pointer;">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            Logout
+                        </button>
+                    </form>
 
                 </div>
 
@@ -145,15 +120,14 @@
 
                     </div>
 
-                    <form class="profile-form"
-                          id="profileForm">
+                    <form class="profile-form" id="profileForm">
 
                         <div class="profile-form__grid">
 
                             <div class="profile-field">
 
-                                <label for="firstName">
-                                    First Name
+                                <label for="fullName">
+                                    Full Name
                                 </label>
 
                                 <div class="profile-input">
@@ -161,9 +135,11 @@
                                     <i class="fa-regular fa-user"></i>
 
                                     <input type="text"
-                                           id="firstName"
-                                           value="Minh Anh"
-                                           readonly>
+                                           id="fullName"
+                                           name="fullName"
+                                           th:value="${profile != null ? profile.fullName : ''}"
+                                           readonly
+                                           required>
 
                                 </div>
 
@@ -171,17 +147,18 @@
 
                             <div class="profile-field">
 
-                                <label for="lastName">
-                                    Last Name
+                                <label for="phone">
+                                    Phone Number
                                 </label>
 
                                 <div class="profile-input">
 
-                                    <i class="fa-regular fa-user"></i>
+                                    <i class="fa-solid fa-phone"></i>
 
-                                    <input type="text"
-                                           id="lastName"
-                                           value="Nguyen"
+                                    <input type="tel"
+                                           id="phone"
+                                           name="phoneNumber"
+                                           th:value="${profile != null ? profile.phoneNumber : ''}"
                                            readonly>
 
                                 </div>
@@ -200,26 +177,8 @@
 
                                     <input type="email"
                                            id="email"
-                                           value="minhanh@gmail.com"
-                                           readonly>
-
-                                </div>
-
-                            </div>
-
-                            <div class="profile-field">
-
-                                <label for="phone">
-                                    Phone Number
-                                </label>
-
-                                <div class="profile-input">
-
-                                    <i class="fa-solid fa-phone"></i>
-
-                                    <input type="tel"
-                                           id="phone"
-                                           value="+84 912 345 678"
+                                           name="email"
+                                           th:value="${profile != null ? profile.email : ''}"
                                            readonly>
 
                                 </div>
@@ -238,54 +197,8 @@
 
                                     <input type="date"
                                            id="birthday"
-                                           value="2002-08-20"
-                                           readonly>
-
-                                </div>
-
-                            </div>
-
-                            <div class="profile-field">
-
-                                <label for="gender">
-                                    Gender
-                                </label>
-
-                                <div class="profile-input">
-
-                                    <i class="fa-solid fa-venus-mars"></i>
-
-                                    <select id="gender"
-                                            disabled>
-
-                                        <option value="male">Male</option>
-
-                                        <option value="female"
-                                                selected>
-                                            Female
-                                        </option>
-
-                                        <option value="other">Other</option>
-
-                                    </select>
-
-                                </div>
-
-                            </div>
-
-                            <div class="profile-field profile-field--full">
-
-                                <label for="address">
-                                    Address
-                                </label>
-
-                                <div class="profile-input">
-
-                                    <i class="fa-solid fa-location-dot"></i>
-
-                                    <input type="text"
-                                           id="address"
-                                           value="Thu Duc City, Ho Chi Minh City, Vietnam"
+                                           name="birthDay"
+                                           th:value="${profile != null && profile.birthDay != null ? profile.birthDay : ''}"
                                            readonly>
 
                                 </div>
@@ -294,8 +207,7 @@
 
                         </div>
 
-                        <div class="profile-form__actions"
-                             id="profileFormActions">
+                        <div class="profile-form__actions" id="profileFormActions">
 
                             <button type="button"
                                     class="profile-btn-outline"
@@ -351,7 +263,7 @@
                             </div>
 
                             <div>
-                                <strong>08</strong>
+                                <strong th:text="${totalBookingsCount != null ? totalBookingsCount : 0}">0</strong>
                                 <span>Total Bookings</span>
                             </div>
 
@@ -364,8 +276,8 @@
                             </div>
 
                             <div>
-                                <strong>02</strong>
-                                <span>Upcoming Stays</span>
+                                <strong th:text="${upcomingStaysCount != null ? upcomingStaysCount : 0}">0</strong>
+                                <span>Active Bookings</span>
                             </div>
 
                         </article>
@@ -373,12 +285,12 @@
                         <article class="profile-stat-card">
 
                             <div class="profile-stat-card__icon">
-                                <i class="fa-regular fa-heart"></i>
+                                <i class="fa-solid fa-star"></i>
                             </div>
 
                             <div>
-                                <strong>05</strong>
-                                <span>Saved Rooms</span>
+                                <strong th:text="${profile != null && profile.totalPoints != null ? profile.totalPoints : 0}">0</strong>
+                                <span>Loyalty Points</span>
                             </div>
 
                         </article>
@@ -395,7 +307,9 @@
 
 </main>
 
-<script th:src="@{/assets/js/customer-profile.js}"></script>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/customer/profile.js}" src="/js/customer/profile.js"></script>
 
 </body>
 </html>

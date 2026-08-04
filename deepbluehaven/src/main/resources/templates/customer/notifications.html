@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_context_path" th:content="@{/}" />
+    <title>Notifications | Deep Blue Haven</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" href="/assets/css/base.css">
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css">
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/home.css}" href="/assets/css/customer/home.css">
+
+    <style>
+        .notifications-page {
+            padding-top: 110px;
+            padding-bottom: 80px;
+            min-height: 80vh;
+            background: var(--surface-bg, #f4f8fb);
+        }
+
+        .notifications-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .notifications-title {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--black, #071827);
+        }
+
+        .notifications-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-read-all {
+            padding: 8px 16px;
+            border-radius: 999px;
+            border: 1px solid var(--primary-400, #a0c4e2);
+            background: var(--white, #fff);
+            color: var(--primary-800, #0d3b66);
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-read-all:hover {
+            background: var(--primary-100, #e8f4fd);
+            transform: translateY(-1px);
+        }
+
+        .notifications-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .notifications-tab {
+            padding: 8px 18px;
+            border-radius: 999px;
+            border: none;
+            background: var(--white, #fff);
+            color: var(--black, #333);
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            white-space: nowrap;
+        }
+
+        .notifications-tab.is-active,
+        .notifications-tab:hover {
+            background: var(--primary-800, #0d3b66);
+            color: var(--white, #fff);
+        }
+
+        .notifications-card {
+            background: var(--white, #fff);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(7, 24, 39, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-page-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease;
+            margin-bottom: 8px;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .notification-page-item:hover {
+            background: var(--primary-100, #f0f8ff);
+            transform: translateX(3px);
+        }
+
+        .notification-page-item.unread {
+            background: #eef7ff;
+            border-left: 4px solid var(--primary-800, #0d3b66);
+        }
+
+        .notification-page-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary-200, #d0e8ff);
+            color: var(--primary-800, #0d3b66);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .notification-page-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-page-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--black, #111);
+            margin-bottom: 4px;
+        }
+
+        .notification-page-msg {
+            font-size: 0.9rem;
+            color: #444;
+            line-height: 1.4;
+
+        }
+
+        .notification-page-time {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        .notifications-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+        }
+
+        .notifications-empty i {
+            font-size: 3rem;
+            color: var(--primary-300, #b0d4f1);
+            margin-bottom: 16px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body class="home-page">
+
+<div th:replace="~{fragments/header :: header(activePage='notifications')}"></div>
+
+<main class="notifications-page">
+    <div class="container">
+        <div class="notifications-header">
+            <h1 class="notifications-title">Notifications</h1>
+            <div class="notifications-actions">
+                <button type="button" class="btn-read-all" id="btnReadAll">
+                    <i class="fa-solid fa-check-double"></i> Mark all as read
+                </button>
+            </div>
+        </div>
+
+        <div class="notifications-tabs" role="tablist">
+            <button type="button" class="notifications-tab is-active" data-filter="all">All</button>
+            <button type="button" class="notifications-tab" data-filter="unread">Unread</button>
+            <button type="button" class="notifications-tab" data-filter="BOOKING">Bookings</button>
+            <button type="button" class="notifications-tab" data-filter="PROMOTION">Promotions</button>
+            <button type="button" class="notifications-tab" data-filter="SYSTEM">System</button>
+        </div>
+
+        <div class="notifications-card">
+            <div id="notificationsList">
+                <div class="notifications-empty">
+                    <i class="fa-regular fa-bell-slash"></i>
+                    Loading notifications...
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    (function () {
+        function getApiUrl(path) {
+            let contextPath = document.querySelector('meta[name="_context_path"]')?.content;
+            if (!contextPath || contextPath === "/") {
+                const match = window.location.pathname.match(/^\/([^\/]+)/);
+                if (match && match[1] === "deepbluehaven") {
+                    contextPath = "/" + match[1];
+                } else {
+                    contextPath = "";
+                }
+            }
+            return contextPath.replace(/\/$/, "") + (path.startsWith("/") ? path : "/" + path);
+        }
+
+        function getIconForType(type) {
+            switch (type) {
+                case "BOOKING": return "fa-solid fa-calendar-check";
+                case "SERVICE": return "fa-solid fa-concierge-bell";
+                case "TASK": return "fa-solid fa-list-check";
+                case "PROMOTION": return "fa-solid fa-gift";
+                case "SYSTEM": return "fa-solid fa-gear";
+                default: return "fa-solid fa-bell";
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return "";
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        let notifications = [];
+        let activeFilter = "all";
+
+        async function fetchNotifications() {
+            const container = document.getElementById("notificationsList");
+            try {
+                const response = await fetch(getApiUrl("/api/notifications"));
+                if (!response.ok) {
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="notifications-empty">
+                                <i class="fa-solid fa-lock"></i>
+                                Vui lòng đăng nhập để xem thông báo.
+                            </div>
+                        `;
+                    }
+                    return;
+                }
+                const data = await response.json();
+                notifications = data.notifications || [];
+                render();
+            } catch (e) {
+                if (container) {
+                    container.innerHTML = `
+                        <div class="notifications-empty">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            Không thể kết nối đến máy chủ. Vui lòng thử lại.
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function render() {
+            const container = document.getElementById("notificationsList");
+            if (!container) return;
+
+            let filtered = notifications;
+            if (activeFilter === "unread") {
+                filtered = notifications.filter(n => !n.isRead);
+            } else if (activeFilter !== "all") {
+                filtered = notifications.filter(n => n.type === activeFilter);
+            }
+
+            if (!filtered.length) {
+                container.innerHTML = `
+                    <div class="notifications-empty">
+                        <i class="fa-regular fa-bell-slash"></i>
+                        No notifications found.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(item => `
+                <div class="notification-page-item ${item.isRead ? '' : 'unread'}" data-id="${item.id}" data-link="${item.link || ''}">
+                    <div class="notification-page-icon">
+                        <i class="${getIconForType(item.type)}"></i>
+                    </div>
+                    <div class="notification-page-body">
+                        <div class="notification-page-title">${escapeHtml(item.title)}</div>
+                        <div class="notification-page-msg">${escapeHtml(item.message)}</div>
+                        <div class="notification-page-time"><i class="fa-regular fa-clock"></i> ${item.timeAgo || ''}</div>
+                    </div>
+                </div>
+            `).join("");
+
+            container.querySelectorAll(".notification-page-item").forEach(itemEl => {
+                itemEl.addEventListener("click", async () => {
+                    const id = itemEl.dataset.id;
+                    const link = itemEl.dataset.link;
+
+                    try {
+                        await fetch(getApiUrl(`/api/notifications/${id}/read`), { method: "POST" });
+                    } catch (e) {}
+
+                    if (link && link !== "null" && link !== "" && link !== "#") {
+                        window.location.href = getApiUrl(link);
+                    } else {
+                        fetchNotifications();
+                    }
+                });
+            });
+        }
+
+        document.querySelectorAll(".notifications-tab").forEach(tab => {
+            tab.addEventListener("click", () => {
+                document.querySelectorAll(".notifications-tab").forEach(t => t.classList.remove("is-active"));
+                tab.classList.add("is-active");
+                activeFilter = tab.dataset.filter || "all";
+                render();
+            });
+        });
+
+        document.getElementById("btnReadAll")?.addEventListener("click", async () => {
+            try {
+                await fetch(getApiUrl("/api/notifications/read-all"), { method: "POST" });
+                fetchNotifications();
+            } catch (e) {}
+        });
+
+        document.addEventListener("DOMContentLoaded", fetchNotifications);
+    })();
+</script>
+</body>
+</html>

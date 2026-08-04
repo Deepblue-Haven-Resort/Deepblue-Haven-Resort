@@ -27,8 +27,7 @@ public class AuthFilter implements Filter {
         String uri = request.getRequestURI();
         String ctx = request.getContextPath();
 
-        boolean isPublicRoute =
-                uri.equals(ctx + "/") ||
+        boolean isPublicRoute = uri.equals(ctx + "/") ||
                 uri.equals(ctx + "/login") ||
                 uri.equals(ctx + "/logout") ||
                 uri.startsWith(ctx + "/assets/") ||
@@ -49,8 +48,7 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        boolean isCustomerRoute =
-                uri.equals(ctx + "/home") ||
+        boolean isCustomerRoute = uri.equals(ctx + "/home") ||
                 uri.equals(ctx + "/dashboard") ||
                 uri.startsWith(ctx + "/customer/");
 
@@ -64,8 +62,7 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        boolean isStaffRoute =
-                uri.startsWith(ctx + "/admin/") ||
+        boolean isStaffRoute = uri.startsWith(ctx + "/admin/") ||
                 uri.startsWith(ctx + "/manager/") ||
                 uri.startsWith(ctx + "/receptionist/") ||
                 uri.startsWith(ctx + "/housekeeper/");
@@ -78,8 +75,7 @@ public class AuthFilter implements Filter {
 
             String role = (String) session.getAttribute("workerRole");
 
-            boolean allowed =
-                    (uri.startsWith(ctx + "/admin/") && "ADMIN".equals(role)) ||
+            boolean allowed = (uri.startsWith(ctx + "/admin/") && "ADMIN".equals(role)) ||
                     (uri.startsWith(ctx + "/manager/") && "MANAGER".equals(role)) ||
                     (uri.startsWith(ctx + "/receptionist/") && "RECEPTIONIST".equals(role)) ||
                     (uri.startsWith(ctx + "/housekeeper/") && "HOUSEKEEPER".equals(role));

@@ -19,7 +19,7 @@
 
 <body class="home-page">
 
-<div th:replace="~{fragments/header :: header}"></div>
+<div th:replace="~{fragments/header :: header(activePage='booking-history')}"></div>
 
 <main class="booking-history-page">
 
@@ -226,7 +226,11 @@
                                 th:data-room-charge="${b.roomChargeVnd != null ? #numbers.formatDecimal(b.roomChargeVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}"
                                 th:data-service-charge="${b.serviceChargeVnd != null && b.serviceChargeVnd > 0 ? #numbers.formatDecimal(b.serviceChargeVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}"
                                 th:data-tax="${b.taxVnd != null && b.taxVnd > 0 ? #numbers.formatDecimal(b.taxVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}"
-                                th:data-discount="${b.discountVnd != null && b.discountVnd > 0 ? '-' + #numbers.formatDecimal(b.discountVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}">
+                                th:data-discount="${b.discountVnd != null && b.discountVnd > 0 ? '-' + #numbers.formatDecimal(b.discountVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}"
+                                th:data-guest-name="${b.guestName}"
+                                th:data-guest-email="${b.guestEmail}"
+                                th:data-guest-phone="${b.guestPhone}"
+                                th:data-service-items="${b.serviceItemsJson}">
 
                             View Details
                             <i class="fa-solid fa-arrow-right"></i>

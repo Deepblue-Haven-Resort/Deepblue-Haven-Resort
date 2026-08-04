@@ -40,6 +40,9 @@ public class Customer {
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<CustomerDiscount> discounts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    private List<Notification> notifications = new ArrayList<>();
+
     public Customer() {
     }
 
@@ -81,6 +84,14 @@ public class Customer {
 
     public void setDiscounts(List<CustomerDiscount> discounts) {
         this.discounts = discounts;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
     }
 
     public LocalDateTime getCreatedAt() {

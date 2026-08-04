@@ -57,46 +57,31 @@
                 <div class="auth-card">
 
                     <div class="auth-tabs">
-                        <a th:href="@{/login}" href="/login" class="auth-tab is-active">Login</a>
+                        <a th:href="@{/staff-login}" href="/staff-login" class="auth-tab is-active">Login</a>
                         <a th:href="@{/register}" href="/register" class="auth-tab">Register</a>
                     </div>
 
                     <div class="auth-heading">
                         <h2>Login to your account</h2>
-                    </div>  
-                    <form id="form-login"
-                          class="auth-form"
-                          th:action="@{/login}"
-                          method="post">
+                    </div>
+                    <form id="form-login" class="auth-form" th:action="@{/staff-login}" method="post">
 
-                        <input type="hidden"
-                               th:if="${_csrf != null}"
-                               th:name="${_csrf.parameterName}"
-                               th:value="${_csrf.token}" />
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}" />
 
                         <label class="auth-field" for="username">
                             <span>Username</span>
-                            <input id="username"
-                                   name="username"
-                                   type="text"
-                                   autocomplete="username"
-                                   placeholder="Enter your username"
-                                   required />
+                            <input id="username" name="username" type="text" autocomplete="username"
+                                placeholder="Enter your username" required />
                         </label>
 
                         <label class="auth-field" for="password">
                             <span>Password</span>
-                            <input id="password"
-                                   name="password"
-                                   type="password"
-                                   autocomplete="current-password"
-                                   placeholder="Enter your password"
-                                   required />
+                            <input id="password" name="password" type="password" autocomplete="current-password"
+                                placeholder="Enter your password" required />
 
-                            <button class="auth-password-toggle"
-                                    type="button"
-                                    data-toggle-password="password"
-                                    aria-label="Show or hide password">
+                            <button class="auth-password-toggle" type="button" data-toggle-password="password"
+                                aria-label="Show or hide password">
                                 <i class="fa-regular fa-eye-slash"></i>
                             </button>
                         </label>
@@ -125,10 +110,12 @@
                     </div>
 
                     <div class="auth-social">
-                        <a th:href="@{/oauth2/authorization/google}" class="auth-social-btn" aria-label="Register with Google">
+                        <a th:href="@{/oauth2/authorization/google}" class="auth-social-btn"
+                            aria-label="Register with Google">
                             <i class="fa-brands fa-google"></i>
                         </a>
-                        <a th:href="@{/oauth2/authorization/facebook}" class="auth-social-btn" aria-label="Login with Facebook">
+                        <a th:href="@{/oauth2/authorization/facebook}" class="auth-social-btn"
+                            aria-label="Login with Facebook">
                             <i class="fa-brands fa-facebook-f"></i>
                         </a>
                         <a th:href="@{/oauth2/authorization/zalo}" class="auth-social-btn auth-social-btn--zalo"
@@ -155,4 +142,5 @@
     <script th:src="@{/js/auth/auth.js}"></script>
     <script th:src="@{/js/auth/login.js}"></script>
 </body>
+
 </html>

@@ -31,6 +31,8 @@ import deepbluehaven.pojo.Invoice;
 import deepbluehaven.pojo.InvoiceStatusLog;
 import deepbluehaven.pojo.Log;
 import deepbluehaven.pojo.MembershipTier;
+import deepbluehaven.pojo.Notification;
+import deepbluehaven.pojo.enums.NotificationType;
 import deepbluehaven.pojo.PaymentTransaction;
 import deepbluehaven.pojo.PricingRule;
 import deepbluehaven.pojo.Resort;
@@ -101,6 +103,7 @@ public class SeedDataRunner implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
         if (isSeeded()) {
+            seedNotificationsIfEmpty();
             LOGGER.info("Seed data đã tồn tại. Bỏ qua SeedDataRunner.");
             return;
         }
@@ -152,6 +155,7 @@ public class SeedDataRunner implements CommandLineRunner {
 
         seedCustomerLoyaltyLogs(customers, bookings, serviceOrders);
         seedAuthAccessLogs(customers, workers);
+        seedNotifications(customers, workers);
         seedSystemLogs(bookings, rooms, tasks, inventoryItems, invoices, customers, workers);
 
         entityManager.flush();
@@ -1191,6 +1195,49 @@ public class SeedDataRunner implements CommandLineRunner {
                 return customers.get(index % customers.size()).getId();
             default:
                 throw new IllegalArgumentException("ObjectType không được hỗ trợ: " + objectType);
+        }
+    }
+
+    private void seedNotifications(List<Customer> customers, List<Worker> workers) {
+        if (customers != null && !customers.isEmpty()) {
+            for (int i = 0; i < customers.size(); i++) {
+                Customer c = customers.get(i);
+
+                Notification n1 = new Notification(c, "Đặt phòng thành công", "Đơn đặt phòng #DBH-2026-00" + (i + 1) + " đã được xác nhận thành công.", NotificationType.BOOKING);
+                n1.setLink("/booking/history");
+                persist(n1);
+
+                Notification n2 = new Notification(c, "Ưu đãi thành viên đặc biệt", "Nhận ngay giảm giá 15% cho dịch vụ Spa & Wellness trong tháng này.", NotificationType.PROMOTION);
+                n2.setLink("/offers");
+                persist(n2);
+
+                Notification n3 = new Notification(c, "Chào mừng tới Deep Blue Haven", "Cảm ơn bạn đã lựa chọn khu nghỉ dưỡng cao cấp Deep Blue Haven Resort.", NotificationType.SYSTEM);
+                n3.setIsRead(true);
+                persist(n3);
+            }
+        }
+
+        if (workers != null && !workers.isEmpty()) {
+            for (int i = 0; i < workers.size(); i++) {
+                Worker w = workers.get(i);
+
+                Notification n1 = new Notification(w, "Nhiệm vụ dọn dẹp mới", "Bạn được phân công dọn dẹp phòng #" + (101 + i) + ".", NotificationType.TASK);
+                n1.setLink("/housekeeper/tasks");
+                persist(n1);
+
+                Notification n2 = new Notification(w, "Thông báo hệ thống", "Lịch làm việc tuần tới đã được cập nhật trên trang quản lý.", NotificationType.SYSTEM);
+                persist(n2);
+            }
+        }
+    }
+
+    private void seedNotificationsIfEmpty() {
+        Long count = entityManager.createQuery("select count(n) from Notification n", Long.class).getSingleResult();
+        if (count == 0) {
+            List<Customer> customers = entityManager.createQuery("select c from Customer c", Customer.class).getResultList();
+            List<Worker> workers = entityManager.createQuery("select w from Worker w", Worker.class).getResultList();
+            seedNotifications(customers, workers);
+            LOGGER.info("Đã tự động seed bổ sung thông báo cho {} customer và {} worker.", customers.size(), workers.size());
         }
     }
 
