@@ -7,17 +7,24 @@ function initPasswordToggle() {
     const toggleButtons = document.querySelectorAll("[data-toggle-password]");
 
     toggleButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-            const input = document.getElementById(button.dataset.togglePassword);
+        button.addEventListener("click", (e) => {
+            e.preventDefault();
+            const inputId = button.getAttribute("data-toggle-password");
+            const input = document.getElementById(inputId);
             const icon = button.querySelector("i");
 
             if (!input || !icon) return;
 
-            const isHidden = input.type === "password";
-            input.type = isHidden ? "text" : "password";
+            const isPassword = input.type === "password";
+            input.type = isPassword ? "text" : "password";
 
-            icon.classList.toggle("fa-eye", isHidden);
-            icon.classList.toggle("fa-eye-slash", !isHidden);
+            if (isPassword) {
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            } else {
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            }
         });
     });
 }

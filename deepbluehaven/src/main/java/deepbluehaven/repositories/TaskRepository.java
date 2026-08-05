@@ -25,4 +25,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findDelayedTasks(@Param("now") LocalDateTime now);
 
     List<Task> findTop5ByOrderByTimestampDesc();
+    List<Task> findByAssignedToIdOrderByTimestampDesc(Long workerId);
+    List<Task> findByAssignedToIdAndStatusOrderByTimestampDesc(Long workerId, TaskStatus status);
+    long countByAssignedToIdAndStatus(Long workerId, TaskStatus status);
 }
