@@ -37,6 +37,9 @@ public class InventoryItem {
     @Column(name = "unit", nullable = false, length = 50, columnDefinition = "NVARCHAR(50)")
     private String unit;
 
+    @Column(name = "min_threshold", nullable = false)
+    private Integer minThreshold = 10;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
@@ -70,6 +73,11 @@ public class InventoryItem {
         return unit; }
     public void setUnit(String unit) { 
         this.unit = unit; }
+
+    public Integer getMinThreshold() {
+        return minThreshold; }
+    public void setMinThreshold(Integer minThreshold) {
+        this.minThreshold = minThreshold; }
 
     public Supplier getSupplier() { 
         return supplier; }

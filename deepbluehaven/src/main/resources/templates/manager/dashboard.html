@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,35 +25,35 @@
         <!-- HERO -->
         <section class="dashboard-hero manager-hero">
             <div>
-                <span class="page-label">Manager Operation Center</span>
+                <span class="page-label">Manager Operations Center</span>
                 <h1>Resort Dashboard</h1>
-                <p>Theo dõi vận hành phòng, booking, doanh thu, dịch vụ và hiệu suất nhân viên.</p>
+                <p>Monitor room operations, bookings, revenue, active services, and staff performance.</p>
             </div>
 
             <div class="hero-actions">
                 <button class="btn btn-cta btn-medium">
                     <i class="fa-solid fa-calendar-plus"></i>
-                    Tạo booking
+                    Create Booking
                 </button>
 
                 <button class="btn btn-outline btn-medium">
                     <i class="fa-solid fa-file-export"></i>
-                    Xuất báo cáo
+                    Export Report
                 </button>
             </div>
         </section>
 
         <!-- KPI -->
-        <section class="stats-grid">
+        <section class="stats-grid" th:if="${dashboardData != null}">
 
             <article class="stat-card revenue">
                 <div class="stat-icon">
                     <i class="fa-solid fa-sack-dollar"></i>
                 </div>
                 <div>
-                    <span>Doanh thu hôm nay</span>
-                    <strong>128.5M</strong>
-                    <small>+14% so với hôm qua</small>
+                    <span>Today's Revenue</span>
+                    <strong th:text="${dashboardData.kpi.revenueTodayStr}">128.5M</strong>
+                    <small th:text="${dashboardData.kpi.revenueGrowthStr + ' vs yesterday'}">+14% vs yesterday</small>
                 </div>
             </article>
 
@@ -62,9 +62,9 @@
                     <i class="fa-solid fa-bed"></i>
                 </div>
                 <div>
-                    <span>Công suất phòng</span>
-                    <strong>82%</strong>
-                    <small>51 / 62 phòng đang sử dụng</small>
+                    <span>Occupancy Rate</span>
+                    <strong th:text="${dashboardData.kpi.occupancyRate + '%'}">82%</strong>
+                    <small th:text="${dashboardData.kpi.occupiedRooms + ' / ' + dashboardData.kpi.totalRooms + ' rooms in use'}">51 / 62 rooms in use</small>
                 </div>
             </article>
 
@@ -73,9 +73,9 @@
                     <i class="fa-solid fa-calendar-check"></i>
                 </div>
                 <div>
-                    <span>Booking hôm nay</span>
-                    <strong>36</strong>
-                    <small>12 check-in, 8 check-out</small>
+                    <span>Today's Bookings</span>
+                    <strong th:text="${dashboardData.kpi.todayBookingsCount}">36</strong>
+                    <small th:text="${dashboardData.kpi.todayCheckInCount + ' check-in, ' + dashboardData.kpi.todayCheckOutCount + ' check-out'}">12 check-in, 8 check-out</small>
                 </div>
             </article>
 
@@ -84,45 +84,33 @@
                     <i class="fa-solid fa-broom"></i>
                 </div>
                 <div>
-                    <span>Phòng cần xử lý</span>
-                    <strong>16</strong>
-                    <small>12 cleaning, 4 maintenance</small>
+                    <span>Rooms Needing Attention</span>
+                    <strong th:text="${dashboardData.kpi.attentionRoomsCount}">16</strong>
+                    <small th:text="${dashboardData.kpi.cleaningRoomsCount + ' cleaning, ' + dashboardData.kpi.maintenanceRoomsCount + ' maintenance'}">12 cleaning, 4 maintenance</small>
                 </div>
             </article>
 
         </section>
 
         <!-- MAIN DASHBOARD GRID -->
-        <section class="dashboard-grid">
+        <section class="dashboard-grid" th:if="${dashboardData != null}">
 
             <!-- REVENUE CHART -->
             <article class="chart-card large">
                 <div class="card-header">
                     <div>
                         <h2>Revenue Overview</h2>
-                        <p>Doanh thu 7 ngày gần đây từ phòng và dịch vụ</p>
+                        <p>Past 7 days revenue from rooms and services</p>
                     </div>
-                    <span class="chip success">+18%</span>
+                    <span class="chip success" th:text="${dashboardData.revenueChart.growthPercentageStr}">+18%</span>
                 </div>
 
                 <div class="fake-line-chart revenue-chart">
-                    <div style="height: 42%"></div>
-                    <div style="height: 58%"></div>
-                    <div style="height: 46%"></div>
-                    <div style="height: 72%"></div>
-                    <div style="height: 64%"></div>
-                    <div style="height: 88%"></div>
-                    <div style="height: 76%"></div>
+                    <div th:each="h : ${dashboardData.revenueChart.barHeights}" th:style="'height: ' + ${h} + '%'"></div>
                 </div>
 
                 <div class="chart-labels">
-                    <span>Mon</span>
-                    <span>Tue</span>
-                    <span>Wed</span>
-                    <span>Thu</span>
-                    <span>Fri</span>
-                    <span>Sat</span>
-                    <span>Sun</span>
+                    <span th:each="label : ${dashboardData.revenueChart.dayLabels}" th:text="${label}">Mon</span>
                 </div>
             </article>
 
@@ -131,23 +119,23 @@
                 <div class="card-header">
                     <div>
                         <h2>Room Status</h2>
-                        <p>Tình trạng phòng hiện tại</p>
+                        <p>Current room status overview</p>
                     </div>
                 </div>
 
                 <div class="donut-wrap">
                     <div class="donut-chart room-donut"></div>
                     <div class="donut-center">
-                        <strong>62</strong>
+                        <strong th:text="${dashboardData.roomStatus.totalRooms}">62</strong>
                         <span>Rooms</span>
                     </div>
                 </div>
 
                 <div class="role-list">
-                    <div><span class="dot available"></span>Available <strong>32</strong></div>
-                    <div><span class="dot occupied"></span>Occupied <strong>51</strong></div>
-                    <div><span class="dot cleaning"></span>Cleaning <strong>12</strong></div>
-                    <div><span class="dot maintenance"></span>Maintenance <strong>4</strong></div>
+                    <div><span class="dot available"></span>Available <strong th:text="${dashboardData.roomStatus.availableRooms}">32</strong></div>
+                    <div><span class="dot occupied"></span>Occupied <strong th:text="${dashboardData.roomStatus.occupiedRooms}">51</strong></div>
+                    <div><span class="dot cleaning"></span>Cleaning <strong th:text="${dashboardData.roomStatus.cleaningRooms}">12</strong></div>
+                    <div><span class="dot maintenance"></span>Maintenance <strong th:text="${dashboardData.roomStatus.maintenanceRooms}">4</strong></div>
                 </div>
             </article>
 
@@ -156,26 +144,26 @@
                 <div class="card-header">
                     <div>
                         <h2>Booking Flow</h2>
-                        <p>Trạng thái đặt phòng hôm nay</p>
+                        <p>Today's booking status flow</p>
                     </div>
                 </div>
 
                 <div class="health-list">
                     <div>
                         <span>Pending</span>
-                        <strong class="warning-text">6</strong>
+                        <strong class="warning-text" th:text="${dashboardData.bookingFlow.pendingCount}">6</strong>
                     </div>
                     <div>
                         <span>Confirmed</span>
-                        <strong>18</strong>
+                        <strong th:text="${dashboardData.bookingFlow.confirmedCount}">18</strong>
                     </div>
                     <div>
                         <span>Checked In</span>
-                        <strong class="online">12</strong>
+                        <strong class="online" th:text="${dashboardData.bookingFlow.checkedInCount}">12</strong>
                     </div>
                     <div>
                         <span>Cancelled</span>
-                        <strong class="danger-text">2</strong>
+                        <strong class="danger-text" th:text="${dashboardData.bookingFlow.cancelledCount}">2</strong>
                     </div>
                 </div>
             </article>
@@ -185,25 +173,15 @@
                 <div class="card-header">
                     <div>
                         <h2>Service Orders</h2>
-                        <p>Dịch vụ đang được xử lý</p>
+                        <p>Active service orders being processed</p>
                     </div>
-                    <span class="chip warning">9 pending</span>
+                    <span class="chip warning" th:text="${dashboardData.serviceOrders.pendingCount + ' pending'}">9 pending</span>
                 </div>
 
                 <div class="activity-list">
-                    <div class="activity-item">
-                        <i class="fa-solid fa-bell-concierge"></i>
-                        <p><strong>Room 204</strong> gọi dịch vụ F&B</p>
-                    </div>
-
-                    <div class="activity-item">
-                        <i class="fa-solid fa-spa"></i>
-                        <p><strong>Room 502</strong> đặt lịch Spa lúc 15:30</p>
-                    </div>
-
-                    <div class="activity-item">
-                        <i class="fa-solid fa-shirt"></i>
-                        <p><strong>Room 118</strong> yêu cầu Laundry</p>
+                    <div class="activity-item" th:each="order : ${dashboardData.serviceOrders.recentOrders}">
+                        <i th:class="${order.categoryIcon}"></i>
+                        <p><strong th:text="${order.roomNumber}">Room 204</strong> <span th:text="${'requested ' + order.serviceName}">requested F&B service</span></p>
                     </div>
                 </div>
             </article>
@@ -211,76 +189,36 @@
         </section>
 
         <!-- SECOND GRID -->
-        <section class="dashboard-grid secondary-grid">
+        <section class="dashboard-grid secondary-grid" th:if="${dashboardData != null}">
 
             <!-- STAFF PERFORMANCE -->
             <article class="chart-card large">
                 <div class="card-header">
                     <div>
                         <h2>Staff Performance</h2>
-                        <p>Hiệu suất xử lý công việc của nhân viên</p>
+                        <p>Top 5 Most Dedicated Staff (Performance & Weighted Tasks)</p>
                     </div>
-                    <span class="chip success">Good</span>
+                    <span class="chip success">Top 5 Dedicated</span>
                 </div>
 
                 <div class="staff-list">
 
-                    <div class="staff-row">
+                    <div class="staff-row" th:each="staff : ${dashboardData.staffPerformanceList}">
                         <div class="staff-profile">
-                            <div class="avatar">N</div>
+                            <div class="avatar" th:text="${staff.avatarLetter}">N</div>
                             <div>
-                                <strong>Trần Hoàng Nam</strong>
-                                <span>Housekeeping</span>
+                                <strong th:text="${staff.workerName}">John Smith</strong>
+                                <span th:text="${staff.departmentName}">Housekeeping</span>
                             </div>
                         </div>
 
                         <div class="progress-box">
                             <div class="progress-info">
-                                <span>12 tasks completed</span>
-                                <strong>92%</strong>
+                                <span th:text="${staff.tasksDescription}">12 tasks completed</span>
+                                <strong th:text="${staff.completionRate + '%'}">92%</strong>
                             </div>
                             <div class="progress-track">
-                                <div class="progress-fill" style="width: 92%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="staff-row">
-                        <div class="staff-profile">
-                            <div class="avatar">H</div>
-                            <div>
-                                <strong>Phạm Quốc Huy</strong>
-                                <span>Receptionist</span>
-                            </div>
-                        </div>
-
-                        <div class="progress-box">
-                            <div class="progress-info">
-                                <span>18 bookings handled</span>
-                                <strong>86%</strong>
-                            </div>
-                            <div class="progress-track">
-                                <div class="progress-fill" style="width: 86%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="staff-row">
-                        <div class="staff-profile">
-                            <div class="avatar">L</div>
-                            <div>
-                                <strong>Lê Thanh Vy</strong>
-                                <span>Service Staff</span>
-                            </div>
-                        </div>
-
-                        <div class="progress-box">
-                            <div class="progress-info">
-                                <span>9 service orders</span>
-                                <strong>78%</strong>
-                            </div>
-                            <div class="progress-track">
-                                <div class="progress-fill warning-fill" style="width: 78%"></div>
+                                <div class="progress-fill" th:classappend="${staff.fillClass}" th:style="'width: ' + ${staff.completionRate} + '%'"></div>
                             </div>
                         </div>
                     </div>
@@ -293,12 +231,12 @@
                 <div class="card-header">
                     <div>
                         <h2>Guest Experience</h2>
-                        <p>Đánh giá và khách VIP</p>
+                        <p>Ratings and VIP guest insights</p>
                     </div>
                 </div>
 
                 <div class="rating-box">
-                    <strong>4.8</strong>
+                    <strong th:text="${dashboardData.guestExperience.averageRatingStr}">4.8</strong>
                     <div>
                         <span class="stars">
                             <i class="fa-solid fa-star"></i>
@@ -307,22 +245,22 @@
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star-half-stroke"></i>
                         </span>
-                        <p>326 reviews</p>
+                        <p th:text="${dashboardData.guestExperience.totalReviews + ' reviews'}">326 reviews</p>
                     </div>
                 </div>
 
                 <div class="health-list">
                     <div>
                         <span>VIP Guests</span>
-                        <strong>18</strong>
+                        <strong th:text="${dashboardData.guestExperience.vipGuestsCount}">18</strong>
                     </div>
                     <div>
                         <span>Returning Guests</span>
-                        <strong>42%</strong>
+                        <strong th:text="${dashboardData.guestExperience.returningGuestsRateStr}">42%</strong>
                     </div>
                     <div>
                         <span>Complaints</span>
-                        <strong class="warning-text">3</strong>
+                        <strong class="warning-text" th:text="${dashboardData.guestExperience.complaintsCount}">3</strong>
                     </div>
                 </div>
             </article>
@@ -332,33 +270,17 @@
                 <div class="card-header">
                     <div>
                         <h2>Operational Alerts</h2>
-                        <p>Cảnh báo cần xử lý</p>
+                        <p>Alerts requiring immediate attention</p>
                     </div>
                 </div>
 
                 <div class="alert-list">
 
-                    <div class="alert-item high">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    <div class="alert-item" th:each="alert : ${dashboardData.operationalAlerts}" th:classappend="${alert.level}">
+                        <i th:class="${alert.iconClass}"></i>
                         <div>
-                            <strong>Room 305 maintenance</strong>
-                            <span>Máy lạnh cần kiểm tra gấp</span>
-                        </div>
-                    </div>
-
-                    <div class="alert-item medium">
-                        <i class="fa-solid fa-clock"></i>
-                        <div>
-                            <strong>Cleaning delayed</strong>
-                            <span>Room 410 trễ 25 phút</span>
-                        </div>
-                    </div>
-
-                    <div class="alert-item low">
-                        <i class="fa-solid fa-box"></i>
-                        <div>
-                            <strong>Low inventory</strong>
-                            <span>Minibar water gần hết kho</span>
+                            <strong th:text="${alert.title}">Room 305 maintenance</strong>
+                            <span th:text="${alert.description}">Air conditioning inspection required</span>
                         </div>
                     </div>
 
@@ -368,15 +290,15 @@
         </section>
 
         <!-- TABLE / LIVE ACTIVITY -->
-        <section class="manager-panel">
+        <section class="manager-panel" th:if="${dashboardData != null}">
 
             <div class="panel-header">
                 <div>
                     <h2>Live Resort Activity</h2>
-                    <p>Theo dõi toàn bộ hoạt động mới nhất trong resort</p>
+                    <p>Track all latest live operations across the resort</p>
                 </div>
 
-                <button class="btn btn-cta btn-medium">
+                <button class="btn btn-cta btn-medium" onclick="window.location.reload();">
                     <i class="fa-solid fa-rotate"></i>
                     Refresh
                 </button>
@@ -386,72 +308,29 @@
                 <table class="activity-table">
                     <thead>
                     <tr>
-                        <th>Thời gian</th>
-                        <th>Loại hoạt động</th>
-                        <th>Đối tượng</th>
-                        <th>Người thực hiện</th>
-                        <th>Trạng thái</th>
-                        <th>Ghi chú</th>
+                        <th>Timestamp</th>
+                        <th>Activity Type</th>
+                        <th>Target / Subject</th>
+                        <th>Performed By</th>
+                        <th>Status</th>
+                        <th>Notes</th>
                     </tr>
                     </thead>
 
                     <tbody>
-                    <tr>
-                        <td>10:25</td>
+                    <tr th:each="act : ${dashboardData.liveActivities}">
+                        <td th:text="${act.timeStr}">10:25</td>
                         <td>
-                            <span class="activity-badge booking">
-                                <i class="fa-solid fa-calendar-check"></i>
-                                Booking
+                            <span class="activity-badge" th:classappend="${act.category}">
+                                <i th:class="${act.iconClass}"></i>
+                                <span th:text="${act.categoryLabel}">Booking</span>
                             </span>
                         </td>
-                        <td>Booking #BK1024</td>
-                        <td>Receptionist Huy</td>
-                        <td><span class="status status-success">CONFIRMED</span></td>
-                        <td>Khách đặt Ocean Suite</td>
+                        <td th:text="${act.subject}">Booking #BK1024</td>
+                        <td th:text="${act.performer}">Receptionist Sarah</td>
+                        <td><span class="status" th:classappend="${act.statusClass}" th:text="${act.status}">CONFIRMED</span></td>
+                        <td th:text="${act.note}">Guest booked Ocean Suite</td>
                     </tr>
-
-                    <tr>
-                        <td>10:18</td>
-                        <td>
-                            <span class="activity-badge room">
-                                <i class="fa-solid fa-bed"></i>
-                                Room
-                            </span>
-                        </td>
-                        <td>Room 502</td>
-                        <td>System</td>
-                        <td><span class="status status-warning">CLEANING</span></td>
-                        <td>Sau khi khách check-out</td>
-                    </tr>
-
-                    <tr>
-                        <td>10:06</td>
-                        <td>
-                            <span class="activity-badge payment">
-                                <i class="fa-solid fa-credit-card"></i>
-                                Payment
-                            </span>
-                        </td>
-                        <td>Invoice #INV8821</td>
-                        <td>Receptionist Mai</td>
-                        <td><span class="status status-success">PAID</span></td>
-                        <td>Thanh toán bằng E-Wallet</td>
-                    </tr>
-
-                    <tr>
-                        <td>09:52</td>
-                        <td>
-                            <span class="activity-badge service">
-                                <i class="fa-solid fa-bell-concierge"></i>
-                                Service
-                            </span>
-                        </td>
-                        <td>Service Order #SV221</td>
-                        <td>Service Staff Vy</td>
-                        <td><span class="status status-info">DELIVERED</span></td>
-                        <td>Minibar Room 204</td>
-                    </tr>
-
                     </tbody>
                 </table>
             </div>

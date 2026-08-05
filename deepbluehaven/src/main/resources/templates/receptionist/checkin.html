@@ -1,171 +1,207 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check-in / Out Management | Deep Blue Haven</title>
+    <title>Guest Check-In Management | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
-<div class="admin-layout">
+    <div class="receptionist-layout">
 
-    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
+        <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
 
-    <main class="admin-main">
+        <main class="receptionist-main">
 
-        <section class="account-panel">
-
-            <div class="panel-header">
+            <!-- HERO -->
+            <section class="dashboard-hero">
                 <div>
-                    <h2><strong>Front Desk Check-in & Check-out Desk</strong></h2>
+                    <span class="page-label"><i class="fa-solid fa-key"></i> Front Desk Check-In</span>
+                    <h1>Guest Check-In & Room Assignment</h1>
                 </div>
-                <div style="display: flex; align-items: center; gap: var(--space-12);">
-                    <button class="btn btn-small btn-success">
-                        Walk-in Check-in
+
+                <div class="hero-actions">
+                    <button type="button" class="btn btn-cta btn-medium" data-open-walkin>
+                        <i class="fa-solid fa-plus-circle"></i>
+                        Walk-In Booking
                     </button>
                 </div>
+            </section>
+
+            <!-- FLASH MESSAGES -->
+            <div th:if="${successMessage}" class="alert-banner success" th:text="${successMessage}">
+                Check-In successfully completed!
+            </div>
+            <div th:if="${errorMessage}" class="alert-banner error" th:text="${errorMessage}">
+                Check-In failed. Please try again.
             </div>
 
-            <div class="filter-bar">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search by guest name, passport, or room number...">
-                </div>
-
-                <div class="filter-dropdown">
-                    <button class="filter-btn" type="button">
-                        <span class="filter-label"><strong>All Actions</strong></span>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                    <div class="filter-menu">
-                        <button type="button"><strong>All Arrivals & Departures</strong></button>
-                        <button type="button"><strong>Pending Check-in</strong></button>
-                        <button type="button"><strong>Checked In</strong></button>
-                        <button type="button"><strong>Pending Check-out</strong></button>
+            <!-- SEARCH BAR & QUEUE -->
+            <section class="reception-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Confirmed Reservations Queue</h2>
+                    </div>
+                    <div style="width: 320px;">
+                        <input type="text" id="tableSearchInput" class="form-input"
+                            placeholder="Search by name, phone, code...">
                     </div>
                 </div>
-            </div>
 
-            <div class="table-wrapper">
-                <table class="account-table">
-                    <thead>
-                    <tr>
-                        <th>Booking ID</th>
-                        <th>Guest Info</th>
-                        <th>Room Number</th>
-                        <th>Arrival / Departure</th>
-                        <th>Payment Status</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
+                <div class="table-wrapper">
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Booking Ref</th>
+                                <th>Guest Details</th>
+                                <th>Requested Room Type</th>
+                                <th>Stay Dates</th>
+                                <th>Total Amount</th>
+                                <th>Room Assignment</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${checkInQueue}">
+                                <td><strong th:text="${item.bookingCode}">DBH-2026-001</strong></td>
+                                <td>
+                                    <strong th:text="${item.customerName}">John Smith</strong><br>
+                                    <small th:text="${item.customerPhone}">0901234567</small>
+                                </td>
+                                <td><span class="badge-status available" th:text="${item.roomTypeName}">Deluxe
+                                        Suite</span></td>
+                                <td>
+                                    <span th:text="${item.checkInDate}">2026-08-05</span> to <span
+                                        th:text="${item.checkOutDate}">2026-08-07</span><br>
+                                    <small th:text="${item.nights + ' Nights'}">2 Nights</small>
+                                </td>
+                                <td><strong th:text="${item.totalAmountStr + ' VND'}">3,500,000 VND</strong></td>
 
-                    <tbody>
-                    <tr>
-                        <td><strong>#BK-9021</strong></td>
-                        <td>
-                            <div class="user-info">
-                                <div>
-                                    <strong>Alexander Wright</strong>
-                                    <span>Passport: US-9920148</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Room 304 - Ocean Villa</td>
-                        <td>Aug 03, 14:00 PM</td>
-                        <td><span class="status status-success">PAID</span></td>
-                        <td>
-                            <button class="btn btn-small btn-success">Issue Key & Check-in</button>
-                        </td>
-                    </tr>
+                                <!-- FORM FOR CHECK-IN EXECUTION -->
+                                <form th:action="@{/receptionist/check-in/execute}" method="post">
+                                    <input type="hidden" name="bookingId" th:value="${item.bookingId}" />
+                                    <td>
+                                        <select name="roomId" class="form-select" required style="min-width: 180px;">
+                                            <option th:if="${item.assignedRoomId != null}"
+                                                th:value="${item.assignedRoomId}"
+                                                th:text="${'Room ' + item.assignedRoomNumber + ' (Assigned)'}" selected>
+                                                Room 304 (Assigned)
+                                            </option>
+                                            <option value="" th:if="${item.assignedRoomId == null}" disabled selected>--
+                                                Select Room --</option>
+                                            <option th:each="rm : ${item.availableRooms}"
+                                                th:if="${item.assignedRoomId == null || !rm.roomId.equals(item.assignedRoomId)}"
+                                                th:value="${rm.roomId}"
+                                                th:text="${'Room ' + rm.roomNumber + ' (' + rm.roomTypeName + ' - ' + rm.basePriceStr + ' VND)'}">
+                                                Room 304 (Deluxe Suite - 1,800,000 VND)
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button type="submit" class="btn btn-cta btn-small">
+                                            <i class="fa-solid fa-key"></i> Check In
+                                        </button>
+                                    </td>
+                                </form>
+                            </tr>
 
-                    <tr>
-                        <td><strong>#BK-9018</strong></td>
-                        <td>
-                            <div class="user-info">
-                                <div>
-                                    <strong>Sophia Martinez</strong>
-                                    <span>ID: 07919823019</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Room 112 - Deluxe Twin</td>
-                        <td>Aug 03, 12:00 PM (Out)</td>
-                        <td><span class="status status-success">PAID</span></td>
-                        <td>
-                            <button class="btn btn-small btn-error">Process Check-out</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td><strong>#BK-9025</strong></td>
-                        <td>
-                            <div class="user-info">
-                                <div>
-                                    <strong>Michael Chang</strong>
-                                    <span>Passport: HK-881029</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Room 208 - Superior King</td>
-                        <td>Aug 03, 15:30 PM</td>
-                        <td><span class="status status-warning">UNPAID</span></td>
-                        <td>
-                            <button class="btn btn-small btn-warning">Collect & Check-in</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td><strong>#BK-8995</strong></td>
-                        <td>
-                            <div class="user-info">
-                                <div>
-                                    <strong>Emma Watson</strong>
-                                    <span>Passport: UK-449102</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Room 502 - Penthouse</td>
-                        <td>Aug 03, 11:00 AM (Out)</td>
-                        <td><span class="status status-info">DEPOSIT_ONLY</span></td>
-                        <td>
-                            <button class="btn btn-small btn-error">Settle & Check-out</button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="table-footer">
-                <p>Showing <strong>1-4</strong> of <strong>20</strong> entries</p>
-
-                <div class="pagination">
-                    <button type="button" class="page-btn disabled">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-
-                    <button type="button" class="page-btn active">1</button>
-                    <button type="button" class="page-btn">2</button>
-                    <button type="button" class="page-btn">3</button>
-
-                    <button type="button" class="page-btn">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
+                            <tr th:if="${checkInQueue == null || checkInQueue.empty}">
+                                <td colspan="7" style="text-align: center; color: var(--neutral-500); padding: 40px;">
+                                    <i class="fa-solid fa-calendar-check"
+                                        style="font-size: 2rem; margin-bottom: 8px; display: block; color: var(--neutral-400);"></i>
+                                    No confirmed bookings currently waiting for check-in.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- WALK-IN BOOKING MODAL -->
+    <div class="modal-backdrop" id="walkInModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-plus" style="color: #2563eb; margin-right: 8px;"></i> Walk-In Guest
+                    Booking</h3>
+                <button type="button" class="modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-        </section>
+            <form th:action="@{/receptionist/walkin-booking}" method="post">
+                <div class="form-group">
+                    <label>Guest Full Name *</label>
+                    <input type="text" name="fullName" class="form-input" placeholder="e.g. Alex Morgan" required />
+                </div>
 
-    </main>
-</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" name="phone" class="form-input" placeholder="0901234567" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" name="email" class="form-input" placeholder="guest@example.com" />
+                    </div>
+                </div>
 
-<script th:src="@{/js/admin-sidebar.js}"></script>
+                <div class="form-group">
+                    <label>Assign Available Room *</label>
+                    <select name="roomId" class="form-select" required>
+                        <option value="" disabled selected>-- Select Room --</option>
+                        <option
+                            th:each="rm : ${checkInQueue != null && !checkInQueue.empty ? checkInQueue.get(0).availableRooms : {}}"
+                            th:value="${rm.roomId}"
+                            th:text="${'Room ' + rm.roomNumber + ' (' + rm.roomTypeName + ' - ' + rm.basePriceStr + ' VND)'}">
+                            Room 304
+                        </option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div class="form-group">
+                        <label>Check-In Date</label>
+                        <input type="date" name="checkInDate" class="form-input"
+                            th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" />
+                    </div>
+                    <div class="form-group">
+                        <label>Check-Out Date</label>
+                        <input type="date" name="checkOutDate" class="form-input"
+                            th:value="${#temporals.format(#temporals.createNow().plusDays(1), 'yyyy-MM-dd')}" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select name="paymentMethod" class="form-select">
+                        <option value="CREDIT_CARD">Credit / Debit Card</option>
+                        <option value="CASH" selected>Cash Payment</option>
+                        <option value="BANK_TRANSFER">Bank Transfer</option>
+                        <option value="E_WALLET">E-Wallet (MoMo/ZaloPay)</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-cta"><i class="fa-solid fa-check-circle"></i> Create & Check
+                        In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/assets/js/receptionist-sidebar.js}"></script>
+    <script th:src="@{/assets/js/receptionist/receptionist.js}"></script>
 </body>
+
 </html>

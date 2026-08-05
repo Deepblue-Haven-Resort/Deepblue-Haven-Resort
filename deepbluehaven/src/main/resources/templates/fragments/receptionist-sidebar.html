@@ -1,4 +1,4 @@
-<aside th:fragment="receptionistSidebar" class="admin-sidebar" id="adminSidebar">
+<aside th:fragment="receptionistSidebar" class="manager-sidebar" id="receptionistSidebar">
 
     <button class="sidebar-toggle" id="sidebarToggle" type="button">
         <i class="fa-solid fa-bars"></i>
@@ -8,32 +8,26 @@
 
         <a th:href="@{/receptionist/dashboard}"
            th:class="${activePage == 'dashboard'} ? 'sidebar-item active' : 'sidebar-item'">
-            <i class="fa-solid fa-chart-pie"></i>
-            <span>Dashboard</span>
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>Operations Desk</span>
         </a>
 
-        <a th:href="@{/receptionist/checkin}"
-           th:class="${activePage == 'checkin'} ? 'sidebar-item active' : 'sidebar-item'">
+        <a th:href="@{/receptionist/check-in}"
+           th:class="${activePage == 'check-in'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-key"></i>
-            <span>Check-in / Out</span>
+            <span>Check-In Queue</span>
         </a>
 
-        <a th:href="@{/receptionist/bookings}"
-           th:class="${activePage == 'bookings'} ? 'sidebar-item active' : 'sidebar-item'">
-            <i class="fa-solid fa-calendar-check"></i>
-            <span>Bookings</span>
+        <a th:href="@{/receptionist/check-out}"
+           th:class="${activePage == 'check-out'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-receipt"></i>
+            <span>Check-Out & Folio</span>
         </a>
 
-        <a th:href="@{/receptionist/guests}"
-           th:class="${activePage == 'guests'} ? 'sidebar-item active' : 'sidebar-item'">
-            <i class="fa-solid fa-users"></i>
-            <span>Guest Directory</span>
-        </a>
-
-        <a th:href="@{/receptionist/profile}"
-           th:class="${activePage == 'profile'} ? 'sidebar-item active' : 'sidebar-item'">
-            <i class="fa-solid fa-user"></i>
-            <span>My Profile</span>
+        <a th:href="@{/receptionist/room-grid}"
+           th:class="${activePage == 'room-grid'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-border-all"></i>
+            <span>Room Rack Grid</span>
         </a>
 
     </nav>

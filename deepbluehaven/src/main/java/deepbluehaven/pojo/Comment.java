@@ -53,6 +53,9 @@ public class Comment {
     @Column(name = "rating", nullable = false)
     private Integer rating;
 
+    @Column(name = "is_complaint", nullable = false)
+    private Boolean isComplaint = false;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "comment_images", joinColumns = @JoinColumn(name = "comment_id"))
     @Column(name = "image_url", length = 255)
@@ -63,6 +66,11 @@ public class Comment {
     private LocalDateTime createdAt;
 
     public Comment() {}
+
+    public Boolean getIsComplaint() {
+        return isComplaint; }
+    public void setIsComplaint(Boolean isComplaint) {
+        this.isComplaint = isComplaint; }
 
 
     public Long getId() { 

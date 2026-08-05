@@ -59,7 +59,18 @@ public class WorkerProfile {
     @Column(name = "address", nullable = true, length = 255, columnDefinition = "NVARCHAR(255)")
     private String address;
 
+    @Column(name = "performance_score", nullable = true)
+    private Double performanceScore = 90.0;
+
     public WorkerProfile() {
+    }
+
+    public Double getPerformanceScore() {
+        return performanceScore;
+    }
+
+    public void setPerformanceScore(Double performanceScore) {
+        this.performanceScore = performanceScore;
     }
 
     public Long getWorkerId() {

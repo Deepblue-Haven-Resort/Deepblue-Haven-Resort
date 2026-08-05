@@ -49,6 +49,9 @@ public class Task {
     @Column(name = "action", nullable = false, length = 100)
     private String action;
 
+    @Column(name = "due_time", nullable = true)
+    private LocalDateTime dueTime;
+
     @CreationTimestamp
     @Column(name = "timestamp", nullable = false, updatable = false)
     private LocalDateTime timestamp;
@@ -88,6 +91,11 @@ public class Task {
         return action; }
     public void setAction(String action) { 
         this.action = action; }
+
+    public LocalDateTime getDueTime() {
+        return dueTime; }
+    public void setDueTime(LocalDateTime dueTime) {
+        this.dueTime = dueTime; }
 
     public LocalDateTime getTimestamp() { 
         return timestamp; }

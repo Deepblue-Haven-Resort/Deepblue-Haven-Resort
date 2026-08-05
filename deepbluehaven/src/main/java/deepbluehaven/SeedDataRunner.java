@@ -32,7 +32,6 @@ import deepbluehaven.pojo.InvoiceStatusLog;
 import deepbluehaven.pojo.Log;
 import deepbluehaven.pojo.MembershipTier;
 import deepbluehaven.pojo.Notification;
-import deepbluehaven.pojo.enums.NotificationType;
 import deepbluehaven.pojo.PaymentTransaction;
 import deepbluehaven.pojo.PricingRule;
 import deepbluehaven.pojo.Resort;
@@ -60,9 +59,11 @@ import deepbluehaven.pojo.enums.DiscountType;
 import deepbluehaven.pojo.enums.Gender;
 import deepbluehaven.pojo.enums.InvoiceStatus;
 import deepbluehaven.pojo.enums.MessageType;
+import deepbluehaven.pojo.enums.NotificationType;
 import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.pojo.enums.PaymentMethod;
 import deepbluehaven.pojo.enums.PaymentType;
+import deepbluehaven.pojo.enums.PermissionTag;
 import deepbluehaven.pojo.enums.ReferenceType;
 import deepbluehaven.pojo.enums.Role;
 import deepbluehaven.pojo.enums.RoomStatus;
@@ -84,13 +85,9 @@ public class SeedDataRunner implements CommandLineRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(SeedDataRunner.class);
 
     private static final String SEED_SENTINEL = "seed_admin_001";
-
     private static final String DEFAULT_PASSWORD = "password";
 
     private final BCryptPasswordEncoder passwordEncoder;
-
-    private static final LocalDate BASE_DATE = LocalDate.of(2026, 8, 1);
-    private static final LocalDateTime BASE_TIME = LocalDateTime.of(2026, 7, 21, 8, 0);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -103,10 +100,11 @@ public class SeedDataRunner implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
         if (isSeeded()) {
-            seedNotificationsIfEmpty();
-            LOGGER.info("Seed data đã tồn tại. Bỏ qua SeedDataRunner.");
+            LOGGER.info("Seed data  already exists. Skipping SeedDataRunner.");
             return;
         }
+
+        LOGGER.info("Starting SeedDataRunner...");
 
         List<MembershipTier> membershipTiers = seedMembershipTiers();
         List<Resort> resorts = seedResorts();
@@ -151,7 +149,7 @@ public class SeedDataRunner implements CommandLineRunner {
         seedChatMessages(chatSessions, customers, workers);
 
         List<InventoryItem> inventoryItems = seedInventoryItems(resorts, suppliers);
-        seedInventoryTransactions(inventoryItems);
+        seedInventoryTransactions(inventoryItems, workers);
 
         seedCustomerLoyaltyLogs(customers, bookings, serviceOrders);
         seedAuthAccessLogs(customers, workers);
@@ -159,13 +157,12 @@ public class SeedDataRunner implements CommandLineRunner {
         seedSystemLogs(bookings, rooms, tasks, inventoryItems, invoices, customers, workers);
 
         entityManager.flush();
-        LOGGER.info("Đã seed thành công dữ liệu cho 34 entity và các bảng ElementCollection.");
+        LOGGER.info("Successfully seeded dataset (~100 rows per entity, 2-week window, English).");
     }
 
     private boolean isSeeded() {
         Long count = entityManager.createQuery(
-                "select count(w) from Worker w where w.username = :username",
-                Long.class)
+                "select count(w) from Worker w where w.username = :username", Long.class)
                 .setParameter("username", SEED_SENTINEL)
                 .getSingleResult();
         return count > 0;
@@ -186,7 +183,7 @@ public class SeedDataRunner implements CommandLineRunner {
             tier.setPointMultiplier(new BigDecimal(multipliers[i]));
             tier.setDiscountRate(new BigDecimal(discountRates[i]));
             tier.setPriorityDuration(priorityDurations[i]);
-            tier.setDescription("Hạng thành viên " + statuses[i].name());
+            tier.setDescription("Membership Tier: " + statuses[i].name());
             persist(tier);
             tiers.add(tier);
         }
@@ -196,11 +193,11 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private List<Resort> seedResorts() {
         String[][] data = {
-                { "Deep Blue Haven Đà Nẵng", "Võ Nguyên Giáp, Đà Nẵng" },
-                { "Deep Blue Haven Nha Trang", "Trần Phú, Nha Trang" },
-                { "Deep Blue Haven Phú Quốc", "Bãi Trường, Phú Quốc" },
-                { "Deep Blue Haven Quy Nhơn", "Ghềnh Ráng, Quy Nhơn" },
-                { "Deep Blue Haven Hạ Long", "Bãi Cháy, Hạ Long" }
+                { "Deep Blue Haven Danang Beach Resort", "Vo Nguyen Giap Coastal Highway, Danang City" },
+                { "Deep Blue Haven Nha Trang Bay Resort", "Tran Phu Ocean Boulevard, Nha Trang City" },
+                { "Deep Blue Haven Phu Quoc Island Resort", "Bai Truong Sunset Coast, Phu Quoc Island" },
+                { "Deep Blue Haven Quy Nhon Cliff Resort", "Ghenh Rang Seaside, Quy Nhon City" },
+                { "Deep Blue Haven Halong Luxury Resort", "Bai Chay Coastal Area, Halong City" }
         };
 
         List<Resort> resorts = new ArrayList<>();
@@ -208,7 +205,7 @@ public class SeedDataRunner implements CommandLineRunner {
             Resort resort = new Resort();
             resort.setName(data[i][0]);
             resort.setLocation(data[i][1]);
-            resort.setScript("Kịch bản giới thiệu và chăm sóc khách hàng tại " + data[i][0]);
+            resort.setScript("Welcome and VIP guest experience protocol for " + data[i][0]);
             persist(resort);
             resorts.add(resort);
         }
@@ -218,20 +215,20 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private List<Supplier> seedSuppliers() {
         String[] names = {
-                "Ocean Supply",
-                "Blue Linen",
-                "Fresh Food Partner",
-                "Green Amenities",
-                "Premium Equipment"
+                "Oceanic Amenity Supplies",
+                "Blue Velvet Linen & Fabric Co.",
+                "Fresh Harbor Food & Beverage Services",
+                "EcoGreen Housekeeping Essentials",
+                "Apex Resort Equipment & Maintenance"
         };
 
         List<Supplier> suppliers = new ArrayList<>();
         for (int i = 0; i < names.length; i++) {
             Supplier supplier = new Supplier();
             supplier.setName(names[i]);
-            supplier.setPhoneNumber(String.format("09080000%02d", i + 1));
-            supplier.setEmail("supplier" + (i + 1) + "@deepbluehaven.test");
-            supplier.setAddress("Địa chỉ nhà cung cấp số " + (i + 1));
+            supplier.setPhoneNumber(String.format("+1-800-555-%04d", i + 101));
+            supplier.setEmail("contact@supplier" + (i + 1) + ".deepbluehaven.com");
+            supplier.setAddress("Industrial Zone " + (i + 1) + ", Supply Logistics Park");
             persist(supplier);
             suppliers.add(supplier);
         }
@@ -242,30 +239,21 @@ public class SeedDataRunner implements CommandLineRunner {
     private List<Worker> seedWorkers() {
         List<Worker> workers = new ArrayList<>();
 
-        WorkerStatus[] statuses = WorkerStatus.values();
-
-        for (int i = 0; i < 5; i++) {
-            WorkerStatus status = statuses[i % statuses.length];
+        for (int i = 0; i < 25; i++) {
+            WorkerStatus status = (i == 23) ? WorkerStatus.LOCKED : WorkerStatus.ACTIVE;
 
             Worker worker = new Worker();
-            worker.setEmployeeCode(
-                    String.format("SEED-EMP-%03d", i + 1));
-
+            worker.setEmployeeCode(String.format("SEED-EMP-%03d", i + 1));
             worker.setUsername(
                     i == 0
                             ? SEED_SENTINEL
-                            : String.format(
-                                    "seed_worker_%03d",
-                                    i + 1));
+                            : String.format("seed_worker_%03d", i + 1));
 
-            worker.setPasswordHash(
-                    passwordEncoder.encode(DEFAULT_PASSWORD));
-
+            worker.setPasswordHash(passwordEncoder.encode(DEFAULT_PASSWORD));
             worker.setStatus(status);
             worker.setLocked(status == WorkerStatus.LOCKED);
             worker.setForceChangePassword(false);
-            worker.setCreatedAt(
-                    BASE_TIME.minusDays(30L - i));
+            worker.setCreatedAt(LocalDateTime.now().minusDays(30 - i));
 
             persist(worker);
             workers.add(worker);
@@ -276,936 +264,667 @@ public class SeedDataRunner implements CommandLineRunner {
     }
 
     private void seedWorkerProfiles(List<Worker> workers) {
-        String[] names = {
-                "Nguyễn Minh Quản Trị",
-                "Trần Hải Quản Lý",
-                "Lê Thu Lễ Tân",
-                "Phạm An Buồng Phòng",
-                "Võ Bình Lễ Tân"
-        };
+        String[] firstNames = { "John", "Sarah", "Michael", "Emily", "David", "Jessica", "James", "Laura", "Robert",
+                "Emma", "Daniel", "Olivia", "William", "Sophia", "Alexander", "Isabella", "Ethan", "Mia", "Matthew",
+                "Charlotte", "Joseph", "Amelia", "Henry", "Harper", "Andrew" };
+        String[] lastNames = { "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis",
+                "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor",
+                "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson", "White", "Harris" };
 
         Role[] roles = Role.values();
         Gender[] genders = Gender.values();
+
         for (int i = 0; i < workers.size(); i++) {
             WorkerProfile profile = new WorkerProfile();
             profile.setWorker(workers.get(i));
-            profile.setFullName(names[i]);
-            profile.setRole(roles[i % roles.length]);
+            profile.setFullName(firstNames[i] + " " + lastNames[i % lastNames.length]);
+            Role role = (i == 0 || i == 1) ? Role.ADMIN
+                    : (i < 5 ? Role.MANAGER : (i < 12 ? Role.RECEPTIONIST : Role.HOUSEKEEPER));
+            profile.setRole(role);
             profile.setRoleLevel((i % 4) + 1);
-            profile.setPhoneNumber(String.format("09110000%02d", i + 1));
-            profile.setEmail("worker" + (i + 1) + "@deepbluehaven.test");
-            profile.setDepartment(defaultDepartment(roles[i % roles.length]));
+            profile.setPhoneNumber(String.format("+1-555-%03d-%04d", (i * 17) % 900 + 100, (i * 31) % 9000 + 1000));
+            profile.setEmail(firstNames[i].toLowerCase() + "." + lastNames[i % lastNames.length].toLowerCase()
+                    + "@deepbluehaven.com");
+            profile.setDepartment(defaultDepartment(role));
             profile.setGender(genders[i % genders.length]);
-            profile.setDateOfBirth(
-                    LocalDate.of(
-                            1985 + i,
-                            1 + i,
-                            10 + i));
-            profile.setAddress(
-                    "Địa chỉ nhân viên seed số " + (i + 1));
-
-            workers.get(i).setProfile(profile);
+            profile.setDateOfBirth(LocalDate.of(1985 + (i % 15), (i % 12) + 1, (i % 25) + 1));
+            profile.setAddress(100 + i * 12 + " Ocean Boulevard, Suite " + (i + 1));
+            profile.setPerformanceScore(75.0 + (i % 24) * 0.9);
             persist(profile);
         }
         entityManager.flush();
     }
 
-    private int defaultRoleLevel(Role role) {
-        switch (role) {
-            case ADMIN:
-                return 4;
-            case MANAGER:
-                return 3;
-            case RECEPTIONIST:
-                return 2;
-            case HOUSEKEEPER:
-                return 1;
-            default:
-                throw new IllegalArgumentException(
-                        "Role không được hỗ trợ: " + role);
-        }
-    }
-
     private Department defaultDepartment(Role role) {
-        switch (role) {
-            case ADMIN:
-                return Department.ADMINISTRATION;
-            case MANAGER:
-                return Department.MANAGEMENT;
-            case RECEPTIONIST:
-                return Department.RECEPTION;
-            case HOUSEKEEPER:
-                return Department.HOUSEKEEPING;
-            default:
-                throw new IllegalArgumentException(
-                        "Role không được hỗ trợ: " + role);
-        }
+        if (role == null)
+            return Department.RECEPTION;
+        return switch (role) {
+            case ADMIN, MANAGER -> Department.MANAGEMENT;
+            case RECEPTIONIST -> Department.RECEPTION;
+            case HOUSEKEEPER -> Department.HOUSEKEEPING;
+        };
     }
 
     private void seedWorkerRoleTags(List<Worker> workers) {
-        if (workers == null || workers.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Danh sách worker không được null hoặc rỗng");
+        PermissionTag[] tags = PermissionTag.values();
+        for (int i = 0; i < workers.size(); i++) {
+            Worker worker = workers.get(i);
+            WorkerRoleTag mainTag = new WorkerRoleTag(worker, tags[i % tags.length],
+                    "Granted system role permission tag");
+            persist(mainTag);
         }
-
-        for (Worker worker : workers) {
-            if (worker == null) {
-                throw new IllegalArgumentException(
-                        "Worker trong danh sách không được null");
-            }
-
-            WorkerProfile profile = worker.getProfile();
-
-            if (profile == null) {
-                throw new IllegalStateException(
-                        "Worker " + worker.getUsername()
-                                + " chưa có WorkerProfile");
-            }
-
-            Role role = profile.getRole();
-
-            if (role == null) {
-                throw new IllegalStateException(
-                        "Worker " + worker.getUsername()
-                                + " chưa được gán Role");
-            }
-
-            worker.applyDefaultPermissions(role);
-
-            for (WorkerRoleTag roleTag : worker.getRoleTags()) {
-                if (roleTag.getWorker() == null) {
-                    roleTag.setWorker(worker);
-                }
-
-                if (roleTag.getPermissionTag() == null) {
-                    throw new IllegalStateException(
-                            "Permission của worker "
-                                    + worker.getUsername()
-                                    + " không được null");
-                }
-
-                if (roleTag.getId() == null) {
-                    persist(roleTag);
-                }
-            }
-        }
-
         entityManager.flush();
     }
 
     private List<Customer> seedCustomers() {
         List<Customer> customers = new ArrayList<>();
-
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 40; i++) {
             Customer customer = new Customer();
-
-            customer.setUsername(
-                    String.format(
-                            "seed_customer_%03d",
-                            i + 1));
-
-            customer.setPasswordHash(
-                    passwordEncoder.encode(DEFAULT_PASSWORD));
-
-            customer.setCreatedAt(
-                    BASE_TIME.minusDays(20L - i));
+            customer.setUsername(String.format("seed_customer_%03d", i + 1));
+            customer.setPasswordHash(passwordEncoder.encode(DEFAULT_PASSWORD));
+            customer.setCreatedAt(LocalDateTime.now().minusDays(60 - i));
 
             persist(customer);
             customers.add(customer);
         }
-
         entityManager.flush();
         return customers;
     }
 
-    private void seedCustomerProfiles(
-            List<Customer> customers,
-            List<MembershipTier> membershipTiers) {
-
-        String[] names = {
-                "Nguyễn An",
-                "Trần Bình",
-                "Lê Chi",
-                "Phạm Dũng",
-                "Võ Giang"
-        };
-        String[] segments = {
-                "NEW",
-                "REGULAR",
-                "LOYAL",
-                "VIP",
-                "PREMIUM"
-        };
+    private void seedCustomerProfiles(List<Customer> customers, List<MembershipTier> tiers) {
+        String[] firstNames = { "Oliver", "Charlotte", "Liam", "Amelia", "Noah", "Harper", "Elijah", "Evelyn", "Lucas",
+                "Abigail", "Mason", "Emily", "Logan", "Elizabeth", "Ethan", "Mila", "Jacob", "Ella", "Jack", "Avery",
+                "Michael", "Sofia", "Benjamin", "Camila", "William", "Aria", "James", "Scarlett", "Alexander",
+                "Victoria", "Sebastian", "Madison", "Henry", "Luna", "Samuel", "Grace", "Jackson", "Chloe", "Levi",
+                "Penelope" };
+        String[] lastNames = { "Clark", "Lewis", "Robinson", "Walker", "Young", "Allen", "King", "Wright", "Scott",
+                "Torres", "Nguyen", "Hill", "Flores", "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell",
+                "Mitchell", "Carter", "Roberts", "Gomez", "Phillips", "Evans", "Turner", "Diaz", "Parker", "Cruz",
+                "Edwards", "Collins", "Reyes", "Stewart", "Morris", "Morales", "Murphy", "Cook", "Rogers",
+                "Gutierrez" };
 
         for (int i = 0; i < customers.size(); i++) {
             CustomerProfile profile = new CustomerProfile();
             profile.setCustomer(customers.get(i));
-            profile.setBirthDay(LocalDate.of(1988 + i, 2 + i, 10 + i));
-            profile.setFullName(names[i]);
-            profile.setPhoneNumber(String.format("09220000%02d", i + 1));
-            profile.setEmail("customer" + (i + 1) + "@deepbluehaven.test");
-            profile.setTotalBookings(i * 3);
-            profile.setTotalSpent(BigDecimal.valueOf((long) i * 8_500_000L));
-            profile.setTotalPoints(i * 7_500);
-            profile.setSegment(segments[i]);
-            profile.setMembershipTier(membershipTiers.get(i));
-
-            customers.get(i).setProfile(profile);
+            profile.setFullName(firstNames[i] + " " + lastNames[i]);
+            profile.setPhoneNumber(String.format("+1-555-888-%04d", i + 1000));
+            profile.setEmail(firstNames[i].toLowerCase() + "." + lastNames[i].toLowerCase() + "@example.com");
+            profile.setBirthDay(LocalDate.of(1980 + (i % 20), (i % 12) + 1, (i % 25) + 1));
+            profile.setTotalBookings(i % 5 + 1);
+            profile.setTotalSpent(BigDecimal.valueOf(i * 1500000L));
+            profile.setTotalPoints(i * 450);
+            profile.setSegment(i % 2 == 0 ? "LEISURE" : "BUSINESS");
+            profile.setMembershipTier(tiers.get(i % tiers.size()));
             persist(profile);
         }
         entityManager.flush();
     }
 
     private List<Room> seedRooms(List<Resort> resorts) {
-        RoomType[] roomTypes = RoomType.values();
-        RoomStatus[] roomStatuses = RoomStatus.values();
-        RoomTag[] roomTags = RoomTag.values();
-        Amenity[] amenities = Amenity.values();
-
         List<Room> rooms = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            Room room = new Room();
-            room.setResort(resorts.get(i));
-            room.setRoomNumber(String.format("%d01", i + 1));
-            room.setRoomType(roomTypes[i % roomTypes.length]);
-            room.setTags(List.of(roomTags[i]));
-            room.setDescription("Phòng mẫu số " + (i + 1) + " thuộc " + resorts.get(i).getName());
-            room.setImages(List.of(
-                    "/images/rooms/seed-room-" + (i + 1) + "-1.jpg",
-                    "/images/rooms/seed-room-" + (i + 1) + "-2.jpg"));
-            room.setAmenities(distributeAmenities(amenities, i, 5));
-            room.setPlanUrl("/plans/seed-room-" + (i + 1) + ".pdf");
-            room.setArea(32 + i * 12);
-            room.setStatus(roomStatuses[i % roomStatuses.length]);
-            room.setCapacity(2 + (i % 4));
-            room.setBasePrice(BigDecimal.valueOf(1_500_000L + i * 1_000_000L));
-            persist(room);
-            rooms.add(room);
-        }
+        RoomType[] roomTypes = RoomType.values();
 
+        int roomCounter = 0;
+        for (int floor = 1; floor <= 5; floor++) {
+            for (int r = 1; r <= 14; r++) {
+                roomCounter++;
+                String roomNum = String.format("%d%02d", floor, r);
+                Room room = new Room();
+                room.setResort(resorts.get(roomCounter % resorts.size()));
+                room.setRoomNumber(roomNum);
+                RoomType type = roomTypes[roomCounter % roomTypes.length];
+                room.setRoomType(type);
+                room.setDescription("Luxurious " + type.name()
+                        + " with panoramic ocean views, private balcony, and king-size bedding.");
+                room.setCapacity((floor % 3) + 2);
+                room.setBasePrice(BigDecimal.valueOf(1500000L + (floor * 500000L) + (r * 100000L)));
+                room.setArea(35 + floor * 10);
+                room.setPlanUrl("/assets/images/rooms/plan-" + type.name().toLowerCase() + ".png");
+
+                RoomStatus status;
+                if (roomCounter % 7 == 0)
+                    status = RoomStatus.MAINTENANCE;
+                else if (roomCounter % 5 == 0)
+                    status = RoomStatus.CLEANING;
+                else if (roomCounter % 2 == 0)
+                    status = RoomStatus.OCCUPIED;
+                else
+                    status = RoomStatus.AVAILABLE;
+
+                room.setStatus(status);
+                room.getTags().add(RoomTag.OCEAN_VIEW);
+                room.getImages().add("/assets/images/rooms/room-" + (roomCounter % 5 + 1) + ".jpg");
+
+                for (Amenity a : Amenity.values()) {
+                    if (roomCounter % 2 == 0)
+                        room.getAmenities().add(a);
+                }
+
+                persist(room);
+                rooms.add(room);
+            }
+        }
         entityManager.flush();
         return rooms;
     }
 
-    private List<Amenity> distributeAmenities(
-            Amenity[] amenities,
-            int roomIndex,
-            int roomCount) {
-
-        List<Amenity> result = new ArrayList<>();
-        for (int i = roomIndex; i < amenities.length; i += roomCount) {
-            result.add(amenities[i]);
-        }
-        return result;
-    }
-
     private void seedRoomHighlights(List<Room> rooms) {
-        String[] titles = {
-                "Không gian yên tĩnh",
-                "Tầm nhìn đẹp",
-                "Thiết kế hiện đại",
-                "Gần tiện ích",
-                "Dịch vụ cao cấp"
-        };
-
+        String[] titles = { "Panoramic Ocean View", "Private Infinity Jacuzzi", "King Size Master Bed",
+                "Executive Lounge Access", "High-Speed Wi-Fi" };
         for (int i = 0; i < rooms.size(); i++) {
-            RoomHighlight highlight = new RoomHighlight();
-            highlight.setRoom(rooms.get(i));
-            highlight.setTitle(titles[i]);
-            highlight.setDescription("Điểm nổi bật của phòng " + rooms.get(i).getRoomNumber());
-            persist(highlight);
+            Room r = rooms.get(i);
+            for (int h = 0; h < 2; h++) {
+                RoomHighlight highlight = new RoomHighlight();
+                highlight.setRoom(r);
+                highlight.setTitle(titles[(i + h) % titles.length]);
+                highlight.setDescription("Premium feature provided in room " + r.getRoomNumber());
+                persist(highlight);
+            }
         }
         entityManager.flush();
     }
 
     private void seedRoomStatusLogs(List<Room> rooms, List<Worker> workers) {
         for (int i = 0; i < rooms.size(); i++) {
-            RoomStatusLog statusLog = new RoomStatusLog();
-            statusLog.setRoom(rooms.get(i));
-            statusLog.setWorker(workers.get(i));
-            statusLog.setPreviousStatus(i == 0 ? null : RoomStatus.AVAILABLE);
-            statusLog.setCurrentStatus(rooms.get(i).getStatus());
-            statusLog.setTimestamp(BASE_TIME.minusHours(10 - i));
-            persist(statusLog);
+            Room r = rooms.get(i);
+            RoomStatusLog log = new RoomStatusLog();
+            log.setRoom(r);
+            log.setWorker(workers.get(i % workers.size()));
+            log.setPreviousStatus(RoomStatus.CLEANING);
+            log.setCurrentStatus(r.getStatus());
+            log.setTimestamp(LocalDateTime.now().minusDays(i % 14).minusHours(i % 12));
+            persist(log);
         }
         entityManager.flush();
     }
 
     private void seedWorkerRoomAssignmentLogs(List<Room> rooms, List<Worker> workers) {
         for (int i = 0; i < rooms.size(); i++) {
-            WorkerRoomAssignmentLog assignment = new WorkerRoomAssignmentLog();
-            assignment.setWorker(workers.get((i + 1) % workers.size()));
-            assignment.setRoom(rooms.get(i));
-            assignment.setAction(i % 2 == 0 ? "ASSIGNED" : "REASSIGNED");
-            assignment.setUpdatedBy(workers.get(0));
-            assignment.setTimestamp(BASE_TIME.minusHours(5 - i));
-            persist(assignment);
+            WorkerRoomAssignmentLog log = new WorkerRoomAssignmentLog();
+            log.setRoom(rooms.get(i));
+            log.setWorker(workers.get(i % workers.size()));
+            log.setUpdatedBy(workers.get(0));
+            log.setAction("Assigned housekeeping inspection for Room " + rooms.get(i).getRoomNumber());
+            log.setTimestamp(LocalDateTime.now().minusDays(i % 14));
+            persist(log);
         }
         entityManager.flush();
     }
 
     private List<TaskType> seedTaskTypes() {
-        String[][] data = {
-                { "Dọn phòng", "Vệ sinh và chuẩn bị phòng" },
-                { "Kiểm tra phòng", "Kiểm tra phòng trước khi đón khách" },
-                { "Bảo trì điện", "Kiểm tra hệ thống điện" },
-                { "Bổ sung minibar", "Bổ sung hàng hóa minibar" },
-                { "Xử lý yêu cầu khách", "Xử lý yêu cầu phát sinh" }
+        String[][] types = {
+                { "Routine Housekeeping", "Clean & sanitize room after guest check-out" },
+                { "Deep Sanitation & Turnover", "Full deep cleaning, linen change, and disinfection" },
+                { "AC Maintenance & Filter Check", "HVAC unit maintenance, air filter cleaning" },
+                { "Plumbing & Fixture Repair", "Inspect bathroom fixtures and piping" },
+                { "Minibar Stocking & Check", "Restock minibar items and verify inventory" }
         };
 
-        List<TaskType> taskTypes = new ArrayList<>();
-        for (int i = 0; i < data.length; i++) {
-            TaskType taskType = new TaskType();
-            taskType.setName(data[i][0]);
-            taskType.setDescription(data[i][1]);
-            taskType.setRequiredLevel((i % 4) + 1);
-            taskType.setIsActive(i != 4);
-            persist(taskType);
-            taskTypes.add(taskType);
+        List<TaskType> list = new ArrayList<>();
+        for (String[] t : types) {
+            TaskType tt = new TaskType();
+            tt.setName(t[0]);
+            tt.setDescription(t[1]);
+            tt.setRequiredLevel(1);
+            tt.setIsActive(true);
+            persist(tt);
+            list.add(tt);
         }
         entityManager.flush();
-        return taskTypes;
+        return list;
     }
 
-    private List<Task> seedTasks(
-            List<Room> rooms,
-            List<TaskType> taskTypes,
-            List<Worker> workers) {
-
-        TaskStatus[] statuses = TaskStatus.values();
+    private List<Task> seedTasks(List<Room> rooms, List<TaskType> taskTypes, List<Worker> workers) {
         List<Task> tasks = new ArrayList<>();
+        TaskStatus[] statuses = TaskStatus.values();
 
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 90; i++) {
             Task task = new Task();
-            task.setRoom(rooms.get(i % rooms.size()));
+            Room room = rooms.get(i % rooms.size());
+            task.setRoom(room);
             task.setTaskType(taskTypes.get(i % taskTypes.size()));
-            task.setAssignedBy(workers.get(0));
-            // Gán cho Pham An (index 3) để hiển thị trên dashboard của housekeeper
-            task.setAssignedTo(workers.size() > 3 ? workers.get(3) : workers.get(i % workers.size()));
-            task.setStatus(statuses[i % statuses.length]);
-            
-            String[] actions = {
-                "Bed Linen Change & Routine",
-                "Checkout Room Cleaning",
-                "Towel & Minibar Restock",
-                "Low Shower Pressure Inspection",
-                "Deep Clean After Maintenance",
-                "Air Conditioner Filter Wash"
-            };
-            task.setAction(actions[i % actions.length]);
-            task.setTimestamp(BASE_TIME.plusHours(i));
+            task.setAssignedBy(workers.get(1));
+            task.setAssignedTo(workers.get(5 + (i % 15)));
+            TaskStatus status = statuses[i % statuses.length];
+            task.setStatus(status);
+            task.setAction("Perform " + task.getTaskType().getName() + " in Room " + room.getRoomNumber());
+
+            LocalDateTime baseTime = LocalDateTime.now().minusDays(14 - (i % 14)).withHour(8 + (i % 10)).withMinute(0);
+            if (i == 5) {
+                task.setDueTime(LocalDateTime.now().minusMinutes(25));
+                task.setStatus(TaskStatus.CLEANING);
+                task.setAction("Clean Room 410 delayed by 25 minutes");
+            } else {
+                task.setDueTime(baseTime.plusMinutes(60));
+            }
+
+            task.setTimestamp(baseTime);
+
             persist(task);
             tasks.add(task);
         }
-
         entityManager.flush();
         return tasks;
     }
 
     private void seedPricingRules() {
         RoomType[] roomTypes = RoomType.values();
-        String[] multipliers = { "1.00", "1.15", "1.30", "1.50", "0.90" };
-
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < roomTypes.length; i++) {
             PricingRule rule = new PricingRule();
-            rule.setRoomType(roomTypes[i % roomTypes.length]);
-            rule.setMultiplier(new BigDecimal(multipliers[i]));
-            rule.setStartDate(BASE_DATE.plusMonths(i));
-            rule.setEndDate(BASE_DATE.plusMonths(i + 1).minusDays(1));
+            rule.setRoomType(roomTypes[i]);
+            rule.setMultiplier(new BigDecimal("1.15"));
+            rule.setStartDate(LocalDate.now().minusDays(30));
+            rule.setEndDate(LocalDate.now().plusDays(90));
             persist(rule);
         }
         entityManager.flush();
     }
 
     private List<Service> seedServices(List<Resort> resorts) {
-        ServiceCategory[] categories = ServiceCategory.values();
-        ServiceStatus[] statuses = ServiceStatus.values();
-
-        String[] names = {
-                "Bữa sáng tại phòng",
-                "Giặt ủi nhanh",
-                "Massage thư giãn",
-                "Đưa đón sân bay",
-                "Minibar cao cấp",
-                "Thuê dụng cụ thể thao",
-                "Trang trí phòng"
-        };
-        String[] units = {
-                "suất",
-                "kg",
-                "lượt",
-                "chuyến",
-                "sản phẩm",
-                "giờ",
-                "gói"
+        String[][] servicesData = {
+                { "Gourmet Breakfast Buffet", "Full continental and Asian breakfast spread", "350000",
+                        "FOOD_BEVERAGE", "F&B Buffet", "Per Person" },
+                { "In-Room Dining F&B", "24/7 dining served to room", "500000", "FOOD_BEVERAGE", "In-Room Order",
+                        "Per Order" },
+                { "Aroma Essential Spa Session", "60-minute relaxing full body aromatherapy massage", "850000",
+                        "SPA", "Wellness Massage", "Per Session" },
+                { "Express Laundry Service", "Wash, press, and fold laundry service", "200000", "LAUNDRY",
+                        "Laundry Care", "Per Basket" },
+                { "Airport Luxury Shuttle", "Private airport pickup and dropoff service", "450000", "TRANSPORT",
+                        "Airport Transfer", "Per Trip" },
+                { "Scuba Diving Experience", "Guided coral reef scuba diving excursion", "1200000", "SPORT",
+                        "Outdoor Tour", "Per Person" }
         };
 
         List<Service> services = new ArrayList<>();
-        for (int i = 0; i < categories.length; i++) {
+        for (int i = 0; i < servicesData.length; i++) {
             Service service = new Service();
             service.setResort(resorts.get(i % resorts.size()));
-            service.setName(names[i]);
-            service.setDescription("Dịch vụ mẫu thuộc nhóm " + categories[i].name());
-            service.setImages(List.of("/images/services/seed-service-" + (i + 1) + ".jpg"));
-            service.setType("SEED_" + categories[i].name());
-            service.setCategory(categories[i]);
-            service.setBasePrice(BigDecimal.valueOf(150_000L + i * 175_000L));
-            service.setUnit(units[i]);
-            service.setStatus(statuses[i % statuses.length]);
+            service.setName(servicesData[i][0]);
+            service.setDescription(servicesData[i][1]);
+            service.setBasePrice(new BigDecimal(servicesData[i][2]));
+            service.setCategory(ServiceCategory.valueOf(servicesData[i][3]));
+            service.setType(servicesData[i][4]);
+            service.setUnit(servicesData[i][5]);
+            service.setStatus(ServiceStatus.ACTIVE);
+            service.getImages().add("/assets/images/services/service-" + (i + 1) + ".jpg");
             persist(service);
             services.add(service);
         }
-
         entityManager.flush();
         return services;
     }
 
     private void seedServicePoints() {
         ServiceCategory[] categories = ServiceCategory.values();
-        CalculationType[] calculationTypes = CalculationType.values();
-
         for (int i = 0; i < categories.length; i++) {
-            ServicePoint servicePoint = new ServicePoint();
-            servicePoint.setServiceCategory(categories[i]);
-            servicePoint.setCalculationType(calculationTypes[i % calculationTypes.length]);
+            ServicePoint point = new ServicePoint();
+            point.setServiceCategory(categories[i]);
+            point.setCalculationType(CalculationType.PERCENTAGE);
+            point.setFixedPoints(100 + i * 50);
+            point.setRewardPercentage(new BigDecimal("5.00"));
+            point.setIsActive(true);
+            persist(point);
+        }
+        entityManager.flush();
+    }
 
-            if (servicePoint.getCalculationType() == CalculationType.FIXED_AMOUNT) {
-                servicePoint.setFixedPoints(25 + i * 5);
-                servicePoint.setRewardPercentage(null);
-            } else {
-                servicePoint.setFixedPoints(null);
-                servicePoint.setRewardPercentage(new BigDecimal("2.50").add(BigDecimal.valueOf(i)));
+    private List<Discount> seedDiscounts(List<MembershipTier> tiers, List<Worker> workers) {
+        List<Discount> list = new ArrayList<>();
+        String[][] discounts = {
+                { "WELCOME2026", "Summer Welcome Voucher", "15.00", "500000", "PERCENTAGE" },
+                { "VIPLUXURY", "VIP Executive Discount", "25.00", "1500000", "PERCENTAGE" },
+                { "SPARELAX", "Spa Special Offer", "100000", "300000", "FIXED_AMOUNT" }
+        };
+
+        for (int i = 0; i < discounts.length; i++) {
+            Discount d = new Discount();
+            d.setCode(discounts[i][0]);
+            d.setDescription(discounts[i][1] + " valid for all guests");
+            d.setType(DiscountType.valueOf(discounts[i][4]));
+            d.setDiscountValue(new BigDecimal(discounts[i][2]));
+            d.setMinValueService(new BigDecimal(discounts[i][3]));
+            d.setUsageLimit(500);
+            d.setUsageCount(i * 12);
+            d.setLimitPerUser(2);
+            d.setStartDate(LocalDate.now().minusDays(30));
+            d.setEndDate(LocalDate.now().plusDays(60));
+            d.setIsActive(true);
+            d.setCreatedBy(workers.get(0));
+            d.setMembershipTier(tiers.get(i % tiers.size()));
+            persist(d);
+            list.add(d);
+        }
+        entityManager.flush();
+        return list;
+    }
+
+    private List<CustomerDiscount> seedCustomerDiscounts(List<Customer> customers, List<Discount> discounts) {
+        List<CustomerDiscount> list = new ArrayList<>();
+        for (int i = 0; i < customers.size(); i++) {
+            CustomerDiscount cd = new CustomerDiscount();
+            cd.setCustomer(customers.get(i));
+            cd.setDiscount(discounts.get(i % discounts.size()));
+            cd.setStatus(i % 3 == 0 ? CustomerDiscountStatus.USED : CustomerDiscountStatus.AVAILABLE);
+            if (cd.getStatus() == CustomerDiscountStatus.USED) {
+                cd.setUsedAt(LocalDateTime.now().minusDays(i % 7));
             }
-
-            servicePoint.setIsActive(i != categories.length - 1);
-            persist(servicePoint);
+            persist(cd);
+            list.add(cd);
         }
         entityManager.flush();
+        return list;
     }
 
-    private List<Discount> seedDiscounts(
-            List<MembershipTier> membershipTiers,
-            List<Worker> workers) {
-
-        DiscountType[] discountTypes = DiscountType.values();
-        List<Discount> discounts = new ArrayList<>();
-
-        for (int i = 0; i < 5; i++) {
-            Discount discount = new Discount();
-            discount.setCode(String.format("SEED%02d", i + 1));
-            discount.setType(discountTypes[i % discountTypes.length]);
-            discount.setDiscountValue(
-                    discount.getType() == DiscountType.PERCENTAGE
-                            ? BigDecimal.valueOf(5 + i * 2L)
-                            : BigDecimal.valueOf(100_000L + i * 50_000L));
-            discount.setDescription("Mã giảm giá seed số " + (i + 1));
-            discount.setStartDate(BASE_DATE.minusMonths(1));
-            discount.setEndDate(BASE_DATE.plusMonths(6 + i));
-            discount.setMinValueService(BigDecimal.valueOf(500_000L + i * 250_000L));
-            discount.setUsageLimit(100 + i * 20);
-            discount.setUsageCount(i * 3);
-            discount.setLimitPerUser(1 + (i % 2));
-            discount.setMembershipTier(membershipTiers.get(i));
-            discount.setRoomType(RoomType.values()[i % RoomType.values().length].name());
-            discount.setIsActive(i != 4);
-            discount.setIsStackable(i % 2 == 0);
-            discount.setCreatedAt(BASE_TIME.minusDays(30 - i));
-            discount.setUpdatedAt(BASE_TIME.minusDays(i));
-            discount.setCreatedBy(workers.get(i));
-            persist(discount);
-            discounts.add(discount);
-        }
-
-        entityManager.flush();
-        return discounts;
-    }
-
-    private List<CustomerDiscount> seedCustomerDiscounts(
-            List<Customer> customers,
-            List<Discount> discounts) {
-
-        CustomerDiscountStatus[] statuses = CustomerDiscountStatus.values();
-        List<CustomerDiscount> customerDiscounts = new ArrayList<>();
-
-        for (int i = 0; i < 5; i++) {
-            CustomerDiscount customerDiscount = new CustomerDiscount();
-            customerDiscount.setCustomer(customers.get(i));
-            customerDiscount.setDiscount(discounts.get(i));
-            customerDiscount.setStatus(statuses[i % statuses.length]);
-            customerDiscount.setAcquiredAt(BASE_TIME.minusDays(20 - i));
-
-            if (customerDiscount.getStatus() == CustomerDiscountStatus.USED) {
-                customerDiscount.setUsedAt(BASE_TIME.minusDays(2));
-            }
-
-            persist(customerDiscount);
-            customerDiscounts.add(customerDiscount);
-        }
-
-        entityManager.flush();
-        return customerDiscounts;
-    }
-
-    private List<Booking> seedBookings(
-            List<Customer> customers,
-            List<Worker> workers,
-            List<Room> rooms) {
-
-        BookingStatus[] statuses = BookingStatus.values();
+    private List<Booking> seedBookings(List<Customer> customers, List<Worker> workers, List<Room> rooms) {
         List<Booking> bookings = new ArrayList<>();
+        BookingStatus[] statuses = BookingStatus.values();
 
-        for (int i = 0; i < statuses.length; i++) {
-            Room room = rooms.get(i % rooms.size());
-            int nights = 2 + (i % 3);
-            BigDecimal total = room.getBasePrice().multiply(BigDecimal.valueOf(nights));
+        for (int i = 0; i < 100; i++) {
+            Booking b = new Booking();
+            b.setCustomer(customers.get(i % customers.size()));
+            b.setCreatedBy(workers.get(i % 5));
+            BookingStatus status = statuses[i % statuses.length];
+            b.setStatus(status);
+            LocalDateTime bookingTime = LocalDateTime.now().minusDays(14 - (i % 14)).withHour(9 + (i % 10))
+                    .withMinute((i * 7) % 60);
+            b.setBookingTime(bookingTime);
+            b.setTotalAmount(BigDecimal.valueOf(3500000L + (i % 10) * 1200000L));
+            b.setNote(
+                    "Guest requested " + (i % 2 == 0 ? "high floor ocean view room" : "quiet room away from elevator"));
 
-            Booking booking = new Booking();
-            booking.setCustomer(customers.get(i % customers.size()));
-            booking.setCreatedBy(workers.get(i % workers.size()));
-            booking.setStatus(statuses[i]);
-            booking.setBookingTime(BASE_TIME.minusDays(12 - i));
-            booking.setTotalAmount(total);
-            booking.setNote("Đặt phòng seed với trạng thái " + statuses[i].name());
-            persist(booking);
-            bookings.add(booking);
+            persist(b);
+            bookings.add(b);
         }
-
         entityManager.flush();
         return bookings;
     }
 
     private void seedBookingDetails(List<Booking> bookings, List<Room> rooms) {
         for (int i = 0; i < bookings.size(); i++) {
-            Booking booking = bookings.get(i);
-            Room room = rooms.get(i % rooms.size());
-            LocalDate checkIn = BASE_DATE.plusDays(i * 3L);
-            LocalDate checkOut = checkIn.plusDays(2 + (i % 3));
-            long nights = checkOut.toEpochDay() - checkIn.toEpochDay();
+            Booking b = bookings.get(i);
+            Room r = rooms.get(i % rooms.size());
 
             BookingDetail detail = new BookingDetail();
-            detail.setBooking(booking);
-            detail.setRoom(room);
-            detail.setRoomType(room.getRoomType());
+            detail.setBooking(b);
+            detail.setRoom(r);
+            detail.setRoomType(r.getRoomType());
+            LocalDate checkIn = b.getBookingTime().toLocalDate();
             detail.setCheckIn(checkIn);
-            detail.setCheckOut(checkOut);
-            detail.setPricePerNight(room.getBasePrice());
-            detail.setSubTotal(room.getBasePrice().multiply(BigDecimal.valueOf(nights)));
-            detail.setStatus(booking.getStatus());
-            detail.setAction("CREATE_BOOKING_DETAIL");
-            detail.setTimestamp(BASE_TIME.minusDays(10 - i));
+            detail.setCheckOut(checkIn.plusDays(2 + (i % 4)));
+            detail.setPricePerNight(r.getBasePrice());
+            detail.setSubTotal(b.getTotalAmount());
+            detail.setStatus(b.getStatus());
+            detail.setAction("Room reserved for booking #" + b.getId());
+            detail.setTimestamp(b.getBookingTime());
             persist(detail);
         }
         entityManager.flush();
     }
 
     private void seedBookingLogs(List<Booking> bookings, List<Worker> workers) {
-        BookingStatus[] statuses = BookingStatus.values();
-
         for (int i = 0; i < bookings.size(); i++) {
-            BookingLog bookingLog = new BookingLog();
-            bookingLog.setBooking(bookings.get(i));
-            bookingLog.setActorId(workers.get(i % workers.size()).getId());
-            bookingLog.setPreviousStatus(i == 0 ? null : statuses[i - 1]);
-            bookingLog.setCurrentStatus(bookings.get(i).getStatus());
-            bookingLog.setNote("Cập nhật booking sang " + bookings.get(i).getStatus().name());
-            bookingLog.setTimestamp(BASE_TIME.minusDays(6 - i));
-            persist(bookingLog);
+            Booking b = bookings.get(i);
+            BookingLog log = new BookingLog();
+            log.setBooking(b);
+            log.setActorId(workers.get(i % workers.size()).getId());
+            log.setPreviousStatus(BookingStatus.PENDING);
+            log.setCurrentStatus(b.getStatus());
+            log.setNote("Booking status updated to " + b.getStatus());
+            log.setTimestamp(b.getBookingTime().plusMinutes(15));
+            persist(log);
         }
         entityManager.flush();
     }
 
-    private List<Invoice> seedInvoices(
-            List<Booking> bookings,
-            List<Customer> customers,
-            List<Worker> workers) {
-
-        InvoiceStatus[] statuses = InvoiceStatus.values();
+    private List<Invoice> seedInvoices(List<Booking> bookings, List<Customer> customers, List<Worker> workers) {
         List<Invoice> invoices = new ArrayList<>();
+        InvoiceStatus[] statuses = InvoiceStatus.values();
 
-        for (int i = 0; i < 5; i++) {
-            Booking booking = bookings.get(i);
-            InvoiceStatus status = statuses[i % statuses.length];
-            BigDecimal total = booking.getTotalAmount();
+        for (int i = 0; i < bookings.size(); i++) {
+            Booking b = bookings.get(i);
+            Invoice inv = new Invoice();
+            inv.setBooking(b);
+            inv.setCustomer(b.getCustomer());
+            inv.setWorker(workers.get(i % 5));
+            inv.setTotalAmount(b.getTotalAmount());
 
-            Invoice invoice = new Invoice();
-            invoice.setBooking(booking);
-            invoice.setCustomer(customers.get(i));
-            invoice.setWorker(workers.get(i));
-            invoice.setTotalAmount(total);
-            invoice.setPaidAmount(paidAmountFor(status, total));
-            invoice.setStatus(status);
-            invoice.setTimestamp(BASE_TIME.minusDays(5 - i));
-            persist(invoice);
-            invoices.add(invoice);
+            InvoiceStatus status = (b.getStatus() == BookingStatus.CANCELLED) ? InvoiceStatus.CANCELLED
+                    : statuses[i % statuses.length];
+            inv.setStatus(status);
+            inv.setPaidAmount(status == InvoiceStatus.PAID ? b.getTotalAmount() : BigDecimal.ZERO);
+            inv.setTimestamp(b.getBookingTime().plusHours(1));
+
+            persist(inv);
+            invoices.add(inv);
         }
-
         entityManager.flush();
         return invoices;
     }
 
-    private BigDecimal paidAmountFor(InvoiceStatus status, BigDecimal total) {
-        if (status == InvoiceStatus.PAID) {
-            return total;
+    private void attachInvoicesToCustomerDiscounts(List<CustomerDiscount> customerDiscounts, List<Invoice> invoices) {
+        for (int i = 0; i < customerDiscounts.size() && i < invoices.size(); i++) {
+            CustomerDiscount cd = customerDiscounts.get(i);
+            if (cd.getStatus() == CustomerDiscountStatus.USED) {
+                cd.setReferenceInvoiceId(invoices.get(i).getId());
+            }
         }
-        if (status == InvoiceStatus.PARTIAL_PAID) {
-            return total.divide(BigDecimal.valueOf(2));
-        }
-        return BigDecimal.ZERO;
-    }
-
-    private void attachInvoicesToCustomerDiscounts(
-            List<CustomerDiscount> customerDiscounts,
-            List<Invoice> invoices) {
-
-        for (int i = 0; i < customerDiscounts.size(); i++) {
-            customerDiscounts.get(i).setReferenceInvoiceId(invoices.get(i).getId());
-        }
+        entityManager.flush();
     }
 
     private void seedInvoiceStatusLogs(List<Invoice> invoices, List<Worker> workers) {
         for (int i = 0; i < invoices.size(); i++) {
-            InvoiceStatusLog statusLog = new InvoiceStatusLog();
-            statusLog.setInvoice(invoices.get(i));
-            statusLog.setWorker(workers.get(i));
-            statusLog.setPreviousStatus(i == 0 ? null : InvoiceStatus.UNPAID);
-            statusLog.setCurrentStatus(invoices.get(i).getStatus());
-            statusLog.setTimestamp(BASE_TIME.minusDays(4 - i));
-            persist(statusLog);
+            Invoice inv = invoices.get(i);
+            InvoiceStatusLog log = new InvoiceStatusLog();
+            log.setInvoice(inv);
+            log.setWorker(workers.get(i % workers.size()));
+            log.setPreviousStatus(InvoiceStatus.UNPAID);
+            log.setCurrentStatus(inv.getStatus());
+            log.setTimestamp(inv.getTimestamp().plusMinutes(10));
+            persist(log);
         }
         entityManager.flush();
     }
 
     private void seedPaymentTransactions(List<Invoice> invoices) {
         PaymentMethod[] methods = PaymentMethod.values();
-        PaymentType[] types = PaymentType.values();
-
-        for (int i = 0; i < 5; i++) {
-            Invoice invoice = invoices.get(i);
-            PaymentTransaction transaction = new PaymentTransaction();
-            transaction.setInvoice(invoice);
-            transaction.setAmount(
-                    invoice.getPaidAmount().compareTo(BigDecimal.ZERO) > 0
-                            ? invoice.getPaidAmount()
-                            : BigDecimal.valueOf(500_000L + i * 100_000L));
-            transaction.setPaymentMethod(methods[i % methods.length]);
-            transaction.setPaymentType(types[i % types.length]);
-            transaction.setTransactionRef(String.format("SEED-TXN-%04d", i + 1));
-            transaction.setAction(
-                    transaction.getPaymentType() == PaymentType.REFUND
-                            ? "REFUND_PROCESSED"
-                            : "PAYMENT_SUCCESS");
-            transaction.setTimestamp(BASE_TIME.minusDays(3 - i));
-            persist(transaction);
+        for (int i = 0; i < invoices.size(); i++) {
+            Invoice inv = invoices.get(i);
+            PaymentTransaction tx = new PaymentTransaction();
+            tx.setInvoice(inv);
+            tx.setAmount(inv.getPaidAmount());
+            tx.setPaymentMethod(methods[i % methods.length]);
+            tx.setPaymentType(PaymentType.FINAL);
+            tx.setTransactionRef(String.format("TX-2026-%05d", i + 1000));
+            tx.setAction(inv.getStatus() == InvoiceStatus.PAID ? "Payment Success" : "Payment Pending");
+            tx.setTimestamp(inv.getTimestamp().plusMinutes(5));
+            persist(tx);
         }
         entityManager.flush();
     }
 
-    private List<ServiceOrder> seedServiceOrders(
-            List<Service> services,
-            List<Booking> bookings,
-            List<Customer> customers,
-            List<Worker> workers) {
-
+    private List<ServiceOrder> seedServiceOrders(List<Service> services, List<Booking> bookings,
+            List<Customer> customers, List<Worker> workers) {
+        List<ServiceOrder> serviceOrders = new ArrayList<>();
         ServiceOrderStatus[] statuses = ServiceOrderStatus.values();
-        List<ServiceOrder> orders = new ArrayList<>();
 
-        for (int i = 0; i < services.size(); i++) {
-            int quantity = 1 + (i % 3);
+        for (int i = 0; i < 80; i++) {
+            ServiceOrder so = new ServiceOrder();
+            Booking b = bookings.get(i % bookings.size());
+            Service s = services.get(i % services.size());
+
+            so.setBooking(b);
+            so.setCustomer(b.getCustomer());
+            so.setGuestPhone(b.getCustomer().getProfile() != null ? b.getCustomer().getProfile().getPhoneNumber()
+                    : "+1-555-000-0000");
+            so.setGuestEmail("guest" + ((i % 40) + 1) + "@example.com");
+            so.setService(s);
+            so.setQuantity((i % 3) + 1);
+            so.setTotalPrice(s.getBasePrice().multiply(BigDecimal.valueOf(so.getQuantity())));
+            so.setNote("Service requested for " + s.getName() + " at Room " + (101 + i % 50));
+
             ServiceOrderStatus status = statuses[i % statuses.length];
-
-            ServiceOrder order = new ServiceOrder();
-            order.setBooking(bookings.get(i % bookings.size()));
-            order.setCustomer(customers.get(i % customers.size()));
-            order.setGuestPhone(null);
-            order.setGuestEmail(null);
-            order.setService(services.get(i));
-            order.setQuantity(quantity);
-            order.setTotalPrice(
-                    services.get(i).getBasePrice().multiply(BigDecimal.valueOf(quantity)));
-            order.setNote("Yêu cầu dịch vụ seed số " + (i + 1));
-            order.setStatus(status);
-            order.setProcessedBy(workers.get(i % workers.size()));
-            order.setOrderTime(BASE_TIME.plusHours(i));
-            if (status == ServiceOrderStatus.DELIVERED
-                    || status == ServiceOrderStatus.COMPLETED) {
-                order.setCompletedTime(BASE_TIME.plusHours(i + 2L));
+            so.setStatus(status);
+            so.setProcessedBy(workers.get(5 + (i % 10)));
+            LocalDateTime orderTime = LocalDateTime.now().minusDays(14 - (i % 14)).withHour(10 + (i % 8))
+                    .withMinute((i * 11) % 60);
+            so.setOrderTime(orderTime);
+            if (status == ServiceOrderStatus.DELIVERED) {
+                so.setCompletedTime(orderTime.plusMinutes(45));
             }
-            order.setAction("SERVICE_ORDER_" + status.name());
-            order.setTimestamp(BASE_TIME.plusHours(i));
-            persist(order);
-            orders.add(order);
-        }
+            so.setAction("Order #" + (i + 1) + " processed by service staff");
+            so.setTimestamp(orderTime);
 
+            persist(so);
+            serviceOrders.add(so);
+        }
         entityManager.flush();
-        return orders;
+        return serviceOrders;
     }
 
-    private void seedComments(
-            List<Customer> customers,
-            List<Resort> resorts,
-            List<Room> rooms,
-            List<Service> services,
+    private void seedComments(List<Customer> customers, List<Resort> resorts, List<Room> rooms, List<Service> services,
             List<Worker> workers) {
+        String[] highReviews = {
+                "Exceptional resort experience! The ocean view suite was breathtaking and service staff were incredibly attentive.",
+                "Top-notch hospitality! From check-in to spa session, everything was flawless. Will definitely return!",
+                "Amazing gourmet breakfast and pristine infinity pool. Deep Blue Haven exceeded all our expectations.",
+                "Beautiful beachfront property with luxurious amenities. Highly recommended for couples and families alike!"
+        };
 
-        for (int i = 0; i < 5; i++) {
+        String[] lowReviews = {
+                "Air conditioning in Room 305 was making noise and took time to inspect.",
+                "Service delivery for room dining was slightly delayed during peak dinner hours.",
+                "Minibar water supply was low upon check-in, though staff resolved it quickly."
+        };
+
+        for (int i = 0; i < 60; i++) {
             Comment comment = new Comment();
-            comment.setCustomer(customers.get(i));
+            comment.setCustomer(customers.get(i % customers.size()));
+            comment.setResort(resorts.get(i % resorts.size()));
+            comment.setRoom(rooms.get(i % rooms.size()));
+            comment.setService(services.get(i % services.size()));
+            comment.setWorker(workers.get(i % workers.size()));
 
-            switch (i) {
-                case 0:
-                    comment.setResort(resorts.get(i));
-                    break;
-                case 1:
-                    comment.setRoom(rooms.get(i));
-                    break;
-                case 2:
-                    comment.setService(services.get(i));
-                    break;
-                case 3:
-                    comment.setWorker(workers.get(i));
-                    break;
-                default:
-                    comment.setResort(resorts.get(i));
-                    comment.setRoom(rooms.get(i));
-                    break;
+            if (i % 6 == 0) {
+                comment.setRating(1 + (i % 2));
+                comment.setContent(lowReviews[i % lowReviews.length]);
+                comment.setIsComplaint(true);
+            } else {
+                comment.setRating(4 + (i % 2));
+                comment.setContent(highReviews[i % highReviews.length]);
+                comment.setIsComplaint(false);
             }
 
-            comment.setContent("Đánh giá seed số " + (i + 1));
-            comment.setRating(i + 1);
-            comment.setImages(List.of("/images/comments/seed-comment-" + (i + 1) + ".jpg"));
-            comment.setCreatedAt(BASE_TIME.minusDays(5 - i));
+            comment.setCreatedAt(LocalDateTime.now().minusDays(14 - (i % 14)).minusHours(i % 10));
             persist(comment);
         }
         entityManager.flush();
     }
 
-    private List<ChatSession> seedChatSessions(
-            List<Customer> customers,
-            List<Worker> workers) {
-
-        ChatStatus[] statuses = ChatStatus.values();
-        List<ChatSession> sessions = new ArrayList<>();
-
-        for (int i = 0; i < 5; i++) {
-            ChatSession session = new ChatSession();
-            session.setCustomer(customers.get(i));
-            session.setCurrentAssigneeId(workers.get(i).getId());
-            session.setStatus(statuses[i % statuses.length]);
-            session.setIsread(i % 2 == 0);
-            session.setStartTime(BASE_TIME.minusHours(10 - i));
-            session.setUpdatedAt(BASE_TIME.minusHours(5 - i));
-            persist(session);
-            sessions.add(session);
+    private List<ChatSession> seedChatSessions(List<Customer> customers, List<Worker> workers) {
+        List<ChatSession> list = new ArrayList<>();
+        for (int i = 0; i < 15; i++) {
+            ChatSession cs = new ChatSession();
+            cs.setCustomer(customers.get(i));
+            cs.setCurrentAssigneeId(workers.get(2 + (i % 5)).getId());
+            cs.setStatus(ChatStatus.RESOLVED);
+            persist(cs);
+            list.add(cs);
         }
-
         entityManager.flush();
-        return sessions;
+        return list;
     }
 
-    private void seedChatMessages(
-            List<ChatSession> sessions,
-            List<Customer> customers,
-            List<Worker> workers) {
+    private void seedChatMessages(List<ChatSession> sessions, List<Customer> customers, List<Worker> workers) {
+        for (int i = 0; i < sessions.size(); i++) {
+            ChatSession cs = sessions.get(i);
+            ChatMessage m1 = new ChatMessage();
+            m1.setChatSession(cs);
+            m1.setSenderType(SenderType.CUSTOMER);
+            m1.setSenderId(cs.getCustomer().getId());
+            m1.setMessageType(MessageType.TEXT);
+            m1.setContent("Hello, I would like to inquire about late check-out options for my booking.");
+            persist(m1);
 
-        MessageType[] messageTypes = MessageType.values();
-        SenderType[] senderTypes = SenderType.values();
-
-        // 12 rows để bao phủ đầy đủ 4 MessageType và 3 SenderType.
-        for (int i = 0; i < 12; i++) {
-            SenderType senderType = senderTypes[i % senderTypes.length];
-
-            ChatMessage message = new ChatMessage();
-            message.setChatSession(sessions.get(i % sessions.size()));
-            message.setSenderType(senderType);
-            message.setMessageType(messageTypes[i % messageTypes.length]);
-            message.setContent(
-                    "Tin nhắn seed " + (i + 1)
-                            + " - " + senderType.name()
-                            + " - " + message.getMessageType().name());
-            message.setTimestamp(BASE_TIME.minusMinutes(60L - i * 3L));
-
-            if (senderType == SenderType.CUSTOMER) {
-                message.setSenderId(customers.get(i % customers.size()).getId());
-            } else if (senderType == SenderType.STAFF) {
-                message.setSenderId(workers.get(i % workers.size()).getId());
-            } else {
-                message.setSenderId(null);
-            }
-
-            persist(message);
+            ChatMessage m2 = new ChatMessage();
+            m2.setChatSession(cs);
+            m2.setSenderType(SenderType.STAFF);
+            m2.setSenderId(cs.getCurrentAssigneeId());
+            m2.setMessageType(MessageType.TEXT);
+            m2.setContent("Good day! Late check-out until 2:00 PM is complimentary for VIP tier guests.");
+            persist(m2);
         }
         entityManager.flush();
     }
 
-    private List<InventoryItem> seedInventoryItems(
-            List<Resort> resorts,
-            List<Supplier> suppliers) {
-
-        String[] names = {
-                "Khăn tắm",
-                "Ga giường",
-                "Nước suối",
-                "Bộ amenities",
-                "Cà phê minibar"
-        };
-        String[] units = {
-                "cái",
-                "bộ",
-                "chai",
-                "bộ",
-                "gói"
+    private List<InventoryItem> seedInventoryItems(List<Resort> resorts, List<Supplier> suppliers) {
+        String[][] itemsData = {
+                { "Minibar Premium Water 500ml", "150", "bottles", "100" },
+                { "Luxury Bath Towel 100% Cotton", "85", "pieces", "50" },
+                { "Aroma Essential Lavender Massage Oil", "8", "bottles", "15" },
+                { "Organic Espresso Coffee Pods", "400", "capsules", "100" },
+                { "King Bed Linen Sets White", "12", "sets", "20" },
+                { "Guest Slipper Pairs Premium", "250", "pairs", "60" }
         };
 
         List<InventoryItem> items = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < itemsData.length; i++) {
             InventoryItem item = new InventoryItem();
-            item.setResort(resorts.get(i));
-            item.setName(names[i]);
-            item.setQuantity(100 + i * 50);
-            item.setUnit(units[i]);
-            item.setSupplier(suppliers.get(i));
+            item.setResort(resorts.get(i % resorts.size()));
+            item.setName(itemsData[i][0]);
+            item.setQuantity(Integer.parseInt(itemsData[i][1]));
+            item.setUnit(itemsData[i][2]);
+            item.setMinThreshold(Integer.parseInt(itemsData[i][3]));
+            item.setSupplier(suppliers.get(i % suppliers.size()));
             persist(item);
             items.add(item);
         }
-
         entityManager.flush();
         return items;
     }
 
-    private void seedInventoryTransactions(List<InventoryItem> inventoryItems) {
-        int[] changes = { 50, -10, 100, -5, 75 };
-
-        for (int i = 0; i < inventoryItems.size(); i++) {
-            InventoryTransaction transaction = new InventoryTransaction();
-            transaction.setInventoryItem(inventoryItems.get(i));
-            transaction.setChangeAmount(changes[i]);
-            transaction.setReason(changes[i] > 0 ? "Nhập kho seed" : "Xuất kho seed");
-            persist(transaction);
+    private void seedInventoryTransactions(List<InventoryItem> items, List<Worker> workers) {
+        for (int i = 0; i < items.size(); i++) {
+            InventoryTransaction tx = new InventoryTransaction();
+            tx.setInventoryItem(items.get(i));
+            tx.setChangeAmount(-5);
+            tx.setReason("Routine inventory restock transaction");
+            persist(tx);
         }
         entityManager.flush();
     }
 
-    private void seedCustomerLoyaltyLogs(
-            List<Customer> customers,
-            List<Booking> bookings,
+    private void seedCustomerLoyaltyLogs(List<Customer> customers, List<Booking> bookings,
             List<ServiceOrder> serviceOrders) {
-
-        ReferenceType[] referenceTypes = ReferenceType.values();
-
-        for (int i = 0; i < 5; i++) {
-            ReferenceType referenceType = referenceTypes[i % referenceTypes.length];
-
-            CustomerLoyaltyLog loyaltyLog = new CustomerLoyaltyLog();
-            loyaltyLog.setReferenceType(referenceType);
-            loyaltyLog.setCustomer(customers.get(i));
-            loyaltyLog.setReferenceId(
-                    referenceType == ReferenceType.BOOKING
-                            ? bookings.get(i % bookings.size()).getId()
-                            : serviceOrders.get(i % serviceOrders.size()).getId());
-            loyaltyLog.setPointsChanged((i + 1) * 100);
-            loyaltyLog.setReason("Tích điểm từ " + referenceType.name());
-            loyaltyLog.setTimestamp(BASE_TIME.plusDays(i));
-            persist(loyaltyLog);
-        }
-        entityManager.flush();
-    }
-
-    private void seedAuthAccessLogs(
-            List<Customer> customers,
-            List<Worker> workers) {
-
-        String[] actions = {
-                "LOGIN_SUCCESS",
-                "LOGIN_FAILED",
-                "LOGOUT",
-                "PASSWORD_CHANGED",
-                "SESSION_REFRESHED"
-        };
-
-        for (int i = 0; i < 5; i++) {
-            boolean customerAccount = i % 2 == 0;
-
-            AuthAccessLog accessLog = new AuthAccessLog();
-            accessLog.setAccountId(
-                    customerAccount
-                            ? customers.get(i % customers.size()).getId()
-                            : workers.get(i % workers.size()).getId());
-            accessLog.setAccountType(customerAccount ? "CUSTOMER" : "WORKER");
-            accessLog.setAction(actions[i]);
-            accessLog.setIpAddress("192.168.10." + (20 + i));
-            accessLog.setUserAgent("SeedDataRunner/1.0");
-            accessLog.setTimestamp(BASE_TIME.plusMinutes(i));
-            persist(accessLog);
-        }
-        entityManager.flush();
-    }
-
-    private void seedSystemLogs(
-            List<Booking> bookings,
-            List<Room> rooms,
-            List<Task> tasks,
-            List<InventoryItem> inventoryItems,
-            List<Invoice> invoices,
-            List<Customer> customers,
-            List<Worker> workers) {
-
-        ActionCode[] actionCodes = ActionCode.values();
-        ObjectType[] objectTypes = ObjectType.values();
-
-        // 7 rows để bao phủ đầy đủ toàn bộ ActionCode.
-        for (int i = 0; i < actionCodes.length; i++) {
-            ObjectType objectType = objectTypes[i % objectTypes.length];
-
-            Log log = new Log();
-            log.setObjectType(objectType);
-            log.setObjectId(resolveObjectId(
-                    objectType,
-                    i,
-                    bookings,
-                    rooms,
-                    tasks,
-                    inventoryItems,
-                    invoices,
-                    customers));
-            log.setCorrelationId(String.format("SEED-CORR-%04d", i + 1));
-            log.setActionCode(actionCodes[i]);
-            log.setTimestamp(BASE_TIME.plusMinutes(i * 5L));
-            log.setWorkerId(workers.get(i % workers.size()).getId());
-            log.setPreviousStatus(i == 0 ? null : "PREVIOUS");
-            log.setCurrentStatus("CURRENT_" + actionCodes[i].name());
-            log.setMetadata(
-                    "{\"source\":\"SeedDataRunner\",\"index\":" + (i + 1) + "}");
+        for (int i = 0; i < customers.size(); i++) {
+            Customer c = customers.get(i);
+            CustomerLoyaltyLog log = new CustomerLoyaltyLog();
+            log.setCustomer(c);
+            log.setPointsChanged(250 + i * 50);
+            log.setReason("Reward points earned from completed stay #" + (bookings.get(i % bookings.size()).getId()));
+            log.setReferenceType(ReferenceType.BOOKING);
+            log.setReferenceId(bookings.get(i % bookings.size()).getId());
             persist(log);
         }
         entityManager.flush();
     }
 
-    private Long resolveObjectId(
-            ObjectType objectType,
-            int index,
-            List<Booking> bookings,
-            List<Room> rooms,
-            List<Task> tasks,
-            List<InventoryItem> inventoryItems,
-            List<Invoice> invoices,
-            List<Customer> customers) {
-
-        switch (objectType) {
-            case BOOKING:
-                return bookings.get(index % bookings.size()).getId();
-            case ROOM:
-                return rooms.get(index % rooms.size()).getId();
-            case TASK:
-                return tasks.get(index % tasks.size()).getId();
-            case INVENTORY:
-                return inventoryItems.get(index % inventoryItems.size()).getId();
-            case PAYMENT:
-                return invoices.get(index % invoices.size()).getId();
-            case USER:
-                return customers.get(index % customers.size()).getId();
-            default:
-                throw new IllegalArgumentException("ObjectType không được hỗ trợ: " + objectType);
+    private void seedAuthAccessLogs(List<Customer> customers, List<Worker> workers) {
+        for (int i = 0; i < 30; i++) {
+            AuthAccessLog log = new AuthAccessLog();
+            if (i % 2 == 0) {
+                log.setAccountId(customers.get(i % customers.size()).getId());
+                log.setAccountType("CUSTOMER");
+            } else {
+                log.setAccountId(workers.get(i % workers.size()).getId());
+                log.setAccountType("WORKER");
+            }
+            log.setAction("LOGIN_SUCCESS");
+            log.setIpAddress("192.168.1." + (10 + i));
+            log.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0");
+            persist(log);
         }
+        entityManager.flush();
     }
 
     private void seedNotifications(List<Customer> customers, List<Worker> workers) {
@@ -1213,15 +932,20 @@ public class SeedDataRunner implements CommandLineRunner {
             for (int i = 0; i < customers.size(); i++) {
                 Customer c = customers.get(i);
 
-                Notification n1 = new Notification(c, "Đặt phòng thành công", "Đơn đặt phòng #DBH-2026-00" + (i + 1) + " đã được xác nhận thành công.", NotificationType.BOOKING);
+                Notification n1 = new Notification(c, "Booking Confirmed",
+                        "Your reservation #DBH-2026-00" + (i + 1) + " has been successfully confirmed.",
+                        NotificationType.BOOKING);
                 n1.setLink("/booking/history");
                 persist(n1);
 
-                Notification n2 = new Notification(c, "Ưu đãi thành viên đặc biệt", "Nhận ngay giảm giá 15% cho dịch vụ Spa & Wellness trong tháng này.", NotificationType.PROMOTION);
+                Notification n2 = new Notification(c, "Special Member Privilege",
+                        "Enjoy an exclusive 15% discount on Spa & Wellness services this week.",
+                        NotificationType.PROMOTION);
                 n2.setLink("/offers");
                 persist(n2);
 
-                Notification n3 = new Notification(c, "Chào mừng tới Deep Blue Haven", "Cảm ơn bạn đã lựa chọn khu nghỉ dưỡng cao cấp Deep Blue Haven Resort.", NotificationType.SYSTEM);
+                Notification n3 = new Notification(c, "Welcome to Deep Blue Haven",
+                        "Thank you for choosing Deep Blue Haven Luxury Resort.", NotificationType.SYSTEM);
                 n3.setIsRead(true);
                 persist(n3);
             }
@@ -1231,24 +955,35 @@ public class SeedDataRunner implements CommandLineRunner {
             for (int i = 0; i < workers.size(); i++) {
                 Worker w = workers.get(i);
 
-                Notification n1 = new Notification(w, "Nhiệm vụ dọn dẹp mới", "Bạn được phân công dọn dẹp phòng #" + (101 + i) + ".", NotificationType.TASK);
+                Notification n1 = new Notification(w, "New Housekeeping Assignment",
+                        "You have been assigned to inspect and clean Room #" + (101 + i) + ".", NotificationType.TASK);
                 n1.setLink("/housekeeper/tasks");
                 persist(n1);
 
-                Notification n2 = new Notification(w, "Thông báo hệ thống", "Lịch làm việc tuần tới đã được cập nhật trên trang quản lý.", NotificationType.SYSTEM);
+                Notification n2 = new Notification(w, "System Operations Announcement",
+                        "Weekly resort operational schedule has been updated.", NotificationType.SYSTEM);
                 persist(n2);
             }
         }
+        entityManager.flush();
     }
 
-    private void seedNotificationsIfEmpty() {
-        Long count = entityManager.createQuery("select count(n) from Notification n", Long.class).getSingleResult();
-        if (count == 0) {
-            List<Customer> customers = entityManager.createQuery("select c from Customer c", Customer.class).getResultList();
-            List<Worker> workers = entityManager.createQuery("select w from Worker w", Worker.class).getResultList();
-            seedNotifications(customers, workers);
-            LOGGER.info("Đã tự động seed bổ sung thông báo cho {} customer và {} worker.", customers.size(), workers.size());
+    private void seedSystemLogs(List<Booking> bookings, List<Room> rooms, List<Task> tasks,
+            List<InventoryItem> inventoryItems, List<Invoice> invoices, List<Customer> customers,
+            List<Worker> workers) {
+        for (int i = 0; i < 50; i++) {
+            Log log = new Log();
+            log.setObjectType(i % 2 == 0 ? ObjectType.BOOKING : ObjectType.ROOM);
+            log.setObjectId((long) (i + 1));
+            log.setCorrelationId("CORR-2026-" + (i + 100));
+            log.setActionCode(i % 2 == 0 ? ActionCode.CHECK_IN : ActionCode.START_CLEANING);
+            log.setWorkerId(workers.get(i % workers.size()).getId());
+            log.setPreviousStatus(i % 2 == 0 ? "PENDING" : "OCCUPIED");
+            log.setCurrentStatus(i % 2 == 0 ? "CONFIRMED" : "CLEANING");
+            log.setMetadata("{\"source\":\"SeedDataRunner\",\"executor\":\"SystemSeeder\",\"step\":" + i + "}");
+            persist(log);
         }
+        entityManager.flush();
     }
 
     private void persist(Object entity) {
