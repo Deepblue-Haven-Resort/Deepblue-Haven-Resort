@@ -1186,7 +1186,77 @@
         grid-column: 1 / -1;
     }
 }
+@media (max-width: 768px) {
+  /* 1. Chuyển cấu trúc Hero thành một cột đứng */
+  .offers-hero__container {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-40) !important;
+  }
 
+  /* 2. Căn giữa toàn bộ text giới thiệu và cụm nút bấm */
+  .offers-hero__content {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .offers-hero__content p {
+    margin-inline: auto !important;
+    max-width: 580px !important;
+  }
+
+  .offers-hero__actions {
+    justify-content: center !important;
+    width: 100% !important;
+  }
+
+  /* 3. Căn giữa dòng chữ "Deep Blue Haven Resort" và thêm gạch vàng đối xứng bên phải */
+  .offers-hero__content .offers-eyebrow {
+    justify-content: center !important;
+    width: 100% !important;
+  }
+
+  .offers-hero__content .offers-eyebrow::after {
+    content: "" !important;
+    width: 45px !important;
+    height: 1px !important;
+    background: var(--gold-500) !important;
+    display: inline-block !important;
+  }
+
+  /* 4. Căn giữa khối ảnh nổi bật Hero Visual trên Tablet */
+  .offers-hero__visual {
+    min-height: 470px !important;
+    width: 380px !important;       /* Độ rộng container bọc ảnh */
+    margin: 48px auto 0 !important; /* Dịch xuống và căn giữa */
+    position: relative !important;
+  }
+
+  .offers-hero__image {
+    width: 340px !important;       /* Giữ nguyên kích thước ảnh lớn của Tablet */
+    height: 450px !important;
+    position: relative !important;  /* Bỏ absolute để tự căn giữa */
+    margin: 0 auto !important;
+    right: auto !important;
+    left: auto !important;
+  }
+
+  /* 5. Định vị lại vòng tròn sale bám sát mép trái ảnh trên Tablet */
+  .offers-discount {
+    position: absolute !important;
+    top: 55px !important;
+    left: -20px !important;        
+    right: auto !important;
+  }
+
+  /* 6. Định vị lại thẻ Floating Card bám sát mép phải ảnh trên Tablet */
+  .offers-floating-card {
+    position: absolute !important;
+    right: -20px !important;       
+    bottom: 20px !important;
+  }
+}
 @media (max-width: 640px) {
 
     .offers-hero {
@@ -1451,4 +1521,89 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(217, 119, 6, 0.35);
 }
+@media (max-width: 480px) {
+  /* 1. Đặt chiều rộng cố định cho container visual và dùng auto margin để căn giữa */
+  .offers-hero__visual {
+    min-height: 400px !important;
+    width: 290px !important;       /* Chiều rộng ôm khít ảnh to 250px và mép của discount/floating card */
+    margin: 32px auto 0 !important; /* Căn giữa toàn bộ cụm này tắp lự */
+    position: relative !important;  /* Làm mốc định vị cho các phần tử con */
+    left: 0 !important;
+    right: 0 !important;
+  }
 
+  /* 2. Ảnh chính tự động căn giữa theo container */
+  .offers-hero__image {
+    width: 250px !important;       /* Độ rộng ảnh to nổi bật */
+    height: 340px !important;      /* Chiều cao ảnh */
+    border-radius: 125px 125px 30px 30px !important;
+    position: relative !important;  /* Chuyển sang relative để tự căn giữa */
+    margin: 0 auto !important;      /* Căn giữa ảnh */
+    right: auto !important;         /* Hủy thuộc tính absolute right cũ */
+    left: auto !important;
+  }
+
+  /* 3. Vòng tròn discount bám sát mép trái ảnh */
+  .offers-discount {
+    width: 120px !important;
+    height: 120px !important;
+    top: 60px !important;
+    left: -15px !important;        /* Lệch nhẹ ra ngoài viền ảnh trái */
+    right: auto !important;
+    position: absolute !important;
+  }
+
+  /* 4. Thẻ Floating Card bám sát mép phải ảnh */
+  .offers-floating-card {
+    position: absolute !important;
+    right: -15px !important;       /* Lệch nhẹ ra ngoài viền ảnh phải */
+    bottom: 30px !important;
+    min-width: 190px !important;
+    padding: 10px !important;
+    gap: 8px !important;
+  }
+
+  /* 5. Căn giữa tiêu đề chọn ưu đãi và dòng Curated experiences */
+  .offers-section-heading {
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+
+  .offers-section-label {
+    margin-inline: auto !important; 
+    text-align: center !important;
+  }
+
+  /* 6. Căn giữa dòng chữ "Deep Blue Haven Resort" ở Hero và tạo thêm vạch vàng đối xứng bên phải */
+  .offers-hero__content .offers-eyebrow {
+    justify-content: center !important; 
+    width: 100% !important;
+    text-align: center !important;
+  }
+  
+  .offers-hero__content .offers-eyebrow::after {
+    content: "" !important;
+    width: 45px !important;
+    height: 1px !important;
+    background: var(--gold-500) !important;
+    display: inline-block !important;
+  }
+
+  /* 7. Sửa lỗi rớt chữ tiêu đề chọn ưu đãi */
+  .offers-section-heading h2 {
+    font-size: 1.65rem !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.02em !important;
+    margin-bottom: var(--space-8) !important;
+  }
+
+  /* 8. Sửa lỗi rớt chữ tiêu đề Điều khoản (Terms) */
+  .offer-terms-heading h2 {
+    font-size: 1.65rem !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.01em !important;
+    text-align: center !important;
+  }
+  
+}

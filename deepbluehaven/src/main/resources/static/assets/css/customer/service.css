@@ -502,6 +502,21 @@
 }
 
 @media (max-width: 520px) {
+    /* Đảm bảo tiêu đề Booking Summary và Booking ID ở 320px không bị co rụt dọc */
+    .booking-summary__header {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: var(--space-8) !important;
+    }
+
+    .booking-summary__header h2,
+    .booking-summary__header p {
+        white-space: nowrap !important; /* Luôn nằm trên một hàng ngang */
+        width: 100% !important;
+        text-align: center !important;
+    }
+
     .service-card__body {
         padding: var(--space-20, 20px);
     }
