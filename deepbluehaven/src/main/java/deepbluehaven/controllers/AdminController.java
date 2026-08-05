@@ -70,7 +70,8 @@ public class AdminController {
     }
 
     @PostMapping("/admin/accounts/create")
-    public String createEmployeeAccount(@Valid @ModelAttribute("createWorkerForm") WorkerCreateFormDTO form, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String createEmployeeAccount(@Valid @ModelAttribute("createWorkerForm") WorkerCreateFormDTO form,
+            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             addCreateWorkerOptions(model);
             addValidationErrors(bindingResult, model);
@@ -80,7 +81,7 @@ public class AdminController {
         try {
             Worker worker = workerService.createWorker(form);
             redirectAttributes.addFlashAttribute("successMessage", "Employee account created successfully");
-            return "redirect:/admin/accounts?createdWorkerId="+ worker.getId();
+            return "redirect:/admin/accounts?createdWorkerId=" + worker.getId();
 
         } catch (WorkerFormExceptionService exception) {
             bindingResult.rejectValue(exception.getField(), "worker.create.failed", exception.getMessage());
@@ -132,32 +133,32 @@ public class AdminController {
         return "admin/setting-admin";
     }
 
-    
     @GetMapping("/admin/accounts/stats")
     @ResponseBody
     public ResponseEntity<Map<String, Long>> getStats() {
         return ResponseEntity.ok(workerService.getDashboardStats());
     }
- 
+
     @GetMapping("/admin/accounts/role-distribution")
     @ResponseBody
     public ResponseEntity<Map<String, Long>> getRoleDistribution() {
         return ResponseEntity.ok(workerService.getRoleDistribution());
     }
-    
+
     @GetMapping("/admin/accounts/list")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> listAccounts( @RequestParam(required = false) String search, @RequestParam(required = false) Role role,
-        @RequestParam(required = false) WorkerStatus status, @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<Map<String, Object>> listAccounts(@RequestParam(required = false) String search,
+            @RequestParam(required = false) Role role,
+            @RequestParam(required = false) WorkerStatus status, @RequestParam(defaultValue = "0") int page) {
         return ResponseEntity.ok(workerService.listAccounts(search, role, status, page));
     }
- 
+
     @PatchMapping("/admin/accounts/{id}/status")
     @ResponseBody
     public ResponseEntity<WorkerDTO.Response> updateStatus(@PathVariable Long id, @RequestParam WorkerStatus status) {
         return ResponseEntity.ok(workerService.setStatus(id, status));
     }
- 
+
     @DeleteMapping("/admin/accounts/{id}")
     @ResponseBody
     public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {

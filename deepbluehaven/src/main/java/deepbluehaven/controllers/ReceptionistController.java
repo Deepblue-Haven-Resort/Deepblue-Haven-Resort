@@ -1,0 +1,112 @@
+package deepbluehaven.controllers;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import deepbluehaven.dto.ReceptionistDTO;
+import deepbluehaven.pojo.Worker;
+import deepbluehaven.repositories.WorkerRepository;
+import deepbluehaven.services.ReceptionistService;
+
+import java.util.Map;
+
+@Controller
+@RequestMapping("/receptionist")
+public class ReceptionistController {
+
+    private final ReceptionistService receptionistService;
+    private final WorkerRepository workerRepository;
+
+    public ReceptionistController(ReceptionistService receptionistService, WorkerRepository workerRepository) {
+        this.receptionistService = receptionistService;
+        this.workerRepository = workerRepository;
+    }
+
+    @GetMapping("")
+    public String index() {
+        return "redirect:/receptionist/dashboard";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        ReceptionistDTO.DashboardView dashboardData = receptionistService.getDashboardData();
+        model.addAttribute("dashboardData", dashboardData);
+        model.addAttribute("activePage", "dashboard");
+        return "receptionist/dashboard";
+    }
+
+    @GetMapping("/check-in")
+    public String checkInPage(Model model) {
+        List<ReceptionistDTO.CheckInQueueItem> checkInQueue = receptionistService.getPendingCheckInQueue();
+        model.addAttribute("checkInQueue", checkInQueue);
+        model.addAttribute("checkInRequest", new ReceptionistDTO.CheckInRequest());
+        model.addAttribute("activePage", "check-in");
+        return "receptionist/checkin";
+    }
+
+    @PostMapping("/check-in/execute")
+    public String executeCheckIn(@ModelAttribute ReceptionistDTO.CheckInRequest request, RedirectAttributes redirectAttrs) {
+        try {
+            Worker receptionist = getActiveReceptionist();
+            receptionistService.executeCheckIn(request, receptionist);
+            redirectAttrs.addFlashAttribute("successMessage", "Check-In successfully completed for Booking #" + request.getBookingId());
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Check-In failed: " + e.getMessage());
+        }
+        return "redirect:/receptionist/check-in";
+    }
+
+    @GetMapping("/check-out")
+    public String checkOutPage(Model model) {
+        List<ReceptionistDTO.CheckOutQueueItem> checkOutQueue = receptionistService.getPendingCheckOutQueue();
+        model.addAttribute("checkOutQueue", checkOutQueue);
+        model.addAttribute("checkOutRequest", new ReceptionistDTO.CheckOutRequest());
+        model.addAttribute("activePage", "check-out");
+        return "receptionist/checkout";
+    }
+
+    @PostMapping("/check-out/execute")
+    public String executeCheckOut(@ModelAttribute ReceptionistDTO.CheckOutRequest request, RedirectAttributes redirectAttrs) {
+        try {
+            Worker receptionist = getActiveReceptionist();
+            receptionistService.executeCheckOut(request, receptionist);
+            redirectAttrs.addFlashAttribute("successMessage", "Check-Out and Invoice Settlement completed successfully for Booking #" + request.getBookingId());
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Check-Out failed: " + e.getMessage());
+        }
+        return "redirect:/receptionist/check-out";
+    }
+
+    @GetMapping("/room-grid")
+    public String roomGridPage(Model model) {
+        List<ReceptionistDTO.RoomRackItem> roomGrid = receptionistService.getRoomGridData();
+        Map<Integer, List<ReceptionistDTO.RoomRackItem>> roomsByFloor = receptionistService.getRoomGridGroupedByFloor();
+        model.addAttribute("roomGrid", roomGrid);
+        model.addAttribute("roomsByFloor", roomsByFloor);
+        model.addAttribute("activePage", "room-grid");
+        return "receptionist/room-grid";
+    }
+
+    @PostMapping("/walkin-booking")
+    public String executeWalkInBooking(@ModelAttribute ReceptionistDTO.WalkInBookingRequest request, RedirectAttributes redirectAttrs) {
+        try {
+            Worker receptionist = getActiveReceptionist();
+            receptionistService.executeWalkInBooking(request, receptionist);
+            redirectAttrs.addFlashAttribute("successMessage", "Walk-In Booking created and guest checked in successfully!");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Walk-In Booking failed: " + e.getMessage());
+        }
+        return "redirect:/receptionist/dashboard";
+    }
+
+    private Worker getActiveReceptionist() {
+        return workerRepository.findAll().stream().findFirst().orElse(null);
+    }
+}

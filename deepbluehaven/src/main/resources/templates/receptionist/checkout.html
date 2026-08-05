@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-Out & Folio Settlement | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="receptionist-layout">
+
+        <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
+
+        <main class="receptionist-main">
+
+            <!-- HERO -->
+            <section class="dashboard-hero">
+                <div>
+                    <span class="page-label"><i class="fa-solid fa-receipt"></i> Front Desk Check-Out</span>
+                    <h1>Guest Check-Out & Folio Settlement</h1>
+                </div>
+            </section>
+
+            <!-- FLASH MESSAGES -->
+            <div th:if="${successMessage}" class="alert-banner success" th:text="${successMessage}">
+                Check-Out and Invoice Settlement completed successfully!
+            </div>
+            <div th:if="${errorMessage}" class="alert-banner error" th:text="${errorMessage}">
+                Check-Out failed. Please try again.
+            </div>
+
+            <!-- SEARCH BAR & QUEUE -->
+            <section class="reception-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>In-House Guest Folios Waiting for Check-Out</h2>
+                    </div>
+                    <div style="width: 320px;">
+                        <input type="text" id="tableSearchInput" class="form-input"
+                            placeholder="Search guest name or room...">
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Booking / Room</th>
+                                <th>Guest Details</th>
+                                <th>Stay Duration</th>
+                                <th>Pricing & Discounts</th>
+                                <th>Total Invoice Balance</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${checkOutQueue}" th:data-booking-id="${item.bookingId}"
+                                th:data-booking-code="${item.bookingCode}" th:data-customer-name="${item.customerName}"
+                                th:data-customer-phone="${item.customerPhone}" th:data-room-number="${item.roomNumber}"
+                                th:data-room-type="${item.roomTypeName}"
+                                th:data-stay-dates="${item.checkInDate + ' to ' + item.checkOutDate + ' (' + item.nightsStayed + ' Nights)'}"
+                                th:data-room-charge="${item.roomChargeStr + ' VND'}"
+                                th:data-pricing-note="${item.pricingRuleNote}"
+                                th:data-service-charge="${item.serviceChargeStr + ' VND'}"
+                                th:data-discount-code="${item.discountCode != null ? item.discountCode : 'None'}"
+                                th:data-discount-amount="${item.discountAmountStr != null ? item.discountAmountStr + ' VND' : '0 VND'}"
+                                th:data-tax="${item.taxStr + ' VND'}"
+                                th:data-total-folio="${item.totalFolioStr + ' VND'}">
+
+                                <td>
+                                    <strong th:text="${'Room ' + item.roomNumber}">Room 304</strong><br>
+                                    <small th:text="${item.bookingCode}">DBH-2026-001</small>
+                                </td>
+                                <td>
+                                    <strong th:text="${item.customerName}">John Smith</strong><br>
+                                    <small th:text="${item.customerPhone}">0901234567</small>
+                                </td>
+                                <td>
+                                    <span th:text="${item.checkInDate}">2026-08-03</span> to <span
+                                        th:text="${item.checkOutDate}">2026-08-05</span><br>
+                                    <small th:text="${item.nightsStayed + ' Nights Stayed'}">2 Nights Stayed</small>
+                                </td>
+                                <td>
+                                    <div
+                                        style="background: #f8fafc; padding: 10px 14px; border-radius: 10px; font-size: 0.825rem; border: 1px solid #e2e8f0;">
+                                        <div>Room: <strong th:text="${item.roomChargeStr + ' VND'}">3,500,000
+                                                VND</strong></div>
+                                        <div style="color: #2563eb; font-size: 0.775rem;"
+                                            th:text="${item.pricingRuleNote}">Standard Rate</div>
+                                        <div th:if="${item.discountCode != null}"
+                                            style="color: #16a34a; font-size: 0.775rem;">
+                                            Discount (<span th:text="${item.discountCode}">SUMMER</span>): <strong
+                                                th:text="${'-' + item.discountAmountStr + ' VND'}">-200,000 VND</strong>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong style="font-size: 1.15rem; color: #0f2c59;"
+                                        th:text="${item.totalFolioStr + ' VND'}">4,345,000 VND</strong>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-cta btn-small" data-open-checkout-modal>
+                                        <i class="fa-solid fa-file-invoice-dollar"></i> Check Out & Folio
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr th:if="${checkOutQueue == null || checkOutQueue.empty}">
+                                <td colspan="6" style="text-align: center; color: var(--neutral-500); padding: 40px;">
+                                    <i class="fa-solid fa-receipt"
+                                        style="font-size: 2rem; margin-bottom: 8px; display: block; color: var(--neutral-400);"></i>
+                                    No in-house guests currently pending check-out.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- CHECK-OUT FOLIO CONFIRMATION MODAL -->
+    <div class="modal-backdrop" id="checkoutConfirmModal">
+        <div class="modal-dialog" style="max-width: 620px;">
+            <div class="modal-header">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.5rem; color: #0f2c59;"><i class="fa-solid fa-file-invoice-dollar"
+                            style="color: #2563eb; margin-right: 8px;"></i> Guest Folio Settlement</h3>
+                    <span id="coModalBookingRef" style="font-size: 0.875rem; color: #64748b;">DBH-2026-001</span>
+                </div>
+                <button type="button" class="modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form th:action="@{/receptionist/check-out/execute}" method="post">
+                <input type="hidden" name="bookingId" id="coModalBookingId" />
+
+                <!-- GUEST & ROOM INFO CARD -->
+                <div
+                    style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <div>
+                            <span style="font-size: 0.8rem; color: #64748b;">Guest Full Name</span>
+                            <strong id="coModalGuestName"
+                                style="display: block; font-size: 1.05rem; color: #0f172a;">John Smith</strong>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 0.8rem; color: #64748b;">Assigned Room</span>
+                            <strong id="coModalRoomNum" style="display: block; font-size: 1.05rem; color: #1e5bb8;">Room
+                                304</strong>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.85rem; color: #475569;">
+                        <i class="fa-solid fa-calendar-days" style="color: #2563eb; margin-right: 6px;"></i> <span
+                            id="coModalStayDates">2026-08-03 to 2026-08-05</span>
+                    </div>
+                </div>
+
+                <!-- ITEMIZED FOLIO TABLE -->
+                <div style="margin-bottom: 20px;">
+                    <h4 style="font-size: 0.95rem; font-weight: 700; color: #334155; margin-bottom: 10px;">Itemized
+                        Folio Charges</h4>
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #f1f5f9; background: #ffffff;">
+                                    <td style="padding: 12px 16px; color: #334155;">
+                                        <strong>Room Stay Charge</strong><br>
+                                        <small id="coModalPricingNote" style="color: #2563eb;">PricingRule
+                                            Applied</small>
+                                    </td>
+                                    <td style="padding: 12px 16px; text-align: right; font-weight: 700; color: #0f172a;"
+                                        id="coModalRoomCharge">3,500,000 VND</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9; background: #ffffff;">
+                                    <td style="padding: 12px 16px; color: #334155;">Add-on Service Orders</td>
+                                    <td style="padding: 12px 16px; text-align: right; font-weight: 700; color: #0f172a;"
+                                        id="coModalServiceCharge">450,000 VND</td>
+                                </tr>
+                                <tr id="coModalDiscountRow"
+                                    style="border-bottom: 1px solid #f1f5f9; background: #f0fdf4;">
+                                    <td style="padding: 12px 16px; color: #15803d;">
+                                        <strong>Applied Customer Discount</strong><br>
+                                        <small id="coModalDiscountCode" style="color: #166534;">SUMMER2026</small>
+                                    </td>
+                                    <td style="padding: 12px 16px; text-align: right; font-weight: 700; color: #16a34a;"
+                                        id="coModalDiscountAmount">-200,000 VND</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9; background: #ffffff;">
+                                    <td style="padding: 12px 16px; color: #64748b;">VAT Tax (10%)</td>
+                                    <td style="padding: 12px 16px; text-align: right; color: #64748b;" id="coModalTax">
+                                        375,000 VND</td>
+                                </tr>
+                                <tr style="background: #eff6ff;">
+                                    <td
+                                        style="padding: 14px 16px; color: #1e40af; font-weight: 800; font-size: 1.05rem;">
+                                        Net Folio Payable</td>
+                                    <td style="padding: 14px 16px; text-align: right; font-weight: 800; font-size: 1.25rem; color: #1e3a8a;"
+                                        id="coModalTotalFolio">4,125,000 VND</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PAYMENT METHOD & NOTES -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+                    <div class="form-group" style="margin: 0;">
+                        <label>Payment Settlement Method *</label>
+                        <select name="paymentMethodStr" class="form-select" required>
+                            <option value="CREDIT_CARD" selected>Credit / Debit Card</option>
+                            <option value="CASH">Cash Payment</option>
+                            <option value="BANK_TRANSFER">Bank Transfer</option>
+                            <option value="E_WALLET">E-Wallet (MoMo/ZaloPay)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin: 0;">
+                        <label>Reception Notes</label>
+                        <input type="text" name="notes" class="form-input"
+                            placeholder="e.g. Key handed in, satisfied" />
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-cta"><i class="fa-solid fa-circle-check"></i> Confirm Payment &
+                        Execute Check-Out</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/assets/js/receptionist-sidebar.js}"></script>
+    <script th:src="@{/assets/js/receptionist/receptionist.js}"></script>
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+<aside th:fragment="receptionistSidebar" class="manager-sidebar" id="receptionistSidebar">
+
+    <button class="sidebar-toggle" id="sidebarToggle" type="button">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <nav class="sidebar-menu">
+
+        <a th:href="@{/receptionist/dashboard}"
+           th:class="${activePage == 'dashboard'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>Operations Desk</span>
+        </a>
+
+        <a th:href="@{/receptionist/check-in}"
+           th:class="${activePage == 'check-in'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-key"></i>
+            <span>Check-In Queue</span>
+        </a>
+
+        <a th:href="@{/receptionist/check-out}"
+           th:class="${activePage == 'check-out'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-receipt"></i>
+            <span>Check-Out & Folio</span>
+        </a>
+
+        <a th:href="@{/receptionist/room-grid}"
+           th:class="${activePage == 'room-grid'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-border-all"></i>
+            <span>Room Rack Grid</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-footer">
+
+        <a th:href="@{/staff-logout}" class="sidebar-item logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Sign Out</span>
+        </a>
+
+    </div>
+
+</aside>
