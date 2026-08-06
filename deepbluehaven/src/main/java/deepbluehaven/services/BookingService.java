@@ -23,6 +23,7 @@ import deepbluehaven.pojo.enums.NotificationType;
 import deepbluehaven.pojo.enums.ServiceOrderStatus;
 import deepbluehaven.repositories.BookingRepository;
 import deepbluehaven.repositories.CustomerRepository;
+
 import deepbluehaven.repositories.RoomRepository;
 import deepbluehaven.repositories.ServiceOrderRepository;
 
@@ -50,7 +51,7 @@ public class BookingService {
 
     @Transactional(readOnly = true)
     public List<BookingHistoryDTO.Response> getBookingHistoryByCustomer(Long customerId) {
-        List<Booking> bookings = bookingRepository.findByCustomerId(customerId);
+        List<Booking> bookings = bookingRepository.findByCustomerIdWithDetailsAndRoom(customerId);
         List<BookingHistoryDTO.Response> result = new ArrayList<>();
         LocalDate today = LocalDate.now();
 
@@ -63,7 +64,7 @@ public class BookingService {
 
     @Transactional(readOnly = true)
     public List<BookingHistoryDTO.Response> getValidBookingsByCustomer(Long customerId) {
-        List<Booking> bookings = bookingRepository.findByCustomerId(customerId);
+        List<Booking> bookings = bookingRepository.findByCustomerIdWithDetailsAndRoom(customerId);
         List<BookingHistoryDTO.Response> result = new ArrayList<>();
         LocalDate today = LocalDate.now();
 
@@ -79,7 +80,7 @@ public class BookingService {
 
     @Transactional(readOnly = true)
     public BookingHistoryDTO.Response getBookingByCode(String bookingCode, Long customerId) {
-        List<Booking> bookings = bookingRepository.findByCustomerId(customerId);
+        List<Booking> bookings = bookingRepository.findByCustomerIdWithDetailsAndRoom(customerId);
         LocalDate today = LocalDate.now();
         for (Booking booking : bookings) {
             int year = (booking.getBookingTime() != null) ? booking.getBookingTime().getYear() : today.getYear();
@@ -93,10 +94,27 @@ public class BookingService {
 
     @Transactional
     public BookingHistoryDTO.Response createRoomBooking(Long roomId, LocalDate checkIn, LocalDate checkOut, String note, Long customerId) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new IllegalArgumentException("Customer not found"));
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Room not found"));
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
 
-        long nights = (checkIn != null && checkOut != null) ? ChronoUnit.DAYS.between(checkIn, checkOut) : 1;
+        Room room = roomRepository.findByIdWithPessimisticLock(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("Room not found"));
+
+        LocalDate targetCheckIn = (checkIn != null) ? checkIn : LocalDate.now().plusDays(1);
+        LocalDate targetCheckOut = (checkOut != null) ? checkOut : targetCheckIn.plusDays(1);
+
+        if (!targetCheckOut.isAfter(targetCheckIn)) {
+            throw new IllegalArgumentException("Check-out date must be after check-in date");
+        }
+
+        List<BookingStatus> activeStatuses = List.of(BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.CHECKED_IN);
+        boolean isOverlapped = bookingRepository.existsOverlappingBooking(roomId, targetCheckIn, targetCheckOut, activeStatuses);
+
+        if (isOverlapped) {
+            throw new IllegalStateException("Room is already booked from " + targetCheckIn + " to " + targetCheckOut + ". Please select another date.");
+        }
+
+        long nights = ChronoUnit.DAYS.between(targetCheckIn, targetCheckOut);
         nights = Math.max(nights, 1);
 
         BigDecimal pricePerNight = room.getBasePrice() != null ? room.getBasePrice() : new BigDecimal("1500000");
@@ -113,8 +131,8 @@ public class BookingService {
         detail.setBooking(booking);
         detail.setRoom(room);
         detail.setRoomType(room.getRoomType());
-        detail.setCheckIn(checkIn != null ? checkIn : LocalDate.now().plusDays(1));
-        detail.setCheckOut(checkOut != null ? checkOut : LocalDate.now().plusDays(1 + (int) nights));
+        detail.setCheckIn(targetCheckIn);
+        detail.setCheckOut(targetCheckOut);
         detail.setPricePerNight(pricePerNight);
         detail.setSubTotal(totalAmount);
         detail.setStatus(BookingStatus.CONFIRMED);
@@ -139,7 +157,7 @@ public class BookingService {
 
     @Transactional
     public boolean cancelBooking(String bookingCode, Long customerId) {
-        List<Booking> bookings = bookingRepository.findByCustomerId(customerId);
+        List<Booking> bookings = bookingRepository.findByCustomerIdWithDetailsAndRoom(customerId);
         LocalDate today = LocalDate.now();
         for (Booking booking : bookings) {
             int year = (booking.getBookingTime() != null) ? booking.getBookingTime().getYear() : today.getYear();
@@ -211,15 +229,12 @@ public class BookingService {
         }
 
         BigDecimal amountVnd = (booking.getTotalAmount() != null) ? booking.getTotalAmount() : BigDecimal.ZERO;
-
-        BookingDetail firstDetail = (booking.getDetails() != null && !booking.getDetails().isEmpty())? booking.getDetails().get(0): null;
+        BookingDetail firstDetail = (booking.getDetails() != null && !booking.getDetails().isEmpty()) ? booking.getDetails().get(0) : null;
 
         if (firstDetail != null) {
             if (firstDetail.getRoom() != null) {
                 Room room = firstDetail.getRoom();
-
                 String formattedType = (room.getRoomType() != null) ? room.getRoomType().name() : "Standard";
-
                 String roomNum = (room.getRoomNumber() != null) ? room.getRoomNumber() : "";
 
                 dto.setRoomName(formattedType + " " + roomNum);
@@ -292,7 +307,12 @@ public class BookingService {
         dto.setBookedOn(booking.getBookingTime());
         dto.setRawStatus(booking.getStatus());
 
-        BookingStatus status = booking.getStatus();
+        applyPresentationFormatting(dto, booking.getStatus(), firstDetail, today);
+
+        return dto;
+    }
+
+    private void applyPresentationFormatting(BookingHistoryDTO.Response dto, BookingStatus status, BookingDetail firstDetail, LocalDate today) {
         boolean needsManualCheckIn = false;
         String timeGroup = "upcoming";
         String statusText = "Pending";
@@ -336,7 +356,5 @@ public class BookingService {
         dto.setStatusText(statusText);
         dto.setStatusClass(statusClass);
         dto.setNeedsManualCheckIn(needsManualCheckIn);
-
-        return dto;
     }
 }
