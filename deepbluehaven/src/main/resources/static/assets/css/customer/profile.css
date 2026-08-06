@@ -617,7 +617,7 @@
 @media (max-width: 768px) {
 
     .customer-profile {
-        padding-top: 1.5rem;
+        padding-top: 7rem;
     }
 
     .profile-hero {
@@ -681,4 +681,38 @@
     .profile-form__actions button {
         width: 100%;
     }
+    /* Căn giữa nhãn tiêu đề Account details trên mobile */
+@media (max-width: 480px) {
+    .profile-panel__label {
+        display: block !important;
+        text-align: center !important;
+        width: 100% !important;
+        margin-inline: auto !important;
+    }
+    
+    /* Đồng thời căn giữa cả tiêu đề chính Personal Information ở dưới nó */
+    .profile-panel__header {
+        align-items: center !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+    .profile-panel__header h2 {
+        font-size: 1.5rem !important; /* Hạ cỡ chữ xuống 1.5rem (hoặc 1.35rem nếu cần) */
+        line-height: 1.25 !important;
+        white-space: nowrap !important; /* Ép chữ nằm thẳng hàng không xuống dòng */
+    }
+    .profile-panel__label,
+    .profile-overview__label {
+        display: block !important;
+        text-align: center !important;
+        width: 100% !important;
+        margin-inline: auto !important;
+    }
+    /* Căn giữa tiêu đề chính My Bookings ở tab Lịch sử */
+    .profile-overview__header {
+        align-items: center !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+}
 }

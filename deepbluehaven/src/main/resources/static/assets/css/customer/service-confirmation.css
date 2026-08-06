@@ -869,4 +869,17 @@ body.service-confirmation-modal-open {
     .confirmation-back-button {
         width: 100%;
     }
+@media (max-width: 480px) {
+    #serviceConfirmationTitle {
+        font-size: 1.55rem !important; 
+        line-height: 1.2 !important;
+        white-space: nowrap !important; 
+    }
+}
+.confirmation-textarea-field > span {
+        font-size: 0.65rem !important; 
+        line-height: 1.35 !important;
+        display: block !important;
+        width: 100% !important;
+    }
 }
