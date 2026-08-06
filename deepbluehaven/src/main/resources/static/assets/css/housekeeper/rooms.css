@@ -1,0 +1,77 @@
+/* ==========================================================================
+   HOUSEKEEPER ROOM STATUS MAP RESPONSIVE LAYOUT
+   ========================================================================== */
+
+.rooms-status-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-24);
+}
+
+.status, .role, .badge {
+    white-space: nowrap;
+}
+
+@media (max-width: 1199px) {
+    .rooms-status-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-16);
+    }
+}
+
+@media (max-width: 991px) {
+    .admin-main {
+        margin-left: 88px;
+        padding: var(--space-16);
+    }
+}
+
+@media (max-width: 640px) {
+    .rooms-status-grid,
+    .stats-grid:has(.chart-card) {
+        grid-template-columns: 1fr !important;
+    }
+
+    .chart-card {
+        padding: var(--space-16);
+    }
+
+    .card-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: var(--space-8);
+    }
+
+    .card-header h2 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .admin-main {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: var(--space-12) var(--space-8);
+        width: 100vw;
+        max-width: 100vw;
+        box-sizing: border-box;
+    }
+
+    .filter-bar {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .filter-bar .search-box,
+    .filter-bar .filter-dropdown {
+        width: 100%;
+        flex: 1 1 100%;
+    }
+
+    .filter-bar .filter-dropdown .filter-btn {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+}
