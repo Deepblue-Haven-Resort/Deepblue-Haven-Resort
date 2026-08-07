@@ -124,18 +124,17 @@ public class HousekeeperService {
         dto.setStatus(task.getStatus());
         dto.setStatusLabel(task.getStatus() != null ? task.getStatus().name() : "PENDING");
         dto.setStatusClass(resolveStatusClass(task.getStatus()));
-        // Map priority and style classes based on room type dynamically
         if (task.getRoom() != null && task.getRoom().getRoomType() != null) {
             String rType = task.getRoom().getRoomType().name();
             if ("STANDARD".equalsIgnoreCase(rType)) {
                 dto.setPriority("Low");
-                dto.setPriorityClass("admin"); // Low priority (Light blue/grey badge)
+                dto.setPriorityClass("admin");
             } else if ("SUPERIOR".equalsIgnoreCase(rType) || "DELUXE".equalsIgnoreCase(rType)) {
                 dto.setPriority("Medium");
-                dto.setPriorityClass("manager"); // Medium priority (Purple/blue badge)
+                dto.setPriorityClass("manager");
             } else {
                 dto.setPriority("High");
-                dto.setPriorityClass("housekeeper"); // High priority (Yellow badge)
+                dto.setPriorityClass("housekeeper"); 
             }
         } else {
             dto.setPriority("Low");

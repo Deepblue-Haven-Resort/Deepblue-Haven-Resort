@@ -1,0 +1,152 @@
+package deepbluehaven.services;
+
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import deepbluehaven.config.VnPayConfig;
+import jakarta.servlet.http.HttpServletRequest;
+
+@Service
+public class VnPayService {
+
+    @Autowired
+    private VnPayConfig vnPayConfig;
+
+    public String createPaymentUrl(Long bookingId, BigDecimal amount, String orderInfo, HttpServletRequest request) {
+        try {
+            String vnp_Version = vnPayConfig.getVersion();
+            String vnp_Command = vnPayConfig.getCommand();
+            String vnp_TmnCode = vnPayConfig.getTmnCode();
+            String orderType = vnPayConfig.getOrderType();
+            
+            String vnp_TxnRef = "BOOKING" + bookingId + "_" + System.currentTimeMillis();
+            String vnp_IpAddr = VnPayConfig.getIpAddress(request);
+            
+            long amountInVnd = amount != null ? amount.longValue() * 100 : 50000000L;
+
+            Map<String, String> vnp_Params = new HashMap<>();
+            vnp_Params.put("vnp_Version", vnp_Version);
+            vnp_Params.put("vnp_Command", vnp_Command);
+            vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
+            vnp_Params.put("vnp_Amount", String.valueOf(amountInVnd));
+            vnp_Params.put("vnp_CurrCode", "VND");
+            vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+            vnp_Params.put("vnp_OrderInfo", orderInfo != null ? orderInfo : ("Thanh toan booking " + bookingId));
+            vnp_Params.put("vnp_OrderType", orderType);
+            vnp_Params.put("vnp_Locale", "vn");
+            vnp_Params.put("vnp_ReturnUrl", vnPayConfig.getReturnUrl());
+            vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+            vnp_Params.put("vnp_BankCode", "NCB");
+
+            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+            String vnp_CreateDate = formatter.format(cld.getTime());
+            vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+            
+            cld.add(Calendar.MINUTE, 15);
+            String vnp_ExpireDate = formatter.format(cld.getTime());
+            vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+            
+            List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
+            Collections.sort(fieldNames);
+            StringBuilder hashData = new StringBuilder();
+            StringBuilder query = new StringBuilder();
+            
+            Iterator<String> itr = fieldNames.iterator();
+            while (itr.hasNext()) {
+                String fieldName = itr.next();
+                String fieldValue = vnp_Params.get(fieldName);
+                if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                    hashData.append(fieldName);
+                    hashData.append('=');
+                    hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                    query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                    query.append('=');
+                    query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                    if (itr.hasNext()) {
+                        query.append('&');
+                        hashData.append('&');
+                    }
+                }
+            }
+            
+            String queryUrl = query.toString();
+            String vnp_SecureHash = hmacSHA512(vnPayConfig.getHashSecret(), hashData.toString());
+            queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+            String paymentUrl = vnPayConfig.getVnpayUrl() + "?" + queryUrl;
+            
+            System.out.println("=========================================================================");
+            System.out.println(">>> VNPAY DEBUG - TMN CODE: [" + vnp_TmnCode + "]");
+            System.out.println(">>> VNPAY DEBUG - HASH SECRET: [" + vnPayConfig.getHashSecret() + "]");
+            System.out.println(">>> VNPAY DEBUG - RETURN URL: [" + vnPayConfig.getReturnUrl() + "]");
+            System.out.println(">>> VNPAY DEBUG - FULL PAYMENT URL: " + paymentUrl);
+            System.out.println("=========================================================================");
+            return paymentUrl;
+        } catch (Exception e) {
+            throw new RuntimeException("Không thể tạo URL thanh toán VNPay", e);
+        }
+    }
+
+    public boolean validateChecksum(Map<String, String> params) {
+        try {
+            String vnp_SecureHash = params.get("vnp_SecureHash");
+            params.remove("vnp_SecureHash");
+            params.remove("vnp_SecureHashType");
+            
+            List<String> fieldNames = new ArrayList<>(params.keySet());
+            Collections.sort(fieldNames);
+            StringBuilder hashData = new StringBuilder();
+            
+            Iterator<String> itr = fieldNames.iterator();
+            while (itr.hasNext()) {
+                String fieldName = itr.next();
+                String fieldValue = params.get(fieldName);
+                if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                    hashData.append(fieldName);
+                    hashData.append('=');
+                    hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                    if (itr.hasNext()) {
+                        hashData.append('&');
+                    }
+                }
+            }
+            
+            String signValue = hmacSHA512(vnPayConfig.getHashSecret(), hashData.toString());
+            return signValue.equalsIgnoreCase(vnp_SecureHash);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private String hmacSHA512(String key, String data) {
+        try {
+            Mac hmac512 = Mac.getInstance("HmacSHA512");
+            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
+            hmac512.init(secretKey);
+            byte[] result = hmac512.doFinal(data.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : result) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi tạo HMAC SHA512", e);
+        }
+    }
+}

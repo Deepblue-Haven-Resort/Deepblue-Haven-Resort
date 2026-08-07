@@ -298,7 +298,7 @@
                     <p>Track all latest live operations across the resort</p>
                 </div>
 
-                <button class="btn btn-cta btn-medium" onclick="window.location.reload();">
+                <button type="button" id="refreshActivityBtn" class="btn btn-cta btn-medium">
                     <i class="fa-solid fa-rotate"></i>
                     Refresh
                 </button>
@@ -314,6 +314,7 @@
                         <th>Performed By</th>
                         <th>Status</th>
                         <th>Notes</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
 
@@ -330,6 +331,13 @@
                         <td th:text="${act.performer}">Receptionist Sarah</td>
                         <td><span class="status" th:classappend="${act.statusClass}" th:text="${act.status}">CONFIRMED</span></td>
                         <td th:text="${act.note}">Guest booked Ocean Suite</td>
+                        <td>
+                            <form th:if="${act.status == 'PENDING' && act.bookingId != null}" th:action="@{'/manager/confirm-booking/' + ${act.bookingId}}" method="post">
+                                <button type="submit" class="btn btn-small btn-confirm-action">
+                                    <i class="fa-solid fa-check"></i> Confirm
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -341,5 +349,6 @@
 </div>
 
 <script th:src="@{/js/manager-sidebar.js}"></script>
+<script th:src="@{/assets/js/manager/dashboard.js}"></script>
 </body>
 </html>

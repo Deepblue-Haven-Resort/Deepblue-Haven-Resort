@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,6 @@ import deepbluehaven.pojo.enums.NotificationType;
 import deepbluehaven.pojo.enums.ServiceOrderStatus;
 import deepbluehaven.repositories.BookingRepository;
 import deepbluehaven.repositories.CustomerRepository;
-
 import deepbluehaven.repositories.RoomRepository;
 import deepbluehaven.repositories.ServiceOrderRepository;
 
@@ -118,14 +118,16 @@ public class BookingService {
         nights = Math.max(nights, 1);
 
         BigDecimal pricePerNight = room.getBasePrice() != null ? room.getBasePrice() : new BigDecimal("1500000");
-        BigDecimal totalAmount = pricePerNight.multiply(BigDecimal.valueOf(nights));
+        BigDecimal subTotal = pricePerNight.multiply(BigDecimal.valueOf(nights));
+        BigDecimal vatTax = subTotal.multiply(new BigDecimal("0.10")); // 10% VAT tax
+        BigDecimal totalAmount = subTotal.add(vatTax);
 
         Booking booking = new Booking();
         booking.setCustomer(customer);
-        booking.setStatus(BookingStatus.CONFIRMED);
+        booking.setStatus(BookingStatus.PENDING);
         booking.setBookingTime(LocalDateTime.now());
         booking.setTotalAmount(totalAmount);
-        booking.setNote(note != null ? note : "Customer room booking");
+        booking.setNote(note != null ? note : "Customer room booking (Pending approval)");
 
         BookingDetail detail = new BookingDetail();
         detail.setBooking(booking);
@@ -134,8 +136,8 @@ public class BookingService {
         detail.setCheckIn(targetCheckIn);
         detail.setCheckOut(targetCheckOut);
         detail.setPricePerNight(pricePerNight);
-        detail.setSubTotal(totalAmount);
-        detail.setStatus(BookingStatus.CONFIRMED);
+        detail.setSubTotal(subTotal);
+        detail.setStatus(BookingStatus.PENDING);
         detail.setAction("CREATE_BOOKING_DETAIL");
 
         booking.getDetails().add(detail);
@@ -147,12 +149,33 @@ public class BookingService {
         notificationService.createCustomerNotification(
             customer,
             "Đặt phòng thành công",
-            "Đơn đặt phòng " + bookingCode + " (" + room.getRoomType() + ") đã được xác nhận thành công.",
+            "Đơn đặt phòng " + bookingCode + " (" + room.getRoomType() + ") đã được tiếp nhận và đang chờ Lễ tân/Quản lý xác nhận.",
             NotificationType.BOOKING,
             "/booking/history"
         );
 
         return toHistoryResponse(booking, LocalDate.now());
+    }
+
+    @Transactional
+    public boolean confirmBookingByStaff(Long bookingId, Long workerId) {
+        Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
+        if (bookingOpt.isEmpty()) {
+            return false;
+        }
+        Booking booking = bookingOpt.get();
+        if (booking.getStatus() != BookingStatus.PENDING) {
+            return false;
+        }
+
+        booking.setStatus(BookingStatus.CONFIRMED);
+        if (booking.getDetails() != null) {
+            for (BookingDetail d : booking.getDetails()) {
+                d.setStatus(BookingStatus.CONFIRMED);
+            }
+        }
+        bookingRepository.save(booking);
+        return true;
     }
 
     @Transactional
@@ -232,129 +255,63 @@ public class BookingService {
         BookingDetail firstDetail = (booking.getDetails() != null && !booking.getDetails().isEmpty()) ? booking.getDetails().get(0) : null;
 
         if (firstDetail != null) {
-            if (firstDetail.getRoom() != null) {
-                Room room = firstDetail.getRoom();
-                String formattedType = (room.getRoomType() != null) ? room.getRoomType().name() : "Standard";
-                String roomNum = (room.getRoomNumber() != null) ? room.getRoomNumber() : "";
-
-                dto.setRoomName(formattedType + " " + roomNum);
-                dto.setRoomNumber(roomNum);
-                dto.setRoomType(formattedType + " Room");
-            } else {
-                dto.setRoomName("Resort Accommodation");
-                dto.setRoomNumber("To be assigned");
-                dto.setRoomType("Standard Room");
-            }
-
+            dto.setRoomNumber(firstDetail.getRoom() != null ? firstDetail.getRoom().getRoomNumber() : "—");
+            dto.setRoomType(firstDetail.getRoomType() != null ? firstDetail.getRoomType().name() : "—");
             dto.setCheckIn(firstDetail.getCheckIn());
             dto.setCheckOut(firstDetail.getCheckOut());
 
             if (firstDetail.getCheckIn() != null && firstDetail.getCheckOut() != null) {
                 long nights = ChronoUnit.DAYS.between(firstDetail.getCheckIn(), firstDetail.getCheckOut());
-                dto.setNights(Math.max(nights, 1));
+                dto.setNights(Math.max((int) nights, 1));
             } else {
                 dto.setNights(1);
             }
-
-            BigDecimal pricePerNight = (firstDetail.getPricePerNight() != null)
-                ? firstDetail.getPricePerNight() : (firstDetail.getRoom() != null && firstDetail.getRoom().getBasePrice() != null)
-                ? firstDetail.getRoom().getBasePrice() : amountVnd.divide(BigDecimal.valueOf(Math.max(dto.getNights(), 1)), 0, RoundingMode.HALF_UP);
-
-            BigDecimal roomCharge = (firstDetail.getSubTotal() != null) ? firstDetail.getSubTotal() : pricePerNight.multiply(BigDecimal.valueOf(dto.getNights()));
-            dto.setPricePerNightVnd(pricePerNight);
-            dto.setRoomChargeVnd(roomCharge);
         } else {
+            dto.setRoomNumber("—");
+            dto.setRoomType("—");
+            dto.setCheckIn(today);
+            dto.setCheckOut(today.plusDays(1));
             dto.setNights(1);
-            dto.setPricePerNightVnd(amountVnd);
-            dto.setRoomChargeVnd(amountVnd);
         }
 
-        List<ServiceOrder> orders = serviceOrderRepository.findByBookingId(booking.getId());
-        BigDecimal totalServiceCharge = BigDecimal.ZERO;
-        List<BookingHistoryDTO.ServiceItem> serviceItems = new ArrayList<>();
-
-        if (orders != null) {
-            for (ServiceOrder order : orders) {
-                if (order.getStatus() == ServiceOrderStatus.CANCELLED) {
-                    continue;
-                }
-                String name = (order.getService() != null) ? order.getService().getName() : "Service Add-on";
-                int qty = (order.getQuantity() != null) ? order.getQuantity() : 1;
-                BigDecimal price = (order.getService() != null && order.getService().getBasePrice() != null) ? order.getService().getBasePrice() : BigDecimal.ZERO;
-                BigDecimal itemTotal = (order.getTotalPrice() != null) ? order.getTotalPrice() : price.multiply(BigDecimal.valueOf(qty));
-                boolean canCancel = (order.getStatus() == ServiceOrderStatus.PENDING || order.getStatus() == ServiceOrderStatus.CONFIRMED);
-
-                totalServiceCharge = totalServiceCharge.add(itemTotal);
-                serviceItems.add(new BookingHistoryDTO.ServiceItem(order.getId(), name, qty, price, itemTotal, order.getStatus() != null ? order.getStatus().name() : "CONFIRMED", canCancel));
-            }
-        }
-
-        dto.setServiceItems(serviceItems);
-        dto.setServiceChargeVnd(totalServiceCharge);
-
-        BigDecimal roomAndServices = dto.getRoomChargeVnd().add(totalServiceCharge);
-        BigDecimal tax = roomAndServices.multiply(new BigDecimal("0.10")).setScale(0, RoundingMode.HALF_UP);
-        dto.setTaxVnd(tax);
-        dto.setDiscountVnd(BigDecimal.ZERO);
-
-        BigDecimal finalTotal = roomAndServices.add(tax);
-        dto.setTotalAmountVnd(finalTotal);
-
-        BigDecimal amountUsd = finalTotal.divide(EXCHANGE_RATE_USD, 0, RoundingMode.HALF_UP);
+        dto.setTotalAmountVnd(amountVnd);
+        BigDecimal amountUsd = amountVnd.divide(EXCHANGE_RATE_USD, 2, RoundingMode.HALF_UP);
         dto.setTotalAmountUsd(amountUsd);
 
-        dto.setSpecialRequest(booking.getNote());
-        dto.setBookedOn(booking.getBookingTime());
-        dto.setRawStatus(booking.getStatus());
+        dto.setRawStatus(booking.getStatus() != null ? booking.getStatus() : BookingStatus.PENDING);
+        dto.setStatusText(getStatusLabel(booking.getStatus()));
 
-        applyPresentationFormatting(dto, booking.getStatus(), firstDetail, today);
+        List<BookingHistoryDTO.ServiceItem> serviceItems = new ArrayList<>();
+        if (booking.getDetails() != null) {
+            for (BookingDetail d : booking.getDetails()) {
+                Booking bObj = d.getBooking();
+                if (bObj != null) {
+                    List<ServiceOrder> orders = serviceOrderRepository.findByBookingId(bObj.getId());
+                    for (ServiceOrder order : orders) {
+                        String name = (order.getService() != null) ? order.getService().getName() : "Extended Service";
+                        int qty = order.getQuantity();
+                        BigDecimal price = (order.getService() != null && order.getService().getBasePrice() != null) ? order.getService().getBasePrice() : BigDecimal.ZERO;
+                        BigDecimal itemTotal = (order.getTotalPrice() != null) ? order.getTotalPrice() : price.multiply(BigDecimal.valueOf(qty));
+                        boolean canCancel = (order.getStatus() == ServiceOrderStatus.PENDING || order.getStatus() == ServiceOrderStatus.CONFIRMED);
+                        serviceItems.add(new BookingHistoryDTO.ServiceItem(order.getId(), name, qty, price, itemTotal, order.getStatus() != null ? order.getStatus().name() : "PENDING", canCancel));
+                    }
+                }
+            }
+        }
+        dto.setServiceItems(serviceItems);
 
         return dto;
     }
 
-    private void applyPresentationFormatting(BookingHistoryDTO.Response dto, BookingStatus status, BookingDetail firstDetail, LocalDate today) {
-        boolean needsManualCheckIn = false;
-        String timeGroup = "upcoming";
-        String statusText = "Pending";
-        String statusClass = "booking-status--upcoming";
-
-        if (status == BookingStatus.CANCELLED) {
-            timeGroup = "cancelled";
-            statusText = "Cancelled";
-            statusClass = "booking-status--cancelled";
-        } else if (status == BookingStatus.COMPLETED || status == BookingStatus.CHECKED_OUT) {
-            timeGroup = "completed";
-            statusText = "Completed";
-            statusClass = "booking-status--completed";
-        } else if (status == BookingStatus.CHECKED_IN) {
-            timeGroup = "current";
-            statusText = "Checked In";
-            statusClass = "booking-status--upcoming booking-status--current";
-        } else if (status == BookingStatus.CONFIRMED) {
-            boolean isWithinStayDates = false;
-            if (firstDetail != null && firstDetail.getCheckIn() != null && firstDetail.getCheckOut() != null) {
-                isWithinStayDates = (!today.isBefore(firstDetail.getCheckIn())) && (!today.isAfter(firstDetail.getCheckOut()));
-            }
-
-            if (isWithinStayDates) {
-                timeGroup = "current";
-                statusText = "Confirmed";
-                statusClass = "booking-status--upcoming booking-status--current";
-                needsManualCheckIn = true;
-            } else {
-                timeGroup = "upcoming";
-                statusText = "Confirmed";
-                statusClass = "booking-status--upcoming";
-            }
-        } else {
-            timeGroup = "upcoming";
-            statusText = "Pending";
-            statusClass = "booking-status--upcoming";
+    private String getStatusLabel(BookingStatus status) {
+        if (status == null) return "Chờ xác nhận";
+        switch (status) {
+            case PENDING: return "Chờ xác nhận";
+            case CONFIRMED: return "Đã xác nhận";
+            case CHECKED_IN: return "Đã check-in";
+            case CHECKED_OUT: return "Đã check-out";
+            case CANCELLED: return "Đã hủy";
+            default: return status.name();
         }
-
-        dto.setTimeGroup(timeGroup);
-        dto.setStatusText(statusText);
-        dto.setStatusClass(statusClass);
-        dto.setNeedsManualCheckIn(needsManualCheckIn);
     }
 }

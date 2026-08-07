@@ -36,3 +36,331 @@
         gap: 4px;
     }
 }
+
+/* E-WALLET QR MODAL STYLES */
+.ewallet-qr-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.6);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.ewallet-qr-backdrop.active {
+    display: flex !important;
+}
+
+.ewallet-qr-card {
+    max-width: 440px;
+    width: 90%;
+    text-align: center;
+    padding: 28px;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+.ewallet-qr-title {
+    margin-bottom: 8px;
+    color: #1e3a8a;
+    font-size: 1.25rem;
+}
+
+.ewallet-qr-subtitle {
+    color: #64748b;
+    font-size: 0.88rem;
+    margin-bottom: 16px;
+}
+
+.ewallet-qr-container {
+    padding: 16px;
+    background: #ffffff;
+    border: 2px dashed #0284c7;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.ewallet-qr-img {
+    width: 220px;
+    height: 220px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    border: 1px solid #e2e8f0;
+}
+
+.ewallet-qr-ref {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+
+.ewallet-qr-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.w-full {
+    width: 100%;
+}
+
+/* SEARCH & TABLE UTILITIES */
+.search-input-box {
+    width: 320px;
+}
+
+.folio-pricing-box {
+    background: #f8fafc;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.825rem;
+    border: 1px solid #e2e8f0;
+}
+
+.pricing-note-blue {
+    color: #2563eb;
+    font-size: 0.775rem;
+}
+
+.discount-note-green {
+    color: #16a34a;
+    font-size: 0.775rem;
+}
+
+.total-folio-price {
+    font-size: 1.15rem;
+    color: #0f2c59;
+}
+
+.empty-table-cell {
+    text-align: center;
+    color: var(--neutral-500);
+    padding: 40px;
+}
+
+.empty-table-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    display: block;
+    color: var(--neutral-400);
+}
+
+/* MODAL & FOLIO SUMMARY CLASSES */
+.checkout-modal-dialog {
+    max-width: 620px;
+}
+
+.co-modal-header-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #0f2c59;
+}
+
+.co-modal-header-icon {
+    color: #2563eb;
+    margin-right: 8px;
+}
+
+.co-modal-booking-ref {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.modal-close {
+    background: #ffe4e6 !important;
+    color: #f43f5e !important;
+    border: none !important;
+    width: 32px;
+    height: 32px;
+    border-radius: 50% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+
+.modal-close:hover {
+    background: #fecdd3 !important;
+}
+
+.guest-info-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.guest-info-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.info-sublabel {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.guest-name-text {
+    display: block;
+    font-size: 1.05rem;
+    color: #0f172a;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.room-number-text {
+    display: block;
+    font-size: 1.05rem;
+    color: #1e5bb8;
+}
+
+.stay-dates-info {
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+.calendar-icon-blue {
+    color: #2563eb;
+    margin-right: 6px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.section-subheading {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 10px;
+}
+
+.folio-table-wrapper {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.folio-table-clean {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.folio-row-white {
+    border-bottom: 1px solid #f1f5f9;
+    background: #ffffff;
+}
+
+.folio-td-name {
+    padding: 12px 16px;
+    color: #334155;
+}
+
+.folio-pricing-tag {
+    color: #2563eb;
+}
+
+.folio-td-val {
+    padding: 12px 16px;
+    text-align: right;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.folio-row-discount {
+    border-bottom: 1px solid #f1f5f9;
+    background: #f0fdf4;
+}
+
+.folio-td-discount-name {
+    padding: 12px 16px;
+    color: #15803d;
+}
+
+.folio-discount-code {
+    color: #166534;
+}
+
+.folio-td-discount-val {
+    padding: 12px 16px;
+    text-align: right;
+    font-weight: 700;
+    color: #16a34a;
+}
+
+.folio-td-vat-name {
+    padding: 12px 16px;
+    color: #64748b;
+}
+
+.folio-td-vat-val {
+    padding: 12px 16px;
+    text-align: right;
+    color: #64748b;
+}
+
+.folio-row-total {
+    background: #eff6ff;
+}
+
+.folio-td-total-label {
+    padding: 14px 16px;
+    color: #1e40af;
+    font-weight: 800;
+    font-size: 1.05rem;
+}
+
+.folio-td-total-val {
+    padding: 14px 16px;
+    text-align: right;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: #1e3a8a;
+}
+
+.form-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.form-group-marginless {
+    margin: 0;
+}
+
+.modal-actions-end {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.icon-blue {
+    color: #0284c7;
+}
+
+.btn-cta[data-method="CREDIT_CARD"],
+.btn-cta[data-method="BANK_TRANSFER"] {
+    background-color: #0284c7 !important;
+    border-color: #0284c7 !important;
+}
+
+.btn-cta[data-method="E_WALLET"] {
+    background-color: #0d9488 !important;
+    border-color: #0d9488 !important;
+}

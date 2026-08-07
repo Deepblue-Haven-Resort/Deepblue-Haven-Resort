@@ -1,7 +1,6 @@
 package deepbluehaven.services;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -72,10 +71,9 @@ public class ManagerDashboardService {
     public ManagerDashboardDTO getDashboardData() {
         ManagerDashboardDTO dto = new ManagerDashboardDTO();
 
-        // 1. Room Statistics
         List<Room> allRooms = roomRepository.findAll();
         int totalRooms = allRooms.size();
-        if (totalRooms == 0) totalRooms = 62; // Fallback
+        if (totalRooms == 0) totalRooms = 62; 
 
         int occupiedCount = 0;
         int cleaningCount = 0;
@@ -98,7 +96,6 @@ public class ManagerDashboardService {
 
         int occupancyRate = (totalRooms > 0) ? (occupiedCount * 100 / totalRooms) : 82;
 
-        // 2. Booking Flow & Today Stats
         List<Booking> allBookings = bookingRepository.findAll();
         int pendingBookings = 0;
         int confirmedBookings = 0;
@@ -123,17 +120,15 @@ public class ManagerDashboardService {
         int todayCheckInCount = Math.max(12, checkedInBookings);
         int todayCheckOutCount = Math.max(8, confirmedBookings / 2);
 
-        // 3. Revenue Stats
         LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
         LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
         BigDecimal todayRev = invoiceRepository.sumTotalAmountBetween(startOfDay, endOfDay);
         if (todayRev == null || todayRev.compareTo(BigDecimal.ZERO) == 0) {
-            todayRev = new BigDecimal("128500000"); // Default 128.5M for presentation
+            todayRev = new BigDecimal("128500000"); 
         }
 
         String revTodayFormatted = String.format("%.1fM", todayRev.doubleValue() / 1_000_000.0);
 
-        // Populate KPI
         ManagerDashboardDTO.KpiStats kpi = dto.getKpi();
         kpi.setRevenueTodayStr(revTodayFormatted);
         kpi.setRevenueGrowthStr("+14%");
@@ -147,13 +142,11 @@ public class ManagerDashboardService {
         kpi.setCleaningRoomsCount(cleaningCount);
         kpi.setMaintenanceRoomsCount(maintenanceCount);
 
-        // Populate Revenue Chart (7 Days)
         ManagerDashboardDTO.RevenueChartData chartData = dto.getRevenueChart();
         chartData.setDayLabels(List.of("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"));
         chartData.setBarHeights(List.of(42, 58, 46, 72, 64, 88, 76));
         chartData.setGrowthPercentageStr("+18%");
 
-        // Populate Room Status Data
         ManagerDashboardDTO.RoomStatusData roomStatusData = dto.getRoomStatus();
         roomStatusData.setTotalRooms(totalRooms);
         roomStatusData.setAvailableRooms(availableCount);
@@ -161,14 +154,12 @@ public class ManagerDashboardService {
         roomStatusData.setCleaningRooms(cleaningCount);
         roomStatusData.setMaintenanceRooms(maintenanceCount);
 
-        // Populate Booking Flow Data
         ManagerDashboardDTO.BookingFlowData flowData = dto.getBookingFlow();
         flowData.setPendingCount(pendingBookings);
         flowData.setConfirmedCount(confirmedBookings);
         flowData.setCheckedInCount(checkedInBookings);
         flowData.setCancelledCount(cancelledBookings);
 
-        // 4. Service Orders
         List<ServiceOrder> serviceOrders = serviceOrderRepository.findAll();
         int pendingServiceCount = 0;
         List<ManagerDashboardDTO.ServiceOrderItem> recentServiceItems = new ArrayList<>();
@@ -215,7 +206,6 @@ public class ManagerDashboardService {
         serviceSummary.setPendingCount(pendingServiceCount);
         serviceSummary.setRecentOrders(recentServiceItems);
 
-        // 5. Staff Performance (Top 5 Dedicated Employees by performanceScore & Weighted Task Count)
         List<Worker> workers = workerRepository.findAll();
         List<Task> allTasks = taskRepository.findAll();
 
@@ -263,12 +253,10 @@ public class ManagerDashboardService {
             }
             wd.weightedTaskPoints = weightedPoints;
 
-            // Dedicated Composite Score: 60% base performance score + weighted task points
             wd.compositeScore = (wd.performanceScore * 0.6) + (wd.weightedTaskPoints * 3.5);
             workerDedications.add(wd);
         }
 
-        // Sort descending by compositeScore
         workerDedications.sort((a, b) -> Double.compare(b.compositeScore, a.compositeScore));
 
         List<ManagerDashboardDTO.StaffPerformanceItem> staffList = new ArrayList<>();
@@ -336,7 +324,6 @@ public class ManagerDashboardService {
 
         dto.setStaffPerformanceList(staffList);
 
-        // 6. Guest Experience
         Double avgRating = commentRepository.getAverageRating();
         Long totalReviews = commentRepository.count();
         Long complaints = commentRepository.countComplaints();
@@ -348,7 +335,6 @@ public class ManagerDashboardService {
         guestExp.setReturningGuestsRateStr("42%");
         guestExp.setComplaintsCount(complaints != null && complaints > 0 ? complaints.intValue() : 3);
 
-        // 7. Operational Alerts
         List<ManagerDashboardDTO.OperationalAlertItem> alertList = new ArrayList<>();
         List<InventoryItem> lowItems = inventoryItemRepository.findLowInventoryItems();
         List<deepbluehaven.pojo.Task> delayedTasks = taskRepository.findDelayedTasks(LocalDateTime.now());
@@ -389,22 +375,23 @@ public class ManagerDashboardService {
 
         dto.setOperationalAlerts(alertList);
 
-        // 8. Live Resort Activity
         List<Log> recentLogs = logRepository.findTop10ByOrderByTimestampDesc();
         List<ManagerDashboardDTO.LiveActivityItem> liveList = new ArrayList<>();
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-        for (Log log : recentLogs) {
+        List<Booking> recentBookings = bookingRepository.findAll();
+        for (Booking b : recentBookings) {
             ManagerDashboardDTO.LiveActivityItem act = new ManagerDashboardDTO.LiveActivityItem();
-            act.setTimeStr(log.getTimestamp() != null ? log.getTimestamp().format(timeFormatter) : "10:25");
+            act.setBookingId(b.getId());
+            act.setTimeStr(b.getBookingTime() != null ? b.getBookingTime().format(timeFormatter) : "10:25");
             act.setCategory("booking");
             act.setCategoryLabel("Booking");
             act.setIconClass("fa-solid fa-calendar-check");
-            act.setSubject("Log #" + log.getId());
-            act.setPerformer("System");
-            act.setStatus("CONFIRMED");
-            act.setStatusClass("status-success");
-            act.setNote(log.getActionCode() != null ? log.getActionCode().name() : "System operation");
+            act.setSubject("Booking #DBH-2026-" + String.format("%03d", b.getId()));
+            act.setPerformer(b.getCustomer() != null ? b.getCustomer().getUsername() : "Customer");
+            act.setStatus(b.getStatus() != null ? b.getStatus().name() : "PENDING");
+            act.setStatusClass(b.getStatus() == BookingStatus.CONFIRMED ? "status-success" : (b.getStatus() == BookingStatus.PENDING ? "status-warning" : "status-info"));
+            act.setNote(b.getNote() != null ? b.getNote() : "Room booking");
             liveList.add(act);
         }
 
