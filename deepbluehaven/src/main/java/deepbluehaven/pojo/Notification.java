@@ -15,10 +15,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Notification")
+@Table(name = "Notification", indexes = {
+    @Index(name = "idx_notification_read", columnList = "is_read, created_at")
+})
 public class Notification {
 
     @Id

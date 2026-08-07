@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -15,20 +16,24 @@ import deepbluehaven.dto.ReceptionistDTO;
 import deepbluehaven.pojo.Worker;
 import deepbluehaven.pojo.CustomerProfile;
 import deepbluehaven.repositories.WorkerRepository;
+import deepbluehaven.services.BookingService;
 import deepbluehaven.services.ReceptionistService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+
 
 @Controller
 @RequestMapping("/receptionist")
 public class ReceptionistController {
 
     private final ReceptionistService receptionistService;
+    private final BookingService bookingService;
     private final WorkerRepository workerRepository;
 
-    public ReceptionistController(ReceptionistService receptionistService, WorkerRepository workerRepository) {
+    public ReceptionistController(ReceptionistService receptionistService, BookingService bookingService, WorkerRepository workerRepository) {
         this.receptionistService = receptionistService;
+        this.bookingService = bookingService;
         this.workerRepository = workerRepository;
     }
 
@@ -62,6 +67,22 @@ public class ReceptionistController {
             redirectAttrs.addFlashAttribute("successMessage", "Check-In successfully completed for Booking #" + request.getBookingId());
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Check-In failed: " + e.getMessage());
+        }
+        return "redirect:/receptionist/check-in";
+    }
+
+    @PostMapping("/confirm-booking/{id}")
+    public String confirmBooking(@PathVariable("id") Long id, RedirectAttributes redirectAttrs) {
+        try {
+            Worker receptionist = getActiveReceptionist();
+            boolean success = bookingService.confirmBookingByStaff(id, receptionist != null ? receptionist.getId() : 1L);
+            if (success) {
+                redirectAttrs.addFlashAttribute("successMessage", "Booking #" + id + " has been successfully CONFIRMED!");
+            } else {
+                redirectAttrs.addFlashAttribute("errorMessage", "Failed to confirm booking #" + id);
+            }
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
         return "redirect:/receptionist/check-in";
     }

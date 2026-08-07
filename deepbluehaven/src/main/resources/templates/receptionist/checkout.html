@@ -12,6 +12,7 @@
     <!-- ĐỔI ĐƯỜNG DẪN CSS SANG ADMIN-SIDEBAR -->
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/checkout.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -132,12 +133,11 @@
 
     <!-- CHECK-OUT FOLIO CONFIRMATION MODAL -->
     <div class="modal-backdrop" id="checkoutConfirmModal">
-        <div class="modal-dialog" style="max-width: 620px;">
+        <div class="modal-dialog checkout-modal-dialog">
             <div class="modal-header">
                 <div>
-                    <h3 style="margin: 0; font-size: 1.5rem; color: #0f2c59;"><i class="fa-solid fa-file-invoice-dollar"
-                            style="color: #2563eb; margin-right: 8px;"></i> Guest Folio Settlement</h3>
-                    <span id="coModalBookingRef" style="font-size: 0.875rem; color: #64748b;">DBH-2026-001</span>
+                    <h3 class="co-modal-header-title"><i class="fa-solid fa-file-invoice-dollar co-modal-header-icon"></i> Guest Folio Settlement</h3>
+                    <span id="coModalBookingRef" class="co-modal-booking-ref">DBH-2026-001</span>
                 </div>
                 <button type="button" class="modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -146,67 +146,53 @@
                 <input type="hidden" name="bookingId" id="coModalBookingId" />
 
                 <!-- GUEST & ROOM INFO CARD -->
-                <div
-                    style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <div class="guest-info-card">
+                    <div class="guest-info-header">
                         <div>
-                            <span style="font-size: 0.8rem; color: #64748b;">Guest Full Name</span>
-                            <strong id="coModalGuestName"
-                                style="display: block; font-size: 1.05rem; color: #0f172a;">John Smith</strong>
+                            <span class="info-sublabel">Guest Full Name</span>
+                            <strong id="coModalGuestName" class="guest-name-text">John Smith</strong>
                         </div>
-                        <div style="text-align: right;">
-                            <span style="font-size: 0.8rem; color: #64748b;">Assigned Room</span>
-                            <strong id="coModalRoomNum" style="display: block; font-size: 1.05rem; color: #1e5bb8;">Room
-                                304</strong>
+                        <div class="text-right">
+                            <span class="info-sublabel">Assigned Room</span>
+                            <strong id="coModalRoomNum" class="room-number-text">Room 304</strong>
                         </div>
                     </div>
-                    <div style="font-size: 0.85rem; color: #475569;">
-                        <i class="fa-solid fa-calendar-days" style="color: #2563eb; margin-right: 6px;"></i> <span
-                            id="coModalStayDates">2026-08-03 to 2026-08-05</span>
+                    <div class="stay-dates-info">
+                        <i class="fa-solid fa-calendar-days calendar-icon-blue"></i> <span id="coModalStayDates">2026-08-03 to 2026-08-05</span>
                     </div>
                 </div>
 
                 <!-- ITEMIZED FOLIO TABLE -->
-                <div style="margin-bottom: 20px;">
-                    <h4 style="font-size: 0.95rem; font-weight: 700; color: #334155; margin-bottom: 10px;">Itemized
-                        Folio Charges</h4>
-                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+                <div class="mb-20">
+                    <h4 class="section-subheading">Itemized Folio Charges</h4>
+                    <div class="folio-table-wrapper">
+                        <table class="folio-table-clean">
                             <tbody>
-                                <tr style="border-bottom: 1px solid #f1f5f9; background: #ffffff;">
-                                    <td style="padding: 12px 16px; color: #334155;">
+                                <tr class="folio-row-white">
+                                    <td class="folio-td-name">
                                         <strong>Room Stay Charge</strong><br>
-                                        <small id="coModalPricingNote" style="color: #2563eb;">PricingRule
-                                            Applied</small>
+                                        <small id="coModalPricingNote" class="folio-pricing-tag">PricingRule Applied</small>
                                     </td>
-                                    <td style="padding: 12px 16px; text-align: right; font-weight: 700; color: #0f172a;"
-                                        id="coModalRoomCharge">3,500,000 VND</td>
+                                    <td class="folio-td-val" id="coModalRoomCharge">3,500,000 VND</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #f1f5f9; background: #ffffff;">
-                                    <td style="padding: 12px 16px; color: #334155;">Add-on Service Orders</td>
-                                    <td style="padding: 12px 16px; text-align: right; font-weight: 700; color: #0f172a;"
-                                        id="coModalServiceCharge">450,000 VND</td>
+                                <tr class="folio-row-white">
+                                    <td class="folio-td-name">Add-on Service Orders</td>
+                                    <td class="folio-td-val" id="coModalServiceCharge">450,000 VND</td>
                                 </tr>
-                                <tr id="coModalDiscountRow"
-                                    style="border-bottom: 1px solid #f1f5f9; background: #f0fdf4;">
-                                    <td style="padding: 12px 16px; color: #15803d;">
+                                <tr id="coModalDiscountRow" class="folio-row-discount">
+                                    <td class="folio-td-discount-name">
                                         <strong>Applied Customer Discount</strong><br>
-                                        <small id="coModalDiscountCode" style="color: #166534;">SUMMER2026</small>
+                                        <small id="coModalDiscountCode" class="folio-discount-code">SUMMER2026</small>
                                     </td>
-                                    <td style="padding: 12px 16px; text-align: right; font-weight: 700; color: #16a34a;"
-                                        id="coModalDiscountAmount">-200,000 VND</td>
+                                    <td class="folio-td-discount-val" id="coModalDiscountAmount">-200,000 VND</td>
                                 </tr>
-                                <tr style="border-bottom: 1px solid #f1f5f9; background: #ffffff;">
-                                    <td style="padding: 12px 16px; color: #64748b;">VAT Tax (10%)</td>
-                                    <td style="padding: 12px 16px; text-align: right; color: #64748b;" id="coModalTax">
-                                        375,000 VND</td>
+                                <tr class="folio-row-white">
+                                    <td class="folio-td-vat-name">VAT Tax (10%)</td>
+                                    <td class="folio-td-vat-val" id="coModalTax">375,000 VND</td>
                                 </tr>
-                                <tr style="background: #eff6ff;">
-                                    <td
-                                        style="padding: 14px 16px; color: #1e40af; font-weight: 800; font-size: 1.05rem;">
-                                        Net Folio Payable</td>
-                                    <td style="padding: 14px 16px; text-align: right; font-weight: 800; font-size: 1.25rem; color: #1e3a8a;"
-                                        id="coModalTotalFolio">4,125,000 VND</td>
+                                <tr class="folio-row-total">
+                                    <td class="folio-td-total-label">Net Folio Payable</td>
+                                    <td class="folio-td-total-val" id="coModalTotalFolio">4,125,000 VND</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -214,36 +200,153 @@
                 </div>
 
                 <!-- PAYMENT METHOD & NOTES -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
-                    <div class="form-group" style="margin: 0;">
+                <div class="form-grid-2col">
+                    <div class="form-group form-group-marginless">
                         <label>Payment Settlement Method *</label>
-                        <select name="paymentMethodStr" class="form-select" required>
-                            <option value="CREDIT_CARD" selected>Credit / Debit Card</option>
+                        <select name="paymentMethodStr" class="form-select" onchange="updateCheckoutPaymentBtn(this.value)" required>
+                            <option value="BANK_TRANSFER" selected>Bank Transfer</option>
+                            <option value="CREDIT_CARD">Credit / Debit Card</option>
                             <option value="CASH">Cash Payment</option>
-                            <option value="BANK_TRANSFER">Bank Transfer</option>
                             <option value="E_WALLET">E-Wallet (MoMo/ZaloPay)</option>
                         </select>
                     </div>
 
-                    <div class="form-group" style="margin: 0;">
+                    <div class="form-group form-group-marginless">
                         <label>Reception Notes</label>
-                        <input type="text" name="notes" class="form-input"
-                            placeholder="e.g. Key handed in, satisfied" />
+                        <input type="text" name="notes" class="form-input" placeholder="e.g. Key handed in, satisfied" />
                     </div>
                 </div>
 
-                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                <div class="modal-actions-end">
                     <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
-                    <button type="submit" class="btn btn-cta"><i class="fa-solid fa-circle-check"></i> Confirm Payment &
-                        Execute Check-Out</button>
+                    <button type="submit" id="coModalSubmitBtn" class="btn btn-cta" onclick="return triggerPaymentAction(event)"><i class="fa-solid fa-qrcode"></i> Display VietQR Bank Transfer Code</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- E-WALLET SCANNABLE QR CODE MODAL (INDEPENDENT TOP-LEVEL MODAL) -->
+    <div id="eWalletQrModal" class="ewallet-qr-backdrop">
+        <div class="ewallet-qr-card">
+            <h3 class="ewallet-qr-title"><i class="fa-solid fa-qrcode icon-blue"></i> E-Wallet QR Settlement</h3>
+            <p class="ewallet-qr-subtitle">Mở ứng dụng Ví điện tử (MoMo/ZaloPay/VietQR) để quét mã QR bên dưới.</p>
+            
+            <div class="ewallet-qr-container">
+                <img id="eWalletQrImage" src="" alt="E-Wallet QR Code" class="ewallet-qr-img" />
+                <span id="eWalletBookingRefText" class="ewallet-qr-ref">Booking Settlement</span>
+            </div>
+
+            <div class="ewallet-qr-actions">
+                <button type="button" class="btn btn-outline w-full" onclick="closeEWalletQrModal()">Close</button>
+            </div>
         </div>
     </div>
 
     <!-- ĐỔI ĐƯỜNG DẪN JS SANG ADMIN-SIDEBAR -->
     <script th:src="@{/js/admin-sidebar.js}"></script>
     <script th:src="@{/assets/js/receptionist/receptionist.js}"></script>
+    <script>
+        function updateCheckoutPaymentBtn(val) {
+            const submitBtn = document.getElementById('coModalSubmitBtn');
+            if (!submitBtn) return;
+            if (val === 'CREDIT_CARD') {
+                submitBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay via VNPAY Sandbox Gateway';
+                submitBtn.style.backgroundColor = '#0284c7';
+            } else if (val === 'BANK_TRANSFER') {
+                submitBtn.innerHTML = '<i class="fa-solid fa-qrcode"></i> Display VietQR Bank Transfer Code';
+                submitBtn.style.backgroundColor = '#0284c7';
+            } else if (val === 'E_WALLET') {
+                submitBtn.innerHTML = '<i class="fa-solid fa-mobile-screen-button"></i> Display E-Wallet QR Code';
+                submitBtn.style.backgroundColor = '#0d9488';
+            } else {
+                submitBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Confirm Payment & Execute Check-Out';
+                submitBtn.style.backgroundColor = '';
+            }
+        }
+
+        function triggerPaymentAction(e) {
+            const selectElem = document.querySelector('select[name="paymentMethodStr"]');
+            if (!selectElem) return true;
+
+            const method = selectElem.value;
+            const bookingIdInput = document.getElementById('coModalBookingId');
+            const bookingId = bookingIdInput ? bookingIdInput.value : '';
+            const totalFolioElem = document.getElementById('coModalTotalFolio');
+            const amountText = totalFolioElem ? totalFolioElem.innerText.replace(/[^0-9]/g, '') : '';
+            const submitBtn = document.getElementById('coModalSubmitBtn');
+
+            if (method === 'CREDIT_CARD') {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+                if (bookingId) {
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting to VNPAY...';
+                    }
+                    fetch('/deepbluehaven/api/vnpay/create-checkout-payment?bookingId=' + bookingId + (amountText ? '&amount=' + amountText : ''))
+                        .then(res => res.json())
+                        .then(resData => {
+                            if (resData.success && resData.data) {
+                                window.location.href = resData.data;
+                            } else {
+                                alert('Could not generate VNPAY payment link: ' + (resData.message || 'Error'));
+                                if (submitBtn) {
+                                    submitBtn.disabled = false;
+                                    submitBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay via VNPAY Sandbox Gateway';
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            alert('Error generating VNPAY link: ' + err);
+                            if (submitBtn) {
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay via VNPAY Sandbox Gateway';
+                            }
+                        });
+                }
+                return false;
+            } else if (method === 'BANK_TRANSFER' || method === 'E_WALLET') {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+
+                const checkoutModal = document.getElementById('checkoutConfirmModal');
+                if (checkoutModal) {
+                    checkoutModal.classList.remove('active');
+                    checkoutModal.style.display = 'none';
+                }
+
+                const amountTextVal = amountText || '500000';
+                const qrUrl = 'https://img.vietqr.io/image/970419-9704198526191432-compact.png?amount=' + amountTextVal + '&addInfo=Booking%20' + bookingId;
+
+                const qrImg = document.getElementById('eWalletQrImage');
+                if (qrImg) qrImg.src = qrUrl;
+
+                const refText = document.getElementById('eWalletBookingRefText');
+                if (refText) {
+                    refText.innerText = 'Booking #' + bookingId + (method === 'BANK_TRANSFER' ? ' VietQR Settlement' : ' E-Wallet QR');
+                }
+
+                const modal = document.getElementById('eWalletQrModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    modal.classList.add('active');
+                }
+                return false;
+            }
+            return true;
+        }
+
+        function closeEWalletQrModal() {
+            const modal = document.getElementById('eWalletQrModal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('active');
+            }
+            const checkoutModal = document.getElementById('checkoutConfirmModal');
+            if (checkoutModal) {
+                checkoutModal.classList.remove('active');
+                checkoutModal.style.display = '';
+            }
+        }
+    </script>
 </body>
 
 </html>

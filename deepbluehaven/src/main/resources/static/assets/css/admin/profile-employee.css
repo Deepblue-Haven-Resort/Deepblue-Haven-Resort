@@ -24,7 +24,10 @@
 
 .account-profile-card {
     display: grid;
-    grid-template-columns: 340px minmax(0, 1fr);
+    grid-template-columns: 290px minmax(0, 1fr);
+    max-width: 920px;
+    margin: 0 auto;
+    width: 100%;
     min-height: 620px;
     overflow: hidden;
 

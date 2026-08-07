@@ -15,10 +15,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Task")
+@Table(name = "Task", indexes = {
+    @Index(name = "idx_task_assigned_status", columnList = "assigned_to_id, status"),
+    @Index(name = "idx_task_room", columnList = "room_id")
+})
 public class Task {
 
     @Id
