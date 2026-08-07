@@ -1,0 +1,38 @@
+/* ==========================================================================
+   RECEPTIONIST CHECK-OUT SPECIFIC STYLES & RESPONSIVE
+   ========================================================================== */
+
+.checkout-folio-box {
+    border: 1px dashed var(--primary-300);
+    border-radius: var(--radius-md);
+    background: var(--neutral-50);
+    padding: var(--space-16);
+    margin-bottom: var(--space-16);
+}
+
+.checkout-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: var(--space-8);
+    border-bottom: 1px solid var(--neutral-100);
+}
+
+.checkout-row:last-child {
+    border-bottom: none;
+    font-weight: 800;
+    color: var(--primary-850);
+    font-size: 1.1rem;
+}
+
+/* ==========================================================================
+   RESPONSIVE OVERRIDES
+   ========================================================================== */
+
+@media (max-width: 576px) {
+    .checkout-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}

@@ -150,3 +150,43 @@
 .toast.hide {
     animation: toastOut 0.28s ease forwards;
 }
+/* =========================================================
+   FIX LỖI TOAST THÔNG BÁO BỊ TRÀN VIỀN Ở MOBILE (<480px)
+   ========================================================= */
+@media (max-width: 480px) {
+    /* 1. Ép container toast co giãn đều 2 bên mép màn hình */
+    .toast-container {
+        top: var(--space-12) !important;
+        right: var(--space-12) !important;
+        left: var(--space-12) !important; /* Thêm left để căn đều */
+        width: calc(100% - var(--space-12) * 2) !important; /* Rộng tối đa theo màn hình */
+    }
+
+    /* 2. Ép hộp toast tự co giãn theo chiều rộng container */
+    .toast {
+        width: 100% !important; /* Đổi từ 420px cố định sang 100% */
+        min-height: 70px !important;
+    }
+
+    /* 3. Thu nhỏ nhẹ icon và text để vừa vặn */
+    .toast-icon {
+        width: 44px !important;
+    }
+
+    .toast-body {
+        padding: var(--space-12) !important;
+    }
+
+    .toast-title {
+        font-size: 0.9rem !important;
+    }
+
+    .toast-message {
+        font-size: 0.78rem !important;
+        line-height: 1.35 !important;
+    }
+
+    .toast-close {
+        width: 36px !important;
+    }
+}

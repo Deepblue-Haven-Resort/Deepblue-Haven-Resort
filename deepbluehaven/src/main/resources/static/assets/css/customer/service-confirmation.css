@@ -883,3 +883,188 @@ body.service-confirmation-modal-open {
         width: 100% !important;
     }
 }
+/* =========================================================
+   MOBILE
+   ========================================================= */
+@media (max-width: 640px) {
+    .service-confirmation-modal {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .service-confirmation-modal__dialog {
+        width: 100%;
+        max-height: 92vh;
+        padding: var(--space-24) var(--space-16) var(--space-32);
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        transform: translateY(100%);
+    }
+
+    .service-confirmation-modal.is-open .service-confirmation-modal__dialog,
+    .service-confirmation-modal[aria-hidden="false"] .service-confirmation-modal__dialog {
+        transform: translateY(0);
+    }
+
+    .service-confirmation-modal__close {
+        top: var(--space-12);
+        right: var(--space-12);
+    }
+
+    .service-confirmation__header {
+        padding-right: var(--space-40);
+        padding-bottom: var(--space-16);
+        margin-bottom: var(--space-16);
+        flex-direction: column;
+    }
+
+    .service-confirmation__heading {
+        flex-direction: column;
+        gap: var(--space-12);
+    }
+
+    .service-confirmation__icon {
+        width: var(--space-48);
+        height: var(--space-48);
+    }
+
+    .service-confirmation__header h1 {
+        font-size: 2rem;
+    }
+
+    .confirmation-section {
+        padding: var(--space-16);
+    }
+
+    .confirmation-information-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .confirmation-service-item {
+        grid-template-columns: 1fr;
+    }
+
+    .confirmation-service-item__price {
+        padding-left: calc(var(--space-48) + var(--space-12));
+        text-align: left;
+    }
+
+    .confirmation-total-card {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--space-12);
+    }
+
+    .confirmation-total-card strong {
+        font-size: 1.5rem;
+    }
+
+    .confirmation-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .confirmation-submit-button,
+    .confirmation-back-button {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   MOBILE HẸP & FIX RỚT CHỮ (<480px)
+   ========================================================= */
+/* Tối ưu hóa toàn bộ Popup Confirm dịch vụ dưới 480px */
+@media (max-width: 480px) {
+    /* 1. Thu nhỏ và bo tròn dialog cho khít màn hình */
+    .service-confirmation-modal__dialog {
+        width: calc(100% - 16px) !important;
+        margin: 8px !important;
+        padding: var(--space-16) !important;
+        max-height: 90vh !important;
+        border-radius: var(--radius-md) !important;
+    }
+
+    /* 2. Tiêu đề popup và Icon */
+    .service-confirmation__header {
+        padding-right: var(--space-24) !important;
+        padding-bottom: var(--space-12) !important;
+        margin-bottom: var(--space-16) !important;
+        gap: var(--space-8) !important;
+    }
+
+    .service-confirmation__heading {
+        gap: var(--space-8) !important;
+    }
+
+    .service-confirmation__icon {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .service-confirmation__icon i {
+        font-size: 1.15rem !important;
+    }
+
+    #serviceConfirmationTitle,
+    .service-confirmation__header h1 {
+        font-size: 1.35rem !important; /* Thu nhỏ tiêu đề */
+        line-height: 1.2 !important;
+    }
+
+    /* 3. Ô nhập văn bản & Thông tin đặt phòng */
+    .confirmation-section {
+        padding: var(--space-12) !important;
+    }
+
+    .confirmation-section__title h2 {
+        font-size: 1.15rem !important;
+    }
+
+    .confirmation-field input {
+        min-height: 2.5rem !important;
+        font-size: 0.85rem !important;
+    }
+
+    .confirmation-textarea-field textarea {
+        min-height: 5.5rem !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* 4. Danh sách các dịch vụ đã chọn */
+    .confirmation-service-item {
+        padding: var(--space-10) !important;
+        gap: var(--space-8) !important;
+    }
+
+    .confirmation-service-item__icon {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    .confirmation-service-item__copy h3 {
+        font-size: 0.85rem !important;
+    }
+
+    .confirmation-service-item__price strong {
+        font-size: 0.85rem !important;
+    }
+
+    /* 5. Khối tổng tiền (Total) */
+    .confirmation-total-card {
+        padding: var(--space-16) !important;
+    }
+
+    .confirmation-total-card strong {
+        font-size: 1.35rem !important; /* Thu nhỏ cỡ chữ tiền */
+    }
+
+    /* 6. Các nút hành động */
+    .confirmation-actions {
+        gap: var(--space-8) !important;
+    }
+
+    .confirmation-submit-button,
+    .confirmation-back-button {
+        min-height: 2.75rem !important;
+        font-size: 0.85rem !important;
+    }
+}
