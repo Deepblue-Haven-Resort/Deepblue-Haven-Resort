@@ -1,6 +1,7 @@
 package deepbluehaven.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,10 +13,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import deepbluehaven.dto.ReceptionistDTO;
 import deepbluehaven.pojo.Worker;
+import deepbluehaven.pojo.CustomerProfile;
 import deepbluehaven.repositories.WorkerRepository;
 import deepbluehaven.services.ReceptionistService;
 
-import java.util.Map;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/receptionist")
@@ -52,9 +55,9 @@ public class ReceptionistController {
     }
 
     @PostMapping("/check-in/execute")
-    public String executeCheckIn(@ModelAttribute ReceptionistDTO.CheckInRequest request, RedirectAttributes redirectAttrs) {
+    public String executeCheckIn(@ModelAttribute ReceptionistDTO.CheckInRequest request, RedirectAttributes redirectAttrs, HttpServletRequest req) {
         try {
-            Worker receptionist = getActiveReceptionist();
+            Worker receptionist = getActiveReceptionist(req);
             receptionistService.executeCheckIn(request, receptionist);
             redirectAttrs.addFlashAttribute("successMessage", "Check-In successfully completed for Booking #" + request.getBookingId());
         } catch (Exception e) {
@@ -73,9 +76,9 @@ public class ReceptionistController {
     }
 
     @PostMapping("/check-out/execute")
-    public String executeCheckOut(@ModelAttribute ReceptionistDTO.CheckOutRequest request, RedirectAttributes redirectAttrs) {
+    public String executeCheckOut(@ModelAttribute ReceptionistDTO.CheckOutRequest request, RedirectAttributes redirectAttrs, HttpServletRequest req) {
         try {
-            Worker receptionist = getActiveReceptionist();
+            Worker receptionist = getActiveReceptionist(req);
             receptionistService.executeCheckOut(request, receptionist);
             redirectAttrs.addFlashAttribute("successMessage", "Check-Out and Invoice Settlement completed successfully for Booking #" + request.getBookingId());
         } catch (Exception e) {
@@ -95,15 +98,47 @@ public class ReceptionistController {
     }
 
     @PostMapping("/walkin-booking")
-    public String executeWalkInBooking(@ModelAttribute ReceptionistDTO.WalkInBookingRequest request, RedirectAttributes redirectAttrs) {
+    public String executeWalkInBooking(@ModelAttribute ReceptionistDTO.WalkInBookingRequest request, RedirectAttributes redirectAttrs, HttpServletRequest req) {
         try {
-            Worker receptionist = getActiveReceptionist();
+            Worker receptionist = getActiveReceptionist(req);
             receptionistService.executeWalkInBooking(request, receptionist);
             redirectAttrs.addFlashAttribute("successMessage", "Walk-In Booking created and guest checked in successfully!");
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Walk-In Booking failed: " + e.getMessage());
         }
         return "redirect:/receptionist/dashboard";
+    }
+
+    @GetMapping("/guests")
+    public String guestDirectoryPage(Model model, HttpServletRequest req) {
+        Worker receptionist = getActiveReceptionist(req);
+        if (receptionist == null) {
+            return "redirect:/staff-login";
+        }
+        List<CustomerProfile> customerProfiles = receptionistService.getAllCustomerProfiles();
+        model.addAttribute("guests", customerProfiles);
+        model.addAttribute("activePage", "guests");
+        return "receptionist/guests";
+    }
+
+    @GetMapping("/profile")
+    public String profilePage(Model model, HttpServletRequest req) {
+        Worker receptionist = getActiveReceptionist(req);
+        if (receptionist == null) {
+            return "redirect:/staff-login";
+        }
+        model.addAttribute("worker", receptionist);
+        model.addAttribute("activePage", "profile");
+        return "receptionist/profile";
+    }
+
+    private Worker getActiveReceptionist(HttpServletRequest req) {
+        HttpSession session = req.getSession(false);
+        if (session != null && session.getAttribute("loggedInWorkerId") != null) {
+            Long workerId = (Long) session.getAttribute("loggedInWorkerId");
+            return workerRepository.findById(workerId).orElse(null);
+        }
+        return getActiveReceptionist();
     }
 
     private Worker getActiveReceptionist() {

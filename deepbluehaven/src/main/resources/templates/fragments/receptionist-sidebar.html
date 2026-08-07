@@ -1,4 +1,5 @@
-<aside th:fragment="receptionistSidebar" class="manager-sidebar" id="receptionistSidebar">
+<!-- Cập nhật class="admin-sidebar" và id="adminSidebar" để tương thích hoàn toàn với Javascript -->
+<aside th:fragment="receptionistSidebar" class="admin-sidebar" id="adminSidebar">
 
     <button class="sidebar-toggle" id="sidebarToggle" type="button">
         <i class="fa-solid fa-bars"></i>
@@ -28,6 +29,18 @@
            th:class="${activePage == 'room-grid'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-border-all"></i>
             <span>Room Rack Grid</span>
+        </a>
+
+        <a th:href="@{/receptionist/guests}"
+           th:class="${activePage == 'guests'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-users"></i>
+            <span>Guest Directory</span>
+        </a>
+
+        <a th:href="@{/receptionist/profile}"
+           th:class="${activePage == 'profile'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-user"></i>
+            <span>My Profile</span>
         </a>
 
     </nav>

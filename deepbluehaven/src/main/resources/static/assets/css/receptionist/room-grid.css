@@ -1,0 +1,35 @@
+/* ==========================================================================
+   RECEPTIONIST ROOM-GRID SPECIFIC STYLES & RESPONSIVE
+   ========================================================================== */
+
+.room-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-16);
+    margin-top: var(--space-20);
+}
+
+.room-grid-card {
+    background: var(--surface-0);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--radius-md);
+    padding: var(--space-16);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.room-grid-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ==========================================================================
+   RESPONSIVE OVERRIDES
+   ========================================================================== */
+
+@media (max-width: 480px) {
+    .room-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-12);
+    }
+}

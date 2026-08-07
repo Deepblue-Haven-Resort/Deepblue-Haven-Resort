@@ -524,3 +524,254 @@
         max-width: 100vw;
     }
 }
+
+/* ==========================================================================
+   FORCE PERFECT SQUARE BUTTONS WHEN COLLAPSED (DESKTOP ONLY > 1024px)
+   ========================================================================== */
+
+@media (min-width: 1025px) {
+    /* Ép cứng kích thước 52px cho nút khi co gọn trên Desktop */
+    .admin-sidebar.is-collapsed .sidebar-item,
+    .admin-sidebar.is-collapsed .sidebar-toggle {
+        width: 52px !important;
+        height: 52px !important;
+        min-height: 52px !important;
+        max-height: 52px !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        border-radius: var(--radius-md) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Ẩn chữ hoàn toàn khi co gọn trên Desktop */
+    .admin-sidebar.is-collapsed .sidebar-item span {
+        display: none !important;
+        opacity: 0 !important;
+        width: 0 !important;
+        visibility: hidden !important;
+    }
+
+    /* Đảm bảo icon nằm chính giữa */
+    .admin-sidebar.is-collapsed .sidebar-item i {
+        margin: 0 !important;
+        font-size: 1.2rem !important;
+    }
+
+    /* Tạo khoảng cách phía dưới nút Toggle khi Sidebar co lại */
+    .admin-sidebar.is-collapsed .sidebar-toggle {
+        margin-bottom: 40px !important; /* Đặt khoảng cách 40px thoải mái, đẹp đẽ */
+    }
+
+    /* Đảm bảo khoảng cách giữa các nút trong menu đồng đều */
+    .admin-sidebar.is-collapsed .sidebar-menu {
+        gap: var(--space-12) !important;
+    }
+    
+    /* Kéo giãn phần nội dung chính trên Desktop */
+    .admin-layout:has(.admin-sidebar.is-collapsed) .admin-main {
+        margin-left: 112px !important;
+    }
+}
+@media (max-width: 469px) {
+    /* Cho phép thanh Sidebar ngang tự cuộn ngang khi các nút vượt quá chiều rộng màn hình */
+    .admin-sidebar {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important; /* Căn nút từ trái qua */
+        overflow-x: auto !important; /* Bật tính năng cuộn ngang */
+        overflow-y: hidden !important;
+        white-space: nowrap !important;
+        padding-inline: var(--space-8) !important;
+        -webkit-overflow-scrolling: touch !important; /* Cuộn mượt trên iOS */
+    }
+
+    /* Ẩn thanh cuộn (scrollbar) xấu xí trên các trình duyệt để giao diện đẹp đẽ */
+    .admin-sidebar::-webkit-scrollbar {
+        display: none !important;
+    }
+    .admin-sidebar {
+        -ms-overflow-style: none !important;  /* IE and Edge */
+        scrollbar-width: none !important;  /* Firefox */
+    }
+
+    /* Đảm bảo menu items và footer (Settings/Logout) nằm trên cùng 1 hàng ngang */
+    .admin-sidebar .sidebar-menu,
+    .admin-sidebar .sidebar-footer {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        flex: none !important; /* Không tự co rút kích thước */
+    }
+
+    /* Tạo khoảng cách nhỏ ngăn cách giữa Menu chính và Footer */
+    .admin-sidebar .sidebar-menu {
+        margin-right: 12px !important;
+    }
+
+    /* Giữ nguyên kích thước hình tròn/vuông nhỏ gọn cho từng icon nút */
+    .admin-sidebar .sidebar-item {
+        width: 42px !important;
+        height: 42px !important;
+        min-height: 42px !important;
+        flex-shrink: 0 !important;
+    }
+}
+@media (max-width: 469px) {
+    .admin-layout {
+        overflow-x: hidden;
+        width: 100vw;
+        max-width: 100vw;
+        flex-direction: column;
+    }
+
+    /* Định dạng thanh Top Nav ngang ôm khít màn hình */
+    .admin-sidebar {
+        width: 100vw;
+        height: 52px; /* Giảm chiều cao thanh nav từ 60px xuống 52px cho gọn */
+        min-height: 52px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between; /* Phân bổ đều không gian */
+        padding: 0 8px; /* Khoảng đệm nhẹ 2 bên mép viền */
+        transform: none;
+    }
+
+    /* Nút Toggle 3 gạch */
+    .admin-sidebar .sidebar-toggle {
+        display: flex;
+        height: 28px;
+        width: 28px;
+        margin: 0;
+        padding: 0;
+        justify-content: center;
+        align-items: center;
+        background: transparent;
+        border: none;
+        color: var(--primary-800);
+        flex-shrink: 0;
+    }
+
+    /* Khối chứa 6 nút menu chính */
+    .admin-sidebar .sidebar-menu {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        gap: 4px; /* Thu nhỏ khoảng cách giữa các nút */
+        margin: 0 6px;
+        padding: 0;
+    }
+
+    /* Khối chứa 2 nút Settings & Logout */
+    .admin-sidebar .sidebar-footer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        gap: 4px;
+        border: none;
+    }
+
+    /* Co nhỏ kích thước mỗi nút menu xuống 36px để vừa khít màn hình 425px */
+    .admin-sidebar .sidebar-item {
+        height: 36px;
+        min-height: 36px;
+        width: 36px;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 6px;
+        flex-shrink: 0;
+        background: transparent;
+        color: var(--primary-800);
+    }
+
+    .admin-sidebar .sidebar-item.active {
+        background: var(--primary-700);
+        color: #ffffff;
+    }
+
+    .admin-sidebar .sidebar-item.active i {
+        color: #ffffff;
+    }
+
+    .admin-sidebar .sidebar-item i {
+        font-size: 1rem; /* Thu nhỏ kích thước icon một chút */
+        margin: 0;
+    }
+
+    .admin-sidebar .sidebar-item span {
+        display: none !important; /* Ẩn chữ hoàn toàn để dồn chỗ cho icon */
+    }
+
+    /* Giữ nguyên hành động khi click mở rộng menu đổ dọc xuống dưới */
+    .admin-sidebar.is-collapsed {
+        width: 100vw;
+        height: auto;
+        max-height: 85vh;
+        border-radius: 0 0 16px 16px;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px 0 16px 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .admin-sidebar.is-collapsed .sidebar-toggle {
+        align-self: flex-start;
+        margin: 0 0 16px 12px;
+    }
+
+    .admin-sidebar.is-collapsed .sidebar-menu {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        width: 100%;
+        flex: none;
+        margin-bottom: 4px;
+        gap: 4px;
+        padding: 0 16px;
+    }
+
+    .admin-sidebar.is-collapsed .sidebar-item {
+        width: 100%;
+        height: 44px;
+        min-height: 44px;
+        padding: 0 16px;
+        justify-content: flex-start;
+        border-radius: 10px;
+    }
+
+    .admin-sidebar.is-collapsed .sidebar-item span {
+        display: block !important;
+        opacity: 1;
+        font-size: 0.95rem;
+    }
+
+    .admin-sidebar.is-collapsed .sidebar-footer {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        width: 100%;
+        padding: 0 16px;
+        gap: 4px;
+    }
+}

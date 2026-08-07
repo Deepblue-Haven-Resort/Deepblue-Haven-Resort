@@ -8,20 +8,24 @@
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    
+    <!-- Đồng bộ stylesheet: Sử dụng admin-sidebar.css của toàn hệ thống và css Lễ tân -->
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
+<!-- Dùng cấu trúc chuẩn admin-layout và admin-main để thừa hưởng responsive từ sidebar hệ thống -->
 <div class="admin-layout">
 
-    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
+    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar(activePage='guests')}"></div>
 
     <main class="admin-main">
 
-        <section class="account-panel">
+        <!-- Đồng bộ sang lớp panel của Lễ tân để thừa hưởng CSS responsive bảng -->
+        <section class="reception-panel">
 
             <div class="panel-header">
                 <div>
@@ -42,7 +46,8 @@
             </div>
 
             <div class="table-wrapper">
-                <table class="account-table">
+                <!-- ĐỔI TÊN CLASS THÀNH activity-table ĐỂ ĐỒNG BỘ CSS RESPONSIVE BẢNG LỄ TÂN -->
+                <table class="activity-table">
                     <thead>
                     <tr>
                         <th>Guest Name</th>
@@ -70,7 +75,7 @@
                         <td>alex.wright@example.com</td>
                         <td>+1 415 892 3401</td>
                         <td>4 Stays</td>
-                        <td><span class="role housekeeper">GOLD VIP</span></td>
+                        <td><span class="badge-status inhouse" style="font-weight: bold;">GOLD VIP</span></td>
                         <td>
                             <button class="btn btn-small btn-cta" style="opacity: 0.65;">Profile</button>
                         </td>
@@ -90,7 +95,7 @@
                         <td>sophia.m@example.com</td>
                         <td>+84 908 112 334</td>
                         <td>2 Stays</td>
-                        <td><span class="role admin">SILVER</span></td>
+                        <td><span class="badge-status available" style="font-weight: bold;">SILVER</span></td>
                         <td>
                             <button class="btn btn-small btn-cta" style="opacity: 0.65;">Profile</button>
                         </td>
@@ -110,7 +115,7 @@
                         <td>david.chen@example.com</td>
                         <td>+852 9123 4567</td>
                         <td>8 Stays</td>
-                        <td><span class="role platinum">PLATINUM VIP</span></td>
+                        <td><span class="badge-status checkout" style="font-weight: bold;">PLATINUM VIP</span></td>
                         <td>
                             <button class="btn btn-small btn-cta" style="opacity: 0.65;">Profile</button>
                         </td>
@@ -141,6 +146,7 @@
     </main>
 </div>
 
+<!-- Scripts: Sử dụng file admin-sidebar.js thống nhất hệ thống -->
 <script th:src="@{/js/admin-sidebar.js}"></script>
 </body>
 </html>

@@ -8,8 +8,11 @@
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    
+    <!-- Đồng bộ stylesheet: Sử dụng cả hai file css profile theo đúng thứ tự của Housekeeper -->
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/profile-employee.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/housekeeper/profile.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -17,58 +20,113 @@
 <body>
 <div class="admin-layout">
 
-    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
+    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar(activePage='profile')}"></div>
 
     <main class="admin-main">
 
-        <section class="account-panel">
+        <section class="account-profile-card">
 
-            <div class="panel-header">
-                <div>
-                    <h2><strong>Receptionist Staff Profile</strong></h2>
-                </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 280px 1fr; gap: var(--space-24);">
-
-                <div style="background: var(--primary-100); border: var(--border-1) solid var(--primary-200); padding: var(--space-24); border-radius: var(--radius-lg); text-align: center;">
-                    <div style="width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-800), var(--primary-600)); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto var(--space-16); box-shadow: var(--shadow-lg);">
-                        <i class="fa-solid fa-headset"></i>
-                    </div>
-                    <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary-800); margin-bottom: var(--space-4);">Le Thanh Ha</h3>
-                    <p style="color: var(--neutral-600); font-size: 0.9rem; margin-bottom: var(--space-16);">Senior Receptionist</p>
-                    <span class="status status-success">ACTIVE</span>
+            <!-- Cột bên trái (Sidebar Card) -->
+            <aside class="profile-sidebar-card">
+                <div class="profile-avatar">
+                    <i class="fa-solid fa-headset"></i>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-24); background: var(--surface-0); border: var(--border-1) solid var(--primary-200); padding: var(--space-24); border-radius: var(--radius-lg);">
-                    <div>
-                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Employee Code</span>
-                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--neutral-900); margin-top: var(--space-4);">EMP-REC-003</p>
+                <h2 th:text="${worker?.profile?.fullName ?: 'Le Thanh Ha'}">Le Thanh Ha</h2>
+                <p>Receptionist Staff</p>
+
+                <div class="profile-experience-box">
+                    <div class="experience-item">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <div>
+                            <span>Years of Experience</span>
+                            <strong>2 years</strong>
+                        </div>
                     </div>
 
-                    <div>
-                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Department</span>
-                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--neutral-900); margin-top: var(--space-4);">Front Desk & Guest Services</p>
+                    <div class="experience-item">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <div>
+                            <span>Account Created</span>
+                            <strong>10/05/2024</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-badges">
+                    <span class="status status-success" th:text="${worker?.status?.name() ?: 'Active'}">Active</span>
+                    <span class="role receptionist">Receptionist</span>
+                </div>
+            </aside>
+
+            <!-- Cột bên phải (Content Card) -->
+            <div class="profile-content-card">
+
+                <div class="profile-info-section">
+                    <div class="section-heading">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Personal Information</span>
                     </div>
 
-                    <div>
-                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Phone Number</span>
-                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--neutral-900); margin-top: var(--space-4);">+84 905 678 910</p>
+                    <div class="profile-info-grid">
+                        <div class="profile-info-item">
+                            <span>Full Name</span>
+                            <strong th:text="${worker?.profile?.fullName ?: 'Le Thanh Ha'}">Le Thanh Ha</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Gender</span>
+                            <strong>Female</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Date of Birth</span>
+                            <strong>15/09/1998</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Phone Number</span>
+                            <strong th:text="${worker?.profile?.phoneNumber ?: '+84 905 678 910'}">+84 905 678 910</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Work Email</span>
+                            <strong th:text="${worker?.profile?.email ?: 'thanha.rec@deepbluehaven.com'}">thanha.rec@deepbluehaven.com</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Address</span>
+                            <strong>Da Nang, Viet Nam</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-info-section">
+                    <div class="section-heading">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>Employee Information</span>
                     </div>
 
-                    <div>
-                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Work Email</span>
-                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--neutral-900); margin-top: var(--space-4);">thanha.rec@deepbluehaven.com</p>
-                    </div>
-
-                    <div>
-                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Duty Shift</span>
-                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--primary-700); margin-top: var(--space-4);">Morning Shift (06:00 AM - 02:30 PM)</p>
-                    </div>
-
-                    <div>
-                        <span style="font-size: 0.8125rem; color: var(--primary-800); font-weight: 700; text-transform: uppercase;">Assigned Desk</span>
-                        <p style="font-size: 1.05rem; font-weight: 700; color: var(--neutral-900); margin-top: var(--space-4);">Main Lobby Desk #1</p>
+                    <div class="profile-info-grid">
+                        <div class="profile-info-item">
+                            <span>Employee Code</span>
+                            <strong th:text="${worker?.username ?: 'EMP-REC-003'}">EMP-REC-003</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Department</span>
+                            <strong>Front Desk & Guest Services</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Duty Shift</span>
+                            <strong>Morning Shift (06:00 AM - 02:30 PM)</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Assigned Desk</span>
+                            <strong>Main Lobby Desk #1</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Start Date</span>
+                            <strong>10/05/2024</strong>
+                        </div>
+                        <div class="profile-info-item">
+                            <span>Role</span>
+                            <strong th:text="${worker?.profile?.role?.name() ?: 'RECEPTIONIST'}">RECEPTIONIST</strong>
+                        </div>
                     </div>
                 </div>
 

@@ -1,0 +1,42 @@
+/* ==========================================================================
+   RECEPTIONIST CHECK-IN SPECIFIC STYLES & RESPONSIVE
+   ========================================================================== */
+
+.checkin-card {
+    background: var(--surface-0);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-20);
+    margin-bottom: var(--space-20);
+}
+
+.checkin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-20);
+    margin-top: var(--space-16);
+}
+
+.checkin-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.checkin-field label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--primary-800);
+    text-transform: uppercase;
+}
+
+/* ==========================================================================
+   RESPONSIVE OVERRIDES
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .checkin-grid {
+        grid-template-columns: 1fr;
+    }
+}

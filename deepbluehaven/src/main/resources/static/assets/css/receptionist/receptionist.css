@@ -473,3 +473,272 @@
 }
 .alert-banner.success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
 .alert-banner.error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+/* ==========================================================================
+   STATS GRID 2X2 FOR TABLET DEVICES (480px - 1024px)
+   ========================================================================== */
+
+@media (min-width: 480px) and (max-width: 1024px) {
+    .stats-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: var(--space-16) !important;
+    }
+}
+/* ==========================================================================
+   ALIGN HERO ACTIONS TO THE RIGHT WITH DEFAULT BUTTON WIDTH ON TABLET (< 1024px)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    /* Cho phép khối cha kéo rộng ra và căn các phần tử con về phía bên phải */
+    .hero-actions {
+        flex-direction: column !important;
+        align-items: flex-end !important; /* Căn toàn bộ nút về bên phải */
+        width: 100% !important;
+        gap: var(--space-12) !important;
+    }
+
+    /* Giữ nguyên kích thước gốc của nút (không giãn 100%) */
+    .hero-actions .btn {
+        width: auto !important;
+        min-width: 180px !important; /* Đặt chiều rộng tối thiểu để các nút đều nhau */
+        display: inline-flex !important;
+        justify-content: center !important;
+    }
+}
+/* ==========================================================================
+   TABLET OPTIMIZATION: NO WRAPPING H1 & EQUAL WIDTH BUTTONS (< 1024px)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    /* Hạ font-size của tiêu đề h1 xuống để chống rớt chữ */
+    .dashboard-hero h1 {
+        font-size: 1.85rem !important;
+        white-space: nowrap !important; /* Ngăn chặn tuyệt đối việc tự động rớt chữ */
+    }
+
+    .hero-actions {
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        width: 100% !important;
+        gap: var(--space-12) !important;
+    }
+
+    /* Đặt kích thước chiều rộng cố định bằng nhau cho cả 3 nút */
+    .hero-actions .btn {
+        width: 210px !important; /* Cả 3 nút sẽ có chiều rộng bằng nhau chằn chặn là 210px */
+        display: inline-flex !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Trên điện thoại siêu nhỏ, cho phép tiêu đề xuống dòng tự nhiên và giãn nút 100% */
+    .dashboard-hero h1 {
+        font-size: 1.5rem !important;
+        white-space: normal !important;
+    }
+    .hero-actions {
+        align-items: stretch !important;
+    }
+    .hero-actions .btn {
+        width: 100% !important;
+    }
+}
+/* ==========================================================================
+   PUSH WALK-IN BUTTON BELOW H1 ON TABLET (< 1024px)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    /* Chuyển khối cha .dashboard-hero thành cột dọc để đẩy nút xuống dưới */
+    .dashboard-hero {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: var(--space-16) !important;
+    }
+
+    /* Đảm bảo nút dạt sát lề trái phía dưới tiêu đề và giữ nguyên kích thước nhỏ */
+    .hero-actions {
+        width: auto !important;
+        align-items: flex-start !important;
+        margin-left: 0 !important;
+        margin-top: var(--space-8) !important;
+    }
+
+    .hero-actions .btn {
+        width: auto !important;
+        min-width: 180px !important;
+    }
+}
+/* ==========================================================================
+   TABLET OPTIMIZATION FOR ROOM GRID PANEL HEADER (< 1024px)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    /* Đổi khối panel-header của sơ đồ phòng thành dạng cột dọc */
+    .reception-panel .panel-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: var(--space-12) !important;
+        padding-bottom: var(--space-16) !important;
+    }
+
+    /* Đảm bảo h2 được kéo rộng tối đa không bị chèn ép rớt chữ */
+    .reception-panel .panel-header h2 {
+        font-size: 1.35rem !important;
+        white-space: nowrap !important; /* Ngăn chặn rớt chữ */
+        width: 100% !important;
+    }
+
+    /* Các nút bộ lọc sẽ xếp đều phía dưới */
+    .reception-panel .panel-header div[style*="display: flex"] {
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .reception-panel .panel-header h2 {
+        white-space: normal !important; /* Cho phép xuống dòng tự nhiên trên mobile siêu nhỏ */
+    }
+}
+/* ==========================================================================
+   STATS GRID 2-COLUMN LAYOUT ON MOBILE & TABLET (<= 768px)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    /* Chuyển stats-grid thành 2 cột đều nhau */
+    .stats-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: var(--space-12) !important;
+        width: 100% !important;
+    }
+
+    /* Đảm bảo các thẻ card thống kê co giãn theo đúng kích thước lưới */
+    .stats-grid .stat-card {
+        margin: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Giảm nhẹ kích thước chữ và padding trên màn hình điện thoại siêu nhỏ */
+    .stats-grid .stat-card {
+        padding: var(--space-12) !important;
+        gap: var(--space-8) !important;
+    }
+
+    .stats-grid .stat-card strong {
+        font-size: 1.35rem !important;
+    }
+
+    .stats-grid .stat-card span {
+        font-size: 0.75rem !important;
+    }
+
+    .stats-grid .stat-card small {
+        display: none !important; /* Ẩn bớt mô tả phụ nhỏ để tránh rối mắt trên điện thoại */
+    }
+    css
+    /* Chuyển khối cha .dashboard-hero thành căn giữa */
+    .dashboard-hero {
+        text-align: center !important;
+        align-items: center !important;
+    }
+    /* Đẩy toàn bộ nút trong hero-actions căn giữa màn hình */
+    .hero-actions {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important; /* Căn giữa các nút */
+        justify-content: center !important;
+        width: 100% !important;
+        gap: var(--space-8) !important;
+        margin: var(--space-12) auto 0 auto !important;
+    }
+    /* Đặt chiều rộng tối đa vừa vặn cho các nút khi căn giữa */
+    .hero-actions .btn {
+        width: 100% !important;
+        max-width: 280px !important; /* Không để nút quá to, giới hạn 280px */
+        display: inline-flex !important;
+        justify-content: center !important;
+    }
+    .dashboard-hero > div {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important; /* Căn giữa trục dọc */
+        text-align: center !important; /* Căn giữa văn bản */
+        width: 100% !important;
+    }
+    /* Tiêu đề chính h1 */
+    .dashboard-hero h1 {
+        text-align: center !important;
+        margin-inline: auto !important;
+    }
+    /* Nhãn tiêu đề phụ */
+    .dashboard-hero .page-label {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important; /* Căn giữa icon và chữ */
+        margin-inline: auto !important;
+        margin-bottom: var(--space-8) !important;
+    }
+    .reception-panel .panel-header {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important; /* Căn giữa trục dọc */
+        text-align: center !important; /* Căn giữa chữ */
+        width: 100% !important;
+        gap: var(--space-8) !important;
+    }
+    .reception-panel .panel-header h2 {
+        text-align: center !important;
+        width: 100% !important;
+    }
+    /* Đảm bảo nút "View Full Check-In Queue" (nếu có) cũng được căn giữa ở dưới */
+    .reception-panel .panel-header .btn {
+        margin-inline: auto !important;
+    }
+    .pagination-bar {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: var(--space-12) !important; /* Tạo khoảng cách giữa chữ và các nút */
+        width: 100% !important;
+        text-align: center !important;
+        padding-top: var(--space-12) !important;
+        box-sizing: border-box !important;
+    }
+    /* Đảm bảo dòng chữ báo số mục nằm chính giữa hàng trên */
+    .pagination-bar > div:first-child {
+        width: 100% !important;
+        text-align: center !important;
+    }
+    /* Khối chứa các nút bấm (Prev, 1, 2, Next) xếp gọn gàng ở dưới */
+    .pagination-bar > div[style*="display: flex"] {
+        width: 100% !important;
+        justify-content: center !important; /* Căn giữa các nút bấm */
+        gap: 6px !important; /* Thu nhỏ nhẹ khoảng cách các nút */
+    }
+    /* Thu gọn kích thước nút chuyển trang nhỏ gọn hơn */
+    .pagination-bar .btn {
+        padding: 6px 10px !important;
+        font-size: 0.775rem !important;
+        min-width: auto !important;
+    }
+    .dashboard-hero h1 {
+        font-size: 1.35rem !important; /* Hạ cỡ font cho vừa vặn màn hình điện thoại dọc */
+        white-space: nowrap !important; /* Ngăn chặn hoàn toàn việc rớt chữ xuống dòng */
+        letter-spacing: -0.02em !important;
+        line-height: 1.2 !important;
+    }
+    .reception-panel .panel-header h2 {
+        font-size: 1.1rem !important; /* Thu nhỏ tiêu đề phụ cho phù hợp với di động */
+        line-height: 1.35 !important;
+        white-space: normal !important; /* Cho phép xuống dòng tự nhiên thay vì bị ép vỡ bố cục */
+        font-weight: 800 !important;
+    }
+    
+}

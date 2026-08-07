@@ -9,18 +9,19 @@
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/receptionist-sidebar.css}">
+    <!-- ĐỔI ĐƯỜNG DẪN CSS SANG ADMIN-SIDEBAR -->
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
-    <div class="receptionist-layout">
+    <div class="admin-layout">
 
         <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
 
-        <main class="receptionist-main">
+        <main class="admin-main">
 
             <!-- HERO -->
             <section class="dashboard-hero">
@@ -263,7 +264,8 @@
         </div>
     </div>
 
-    <script th:src="@{/assets/js/receptionist-sidebar.js}"></script>
+    <!-- ĐỔI ĐƯỜNG DẪN JS SANG ADMIN-SIDEBAR -->
+    <script th:src="@{/js/admin-sidebar.js}"></script>
     <script th:src="@{/assets/js/receptionist/receptionist.js}"></script>
 </body>
 
