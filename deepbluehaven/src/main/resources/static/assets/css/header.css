@@ -148,21 +148,32 @@
 
 .notify-badge {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: -3px;
+    right: -3px;
 
-    width: 9px;
-    height: 9px;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 4px;
 
-    border-radius: 50%;
-    background: var(--error-500);
-    border: 2px solid var(--white);
+    border-radius: 999px;
+    background: var(--error-500, #ef4444);
+    border: 2px solid var(--white, #ffffff);
+
+    color: var(--white, #ffffff);
+    font-family: var(--font-body, system-ui, sans-serif);
+    font-size: 0.68rem;
+    font-weight: 800;
 
     display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+    z-index: 2;
 }
 
 .notify-badge.show {
-    display: block;
+    display: inline-flex;
 }
 
 

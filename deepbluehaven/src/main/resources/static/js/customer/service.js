@@ -4,6 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
     initServiceFiltering();
     initServiceSelection();
 
+    document.addEventListener("click", (e) => {
+        const bookingItem = e.target.closest(".custom-booking-item");
+        if (bookingItem && bookingItem.dataset.bookingCode) {
+            window.location.href = "?bookingCode=" + encodeURIComponent(bookingItem.dataset.bookingCode);
+        }
+    });
+
     console.log("service.js loaded");
 });
 

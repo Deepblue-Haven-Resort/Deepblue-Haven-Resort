@@ -805,31 +805,179 @@
 
 .room-booking-card__form {
     display: grid;
-    gap: var(--space-12);
-
+    gap: var(--space-16, 16px);
     margin-bottom: var(--space-24);
 }
 
 .room-booking-card__form label {
     display: grid;
-    gap: var(--space-8);
-
-    color: var(--neutral-700);
-    font-size: 0.82rem;
+    gap: var(--space-6, 6px);
+    color: var(--primary-900);
+    font-size: 0.8125rem;
     font-weight: 800;
+}
+
+.room-booking-card__input-wrapper {
+    position: relative;
+    width: 100%;
 }
 
 .room-booking-card__form input,
 .room-booking-card__form select {
     width: 100%;
     min-height: 50px;
-
-    padding-inline: var(--space-16);
-
-    border-color: rgba(188, 200, 208, 0.82);
-
-    color: var(--neutral-800);
+    padding: 12px 42px 12px var(--space-16);
+    border: 1.5px solid rgba(188, 200, 208, 0.72);
+    border-radius: var(--radius-md, 14px);
+    background: var(--surface-0, #ffffff);
+    color: var(--primary-900, #0d3b66);
+    font-size: 0.9375rem;
     font-weight: 700;
+    font-family: inherit;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-shadow: 0 2px 6px rgba(13, 59, 102, 0.04);
+    transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.room-booking-card__form input:hover,
+.room-booking-card__form select:hover {
+    border-color: var(--primary-400, #4086bf);
+    background: var(--primary-100, #f0f7fc);
+}
+
+.room-booking-card__form input:focus,
+.room-booking-card__form select:focus {
+    border-color: var(--primary-600, #0056b3);
+    background: var(--surface-0, #ffffff);
+    box-shadow: 0 0 0 4px rgba(13, 59, 102, 0.12);
+}
+
+.room-booking-card__field-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-600, #0056b3);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.room-booking-card__select option {
+    padding: 10px var(--space-12);
+    background: var(--white, #ffffff);
+    color: var(--primary-900, #0d3b66);
+    font-size: 0.9375rem;
+    font-weight: 700;
+}
+
+/* ===================================
+   FLATPICKR CUSTOM LUXURY RESORT THEME
+   =================================== */
+.flatpickr-calendar {
+    border-radius: 20px !important;
+    border: 1px solid rgba(188, 200, 208, 0.6) !important;
+    box-shadow: 0 20px 48px rgba(13, 59, 102, 0.18) !important;
+    font-family: var(--font-body, system-ui, sans-serif) !important;
+    padding: 10px !important;
+    background: #ffffff !important;
+    overflow: hidden;
+}
+
+.flatpickr-calendar::before,
+.flatpickr-calendar::after {
+    display: none !important;
+}
+
+.flatpickr-months {
+    background: var(--primary-800, #0b2d4f) !important;
+    border-radius: 14px 14px 0 0 !important;
+    padding: 10px 6px !important;
+    align-items: center !important;
+}
+
+.flatpickr-months .flatpickr-month {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+.flatpickr-current-month {
+    font-weight: 800 !important;
+    font-size: 1.05rem !important;
+    color: #ffffff !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    font-weight: 800 !important;
+    background: var(--primary-800, #0b2d4f) !important;
+    color: #ffffff !important;
+    border-radius: 6px;
+}
+
+.flatpickr-current-month .numInputWrapper span {
+    border: none !important;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+    color: rgba(255, 255, 255, 0.85) !important;
+    fill: rgba(255, 255, 255, 0.85) !important;
+    padding: 8px !important;
+    border-radius: 50%;
+    transition: background 0.2s ease !important;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-months .flatpickr-next-month:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+.flatpickr-weekdays {
+    background: var(--primary-100, #f0f7fc) !important;
+    padding-block: 6px !important;
+}
+
+span.flatpickr-weekday {
+    color: var(--primary-900, #0d3b66) !important;
+    font-weight: 800 !important;
+    font-size: 0.78rem !important;
+    text-transform: uppercase;
+}
+
+.flatpickr-day {
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    color: var(--neutral-800, #222222) !important;
+    transition: all 0.18s ease !important;
+}
+
+.flatpickr-day.today {
+    border-color: var(--gold-400, #d6b980) !important;
+    color: var(--primary-900, #0d3b66) !important;
+}
+
+.flatpickr-day:hover {
+    background: var(--primary-100, #e1f0fa) !important;
+    color: var(--primary-900, #0d3b66) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected:hover {
+    background: var(--primary-700, #0056b3) !important;
+    border-color: var(--primary-700, #0056b3) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3) !important;
+}
+
+.flatpickr-day.inRange {
+    background: var(--primary-100, #e1f0fa) !important;
+    box-shadow: -5px 0 0 #e1f0fa, 5px 0 0 #e1f0fa !important;
 }
 
 .room-booking-card__button {

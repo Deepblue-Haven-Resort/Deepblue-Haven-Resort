@@ -16,6 +16,9 @@
     <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css" />
     <link rel="stylesheet" th:href="@{/assets/css/customer/room-detail.css}" href="/assets/css/customer/room-detail.css">
 
+    <!-- Flatpickr Datepicker CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
@@ -297,24 +300,33 @@
                     <form id="roomBookingForm">
                         <input type="hidden" name="roomId" th:value="${room != null ? room.id : 1}">
                         <div class="room-booking-card__form">
-                            <label>
+                            <label for="bookCheckIn">
                                 Check in
-                                <input type="date" name="checkIn" id="bookCheckIn" required>
+                                <div class="room-booking-card__input-wrapper">
+                                    <input type="text" name="checkIn" id="bookCheckIn" placeholder="Select check-in date" required readonly>
+                                    <i class="fa-regular fa-calendar-days room-booking-card__field-icon"></i>
+                                </div>
                             </label>
 
-                            <label>
+                            <label for="bookCheckOut">
                                 Check out
-                                <input type="date" name="checkOut" id="bookCheckOut" required>
+                                <div class="room-booking-card__input-wrapper">
+                                    <input type="text" name="checkOut" id="bookCheckOut" placeholder="Select check-out date" required readonly>
+                                    <i class="fa-regular fa-calendar-days room-booking-card__field-icon"></i>
+                                </div>
                             </label>
 
-                            <label>
+                            <label for="bookGuests">
                                 Guests
-                                <select name="guests">
-                                    <option value="1">1 guest</option>
-                                    <option value="2">2 guests</option>
-                                    <option value="3">3 guests</option>
-                                    <option value="4" selected>4 guests</option>
-                                </select>
+                                <div class="room-booking-card__input-wrapper">
+                                    <select name="guests" id="bookGuests" class="room-booking-card__select">
+                                        <option value="1">1 guest</option>
+                                        <option value="2">2 guests</option>
+                                        <option value="3">3 guests</option>
+                                        <option value="4" selected>4 guests</option>
+                                    </select>
+                                    <i class="fa-solid fa-chevron-down room-booking-card__field-icon"></i>
+                                </div>
                             </label>
                         </div>
 
@@ -376,6 +388,8 @@
     <div th:replace="~{fragments/toast :: toast}">
         <div id="toast-container" class="toast-container"></div>
     </div>
+<!-- Flatpickr Datepicker JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script th:src="@{/js/customer/room-detail.js}" src="/js/customer/room-detail.js"></script>
 </div>
 </body>
