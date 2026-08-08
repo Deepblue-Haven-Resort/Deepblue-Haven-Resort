@@ -22,10 +22,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Room")
+@Table(name = "Room", indexes = {
+    @Index(name = "idx_room_status", columnList = "status"),
+    @Index(name = "idx_room_number", columnList = "room_number")
+})
 public class Room {
 
     @Id

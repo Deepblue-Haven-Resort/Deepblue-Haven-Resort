@@ -30,7 +30,7 @@ public class CloudinaryStorageService {
       Map<String, Object> res = cloudinary.uploader().upload(
           file.getBytes(),
           Map.of(
-              "folder", folder == null ? "dinio/menu" : folder,
+              "folder", folder == null ? "deepbluehaven/resort" : folder,
               "public_id", publicId,
               "resource_type", "image"
           )

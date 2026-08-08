@@ -10,6 +10,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,24 +21,20 @@ import deepbluehaven.pojo.Booking;
 import deepbluehaven.pojo.BookingDetail;
 import deepbluehaven.pojo.BookingLog;
 import deepbluehaven.pojo.Customer;
+import deepbluehaven.pojo.CustomerDiscount;
 import deepbluehaven.pojo.CustomerProfile;
-import deepbluehaven.pojo.InventoryItem;
+import deepbluehaven.pojo.Discount;
 import deepbluehaven.pojo.Invoice;
 import deepbluehaven.pojo.InvoiceStatusLog;
+import deepbluehaven.pojo.Log;
 import deepbluehaven.pojo.PaymentTransaction;
+import deepbluehaven.pojo.PricingRule;
 import deepbluehaven.pojo.Room;
 import deepbluehaven.pojo.RoomStatusLog;
 import deepbluehaven.pojo.ServiceOrder;
 import deepbluehaven.pojo.Task;
 import deepbluehaven.pojo.TaskType;
 import deepbluehaven.pojo.Worker;
-import java.util.Map;
-import java.util.TreeMap;
-
-import deepbluehaven.pojo.CustomerDiscount;
-import deepbluehaven.pojo.Discount;
-import deepbluehaven.pojo.Log;
-import deepbluehaven.pojo.PricingRule;
 import deepbluehaven.pojo.enums.ActionCode;
 import deepbluehaven.pojo.enums.BookingStatus;
 import deepbluehaven.pojo.enums.CustomerDiscountStatus;
@@ -47,7 +45,6 @@ import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.pojo.enums.PaymentMethod;
 import deepbluehaven.pojo.enums.PaymentType;
 import deepbluehaven.pojo.enums.RoomStatus;
-import deepbluehaven.pojo.enums.RoomType;
 import deepbluehaven.pojo.enums.ServiceOrderStatus;
 import deepbluehaven.pojo.enums.TaskStatus;
 import deepbluehaven.repositories.BookingRepository;
@@ -193,7 +190,6 @@ public class ReceptionistService {
                 item.setSpecialNote(b.getNote() != null ? b.getNote() : "No special request");
                 item.setRawStatus(b.getStatus());
 
-                // Available room options
                 List<ReceptionistDTO.AvailableRoomOption> roomOptions = new ArrayList<>();
                 for (Room r : availableRooms) {
                     roomOptions.add(new ReceptionistDTO.AvailableRoomOption(
@@ -223,7 +219,6 @@ public class ReceptionistService {
             throw new IllegalStateException("Room " + room.getRoomNumber() + " is currently " + room.getStatus() + " and not available for check-in.");
         }
 
-        // 1. Transition BookingStatus to CHECKED_IN
         BookingStatus oldBookingStatus = booking.getStatus();
         booking.setStatus(BookingStatus.CHECKED_IN);
         if (booking.getDetails() != null && !booking.getDetails().isEmpty()) {
@@ -234,12 +229,10 @@ public class ReceptionistService {
         }
         bookingRepository.save(booking);
 
-        // 2. Transition RoomStatus to OCCUPIED
         RoomStatus oldRoomStatus = room.getStatus();
         room.setStatus(RoomStatus.OCCUPIED);
         roomRepository.save(room);
 
-        // 3. Persist Audit Logs
         BookingLog bLog = new BookingLog();
         bLog.setBooking(booking);
         bLog.setActorId(receptionist != null ? receptionist.getId() : 1L);
@@ -267,7 +260,6 @@ public class ReceptionistService {
         log.setMetadata("Guest checked in to Room " + room.getRoomNumber());
         logRepository.save(log);
 
-        // 4. Notify Customer
         if (booking.getCustomer() != null) {
             String code = String.format("DBH-%d-%03d", (booking.getBookingTime() != null ? booking.getBookingTime().getYear() : 2026), booking.getId());
             notificationService.createCustomerNotification(
@@ -325,7 +317,6 @@ public class ReceptionistService {
 
                 BigDecimal roomCharge = b.getTotalAmount() != null ? b.getTotalAmount() : new BigDecimal("3500000");
 
-                // Check active PricingRule for room type
                 BigDecimal pricingMultiplier = BigDecimal.ONE;
                 String pricingNote = "Standard Rate";
                 if (assignedRoom != null && assignedRoom.getRoomType() != null) {
@@ -345,7 +336,6 @@ public class ReceptionistService {
                 item.setPricingRuleNote(pricingNote);
                 item.setRoomCharge(roomCharge);
 
-                // Service orders for this booking
                 List<ServiceOrder> orders = serviceOrderRepository.findByBookingId(b.getId());
                 BigDecimal serviceTotal = BigDecimal.ZERO;
                 List<ReceptionistDTO.ServiceOrderItem> orderItems = new ArrayList<>();
@@ -370,7 +360,6 @@ public class ReceptionistService {
 
                 BigDecimal grossSubtotal = roomCharge.add(serviceTotal);
 
-                // Check active CustomerDiscount
                 BigDecimal discountAmount = BigDecimal.ZERO;
                 String discountCode = null;
                 Long appliedCdId = null;
@@ -435,7 +424,6 @@ public class ReceptionistService {
             assignedRoom = booking.getDetails().get(0).getRoom();
         }
 
-        // 1. Calculate Folio Breakdown with PricingRule & Discount
         BigDecimal roomCharge = booking.getTotalAmount() != null ? booking.getTotalAmount() : new BigDecimal("3500000");
         if (assignedRoom != null && assignedRoom.getRoomType() != null) {
             try {
@@ -460,7 +448,6 @@ public class ReceptionistService {
         }
         BigDecimal grossSubtotal = roomCharge.add(serviceTotal);
 
-        // Apply Discount if present
         BigDecimal discountAmount = BigDecimal.ZERO;
         CustomerDiscount activeCustDiscount = null;
         if (booking.getCustomer() != null && booking.getCustomer().getId() != null) {
@@ -489,7 +476,6 @@ public class ReceptionistService {
         BigDecimal tax = netSubtotal.multiply(new BigDecimal("0.10")).setScale(0, RoundingMode.HALF_UP);
         BigDecimal totalFolio = netSubtotal.add(tax);
 
-        // 2. Settle / Create Invoice & Payment Transaction
         Invoice invoice = entityManager.createQuery("select i from Invoice i where i.booking.id = :bId", Invoice.class)
                 .setParameter("bId", booking.getId())
                 .getResultStream().findFirst().orElse(null);
@@ -519,7 +505,6 @@ public class ReceptionistService {
             entityManager.persist(invLog);
         }
 
-        // Update CustomerDiscount status to USED
         if (activeCustDiscount != null) {
             activeCustDiscount.setStatus(CustomerDiscountStatus.USED);
             activeCustDiscount.setUsedAt(LocalDateTime.now());
@@ -546,7 +531,6 @@ public class ReceptionistService {
         tx.setTimestamp(LocalDateTime.now());
         entityManager.persist(tx);
 
-        // 3. Transition BookingStatus to CHECKED_OUT
         BookingStatus oldBStatus = booking.getStatus();
         booking.setStatus(BookingStatus.CHECKED_OUT);
         if (booking.getDetails() != null && !booking.getDetails().isEmpty()) {
@@ -574,7 +558,6 @@ public class ReceptionistService {
         checkOutLog.setMetadata("Guest checked out. Invoice settled: " + formatVnd(totalFolio) + " VND");
         logRepository.save(checkOutLog);
 
-        // 4. Transition RoomStatus to CLEANING & Spawn Housekeeping Task
         if (assignedRoom != null) {
             RoomStatus oldRStatus = assignedRoom.getStatus();
             assignedRoom.setStatus(RoomStatus.CLEANING);
@@ -588,7 +571,6 @@ public class ReceptionistService {
             rLog.setTimestamp(LocalDateTime.now());
             entityManager.persist(rLog);
 
-            // Spawn Housekeeping Task
             List<TaskType> taskTypes = entityManager.createQuery("select tt from TaskType tt", TaskType.class).getResultList();
             TaskType tt = (!taskTypes.isEmpty()) ? taskTypes.get(0) : null;
 
@@ -603,7 +585,6 @@ public class ReceptionistService {
             taskRepository.save(task);
         }
 
-        // 5. Customer Notification
         if (booking.getCustomer() != null) {
             String code = String.format("DBH-%d-%03d", (booking.getBookingTime() != null ? booking.getBookingTime().getYear() : 2026), booking.getId());
             notificationService.createCustomerNotification(
@@ -643,7 +624,6 @@ public class ReceptionistService {
             item.setAreaStr(r.getArea() != null ? r.getArea() + "m²" : "35m²");
             item.setAvailable(r.getStatus() == RoomStatus.AVAILABLE);
 
-            // Find current guest if occupied
             if (r.getStatus() == RoomStatus.OCCUPIED) {
                 for (Booking b : checkedInBookings) {
                     if (b.getStatus() == BookingStatus.CHECKED_IN && b.getDetails() != null) {
@@ -676,7 +656,6 @@ public class ReceptionistService {
             throw new IllegalStateException("Room " + room.getRoomNumber() + " is currently " + room.getStatus() + " and not available.");
         }
 
-        // 1. Find or Create Customer
         String phone = (request.getPhone() != null && !request.getPhone().isBlank()) ? request.getPhone().trim() : "09" + (int)(Math.random()*90000000 + 10000000);
         Customer customer = customerRepository.findAll().stream()
                 .filter(c -> c.getProfile() != null && phone.equals(c.getProfile().getPhoneNumber()))
@@ -697,7 +676,6 @@ public class ReceptionistService {
             customerRepository.save(customer);
         }
 
-        // 2. Parse Dates & Nights
         LocalDate checkIn = LocalDate.now();
         LocalDate checkOut = LocalDate.now().plusDays(1);
         try {
@@ -713,7 +691,6 @@ public class ReceptionistService {
         BigDecimal basePrice = room.getBasePrice() != null ? room.getBasePrice() : new BigDecimal("2000000");
         BigDecimal totalAmount = basePrice.multiply(BigDecimal.valueOf(nights));
 
-        // 3. Create Booking & BookingDetail
         Booking booking = new Booking();
         booking.setCustomer(customer);
         booking.setStatus(BookingStatus.CHECKED_IN);
@@ -735,12 +712,10 @@ public class ReceptionistService {
         booking.getDetails().add(detail);
         bookingRepository.save(booking);
 
-        // 4. Update Room Status to OCCUPIED
         RoomStatus oldRStatus = room.getStatus();
         room.setStatus(RoomStatus.OCCUPIED);
         roomRepository.save(room);
 
-        // 5. Persist Audit Logs
         BookingLog bLog = new BookingLog();
         bLog.setBooking(booking);
         bLog.setActorId(receptionist != null ? receptionist.getId() : 1L);
@@ -802,7 +777,6 @@ public class ReceptionistService {
             return list;
         }
 
-        // Fallback sample data if no logs yet
         ReceptionistDTO.ActivityItem a1 = new ReceptionistDTO.ActivityItem();
         a1.setTimeStr(LocalDateTime.now().minusMinutes(12).format(fmt));
         a1.setCategory("booking");

@@ -27,8 +27,11 @@
     padding-left: 30px !important;
     padding-bottom: 0 !important;
     border-bottom: none !important;
-    text-align: center !important;
+    text-align: left !important;
     width: 100% !important;
+    max-width: 500px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 .section-heading i {
@@ -211,11 +214,15 @@
     }
 
     .profile-info-grid {
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
-        column-gap: var(--space-24);
-        row-gap: var(--space-20);
-        padding-left: 32px;
-        padding-right: 16px;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(180px, 1fr)) !important;
+        column-gap: 150px !important;
+        row-gap: var(--space-20) !important;
+        max-width: 500px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
 }
 
@@ -235,6 +242,14 @@
 
     .account-profile-card {
         grid-template-columns: 340px minmax(0, 1fr);
+        max-width: 920px !important;
+        margin: 0 auto !important;
+        width: 100%;
+    }
+
+    .profile-info-item strong {
+        margin-bottom: 12px;
+        white-space: nowrap !important;
     }
 }
 

@@ -18,10 +18,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Booking")
+@Table(name = "Booking", indexes = {
+    @Index(name = "idx_booking_time_status", columnList = "booking_time, status"),
+    @Index(name = "idx_booking_customer", columnList = "customer_id")
+})
 public class Booking {
 
     @Id

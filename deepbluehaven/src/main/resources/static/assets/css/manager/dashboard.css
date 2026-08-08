@@ -811,3 +811,11 @@
         font-size: 2.25rem;
     }
 }
+
+/* CONFIRM ACTION BUTTON */
+.btn-confirm-action {
+    background-color: var(--success-500, #10b981);
+    color: var(--white, #ffffff);
+    border-color: var(--success-500, #10b981);
+    white-space: nowrap;
+}
