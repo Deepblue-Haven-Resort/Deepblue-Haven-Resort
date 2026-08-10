@@ -3,7 +3,7 @@
    ========================================================================== */
 
 .checkout-folio-box {
-    border: 1px dashed var(--primary-300);
+    border: var(--border-1) dashed var(--primary-300);
     border-radius: var(--radius-md);
     background: var(--neutral-50);
     padding: var(--space-16);
@@ -15,15 +15,16 @@
     justify-content: space-between;
     align-items: center;
     padding-block: var(--space-8);
-    border-bottom: 1px solid var(--neutral-100);
+    border-bottom: var(--border-1) solid var(--neutral-100);
 }
 
 .checkout-row:last-child {
     border-bottom: none;
     font-weight: 800;
-    color: var(--primary-850);
+    color: var(--primary-800);
     font-size: 1.1rem;
 }
+
 
 /* ==========================================================================
    RESPONSIVE OVERRIDES
@@ -33,19 +34,31 @@
     .checkout-row {
         flex-direction: column;
         align-items: flex-start;
-        gap: 4px;
+        gap: var(--space-4);
     }
 }
 
-/* E-WALLET QR MODAL STYLES */
+
+/* ==========================================================================
+   E-WALLET QR MODAL STYLES
+   ========================================================================== */
+
 .ewallet-qr-backdrop {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(15,23,42,0.6);
+
+    background: color-mix(
+        in srgb,
+        var(--neutral-900) 60%,
+        transparent
+    );
+
     backdrop-filter: blur(4px);
+
     align-items: center;
     justify-content: center;
+
     z-index: 9999;
 }
 
@@ -56,54 +69,75 @@
 .ewallet-qr-card {
     max-width: 440px;
     width: 90%;
+
     text-align: center;
+
     padding: 28px;
-    border-radius: 20px;
-    background: #ffffff;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+
+    border-radius: var(--radius-lg);
+
+    background: var(--surface-0);
+
+    box-shadow: var(--shadow-xl);
 }
 
 .ewallet-qr-title {
-    margin-bottom: 8px;
-    color: #1e3a8a;
+    margin-bottom: var(--space-8);
+
+    color: var(--primary-800);
+
     font-size: 1.25rem;
 }
 
 .ewallet-qr-subtitle {
-    color: #64748b;
+    color: var(--neutral-500);
+
     font-size: 0.88rem;
-    margin-bottom: 16px;
+
+    margin-bottom: var(--space-16);
 }
 
 .ewallet-qr-container {
-    padding: 16px;
-    background: #ffffff;
-    border: 2px dashed #0284c7;
-    border-radius: 16px;
+    padding: var(--space-16);
+
+    background: var(--surface-0);
+
+    border: var(--border-15) dashed var(--primary-600);
+
+    border-radius: var(--radius-md);
+
     margin-bottom: 20px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+
+    gap: var(--space-12);
 }
 
 .ewallet-qr-img {
     width: 220px;
     height: 220px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    border: 1px solid #e2e8f0;
+
+    border-radius: var(--radius-sm);
+
+    box-shadow: var(--shadow-md);
+
+    border: var(--border-1) solid var(--neutral-200);
 }
 
 .ewallet-qr-ref {
     font-weight: 700;
-    color: #1e293b;
+
+    color: var(--neutral-800);
+
     font-size: 0.95rem;
 }
 
 .ewallet-qr-actions {
     display: flex;
     flex-direction: column;
+
     gap: 10px;
 }
 
@@ -111,110 +145,160 @@
     width: 100%;
 }
 
-/* SEARCH & TABLE UTILITIES */
+
+/* ==========================================================================
+   SEARCH & TABLE UTILITIES
+   ========================================================================== */
+
 .search-input-box {
     width: 320px;
 }
 
 .folio-pricing-box {
-    background: #f8fafc;
+    background: var(--neutral-50);
+
     padding: 10px 14px;
+
     border-radius: 10px;
+
     font-size: 0.825rem;
-    border: 1px solid #e2e8f0;
+
+    border: var(--border-1) solid var(--neutral-200);
 }
 
 .pricing-note-blue {
-    color: #2563eb;
+    color: var(--primary-600);
+
     font-size: 0.775rem;
 }
 
 .discount-note-green {
-    color: #16a34a;
+    color: var(--success-600);
+
     font-size: 0.775rem;
 }
 
 .total-folio-price {
     font-size: 1.15rem;
-    color: #0f2c59;
+
+    color: var(--primary-800);
 }
 
 .empty-table-cell {
     text-align: center;
+
     color: var(--neutral-500);
+
     padding: 40px;
 }
 
 .empty-table-icon {
     font-size: 2rem;
-    margin-bottom: 8px;
+
+    margin-bottom: var(--space-8);
+
     display: block;
+
     color: var(--neutral-400);
 }
 
-/* MODAL & FOLIO SUMMARY CLASSES */
+
+/* ==========================================================================
+   MODAL & FOLIO SUMMARY CLASSES
+   ========================================================================== */
+
 .checkout-modal-dialog {
     max-width: 620px;
 }
 
 .co-modal-header-title {
     margin: 0;
+
     font-size: 1.5rem;
-    color: #0f2c59;
+
+    color: var(--primary-800);
 }
 
 .co-modal-header-icon {
-    color: #2563eb;
-    margin-right: 8px;
+    color: var(--primary-600);
+
+    margin-right: var(--space-8);
 }
 
 .co-modal-booking-ref {
     font-size: 0.875rem;
-    color: #64748b;
+
+    color: var(--neutral-500);
 }
 
+
+/* ==========================================================================
+   MODAL CLOSE BUTTON
+   ========================================================================== */
+
 .modal-close {
-    background: #ffe4e6 !important;
-    color: #f43f5e !important;
+    background: var(--error-100) !important;
+
+    color: var(--error-500) !important;
+
     border: none !important;
+
     width: 32px;
     height: 32px;
+
     border-radius: 50% !important;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     cursor: pointer;
+
     font-size: 1rem;
+
     transition: background 0.2s;
 }
 
 .modal-close:hover {
-    background: #fecdd3 !important;
+    background: var(--error-200) !important;
 }
 
+
+/* ==========================================================================
+   GUEST INFORMATION
+   ========================================================================== */
+
 .guest-info-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: var(--neutral-50);
+
+    border: var(--border-1) solid var(--neutral-200);
+
     border-radius: 12px;
-    padding: 16px;
+
+    padding: var(--space-16);
+
     margin-bottom: 20px;
 }
 
 .guest-info-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px;
+
+    margin-bottom: var(--space-8);
 }
 
 .info-sublabel {
     font-size: 0.8rem;
-    color: #64748b;
+
+    color: var(--neutral-500);
 }
 
 .guest-name-text {
     display: block;
+
     font-size: 1.05rem;
-    color: #0f172a;
+
+    color: var(--neutral-900);
 }
 
 .text-right {
@@ -223,17 +307,21 @@
 
 .room-number-text {
     display: block;
+
     font-size: 1.05rem;
-    color: #1e5bb8;
+
+    color: var(--primary-600);
 }
 
 .stay-dates-info {
     font-size: 0.85rem;
-    color: #475569;
+
+    color: var(--neutral-600);
 }
 
 .calendar-icon-blue {
-    color: #2563eb;
+    color: var(--primary-600);
+
     margin-right: 6px;
 }
 
@@ -241,101 +329,166 @@
     margin-bottom: 20px;
 }
 
+
+/* ==========================================================================
+   SECTION SUBHEADING
+   ========================================================================== */
+
 .section-subheading {
     font-size: 0.95rem;
+
     font-weight: 700;
-    color: #334155;
+
+    color: var(--neutral-700);
+
     margin-bottom: 10px;
 }
 
+
+/* ==========================================================================
+   FOLIO TABLE
+   ========================================================================== */
+
 .folio-table-wrapper {
-    border: 1px solid #e2e8f0;
+    border: var(--border-1) solid var(--neutral-200);
+
     border-radius: 12px;
+
     overflow: hidden;
 }
 
 .folio-table-clean {
     width: 100%;
+
     border-collapse: collapse;
+
     font-size: 0.875rem;
 }
 
+
+/* ==========================================================================
+   STANDARD FOLIO ROW
+   ========================================================================== */
+
 .folio-row-white {
-    border-bottom: 1px solid #f1f5f9;
-    background: #ffffff;
+    border-bottom: var(--border-1) solid var(--neutral-100);
+
+    background: var(--surface-0);
 }
 
 .folio-td-name {
     padding: 12px 16px;
-    color: #334155;
+
+    color: var(--neutral-700);
 }
 
 .folio-pricing-tag {
-    color: #2563eb;
+    color: var(--primary-600);
 }
 
 .folio-td-val {
     padding: 12px 16px;
+
     text-align: right;
+
     font-weight: 700;
-    color: #0f172a;
+
+    color: var(--neutral-900);
 }
 
+
+/* ==========================================================================
+   DISCOUNT ROW
+   ========================================================================== */
+
 .folio-row-discount {
-    border-bottom: 1px solid #f1f5f9;
-    background: #f0fdf4;
+    border-bottom: var(--border-1) solid var(--neutral-100);
+
+    background: var(--success-100);
 }
 
 .folio-td-discount-name {
     padding: 12px 16px;
-    color: #15803d;
+
+    color: var(--success-700);
 }
 
 .folio-discount-code {
-    color: #166534;
+    color: var(--success-800);
 }
 
 .folio-td-discount-val {
     padding: 12px 16px;
+
     text-align: right;
+
     font-weight: 700;
-    color: #16a34a;
+
+    color: var(--success-600);
 }
+
+
+/* ==========================================================================
+   VAT ROW
+   ========================================================================== */
 
 .folio-td-vat-name {
     padding: 12px 16px;
-    color: #64748b;
+
+    color: var(--neutral-500);
 }
 
 .folio-td-vat-val {
     padding: 12px 16px;
+
     text-align: right;
-    color: #64748b;
+
+    color: var(--neutral-500);
 }
 
+
+/* ==========================================================================
+   TOTAL ROW
+   ========================================================================== */
+
 .folio-row-total {
-    background: #eff6ff;
+    background: var(--primary-100);
 }
 
 .folio-td-total-label {
     padding: 14px 16px;
-    color: #1e40af;
+
+    color: var(--primary-700);
+
     font-weight: 800;
+
     font-size: 1.05rem;
 }
 
 .folio-td-total-val {
     padding: 14px 16px;
+
     text-align: right;
+
     font-weight: 800;
+
     font-size: 1.25rem;
-    color: #1e3a8a;
+
+    color: var(--primary-800);
 }
+
+
+/* ==========================================================================
+   FORM LAYOUT
+   ========================================================================== */
 
 .form-grid-2col {
     display: grid;
+
     grid-template-columns: 1fr 1fr;
+
     gap: 14px;
+
     margin-bottom: 20px;
 }
 
@@ -345,22 +498,37 @@
 
 .modal-actions-end {
     display: flex;
+
     justify-content: flex-end;
-    gap: 12px;
-    margin-top: 24px;
+
+    gap: var(--space-12);
+
+    margin-top: var(--space-24);
 }
 
+
+/* ==========================================================================
+   ICON COLORS
+   ========================================================================== */
+
 .icon-blue {
-    color: #0284c7;
+    color: var(--primary-600);
 }
+
+
+/* ==========================================================================
+   PAYMENT METHOD BUTTONS
+   ========================================================================== */
 
 .btn-cta[data-method="CREDIT_CARD"],
 .btn-cta[data-method="BANK_TRANSFER"] {
-    background-color: #0284c7 !important;
-    border-color: #0284c7 !important;
+    background-color: var(--primary-600) !important;
+
+    border-color: var(--primary-600) !important;
 }
 
 .btn-cta[data-method="E_WALLET"] {
-    background-color: #0d9488 !important;
-    border-color: #0d9488 !important;
+    background-color: var(--secondary-700) !important;
+
+    border-color: var(--secondary-700) !important;
 }

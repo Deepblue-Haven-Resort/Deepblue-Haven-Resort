@@ -4,7 +4,7 @@
 
 .checkin-card {
     background: var(--surface-0);
-    border: 1px solid var(--primary-200);
+    border: var(--border-1) solid var(--primary-200);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     padding: var(--space-20);
@@ -31,6 +31,7 @@
     text-transform: uppercase;
 }
 
+
 /* ==========================================================================
    RESPONSIVE OVERRIDES
    ========================================================================== */
@@ -41,13 +42,22 @@
     }
 }
 
-/* CONFIRM ACTION BUTTON */
+
+/* ==========================================================================
+   CONFIRM ACTION BUTTON
+   ========================================================================== */
+
 .btn-confirm-action {
-    background-color: var(--success-500, #10b981);
-    color: var(--white, #ffffff);
-    border-color: var(--success-500, #10b981);
+    background-color: var(--success-500);
+    color: var(--white);
+    border-color: var(--success-500);
     white-space: nowrap;
 }
+
+
+/* ==========================================================================
+   SEARCH & UTILITIES
+   ========================================================================== */
 
 .search-input-box {
     width: 320px;
@@ -67,6 +77,11 @@
     padding-left: 0;
 }
 
+
+/* ==========================================================================
+   EMPTY STATE
+   ========================================================================== */
+
 .empty-table-cell {
     text-align: center;
     color: var(--neutral-500);
@@ -75,15 +90,20 @@
 
 .empty-table-icon {
     font-size: 2rem;
-    margin-bottom: 8px;
+    margin-bottom: var(--space-8);
     display: block;
     color: var(--neutral-400);
 }
 
 .icon-blue-mr {
-    color: #2563eb;
-    margin-right: 8px;
+    color: var(--primary-700);
+    margin-right: var(--space-8);
 }
+
+
+/* ==========================================================================
+   FORM & MODAL
+   ========================================================================== */
 
 .form-grid-2col {
     display: grid;
@@ -95,14 +115,18 @@
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    margin-top: 24px;
+    margin-top: var(--space-24);
 }
 
-/* ACTION BUTTON GROUP & INLINE FORMS */
+
+/* ==========================================================================
+   ACTION BUTTON GROUP & INLINE FORMS
+   ========================================================================== */
+
 .action-btn-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-8);
     flex-wrap: nowrap;
 }
 
@@ -111,7 +135,11 @@
     display: inline-block;
 }
 
-/* TABLE HEADER & COLUMN ALIGNMENT ENHANCEMENTS */
+
+/* ==========================================================================
+   TABLE HEADER & COLUMN ALIGNMENT ENHANCEMENTS
+   ========================================================================== */
+
 .reception-panel .activity-table th {
     text-align: center;
     white-space: nowrap;
@@ -127,7 +155,11 @@
     white-space: nowrap !important;
 }
 
-/* FORCE FIXED TABLE LAYOUT SO BROWSERS RESPECT COLUMN WIDTHS */
+
+/* ==========================================================================
+   FORCE FIXED TABLE LAYOUT SO BROWSERS RESPECT COLUMN WIDTHS
+   ========================================================================== */
+
 .reception-panel .activity-table {
     table-layout: fixed !important;
     width: 100%;
@@ -168,70 +200,117 @@
     text-align: center;
 }
 
+
+/* ==========================================================================
+   BOOKING REFERENCE
+   ========================================================================== */
+
 .booking-ref-badge {
     display: inline-block;
     padding: 6px 12px;
-    background: #f1f5f9;
-    color: #1e293b;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
+
+    background: var(--neutral-100);
+    color: var(--neutral-800);
+    border: var(--border-1) solid var(--neutral-300);
+
+    border-radius: var(--radius-sm);
+
     font-weight: 700;
     font-size: 0.875rem;
     letter-spacing: 0.5px;
 }
 
+
+/* ==========================================================================
+   GUEST DETAILS
+   ========================================================================== */
+
 .guest-name-title {
     display: block;
-    color: #0f172a;
+
+    color: var(--neutral-900);
+
     font-size: 0.925rem;
     font-weight: 700;
-    margin-bottom: 4px;
+
+    margin-bottom: var(--space-4);
+
     white-space: nowrap;
 }
 
 .guest-phone-sub {
     display: block;
+
     font-size: 0.8rem;
-    color: #64748b;
+    color: var(--neutral-500);
+
     white-space: nowrap;
 }
 
 .phone-icon {
     font-size: 0.725rem;
-    color: #94a3b8;
-    margin-right: 4px;
+    color: var(--neutral-400);
+
+    margin-right: var(--space-4);
 }
+
+
+/* ==========================================================================
+   STAY INFORMATION
+   ========================================================================== */
 
 .stay-date-range {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #334155;
+
+    color: var(--neutral-700);
+
     white-space: nowrap;
 }
 
 .nights-tag {
     display: inline-block;
+
     margin-top: 3px;
+
     font-size: 0.775rem;
-    color: #0284c7;
     font-weight: 600;
-    background: #e0f2fe;
+
+    color: var(--primary-700);
+    background: var(--primary-200);
+
     padding: 2px 8px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
+
     white-space: nowrap;
 }
+
+
+/* ==========================================================================
+   TOTAL AMOUNT
+   ========================================================================== */
 
 .total-amount-val {
     font-size: 0.95rem;
     font-weight: 800;
-    color: #0f2c59;
+
+    color: var(--primary-900);
+
     white-space: nowrap;
 }
+
+
+/* ==========================================================================
+   ROOM SELECT
+   ========================================================================== */
 
 .room-select-box {
     width: 100%;
     max-width: 145px;
+
     padding: 6px 8px;
+
     font-size: 0.825rem;
-    border-radius: 8px;
+
+    border-radius: var(--radius-sm);
 }

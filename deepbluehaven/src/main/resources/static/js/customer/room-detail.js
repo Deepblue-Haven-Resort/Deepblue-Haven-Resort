@@ -277,20 +277,24 @@ function initRoomBookingForm() {
 
             if (res.status === 401 || !data.success) {
                 if (data.redirectUrl) {
-                    alert("Vui lòng đăng nhập tài khoản để thực hiện đặt phòng.");
-                    window.location.href = getApiUrl(data.redirectUrl);
+                    showToast("warning", "Login Required", "Please log in to your account to book a room.");
+                    setTimeout(() => {
+                        window.location.href = getApiUrl(data.redirectUrl);
+                    }, 2000);
                 } else {
-                    alert(data.message || "Đặt phòng không thành công.");
+                    showToast("error", "Failed", data.message || "Room booking failed.");
                 }
                 return;
             }
 
-            alert(`Đặt phòng thành công! Mã đơn: ${data.bookingCode}`);
+            showToast("success", "Success", `Room booked successfully! Booking Code: ${data.bookingCode}`);
             if (data.redirectUrl) {
-                window.location.href = getApiUrl(data.redirectUrl);
+                setTimeout(() => {
+                    window.location.href = getApiUrl(data.redirectUrl);
+                }, 2000);
             }
         } catch (err) {
-            alert("Đã xảy ra lỗi kết nối khi đặt phòng.");
+            showToast("error", "Connection Error", "A connection error occurred while booking.");
         }
     });
 }
