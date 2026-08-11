@@ -8,7 +8,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/manager-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
 
     <link rel="stylesheet"
@@ -16,11 +16,11 @@
 </head>
 
 <body>
-<div class="manager-layout">
+<div class="admin-layout">
 
     <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
-    <main class="manager-main">
+    <main class="admin-main">
 
         <!-- HERO -->
         <section class="dashboard-hero manager-hero">
@@ -348,7 +348,7 @@
     </main>
 </div>
 
-<script th:src="@{/js/manager-sidebar.js}"></script>
+<script th:src="@{/js/admin-sidebar.js}"></script>
 <script th:src="@{/assets/js/manager/dashboard.js}"></script>
 </body>
 </html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Inventory & Status | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+
+        
+        <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+        <main class="admin-main">
+
+            
+            <section class="dashboard-hero manager-hero">
+                <div>
+                    <span class="page-label">Operations Desk</span>
+                    <h1>Resort Room Rack Grid</h1>
+                    <p>Real-time room status, housekeeping coordination, and maintenance logs.</p>
+                </div>
+            </section>
+
+            
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <span>Available Rooms</span>
+                        <strong>24</strong>
+                        <small>Ready for guest check-in</small>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-bed"></i>
+                    </div>
+                    <div>
+                        <span>Occupied Rooms</span>
+                        <strong>34</strong>
+                        <small>Active guest in-house bookings</small>
+                    </div>
+                </article>
+
+                <article class="stat-card warning">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-broom"></i>
+                    </div>
+                    <div>
+                        <span>Cleaning Queue</span>
+                        <strong>8</strong>
+                        <small>Housekeepers assigned</small>
+                    </div>
+                </article>
+
+                <article class="stat-card warning">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-wrench"></i>
+                    </div>
+                    <div>
+                        <span>Out of Order</span>
+                        <strong>4</strong>
+                        <small>Maintenance scheduled</small>
+                    </div>
+                </article>
+            </section>
+
+            
+            <section class="manager-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Resort Rooms Inventory</h2>
+                    </div>
+                    <div class="filter-options">
+                        <button type="button" class="btn btn-cta btn-medium">Add New Room</button>
+                    </div>
+                </div>
+
+                
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search rooms by number, floor, type...">
+                    </div>
+                </div>
+
+               
+                <div class="table-wrapper">
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Room Number</th>
+                                <th>Room Type</th>
+                                <th>Max Capacity</th>
+                                <th>Base Nightly Price</th>
+                                <th>Current Status</th>
+                                <th>Housekeeper Assigned</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr>
+                                <td><strong>Room 101</strong></td>
+                                <td>Premium Room</td>
+                                <td>3 Guests</td>
+                                <td><strong>2,100,000 VND</strong></td>
+                                <td><span class="status status-success">AVAILABLE</span></td>
+                                <td>Mary Johnson</td>
+                                <td>
+                                    <div class="filter-options" style="display: flex; justify-content: center;">
+                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Edit</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Room 102</strong></td>
+                                <td>Deluxe Suite</td>
+                                <td>4 Guests</td>
+                                <td><strong>3,500,000 VND</strong></td>
+                                <td><span class="status">OCCUPIED</span></td>
+                                <td>David Miller</td>
+                                <td>
+                                    <div class="filter-options" style="display: flex; justify-content: center;">
+                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Edit</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                
+                <div class="table-footer">
+                    <p>Hiển thị <strong>1-2</strong> trong số <strong>62</strong> phòng</p>
+                    <div class="pagination">
+                        <button type="button" class="page-btn disabled">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button type="button" class="page-btn active">1</button>
+                        <button type="button" class="page-btn">2</button>
+                        <span class="page-dots">...</span>
+                        <button type="button" class="page-btn">3</button>
+                        <button type="button" class="page-btn">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script th:src="@{/js/admin-sidebar.js}"></script>
+</body>
+
+</html>

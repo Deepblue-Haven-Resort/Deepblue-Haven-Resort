@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resort Service Orders | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+
+       
+        <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+        <main class="admin-main">
+
+            
+            <section class="dashboard-hero manager-hero">
+                <div>
+                    <span class="page-label">Operations Desk</span>
+                    <h1>Guest Service Orders</h1>
+                    <p>Track active room service, spa, laundry requests, and F&B order workflows.</p>
+                </div>
+            </section>
+
+           
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div>
+                        <span>Pending Orders</span>
+                        <strong>9</strong>
+                        <small>Awaiting confirmation</small>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-spinner"></i>
+                    </div>
+                    <div>
+                        <span>In Process</span>
+                        <strong>14</strong>
+                        <small>Assigned to staff</small>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <span>Completed Today</span>
+                        <strong>42</strong>
+                        <small>Delivered successfully</small>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-money-bill-trend-up"></i>
+                    </div>
+                    <div>
+                        <span>Service Revenue</span>
+                        <strong>18,450,000 VND</strong>
+                        <small>Today's total earnings</small>
+                    </div>
+                </article>
+            </section>
+
+           
+            <section class="manager-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Resort Services Registry</h2>
+                    </div>
+                    <div class="filter-options">
+                        <button type="button" class="btn btn-outline btn-medium">Configure Catalog</button>
+                    </div>
+                </div>
+
+                
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search orders by room, guest, or service category...">
+                    </div>
+                </div>
+
+                
+                <div class="table-wrapper">
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Order Ref</th>
+                                <th>Room & Guest</th>
+                                <th>Service Category</th>
+                                <th>Service Requested</th>
+                                <th>Quantity</th>
+                                <th>Total Cost</th>
+                                <th>Status</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           
+                            <tr>
+                                <td><strong>#SRV-1024</strong></td>
+                                <td>
+                                    <strong>Room 204</strong><br>
+                                    <small>John Smith</small>
+                                </td>
+                                <td>Food & Beverage</td>
+                                <td>Club Sandwich & Orange Juice</td>
+                                <td>2</td>
+                                <td><strong>350,000 VND</strong></td>
+                                <td><span class="status status-warning">PENDING</span></td>
+                                <td>
+                                    
+                                    <div class="filter-options" style="display: flex; justify-content: center;">
+                                        <button type="button" class="btn btn-cta btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Approve</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>#SRV-1023</strong></td>
+                                <td>
+                                    <strong>Room 105</strong><br>
+                                    <small>Sarah Connor</small>
+                                </td>
+                                <td>Spa & Wellness</td>
+                                <td>Aromatherapy Massage</td>
+                                <td>1</td>
+                                <td><strong>1,200,000 VND</strong></td>
+                                <td><span class="status">PROCESSING</span></td>
+                                <td>
+                                    
+                                    <div class="filter-options" style="display: flex; justify-content: center;">
+                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Details</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                
+                <div class="table-footer">
+                    <p>Hiển thị <strong>1-2</strong> trong số <strong>65</strong> đơn dịch vụ</p>
+                    <div class="pagination">
+                        <button type="button" class="page-btn disabled">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button type="button" class="page-btn active">1</button>
+                        <button type="button" class="page-btn">2</button>
+                        <span class="page-dots">...</span>
+                        <button type="button" class="page-btn">3</button>
+                        <button type="button" class="page-btn">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script th:src="@{/js/admin-sidebar.js}"></script>
+</body>
+
+</html>
