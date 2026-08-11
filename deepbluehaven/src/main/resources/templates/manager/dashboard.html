@@ -53,7 +53,6 @@
                 <div>
                     <span>Today's Revenue</span>
                     <strong th:text="${dashboardData.kpi.revenueTodayStr}">128.5M</strong>
-                    <small th:text="${dashboardData.kpi.revenueGrowthStr + ' vs yesterday'}">+14% vs yesterday</small>
                 </div>
             </article>
 
@@ -64,7 +63,6 @@
                 <div>
                     <span>Occupancy Rate</span>
                     <strong th:text="${dashboardData.kpi.occupancyRate + '%'}">82%</strong>
-                    <small th:text="${dashboardData.kpi.occupiedRooms + ' / ' + dashboardData.kpi.totalRooms + ' rooms in use'}">51 / 62 rooms in use</small>
                 </div>
             </article>
 
@@ -75,7 +73,6 @@
                 <div>
                     <span>Today's Bookings</span>
                     <strong th:text="${dashboardData.kpi.todayBookingsCount}">36</strong>
-                    <small th:text="${dashboardData.kpi.todayCheckInCount + ' check-in, ' + dashboardData.kpi.todayCheckOutCount + ' check-out'}">12 check-in, 8 check-out</small>
                 </div>
             </article>
 
@@ -86,7 +83,6 @@
                 <div>
                     <span>Rooms Needing Attention</span>
                     <strong th:text="${dashboardData.kpi.attentionRoomsCount}">16</strong>
-                    <small th:text="${dashboardData.kpi.cleaningRoomsCount + ' cleaning, ' + dashboardData.kpi.maintenanceRoomsCount + ' maintenance'}">12 cleaning, 4 maintenance</small>
                 </div>
             </article>
 
@@ -100,7 +96,6 @@
                 <div class="card-header">
                     <div>
                         <h2>Revenue Overview</h2>
-                        <p>Past 7 days revenue from rooms and services</p>
                     </div>
                     <span class="chip success" th:text="${dashboardData.revenueChart.growthPercentageStr}">+18%</span>
                 </div>
@@ -119,7 +114,6 @@
                 <div class="card-header">
                     <div>
                         <h2>Room Status</h2>
-                        <p>Current room status overview</p>
                     </div>
                 </div>
 
@@ -144,7 +138,6 @@
                 <div class="card-header">
                     <div>
                         <h2>Booking Flow</h2>
-                        <p>Today's booking status flow</p>
                     </div>
                 </div>
 
@@ -168,24 +161,6 @@
                 </div>
             </article>
 
-            <!-- SERVICE ORDERS -->
-            <article class="chart-card">
-                <div class="card-header">
-                    <div>
-                        <h2>Service Orders</h2>
-                        <p>Active service orders being processed</p>
-                    </div>
-                    <span class="chip warning" th:text="${dashboardData.serviceOrders.pendingCount + ' pending'}">9 pending</span>
-                </div>
-
-                <div class="activity-list">
-                    <div class="activity-item" th:each="order : ${dashboardData.serviceOrders.recentOrders}">
-                        <i th:class="${order.categoryIcon}"></i>
-                        <p><strong th:text="${order.roomNumber}">Room 204</strong> <span th:text="${'requested ' + order.serviceName}">requested F&B service</span></p>
-                    </div>
-                </div>
-            </article>
-
         </section>
 
         <!-- SECOND GRID -->
@@ -196,7 +171,6 @@
                 <div class="card-header">
                     <div>
                         <h2>Staff Performance</h2>
-                        <p>Top 5 Most Dedicated Staff (Performance & Weighted Tasks)</p>
                     </div>
                     <span class="chip success">Top 5 Dedicated</span>
                 </div>
@@ -231,7 +205,6 @@
                 <div class="card-header">
                     <div>
                         <h2>Guest Experience</h2>
-                        <p>Ratings and VIP guest insights</p>
                     </div>
                 </div>
 
@@ -270,7 +243,6 @@
                 <div class="card-header">
                     <div>
                         <h2>Operational Alerts</h2>
-                        <p>Alerts requiring immediate attention</p>
                     </div>
                 </div>
 
@@ -295,7 +267,6 @@
             <div class="panel-header">
                 <div>
                     <h2>Live Resort Activity</h2>
-                    <p>Track all latest live operations across the resort</p>
                 </div>
 
                 <button type="button" id="refreshActivityBtn" class="btn btn-cta btn-medium">
@@ -341,6 +312,7 @@
                     </tr>
                     </tbody>
                 </table>
+                
             </div>
 
         </section>

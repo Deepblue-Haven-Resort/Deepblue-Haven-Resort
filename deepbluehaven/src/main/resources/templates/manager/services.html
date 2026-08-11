@@ -12,6 +12,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -23,16 +24,6 @@
         <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
         <main class="admin-main">
-
-            
-            <section class="dashboard-hero manager-hero">
-                <div>
-                    <span class="page-label">Operations Desk</span>
-                    <h1>Guest Service Orders</h1>
-                    <p>Track active room service, spa, laundry requests, and F&B order workflows.</p>
-                </div>
-            </section>
-
            
             <section class="stats-grid">
                 <article class="stat-card">
@@ -42,7 +33,6 @@
                     <div>
                         <span>Pending Orders</span>
                         <strong>9</strong>
-                        <small>Awaiting confirmation</small>
                     </div>
                 </article>
 
@@ -53,7 +43,6 @@
                     <div>
                         <span>In Process</span>
                         <strong>14</strong>
-                        <small>Assigned to staff</small>
                     </div>
                 </article>
 
@@ -64,7 +53,6 @@
                     <div>
                         <span>Completed Today</span>
                         <strong>42</strong>
-                        <small>Delivered successfully</small>
                     </div>
                 </article>
 
@@ -75,7 +63,6 @@
                     <div>
                         <span>Service Revenue</span>
                         <strong>18,450,000 VND</strong>
-                        <small>Today's total earnings</small>
                     </div>
                 </article>
             </section>
@@ -87,7 +74,7 @@
                         <h2>Resort Services Registry</h2>
                     </div>
                     <div class="filter-options">
-                        <button type="button" class="btn btn-outline btn-medium">Configure Catalog</button>
+                        <button type="button" class="btn btn-cta btn-medium" id="addServiceBtn">Add New Service</button>
                     </div>
                 </div>
 
@@ -104,12 +91,9 @@
                     <table class="activity-table">
                         <thead>
                             <tr>
-                                <th>Order Ref</th>
-                                <th>Room & Guest</th>
-                                <th>Service Category</th>
-                                <th>Service Requested</th>
-                                <th>Quantity</th>
-                                <th>Total Cost</th>
+                                <th>Service Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
                                 <th>Status</th>
                                 <th class="text-center">Action</th>
                             </tr>
@@ -117,38 +101,26 @@
                         <tbody>
                            
                             <tr>
-                                <td><strong>#SRV-1024</strong></td>
-                                <td>
-                                    <strong>Room 204</strong><br>
-                                    <small>John Smith</small>
-                                </td>
+                                <td><strong>Club Sandwich & Orange Juice</strong></td>
                                 <td>Food & Beverage</td>
-                                <td>Club Sandwich & Orange Juice</td>
-                                <td>2</td>
                                 <td><strong>350,000 VND</strong></td>
-                                <td><span class="status status-warning">PENDING</span></td>
+                                <td><span class="status status-success">ACTIVE</span></td>
                                 <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn btn-cta btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Approve</button>
+                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                        <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
+                                        <button type="button" class="btn danger-btn delete-btn btn-small">Delete</button>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td><strong>#SRV-1023</strong></td>
-                                <td>
-                                    <strong>Room 105</strong><br>
-                                    <small>Sarah Connor</small>
-                                </td>
+                                <td><strong>Aromatherapy Massage</strong></td>
                                 <td>Spa & Wellness</td>
-                                <td>Aromatherapy Massage</td>
-                                <td>1</td>
                                 <td><strong>1,200,000 VND</strong></td>
-                                <td><span class="status">PROCESSING</span></td>
+                                <td><span class="status status-success">ACTIVE</span></td>
                                 <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Details</button>
+                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                        <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
+                                        <button type="button" class="btn danger-btn delete-btn btn-small">Delete</button>
                                     </div>
                                 </td>
                             </tr>
@@ -177,7 +149,70 @@
         </main>
     </div>
 
+    <!-- Service Modal -->
+    <div class="modal-overlay" id="serviceModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="serviceModalTitle"><i class="fa-solid fa-bell-concierge"></i> Add New Service</h3>
+                <button type="button" class="modal-close" id="closeServiceModalBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <form id="serviceForm">
+                <div class="modal-body">
+                    <div class="modal-form-grid single-col">
+                        <div class="form-group">
+                            <label>Service Name <span>*</span></label>
+                            <input type="text" id="serviceName" required placeholder="e.g. Aromatherapy Massage">
+                        </div>
+                        <div class="form-group">
+                            <label>Category <span>*</span></label>
+                            <input type="hidden" id="serviceCategory" required>
+                            <div class="filter-dropdown form-filter-dropdown" data-input="serviceCategory">
+                                <button class="filter-btn form-filter-btn" type="button">
+                                    <span class="filter-label"><strong>Select Category</strong></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-menu form-filter-menu">
+                                    <button type="button" data-value="FNB"><strong>Food & Beverage</strong></button>
+                                    <button type="button" data-value="SPA"><strong>Spa & Wellness</strong></button>
+                                    <button type="button" data-value="LAUNDRY"><strong>Laundry</strong></button>
+                                    <button type="button" data-value="OTHER"><strong>Other</strong></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Price (VND) <span>*</span></label>
+                            <input type="number" id="servicePrice" required min="0" step="10000" placeholder="e.g. 500000">
+                        </div>
+                        <div class="form-group">
+                            <label>Status <span>*</span></label>
+                            <input type="hidden" id="serviceStatus" required value="ACTIVE">
+                            <div class="filter-dropdown form-filter-dropdown" data-input="serviceStatus">
+                                <button class="filter-btn form-filter-btn" type="button">
+                                    <span class="filter-label"><strong>Active</strong></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-menu form-filter-menu">
+                                    <button type="button" data-value="ACTIVE"><strong>Active</strong></button>
+                                    <button type="button" data-value="INACTIVE"><strong>Inactive</strong></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-btn" id="cancelServiceModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-cta">Save Service</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script th:src="@{/js/admin-sidebar.js}"></script>
+    <script th:src="@{/js/manager/services.js}"></script>
 </body>
 
 </html>

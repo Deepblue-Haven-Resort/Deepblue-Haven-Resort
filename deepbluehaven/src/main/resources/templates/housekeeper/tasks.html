@@ -15,6 +15,7 @@
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
 </head>
 
 <body>
@@ -30,7 +31,7 @@
                 <div>
                     <h2><strong>My Assigned Tasks</strong></h2>
                 </div>
-                <button class="btn btn-small btn-error">Report Issue</button>
+                <button class="btn btn-small btn-error" id="reportIssueBtn"><i class="fa-solid fa-triangle-exclamation"></i> Report Issue</button>
             </div>
 
             <div class="filter-bar">
@@ -130,5 +131,98 @@
 
 <script th:src="@{/js/admin-sidebar.js}"></script>
 <script th:src="@{/js/housekeeper/tasks.js}"></script>
+
+<!-- ============================================================
+     MODAL: Report Room Issue
+     ============================================================ -->
+<div class="modal-overlay" id="reportIssueModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-triangle-exclamation"></i> Report Room Issue</h3>
+            <button type="button" class="modal-close" id="closeReportModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="reportIssueForm">
+            <div class="modal-body">
+                <div class="modal-form-grid">
+                    <div class="form-group">
+                        <label>Room Number <span>*</span></label>
+                        <input type="text" id="issueRoom" placeholder="e.g. 204" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Issue Type <span>*</span></label>
+                        <input type="hidden" id="issueType" value="">
+                        <div class="filter-dropdown form-filter-dropdown" data-input="issueType">
+                            <button class="filter-btn form-filter-btn" type="button">
+                                <span class="filter-label"><strong>Select Issue Type</strong></span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                            <div class="filter-menu form-filter-menu">
+                                <button type="button" data-value="ELECTRICAL"><strong>Electrical Problem</strong></button>
+                                <button type="button" data-value="PLUMBING"><strong>Plumbing / Water Leak</strong></button>
+                                <button type="button" data-value="AC"><strong>Air Conditioning Fault</strong></button>
+                                <button type="button" data-value="FURNITURE"><strong>Furniture / Equipment Damage</strong></button>
+                                <button type="button" data-value="OTHER"><strong>Other</strong></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority <span>*</span></label>
+                        <input type="hidden" id="issuePriority" value="NORMAL">
+                        <div class="filter-dropdown form-filter-dropdown" data-input="issuePriority">
+                            <button class="filter-btn form-filter-btn" type="button">
+                                <span class="filter-label"><strong>Normal</strong></span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                            <div class="filter-menu form-filter-menu">
+                                <button type="button" data-value="LOW"><strong>Low</strong></button>
+                                <button type="button" data-value="NORMAL"><strong>Normal</strong></button>
+                                <button type="button" data-value="HIGH"><strong>High</strong></button>
+                                <button type="button" data-value="URGENT"><strong>Urgent</strong></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description <span>*</span></label>
+                        <textarea id="issueDescription" placeholder="Describe the issue in detail, e.g. loud noise from AC unit since 8 AM" rows="4" required style="resize:vertical;"></textarea>
+                    </div>
+                </div>
+                <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:12px 14px; margin-top:4px; font-size:0.85rem; color:#9a3412; display:flex; align-items:flex-start; gap:10px;">
+                    <i class="fa-solid fa-circle-info" style="margin-top:2px; flex-shrink:0;"></i>
+                    <span>Submitting this report will automatically set the room status to <strong>Maintenance</strong> and create a repair task.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn outline-btn" id="cancelReportModal">Cancel</button>
+                <button type="submit" class="btn btn-cta" style="background:#dc2626;"><i class="fa-solid fa-paper-plane"></i> Submit Report</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(function() {
+    const dropdowns = document.querySelectorAll('#reportIssueModal .filter-dropdown[data-input]');
+    dropdowns.forEach(dd => {
+        const btn = dd.querySelector('.filter-btn, .form-filter-btn');
+        const menu = dd.querySelector('.filter-menu, .form-filter-menu');
+        const label = dd.querySelector('.filter-label strong');
+        const input = document.getElementById(dd.dataset.input);
+        if (btn) btn.addEventListener('click', e => { e.stopPropagation(); dropdowns.forEach(o => o !== dd && o.classList.remove('active')); dd.classList.toggle('active'); });
+        if (menu) menu.querySelectorAll('button').forEach(opt => opt.addEventListener('click', () => { if (label) label.textContent = opt.textContent.trim(); if (input) input.value = opt.dataset.value; dd.classList.remove('active'); }));
+    });
+    document.addEventListener('click', () => dropdowns.forEach(d => d.classList.remove('active')));
+
+    const modal = document.getElementById('reportIssueModal');
+    document.getElementById('reportIssueBtn').addEventListener('click', () => modal.classList.add('active'));
+    document.getElementById('closeReportModal').addEventListener('click',  () => modal.classList.remove('active'));
+    document.getElementById('cancelReportModal').addEventListener('click', () => modal.classList.remove('active'));
+    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
+    document.getElementById('reportIssueForm').addEventListener('submit', e => {
+        e.preventDefault();
+        alert('Issue reported! Room has been flagged for Maintenance.');
+        modal.classList.remove('active');
+    });
+})();
+</script>
 </body>
 </html>

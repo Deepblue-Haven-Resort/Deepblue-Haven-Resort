@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing & Discounts | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            color: var(--primary-600);
+            border-bottom-color: var(--primary-600);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+        <main class="admin-main">
+            <section class="dashboard-hero manager-hero">
+                <div>
+                    <span class="page-label">Revenue Management</span>
+                    <h1>Pricing & Discounts</h1>
+                    <p>Manage seasonal pricing rules, multipliers, and promotional discount codes.</p>
+                </div>
+            </section>
+
+            <section class="manager-panel">
+                <div class="tabs">
+                    <button class="tab-btn active" data-target="pricingRulesTab">Pricing Rules</button>
+                    <button class="tab-btn" data-target="discountsTab">Discount Codes</button>
+                </div>
+
+                <!-- Pricing Rules Tab -->
+                <div id="pricingRulesTab" class="tab-content active">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Seasonal Pricing Rules</h2>
+                        </div>
+                        <div class="filter-options">
+                            <button type="button" class="btn btn-cta btn-medium" id="addRuleBtn">Add Pricing Rule</button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>Rule Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Multiplier</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Summer Peak Season</strong></td>
+                                    <td>01/06/2026</td>
+                                    <td>31/08/2026</td>
+                                    <td><strong>x 1.5</strong></td>
+                                    <td><span class="status status-success">ACTIVE</span></td>
+                                    <td>
+                                        <div style="display: flex; gap: 8px; justify-content: center;">
+                                            <button type="button" class="btn outline-btn edit-rule-btn btn-small">Edit</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>New Year Eve</strong></td>
+                                    <td>30/12/2025</td>
+                                    <td>02/01/2026</td>
+                                    <td><strong>x 2.0</strong></td>
+                                    <td><span class="status">EXPIRED</span></td>
+                                    <td>
+                                        <div style="display: flex; gap: 8px; justify-content: center;">
+                                            <button type="button" class="btn outline-btn edit-rule-btn btn-small">Edit</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Discounts Tab -->
+                <div id="discountsTab" class="tab-content">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Promotional Discount Codes</h2>
+                        </div>
+                        <div class="filter-options">
+                            <button type="button" class="btn btn-cta btn-medium" id="addDiscountBtn">Add Discount</button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-wrapper">
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Type</th>
+                                    <th>Value</th>
+                                    <th>Valid Until</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>SUMMER26</strong></td>
+                                    <td>Percentage</td>
+                                    <td><strong>10%</strong></td>
+                                    <td>31/08/2026</td>
+                                    <td><span class="status status-success">ACTIVE</span></td>
+                                    <td>
+                                        <div style="display: flex; gap: 8px; justify-content: center;">
+                                            <button type="button" class="btn outline-btn edit-discount-btn btn-small">Edit</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>WELCOME500</strong></td>
+                                    <td>Fixed Amount</td>
+                                    <td><strong>500,000 VND</strong></td>
+                                    <td>31/12/2026</td>
+                                    <td><span class="status status-success">ACTIVE</span></td>
+                                    <td>
+                                        <div style="display: flex; gap: 8px; justify-content: center;">
+                                            <button type="button" class="btn outline-btn edit-discount-btn btn-small">Edit</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Pricing Rule Modal -->
+    <div class="modal-overlay" id="ruleModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="ruleModalTitle"><i class="fa-solid fa-tags"></i> Add Pricing Rule</h3>
+                <button type="button" class="modal-close" id="closeRuleModalBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="ruleForm">
+                <div class="modal-body">
+                    <div class="modal-form-grid">
+                        <div class="form-group">
+                            <label>Rule Name <span>*</span></label>
+                            <input type="text" id="ruleName" required placeholder="e.g. Summer Peak Season">
+                        </div>
+                        <div class="form-group">
+                            <label>Start Date <span>*</span></label>
+                            <input type="date" id="ruleStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>End Date <span>*</span></label>
+                            <input type="date" id="ruleEndDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Multiplier <span>*</span></label>
+                            <input type="number" id="ruleMultiplier" required min="0.1" step="0.1" placeholder="e.g. 1.5">
+                        </div>
+                        <div class="form-group">
+                            <label>Status <span>*</span></label>
+                            <input type="hidden" id="ruleStatus" value="ACTIVE" required>
+                            <div class="filter-dropdown form-filter-dropdown" data-input="ruleStatus">
+                                <button class="filter-btn form-filter-btn" type="button">
+                                    <span class="filter-label"><strong>Active</strong></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-menu form-filter-menu">
+                                    <button type="button" data-value="ACTIVE"><strong>Active</strong></button>
+                                    <button type="button" data-value="INACTIVE"><strong>Inactive</strong></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-btn" id="cancelRuleModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-cta">Save Rule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Discount Modal -->
+    <div class="modal-overlay" id="discountModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="discountModalTitle"><i class="fa-solid fa-ticket"></i> Add Discount Code</h3>
+                <button type="button" class="modal-close" id="closeDiscountModalBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="discountForm">
+                <div class="modal-body">
+                    <div class="modal-form-grid">
+                        <div class="form-group">
+                            <label>Code <span>*</span></label>
+                            <input type="text" id="discountCode" required placeholder="e.g. SUMMER26" style="text-transform: uppercase;">
+                        </div>
+                        <div class="form-group">
+                            <label>Discount Type <span>*</span></label>
+                            <input type="hidden" id="discountType" value="PERCENTAGE" required>
+                            <div class="filter-dropdown form-filter-dropdown" data-input="discountType">
+                                <button class="filter-btn form-filter-btn" type="button">
+                                    <span class="filter-label"><strong>Percentage</strong></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-menu form-filter-menu">
+                                    <button type="button" data-value="PERCENTAGE"><strong>Percentage</strong></button>
+                                    <button type="button" data-value="FIXED"><strong>Fixed Amount</strong></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Value <span>*</span></label>
+                            <input type="number" id="discountValue" required min="1" placeholder="e.g. 10">
+                        </div>
+                        <div class="form-group">
+                            <label>Valid Until <span>*</span></label>
+                            <input type="date" id="discountExpiry" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Status <span>*</span></label>
+                            <input type="hidden" id="discountStatus" value="ACTIVE" required>
+                            <div class="filter-dropdown form-filter-dropdown" data-input="discountStatus">
+                                <button class="filter-btn form-filter-btn" type="button">
+                                    <span class="filter-label"><strong>Active</strong></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-menu form-filter-menu">
+                                    <button type="button" data-value="ACTIVE"><strong>Active</strong></button>
+                                    <button type="button" data-value="INACTIVE"><strong>Inactive</strong></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-btn" id="cancelDiscountModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-cta">Save Discount</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/js/admin-sidebar.js}"></script>
+    <script th:src="@{/js/manager/pricing.js}"></script>
+</body>
+
+</html>

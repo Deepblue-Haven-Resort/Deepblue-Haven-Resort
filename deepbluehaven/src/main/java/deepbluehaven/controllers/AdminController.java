@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import deepbluehaven.dto.WorkerCreateFormDTO;
+import deepbluehaven.dto.WorkerEditFormDTO;
 import deepbluehaven.dto.WorkerDTO;
 import deepbluehaven.pojo.Worker;
 import deepbluehaven.pojo.enums.Department;
@@ -88,6 +89,40 @@ public class AdminController {
             addCreateWorkerOptions(model);
             addValidationErrors(bindingResult, model);
             return "admin/create-employee";
+        }
+    }
+
+    @GetMapping("/admin/accounts/{id}/edit")
+    public String editEmployeeAccount(@PathVariable Long id, Model model) {
+        if (!model.containsAttribute("editWorkerForm")) {
+            model.addAttribute("editWorkerForm", workerService.getWorkerForEdit(id));
+        }
+        model.addAttribute("workerId", id);
+        addCreateWorkerOptions(model);
+        return "admin/edit-employee";
+    }
+
+    @PostMapping("/admin/accounts/{id}/edit")
+    public String editEmployeeAccount(@PathVariable Long id, 
+            @Valid @ModelAttribute("editWorkerForm") WorkerEditFormDTO form,
+            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("workerId", id);
+            addCreateWorkerOptions(model);
+            addValidationErrors(bindingResult, model);
+            return "admin/edit-employee";
+        }
+
+        try {
+            workerService.updateWorker(id, form);
+            redirectAttributes.addFlashAttribute("successMessage", "Employee account updated successfully");
+            return "redirect:/admin/accounts";
+        } catch (WorkerFormExceptionService exception) {
+            bindingResult.rejectValue(exception.getField(), "worker.update.failed", exception.getMessage());
+            model.addAttribute("workerId", id);
+            addCreateWorkerOptions(model);
+            addValidationErrors(bindingResult, model);
+            return "admin/edit-employee";
         }
     }
 

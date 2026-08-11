@@ -14,6 +14,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
 </head>
 
 <body>
@@ -32,8 +33,8 @@
                     <h2><strong>Guest Directory & Registration</strong></h2>
                 </div>
                 <div style="display: flex; align-items: center; gap: var(--space-12);">
-                    <button class="btn btn-small btn-cta">
-                        Register New Guest
+                    <button class="btn btn-small btn-cta" id="registerGuestBtn">
+                        <i class="fa-solid fa-user-plus"></i> Register New Guest
                     </button>
                 </div>
             </div>
@@ -77,7 +78,8 @@
                         <td>4 Stays</td>
                         <td><span class="badge-vip-gold">GOLD VIP</span></td>
                         <td>
-                            <button class="btn btn-small btn-cta" style="opacity: 0.65;">Profile</button>
+                            <button class="btn btn-small btn-cta edit-guest-btn" style="opacity: 0.65;"
+                                data-name="Alexander Wright" data-passport="US-9920148" data-email="alex.wright@example.com" data-phone="+1 415 892 3401" data-vip="GOLD" data-note="Prefers high floor">Profile</button>
                         </td>
                     </tr>
 
@@ -97,7 +99,8 @@
                         <td>2 Stays</td>
                         <td><span class="badge-vip-silver">SILVER</span></td>
                         <td>
-                            <button class="btn btn-small btn-cta" style="opacity: 0.65;">Profile</button>
+                            <button class="btn btn-small btn-cta edit-guest-btn" style="opacity: 0.65;"
+                                data-name="Sophia Martinez" data-passport="07919823019" data-email="sophia.m@example.com" data-phone="+84 908 112 334" data-vip="SILVER" data-note="">Profile</button>
                         </td>
                     </tr>
 
@@ -117,7 +120,8 @@
                         <td>8 Stays</td>
                         <td><span class="badge-vip-platinum">PLATINUM VIP</span></td>
                         <td>
-                            <button class="btn btn-small btn-cta" style="opacity: 0.65;">Profile</button>
+                            <button class="btn btn-small btn-cta edit-guest-btn" style="opacity: 0.65;"
+                                data-name="David Chen" data-passport="HK-881029" data-email="david.chen@example.com" data-phone="+852 9123 4567" data-vip="PLATINUM" data-note="VIP guest, suite only">Profile</button>
                         </td>
                     </tr>
                     </tbody>
@@ -148,5 +152,166 @@
 
 <!-- Scripts: Sử dụng file admin-sidebar.js thống nhất hệ thống -->
 <script th:src="@{/js/admin-sidebar.js}"></script>
+
+<!-- ============================================================
+     MODAL: Edit / View Guest Profile
+     ============================================================ -->
+<div class="modal-overlay" id="editGuestModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-id-card"></i> Guest Profile</h3>
+            <button type="button" class="modal-close" id="closeEditGuestModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="editGuestForm">
+            <div class="modal-body">
+                <div class="modal-form-grid">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="guestName" placeholder="Full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Identity / Passport No.</label>
+                        <input type="text" id="guestPassport" placeholder="Passport or CMND number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="guestPhone" placeholder="e.g. +84 901 234 567">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="guestEmail" placeholder="guest@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>VIP / Membership Level</label>
+                        <input type="hidden" id="guestVip" value="NONE">
+                        <div class="filter-dropdown form-filter-dropdown" data-input="guestVip">
+                            <button class="filter-btn form-filter-btn" type="button">
+                                <span class="filter-label"><strong>Select Level</strong></span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                            <div class="filter-menu form-filter-menu">
+                                <button type="button" data-value="NONE"><strong>None (Regular)</strong></button>
+                                <button type="button" data-value="SILVER"><strong>Silver</strong></button>
+                                <button type="button" data-value="GOLD"><strong>Gold VIP</strong></button>
+                                <button type="button" data-value="PLATINUM"><strong>Platinum VIP</strong></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Special Notes</label>
+                        <textarea id="guestNote" placeholder="Dietary restrictions, room preferences, allergies…" rows="3" style="resize:vertical;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn outline-btn" id="cancelEditGuestModal">Cancel</button>
+                <button type="submit" class="btn btn-cta"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================
+     MODAL: Register New Guest
+     ============================================================ -->
+<div class="modal-overlay" id="registerGuestModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-user-plus"></i> Register New Guest</h3>
+            <button type="button" class="modal-close" id="closeRegisterGuestModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="registerGuestForm">
+            <div class="modal-body">
+                <div class="modal-form-grid">
+                    <div class="form-group">
+                        <label>Full Name <span>*</span></label>
+                        <input type="text" id="regName" placeholder="Full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Identity / Passport No. <span>*</span></label>
+                        <input type="text" id="regPassport" placeholder="Passport or CMND number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number <span>*</span></label>
+                        <input type="tel" id="regPhone" placeholder="e.g. +84 901 234 567" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="regEmail" placeholder="guest@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Nationality</label>
+                        <input type="text" id="regNationality" placeholder="e.g. Vietnam, United States">
+                    </div>
+                    <div class="form-group">
+                        <label>Special Notes</label>
+                        <textarea id="regNote" placeholder="Dietary restrictions, preferences…" rows="3" style="resize:vertical;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn outline-btn" id="cancelRegisterGuestModal">Cancel</button>
+                <button type="submit" class="btn btn-cta"><i class="fa-solid fa-user-check"></i> Register Guest</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(function() {
+    // --- Dropdown init ---
+    function initDropdowns(container) {
+        const dropdowns = container.querySelectorAll('.filter-dropdown[data-input]');
+        dropdowns.forEach(dd => {
+            const btn = dd.querySelector('.filter-btn, .form-filter-btn');
+            const menu = dd.querySelector('.filter-menu, .form-filter-menu');
+            const label = dd.querySelector('.filter-label strong');
+            const input = document.getElementById(dd.dataset.input);
+            if (btn) btn.addEventListener('click', e => { e.stopPropagation(); dropdowns.forEach(o => o !== dd && o.classList.remove('active')); dd.classList.toggle('active'); });
+            if (menu) menu.querySelectorAll('button').forEach(opt => opt.addEventListener('click', () => { if (label) label.textContent = opt.textContent.trim(); if (input) input.value = opt.dataset.value; dd.classList.remove('active'); }));
+        });
+        document.addEventListener('click', () => dropdowns.forEach(d => d.classList.remove('active')));
+    }
+
+    function setDd(inputId, value) {
+        const input = document.getElementById(inputId);
+        const dd = document.querySelector('.filter-dropdown[data-input="' + inputId + '"]');
+        if (!input || !dd) return;
+        input.value = value;
+        const opt = dd.querySelector('.filter-menu button[data-value="' + value + '"]');
+        const lbl = dd.querySelector('.filter-label strong');
+        if (opt && lbl) lbl.textContent = opt.textContent.trim();
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    // --- Edit Guest Modal ---
+    initDropdowns(document.getElementById('editGuestModal'));
+
+    document.querySelectorAll('.edit-guest-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('guestName').value    = btn.dataset.name || '';
+            document.getElementById('guestPassport').value = btn.dataset.passport || '';
+            document.getElementById('guestPhone').value   = btn.dataset.phone || '';
+            document.getElementById('guestEmail').value   = btn.dataset.email || '';
+            document.getElementById('guestNote').value    = btn.dataset.note || '';
+            setDd('guestVip', btn.dataset.vip || 'NONE');
+            openModal('editGuestModal');
+        });
+    });
+    document.getElementById('closeEditGuestModal').addEventListener('click',  () => closeModal('editGuestModal'));
+    document.getElementById('cancelEditGuestModal').addEventListener('click', () => closeModal('editGuestModal'));
+    document.getElementById('editGuestModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('editGuestModal'); });
+    document.getElementById('editGuestForm').addEventListener('submit', e => { e.preventDefault(); alert('Guest profile saved!'); closeModal('editGuestModal'); });
+
+    // --- Register Guest Modal ---
+    document.getElementById('registerGuestBtn').addEventListener('click', () => openModal('registerGuestModal'));
+    document.getElementById('closeRegisterGuestModal').addEventListener('click',  () => closeModal('registerGuestModal'));
+    document.getElementById('cancelRegisterGuestModal').addEventListener('click', () => closeModal('registerGuestModal'));
+    document.getElementById('registerGuestModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('registerGuestModal'); });
+    document.getElementById('registerGuestForm').addEventListener('submit', e => { e.preventDefault(); alert('Guest registered!'); closeModal('registerGuestModal'); });
+})();
+</script>
 </body>
 </html>
