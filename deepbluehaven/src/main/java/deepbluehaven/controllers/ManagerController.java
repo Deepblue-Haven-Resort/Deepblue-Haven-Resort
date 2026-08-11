@@ -29,6 +29,42 @@ public class ManagerController {
 
         return "manager/dashboard";
     }
+    
+    @GetMapping("/manager/bookings")
+    public String managerBookings(Model model) {
+    model.addAttribute("activePage", "bookings");
+    return "manager/bookings";
+   }
+
+    @GetMapping("/manager/rooms")
+    public String managerRooms(Model model) {
+    model.addAttribute("activePage", "rooms");
+    return "manager/rooms";
+   }
+
+    @GetMapping("/manager/services")
+    public String managerServices(Model model) {
+    model.addAttribute("activePage", "services");
+    return "manager/services";
+    }
+
+    @GetMapping("/manager/staff")
+    public String managerStaff(Model model) {
+    model.addAttribute("activePage", "staff");
+    return "manager/staff";
+    }
+
+    @GetMapping("/manager/revenue")
+    public String managerRevenue(Model model) {
+    model.addAttribute("activePage", "revenue");
+    return "manager/revenue";
+    }
+
+@GetMapping("/manager/reports")
+public String managerReports(Model model) {
+    model.addAttribute("activePage", "reports");
+    return "manager/reports";
+}
 
     @PostMapping("/manager/confirm-booking/{id}")
     public String confirmBooking(@PathVariable("id") Long id, RedirectAttributes redirectAttrs) {
