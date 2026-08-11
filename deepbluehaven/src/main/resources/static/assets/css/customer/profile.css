@@ -7,11 +7,9 @@
     padding-left: 0;
 
     background:
-        radial-gradient(
-            circle at 88% 10%,
+        radial-gradient(circle at 88% 10%,
             rgba(77, 168, 255, 0.15),
-            transparent 28%
-        ),
+            transparent 28%),
         var(--primary-100);
 }
 
@@ -30,11 +28,9 @@
     overflow: hidden;
 
     background:
-        linear-gradient(
-            120deg,
+        linear-gradient(120deg,
             rgba(255, 255, 255, 0.95),
-            rgba(212, 235, 255, 0.75)
-        );
+            rgba(212, 235, 255, 0.75));
 
     border: 1px solid var(--primary-300);
     border-radius: var(--radius-xl);
@@ -171,11 +167,9 @@
     color: var(--primary-700);
 
     background:
-        linear-gradient(
-            145deg,
+        linear-gradient(145deg,
             var(--primary-200),
-            var(--surface-0)
-        );
+            var(--surface-0));
 
     border: 3px solid var(--white);
     border-radius: 50%;
@@ -237,11 +231,9 @@
     padding: 0.4rem 0.75rem;
 
     color: var(--primary-800);
-    background: linear-gradient(
-        135deg,
-        var(--gold-300),
-        #f7edcf
-    );
+    background: linear-gradient(135deg,
+            var(--gold-300),
+            #f7edcf);
 
     border-radius: 999px;
 
@@ -411,7 +403,7 @@
     position: relative;
 }
 
-.profile-input > i {
+.profile-input>i {
     position: absolute;
     top: 50%;
     left: 1rem;
@@ -532,11 +524,9 @@
     gap: 1rem;
 
     background:
-        linear-gradient(
-            135deg,
+        linear-gradient(135deg,
             var(--neutral-50),
-            var(--primary-100)
-        );
+            var(--primary-100));
 
     border: 1px solid var(--primary-200);
     border-radius: var(--radius-md);
@@ -681,38 +671,44 @@
     .profile-form__actions button {
         width: 100%;
     }
+
     /* Căn giữa nhãn tiêu đề Account details trên mobile */
-@media (max-width: 480px) {
-    .profile-panel__label {
-        display: block !important;
-        text-align: center !important;
-        width: 100% !important;
-        margin-inline: auto !important;
+    @media (max-width: 480px) {
+        .profile-panel__label {
+            display: block !important;
+            text-align: center !important;
+            width: 100% !important;
+            margin-inline: auto !important;
+        }
+
+        /* Đồng thời căn giữa cả tiêu đề chính Personal Information ở dưới nó */
+        .profile-panel__header {
+            align-items: center !important;
+            text-align: center !important;
+            width: 100% !important;
+        }
+
+        .profile-panel__header h2 {
+            font-size: 1.5rem !important;
+            /* Hạ cỡ chữ xuống 1.5rem (hoặc 1.35rem nếu cần) */
+            line-height: 1.25 !important;
+            white-space: nowrap !important;
+            /* Ép chữ nằm thẳng hàng không xuống dòng */
+        }
+
+        .profile-panel__label,
+        .profile-overview__label {
+            display: block !important;
+            text-align: center !important;
+            width: 100% !important;
+            margin-inline: auto !important;
+        }
+
+        /* Căn giữa tiêu đề chính My Bookings ở tab Lịch sử */
+        .profile-overview__header {
+            align-items: center !important;
+            text-align: center !important;
+            width: 100% !important;
+        }
     }
-    
-    /* Đồng thời căn giữa cả tiêu đề chính Personal Information ở dưới nó */
-    .profile-panel__header {
-        align-items: center !important;
-        text-align: center !important;
-        width: 100% !important;
-    }
-    .profile-panel__header h2 {
-        font-size: 1.5rem !important; /* Hạ cỡ chữ xuống 1.5rem (hoặc 1.35rem nếu cần) */
-        line-height: 1.25 !important;
-        white-space: nowrap !important; /* Ép chữ nằm thẳng hàng không xuống dòng */
-    }
-    .profile-panel__label,
-    .profile-overview__label {
-        display: block !important;
-        text-align: center !important;
-        width: 100% !important;
-        margin-inline: auto !important;
-    }
-    /* Căn giữa tiêu đề chính My Bookings ở tab Lịch sử */
-    .profile-overview__header {
-        align-items: center !important;
-        text-align: center !important;
-        width: 100% !important;
-    }
-}
 }

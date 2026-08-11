@@ -242,15 +242,30 @@
                                 </div>
                             </div>
 
-                            <div th:if="${customerBookings != null && !customerBookings.isEmpty()}" style="margin-top: 12px;">
-                                <label style="font-size: 0.78rem; font-weight: 700; color: #555;">Select Active Booking:</label>
-                                <select id="bookingSelectDropdown" onchange="window.location.href='?bookingCode=' + this.value" style="width: 100%; padding: 6px 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 0.85rem; margin-top: 4px; background: #fff;">
-                                    <option th:each="bk : ${customerBookings}"
-                                            th:value="${bk.bookingCode}"
-                                            th:text="|${bk.bookingCode} - ${bk.roomName}|"
-                                            th:selected="${selectedBooking != null && selectedBooking.bookingCode == bk.bookingCode}">
-                                    </option>
-                                </select>
+                            <div th:if="${customerBookings != null && !customerBookings.isEmpty()}" class="booking-summary__select-group">
+                                <span class="booking-summary__select-label">Select Active Booking:</span>
+                                <details class="rooms-dropdown custom-booking-dropdown">
+                                    <summary aria-label="Select active booking">
+                                        <span class="rooms-dropdown__copy">
+                                            <strong th:text="${selectedBooking != null ? selectedBooking.bookingCode : 'Select Booking'}">DBH-2026-001</strong>
+                                            <small class="rooms-dropdown__value" th:text="${selectedBooking != null ? selectedBooking.roomName : 'Choose room'}">PREMIUM 101</small>
+                                        </span>
+                                        <i class="fa-solid fa-chevron-down rooms-dropdown__icon"></i>
+                                    </summary>
+
+                                    <div class="rooms-dropdown__menu custom-booking-menu">
+                                        <div th:each="bk : ${customerBookings}"
+                                             class="custom-booking-item"
+                                             th:classappend="${selectedBooking != null && selectedBooking.bookingCode == bk.bookingCode ? 'is-active' : ''}"
+                                             th:attr="data-booking-code=${bk.bookingCode}">
+                                            <div class="custom-booking-item__info">
+                                                <span class="custom-booking-item__code" th:text="${bk.bookingCode}">DBH-2026-001</span>
+                                                <strong class="custom-booking-item__name" th:text="${bk.roomName}">PREMIUM 101</strong>
+                                            </div>
+                                            <i th:if="${selectedBooking != null && selectedBooking.bookingCode == bk.bookingCode}" class="fa-solid fa-check custom-booking-item__check"></i>
+                                        </div>
+                                    </div>
+                                </details>
                             </div>
 
                             <div class="booking-summary__divider"></div>

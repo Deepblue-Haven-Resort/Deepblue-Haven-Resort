@@ -337,6 +337,9 @@ body {
     z-index: 100;
     width: 100%;
     min-width: 220px;
+    max-height: 240px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     padding: var(--space-8);
     border: var(--border-1) solid rgba(188, 200, 208, 0.62);
     border-radius: var(--radius-md);
@@ -346,6 +349,23 @@ body {
     flex-direction: column;
     gap: var(--space-4);
     animation: dropdownIn 0.18s ease both;
+}
+
+.rooms-dropdown__menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.rooms-dropdown__menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.rooms-dropdown__menu::-webkit-scrollbar-thumb {
+    background: rgba(188, 200, 208, 0.7);
+    border-radius: 999px;
+}
+
+.rooms-dropdown__menu::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-400);
 }
 
 @keyframes dropdownIn {
@@ -361,15 +381,17 @@ body {
 }
 
 .rooms-dropdown__option {
-    min-height: 40px;
-    padding-inline: var(--space-12);
+    min-height: 38px;
+    padding: 8px var(--space-12);
     border-radius: var(--radius-sm);
     background: transparent;
     color: var(--neutral-700);
     font-size: 0.875rem;
     font-weight: 700;
     text-align: left;
-    white-space: nowrap;
+    white-space: normal;
+    line-height: 1.35;
+    word-break: break-word;
     cursor: pointer;
     transition: background 0.18s ease, color 0.18s ease;
 }

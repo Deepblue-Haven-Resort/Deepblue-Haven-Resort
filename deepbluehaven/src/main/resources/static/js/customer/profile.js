@@ -24,10 +24,20 @@ document.addEventListener("DOMContentLoaded", function () {
         initialValues[input.id] = input.value;
     });
 
+    let birthdayPicker = null;
+    if (window.flatpickr) {
+        birthdayPicker = flatpickr("#birthday", {
+            dateFormat: "Y-m-d",
+            clickOpens: false,
+            allowInput: true
+        });
+    }
+
     function enableEditing() {
         inputs.forEach(function (input) {
             input.removeAttribute("readonly");
         });
+        if (birthdayPicker) birthdayPicker.set("clickOpens", true);
         editButton.style.display = "none";
         formActions.classList.add("is-visible");
     }
@@ -36,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
         inputs.forEach(function (input) {
             input.setAttribute("readonly", true);
         });
+        if (birthdayPicker) birthdayPicker.set("clickOpens", false);
         editButton.style.display = "inline-flex";
         formActions.classList.remove("is-visible");
     }
@@ -44,15 +55,24 @@ document.addEventListener("DOMContentLoaded", function () {
         inputs.forEach(function (input) {
             input.value = initialValues[input.id];
         });
+        if (birthdayPicker) {
+            birthdayPicker.setDate(initialValues["birthday"]);
+        }
     }
 
     editButton.addEventListener("click", function () {
         enableEditing();
+        if (typeof showToast === "function") {
+            showToast("info", "Edit Mode", "You can now edit your profile information.");
+        }
     });
 
     cancelButton.addEventListener("click", function () {
         restoreInitialValues();
         disableEditing();
+        if (typeof showToast === "function") {
+            showToast("warning", "Cancelled", "Profile editing cancelled.");
+        }
     });
 
     profileForm.addEventListener("submit", async function (event) {
@@ -82,7 +102,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await response.json();
 
             if (data.success) {
-                alert("Cập nhật thông tin cá nhân thành công!");
+                if (typeof showToast === "function") {
+                    showToast("success", "Success", "Profile updated successfully!");
+                } else {
+                    alert("Profile updated successfully!");
+                }
 
                 inputs.forEach(function (input) {
                     initialValues[input.id] = input.value;
@@ -95,10 +119,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 disableEditing();
             } else {
-                alert(data.message || "Cập nhật không thành công.");
+                if (typeof showToast === "function") {
+                    showToast("error", "Failed", data.message || "Profile update failed.");
+                } else {
+                    alert(data.message || "Profile update failed.");
+                }
             }
         } catch (err) {
-            alert("Đã xảy ra lỗi khi gửi thông tin cập nhật.");
+            if (typeof showToast === "function") {
+                showToast("error", "Error", "An error occurred while updating profile.");
+            } else {
+                alert("An error occurred while updating profile.");
+            }
         }
     });
 });

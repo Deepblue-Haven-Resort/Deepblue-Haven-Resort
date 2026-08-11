@@ -6,65 +6,141 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 32px;
-    padding: 32px 40px;
-    background: linear-gradient(135deg, #d8e9fc 0%, #edf5fd 50%, #ffffff 100%);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 70, 150, 0.06);
+
+    gap: var(--space-32);
+
+    padding: var(--space-32) var(--space-40);
+
+    background: linear-gradient(
+        135deg,
+        var(--primary-200) 0%,
+        var(--primary-100) 50%,
+        var(--surface-0) 100%
+    );
+
+    border: var(--border-1) solid
+        color-mix(
+            in srgb,
+            var(--white) 90%,
+            transparent
+        );
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-xl);
+
     margin-bottom: 28px;
+
     position: relative;
     overflow: hidden;
 }
 
+
+/* ==========================================================================
+   HERO DECORATIVE BACKGROUND
+   ========================================================================== */
+
 .dashboard-hero::after {
     content: "";
+
     position: absolute;
+
     width: 320px;
     height: 320px;
+
     right: -100px;
     top: -100px;
+
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(77, 168, 255, 0.22) 0%, rgba(255, 255, 255, 0) 70%);
+
+    background: radial-gradient(
+        circle,
+        color-mix(
+            in srgb,
+            var(--primary-500) 22%,
+            transparent
+        ) 0%,
+        transparent 70%
+    );
+
     pointer-events: none;
 }
+
+
+/* ==========================================================================
+   PAGE LABEL
+   ========================================================================== */
 
 .page-label {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+
+    gap: var(--space-8);
+
     margin-bottom: 10px;
-    padding: 6px 16px;
+
+    padding: 6px var(--space-16);
+
     border-radius: 999px;
-    background: #ffffff;
-    color: #1e5bb8;
+
+    background: var(--surface-0);
+
+    color: var(--primary-600);
+
     font-size: 0.825rem;
     font-weight: 700;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+
+    box-shadow: var(--shadow-sm);
 }
+
+
+/* ==========================================================================
+   HERO TITLE
+   ========================================================================== */
 
 .dashboard-hero h1 {
     font-size: 2.35rem;
+
     font-weight: 800;
-    color: #0f2c59;
-    margin: 0 0 8px 0;
+
+    color: var(--primary-800);
+
+    margin: 0 0 var(--space-8) 0;
+
     line-height: 1.25;
 }
 
+
+/* ==========================================================================
+   HERO DESCRIPTION
+   ========================================================================== */
+
 .dashboard-hero p {
     max-width: 620px;
-    color: #5a6e85;
+
+    color: var(--neutral-600);
+
     font-size: 0.95rem;
+
     line-height: 1.5;
+
     margin: 0;
 }
+
+
+/* ==========================================================================
+   HERO ACTIONS
+   ========================================================================== */
 
 .hero-actions {
     display: flex;
     align-items: center;
+
     gap: 14px;
+
     z-index: 2;
 }
+
 
 /* ==========================================================================
    RESPONSIVE OVERRIDES
@@ -73,16 +149,21 @@
 @media (max-width: 1024px) {
     .dashboard-hero {
         flex-direction: column;
+
         align-items: flex-start;
-        padding: 24px;
+
+        padding: var(--space-24);
+
         gap: 20px;
     }
-    
+
     .hero-actions {
         width: 100%;
+
         justify-content: flex-start;
     }
 }
+
 
 @media (max-width: 480px) {
     .dashboard-hero h1 {
@@ -91,28 +172,39 @@
 
     .hero-actions {
         flex-direction: column;
+
         align-items: stretch;
     }
 }
+
+
 /* ==========================================================================
    HERO ACTIONS 3-ROW VERTICAL STACK FOR TABLET (480px - 1024px)
    ========================================================================== */
 
 @media (min-width: 480px) and (max-width: 1024px) {
+
     /* Chuyển đổi khối chứa nút thành cột dọc */
     .hero-actions {
         flex-direction: column !important;
+
         align-items: stretch !important;
+
         width: 100% !important;
+
         gap: var(--space-12) !important;
     }
 
     /* Đảm bảo các nút co giãn full 100% chiều ngang hàng */
     .hero-actions .btn {
         width: 100% !important;
+
         display: inline-flex !important;
+
         justify-content: center !important;
+
         align-items: center !important;
+
         box-sizing: border-box !important;
     }
 }

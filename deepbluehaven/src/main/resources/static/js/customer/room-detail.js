@@ -211,6 +211,48 @@ function initRoomBookingForm() {
     const form = document.getElementById("roomBookingForm");
     if (!form) return;
 
+    const checkInInput = document.getElementById("bookCheckIn");
+    const checkOutInput = document.getElementById("bookCheckOut");
+
+    if (window.flatpickr && checkInInput && checkOutInput) {
+        const today = new Date();
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+
+        const formatDate = (date) => {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        };
+
+        let checkOutPicker = flatpickr(checkOutInput, {
+            minDate: formatDate(tomorrow),
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "M j, Y",
+            defaultDate: formatDate(tomorrow),
+            animate: true
+        });
+
+        flatpickr(checkInInput, {
+            minDate: "today",
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "M j, Y",
+            defaultDate: formatDate(today),
+            animate: true,
+            onChange: function (selectedDates) {
+                if (selectedDates[0]) {
+                    const nextDay = new Date(selectedDates[0]);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    checkOutPicker.set("minDate", formatDate(nextDay));
+                    checkOutPicker.setDate(formatDate(nextDay));
+                }
+            }
+        });
+    }
+
     function getApiUrl(path) {
         let ctx = document.querySelector('meta[name="_context_path"]')?.content;
         if (!ctx || ctx === "/") {
@@ -235,20 +277,24 @@ function initRoomBookingForm() {
 
             if (res.status === 401 || !data.success) {
                 if (data.redirectUrl) {
-                    alert("Vui lòng đăng nhập tài khoản để thực hiện đặt phòng.");
-                    window.location.href = getApiUrl(data.redirectUrl);
+                    showToast("warning", "Login Required", "Please log in to your account to book a room.");
+                    setTimeout(() => {
+                        window.location.href = getApiUrl(data.redirectUrl);
+                    }, 2000);
                 } else {
-                    alert(data.message || "Đặt phòng không thành công.");
+                    showToast("error", "Failed", data.message || "Room booking failed.");
                 }
                 return;
             }
 
-            alert(`Đặt phòng thành công! Mã đơn: ${data.bookingCode}`);
+            showToast("success", "Success", `Room booked successfully! Booking Code: ${data.bookingCode}`);
             if (data.redirectUrl) {
-                window.location.href = getApiUrl(data.redirectUrl);
+                setTimeout(() => {
+                    window.location.href = getApiUrl(data.redirectUrl);
+                }, 2000);
             }
         } catch (err) {
-            alert("Đã xảy ra lỗi kết nối khi đặt phòng.");
+            showToast("error", "Connection Error", "A connection error occurred while booking.");
         }
     });
 }
