@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Inventory & Status | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+
+        
+        <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+        <main class="admin-main">
+            
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <span>Available Rooms</span>
+                        <strong>24</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-bed"></i>
+                    </div>
+                    <div>
+                        <span>Occupied Rooms</span>
+                        <strong>34</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card warning">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-broom"></i>
+                    </div>
+                    <div>
+                        <span>Cleaning Queue</span>
+                        <strong>8</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card warning">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-wrench"></i>
+                    </div>
+                    <div>
+                        <span>Out of Order</span>
+                        <strong>4</strong>
+                    </div>
+                </article>
+            </section>
+
+            
+            <section class="manager-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Resort Rooms Inventory</h2>
+                    </div>
+                    <div class="filter-options">
+                        <button type="button" class="btn btn-cta btn-medium" id="addRoomBtn">Add New Room</button>
+                    </div>
+                </div>
+
+                
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search rooms by number, floor, type...">
+                    </div>
+                </div>
+
+               
+                <div class="table-wrapper">
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Room Number</th>
+                                <th>Room Type</th>
+                                <th>Max Capacity</th>
+                                <th>Base Nightly Price</th>
+                                <th>Current Status</th>
+                                <th>Housekeeper Assigned</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr>
+                                <td><strong>Room 101</strong></td>
+                                <td>Premium Room</td>
+                                <td>3 Guests</td>
+                                <td><strong>2,100,000 VND</strong></td>
+                                <td><span class="status status-success">AVAILABLE</span></td>
+                                <td>Mary Johnson</td>
+                                <td>
+                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                        <button type="button" class="btn outline-btn assign-btn btn-small">Assign Task</button>
+                                        <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
+                                        <button type="button" class="btn warning-btn maintenance-btn btn-small">Maintenance</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Room 102</strong></td>
+                                <td>Deluxe Suite</td>
+                                <td>4 Guests</td>
+                                <td><strong>3,500,000 VND</strong></td>
+                                <td><span class="status">OCCUPIED</span></td>
+                                <td>David Miller</td>
+                                <td>
+                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                        <button type="button" class="btn outline-btn assign-btn btn-small">Assign Task</button>
+                                        <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
+                                        <button type="button" class="btn warning-btn maintenance-btn btn-small">Maintenance</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                
+                <div class="table-footer">
+                    <p>Hiển thị <strong>1-2</strong> trong số <strong>62</strong> phòng</p>
+                    <div class="pagination">
+                        <button type="button" class="page-btn disabled">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button type="button" class="page-btn active">1</button>
+                        <button type="button" class="page-btn">2</button>
+                        <span class="page-dots">...</span>
+                        <button type="button" class="page-btn">3</button>
+                        <button type="button" class="page-btn">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Room Modal -->
+    <div class="modal-overlay" id="roomModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="roomModalTitle"><i class="fa-solid fa-hotel"></i> Add New Room</h3>
+                <button type="button" class="modal-close" id="closeRoomModalBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <form id="roomForm">
+                <div class="modal-body">
+                    <div class="modal-form-grid">
+                        <div class="form-group">
+                            <label>Room Number <span>*</span></label>
+                            <input type="text" id="roomNumber" required placeholder="e.g. Room 101">
+                        </div>
+                        <div class="form-group">
+                            <label>Room Type <span>*</span></label>
+                            <input type="hidden" id="roomType" required>
+                            <div class="filter-dropdown form-filter-dropdown" data-input="roomType">
+                                <button class="filter-btn form-filter-btn" type="button">
+                                    <span class="filter-label"><strong>Select Type</strong></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-menu form-filter-menu">
+                                    <button type="button" data-value="PREMIUM"><strong>Premium Room</strong></button>
+                                    <button type="button" data-value="DELUXE"><strong>Deluxe Suite</strong></button>
+                                    <button type="button" data-value="STANDARD"><strong>Standard Room</strong></button>
+                                    <button type="button" data-value="PRESIDENTIAL"><strong>Presidential Suite</strong></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Max Capacity <span>*</span></label>
+                            <input type="number" id="capacity" required min="1" max="10" placeholder="e.g. 2">
+                        </div>
+                        <div class="form-group">
+                            <label>Base Price (VND) <span>*</span></label>
+                            <input type="number" id="basePrice" required min="0" step="100000" placeholder="e.g. 1000000">
+                        </div>
+                        <div class="form-group">
+                            <label>Area (sqm)</label>
+                            <input type="number" id="area" min="10" placeholder="e.g. 35">
+                        </div>
+                        <div class="form-group">
+                            <label>Status <span>*</span></label>
+                            <input type="hidden" id="roomStatus" required value="AVAILABLE">
+                            <div class="filter-dropdown form-filter-dropdown" data-input="roomStatus">
+                                <button class="filter-btn form-filter-btn" type="button">
+                                    <span class="filter-label"><strong>Available</strong></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-menu form-filter-menu">
+                                    <button type="button" data-value="AVAILABLE"><strong>Available</strong></button>
+                                    <button type="button" data-value="OCCUPIED"><strong>Occupied</strong></button>
+                                    <button type="button" data-value="MAINTENANCE"><strong>Maintenance</strong></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-btn" id="cancelRoomModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-cta">Save Room</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assign Task Modal -->
+    <div class="modal-overlay" id="assignTaskModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="assignTaskModalTitle"><i class="fa-solid fa-clipboard-list"></i> Assign Task</h3>
+                <button type="button" class="modal-close" id="closeAssignModalBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <form id="assignTaskForm">
+                <div class="modal-body">
+                    <div class="modal-form-grid single-col">
+                        <div class="form-group">
+                            <label>Room</label>
+                            <input type="text" id="taskRoomNumber" readonly style="background: var(--gray-100);">
+                        </div>
+                        <div class="form-group">
+                            <label>Task Type <span>*</span></label>
+                            <input type="hidden" id="taskType" required>
+                            <div class="filter-dropdown form-filter-dropdown" data-input="taskType">
+                                <button class="filter-btn form-filter-btn" type="button">
+                                    <span class="filter-label"><strong>Select Task Type</strong></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-menu form-filter-menu">
+                                    <button type="button" data-value="CLEANING"><strong>Cleaning</strong></button>
+                                    <button type="button" data-value="MAINTENANCE"><strong>Maintenance</strong></button>
+                                    <button type="button" data-value="INSPECTION"><strong>Inspection</strong></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Assign To (Housekeeper) <span>*</span></label>
+                            <input type="hidden" id="taskAssignee" required>
+                            <div class="filter-dropdown form-filter-dropdown" data-input="taskAssignee">
+                                <button class="filter-btn form-filter-btn" type="button">
+                                    <span class="filter-label"><strong>Select Housekeeper</strong></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-menu form-filter-menu">
+                                    <button type="button" data-value="1"><strong>Mary Johnson</strong></button>
+                                    <button type="button" data-value="2"><strong>David Miller</strong></button>
+                                    <button type="button" data-value="3"><strong>Susan Clark</strong></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <input type="hidden" id="taskPriority" value="NORMAL">
+                            <div class="filter-dropdown form-filter-dropdown" data-input="taskPriority">
+                                <button class="filter-btn form-filter-btn" type="button">
+                                    <span class="filter-label"><strong>Normal</strong></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-menu form-filter-menu">
+                                    <button type="button" data-value="NORMAL"><strong>Normal</strong></button>
+                                    <button type="button" data-value="HIGH"><strong>High</strong></button>
+                                    <button type="button" data-value="URGENT"><strong>Urgent</strong></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-btn" id="cancelAssignModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-cta">Assign Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/js/admin-sidebar.js}"></script>
+    <script th:src="@{/js/manager/rooms.js}"></script>
+</body>
+
+</html>

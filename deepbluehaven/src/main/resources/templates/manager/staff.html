@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resort Staff Directory | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+
+        
+        <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+        <main class="admin-main">
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <span>Total Employees</span>
+                        <strong>25</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <div>
+                        <span>Receptionists</span>
+                        <strong>7</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-broom"></i>
+                    </div>
+                    <div>
+                        <span>Housekeepers</span>
+                        <strong>13</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div>
+                        <span>Average Performance</span>
+                        <strong>85.4%</strong>
+                    </div>
+                </article>
+            </section>
+
+            
+            <section class="manager-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Employee Roster</h2>
+                    </div>
+                    <div class="filter-options">
+                        <button type="button" class="btn btn-cta btn-medium">Register New Staff</button>
+                    </div>
+                </div>
+
+                
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search staff by code, name, phone, or role...">
+                    </div>
+                </div>
+
+                
+                <div class="table-wrapper">
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Employee Code</th>
+                                <th>Employee Name</th>
+                                <th>Department</th>
+                                <th>Phone Number</th>
+                                <th>Performance Score</th>
+                                <th>Status</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr>
+                                <td><strong>SEED-EMP-006</strong></td>
+                                <td>Jessica Miller</td>
+                                <td>Reception</td>
+                                <td>+1-555-102-3045</td>
+                                <td><strong>88.5%</strong></td>
+                                <td><span class="status status-success">ACTIVE</span></td>
+                                <td>
+                                    
+                                    <div class="filter-options" style="display: flex; justify-content: center;">
+                                        <button type="button" class="btn delete-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Lock Account</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>SEED-EMP-024</strong></td>
+                                <td>White Harris</td>
+                                <td>Housekeeping</td>
+                                <td>+1-555-304-8902</td>
+                                <td><strong>72.1%</strong></td>
+                                <td><span class="status status-danger">LOCKED</span></td>
+                                <td>
+                                    
+                                    <div class="filter-options" style="display: flex; justify-content: center;">
+                                        <button type="button" class="btn lock-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Unlock</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                
+                <div class="table-footer">
+                    <p>Hiển thị <strong>1-2</strong> trong số <strong>25</strong> nhân viên</p>
+                    <div class="pagination">
+                        <button type="button" class="page-btn disabled">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button type="button" class="page-btn active">1</button>
+                        <button type="button" class="page-btn">2</button>
+                        <span class="page-dots">...</span>
+                        <button type="button" class="page-btn">3</button>
+                        <button type="button" class="page-btn">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script th:src="@{/js/admin-sidebar.js}"></script>
+</body>
+
+</html>

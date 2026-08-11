@@ -1,0 +1,313 @@
+/* =====================================================
+   MANAGER MODAL — style theo ảnh tham chiếu Admin popup
+   ===================================================== */
+
+/* ---------- Overlay ---------- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ---------- Container ---------- */
+.modal-container {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 440px;
+    max-height: 92vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 48px -8px rgba(0, 0, 0, 0.18), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+    transform: translateY(16px) scale(0.98);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    opacity: 0;
+}
+
+.modal-overlay.active .modal-container {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+/* ---------- Header ---------- */
+.modal-header {
+    padding: 20px 24px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-header h3 i {
+    color: #3b5bdb;
+    font-size: 1rem;
+}
+
+/* ---------- Close button ---------- */
+.modal-close {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.modal-close:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* ---------- Body ---------- */
+.modal-body {
+    padding: 20px 24px;
+}
+
+/* ---------- Form grid: single column ---------- */
+.modal-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ---------- Form group ---------- */
+.modal-form-grid .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 0;
+}
+
+.modal-form-grid .form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.modal-form-grid .form-group label span {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+/* ---------- Inputs & Selects ---------- */
+.modal-form-grid .form-group > input:not([type="hidden"]),
+.modal-form-grid .form-group > textarea,
+.modal-form-grid .form-group > select {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    background: #fff;
+    color: #1e293b;
+    font-size: 0.925rem;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+    appearance: auto;
+}
+
+.modal-form-grid .form-group > textarea {
+    height: auto;
+    min-height: 90px;
+    padding: 12px 14px;
+    resize: vertical;
+}
+
+.modal-form-grid .form-group > input::placeholder,
+.modal-form-grid .form-group > textarea::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.modal-form-grid .form-group > input:not([type="hidden"]):focus,
+.modal-form-grid .form-group > textarea:focus,
+.modal-form-grid .form-group > select:focus {
+    border-color: #3b5bdb;
+    box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.12);
+}
+
+/* ---------- Custom dropdown (filter-dropdown) inside modal ---------- */
+.modal-form-grid .form-group .filter-dropdown,
+.form-filter-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.modal-form-grid .form-group .filter-btn,
+.form-filter-btn {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    background: #fff;
+    color: #1e293b;
+    font-size: 0.925rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-align: left;
+}
+
+.modal-form-grid .form-group .filter-btn:hover,
+.form-filter-btn:hover {
+    border-color: #94a3b8;
+}
+
+.filter-dropdown.active .filter-btn,
+.filter-dropdown.active .form-filter-btn {
+    border-color: #3b5bdb;
+    box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.12);
+}
+
+.filter-dropdown.active .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.fa-chevron-down {
+    transition: transform 0.2s ease;
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+.filter-label strong {
+    font-weight: 500;
+    color: #1e293b;
+}
+
+/* ---------- Dropdown menu ---------- */
+.modal-form-grid .form-group .filter-menu,
+.form-filter-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 200;
+    overflow: hidden;
+    display: none;
+}
+
+.filter-dropdown.active .filter-menu,
+.filter-dropdown.active .form-filter-menu {
+    display: block;
+}
+
+.modal-form-grid .form-group .filter-menu button,
+.form-filter-menu button {
+    width: 100%;
+    padding: 11px 14px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #334155;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.modal-form-grid .form-group .filter-menu button:hover,
+.form-filter-menu button:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+/* ---------- Footer ---------- */
+.modal-footer {
+    padding: 12px 24px 20px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    border-top: none;
+}
+
+/* ---------- Footer buttons ---------- */
+.modal-footer .btn {
+    height: 42px;
+    padding: 0 20px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Solid save/submit button */
+.modal-footer .btn-cta,
+.modal-footer [type="submit"] {
+    background: #3b5bdb;
+    color: #fff;
+    border: none;
+}
+
+.modal-footer .btn-cta:hover,
+.modal-footer [type="submit"]:hover {
+    background: #2f4cc4;
+    box-shadow: 0 4px 12px rgba(59, 91, 219, 0.3);
+}
+
+/* Cancel / outline button */
+.modal-footer .outline-btn {
+    background: #fff;
+    color: #475569;
+    border: 1.5px solid #cbd5e1 !important;
+}
+
+.modal-footer .outline-btn:hover {
+    background: #f8fafc;
+    border-color: #94a3b8 !important;
+    color: #1e293b;
+}
+
+/* ---------- Scrollbar ---------- */
+.modal-container::-webkit-scrollbar {
+    width: 5px;
+}
+.modal-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.modal-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 99px;
+}
