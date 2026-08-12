@@ -8,31 +8,29 @@
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
-    
-    <!-- Đồng bộ stylesheet: Sử dụng admin-sidebar.css của toàn hệ thống và css Lễ tân -->
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/accounts.css}">
+    <!-- CSS Lễ tân hỗ trợ hiển thị Modal backdrop tối chuẩn -->
     <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
-<!-- Dùng cấu trúc chuẩn admin-layout và admin-main để thừa hưởng responsive từ sidebar hệ thống -->
 <div class="admin-layout">
 
-    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar(activePage='guests')}"></div>
+    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
 
     <main class="admin-main">
 
-        <!-- Đồng bộ sang lớp panel của Lễ tân để thừa hưởng CSS responsive bảng -->
-        <section class="reception-panel">
+        <section class="account-panel">
 
             <div class="panel-header">
                 <div>
                     <h2><strong>Guest Directory & Registration</strong></h2>
                 </div>
                 <div style="display: flex; align-items: center; gap: var(--space-12);">
-                    <button class="btn btn-small btn-cta">
+                    <button class="btn btn-cta btn-medium" id="btnRegisterGuest">
                         Register New Guest
                     </button>
                 </div>
@@ -46,107 +44,259 @@
             </div>
 
             <div class="table-wrapper">
-                <!-- ĐỔI TÊN CLASS THÀNH activity-table ĐỂ ĐỒNG BỘ CSS RESPONSIVE BẢNG LỄ TÂN -->
-                <table class="activity-table">
+                <table class="account-table">
                     <thead>
                     <tr>
                         <th>Guest Name</th>
                         <th>Identity / Passport</th>
                         <th>Contact Email</th>
                         <th>Phone Number</th>
-                        <th>Total Stays</th>
+                        <th>Special Notes</th>
                         <th>VIP Level</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody id="guestsTableBody">
                     <tr>
                         <td>
-                            <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
-                                <div class="user-avatar" style="background: var(--primary-600); color: white; width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem;">AW</div>
+                            <div class="user-info">
+                                <div class="user-avatar" style="background: var(--primary-600); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">AW</div>
                                 <div>
-                                    <strong style="display: block; color: #0f172a; font-size: 0.925rem;">Alexander Wright</strong>
-                                    <span style="display: block; color: #64748b; font-size: 0.8rem; margin-top: 2px;">United States</span>
+                                    <strong class="js-name">Alexander Wright</strong>
+                                    <span class="js-nation">United States</span>
                                 </div>
                             </div>
                         </td>
-                        <td>US-9920148</td>
-                        <td>alex.wright@example.com</td>
-                        <td>+1 415 892 3401</td>
-                        <td>4 Stays</td>
-                        <td><span class="badge-vip-gold">GOLD VIP</span></td>
+                        <td class="js-passport">US-9920148</td>
+                        <td class="js-email">alex.wright@example.com</td>
+                        <td class="js-phone">+1 415 892 3401</td>
+                        <td class="js-notes">Prefers room near elevator.</td>
+                        <td><span class="role housekeeper js-vip">GOLD VIP</span></td>
                         <td>
-                            <button class="btn btn-small btn-cta" style="opacity: 0.65;">Profile</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
-                                <div class="user-avatar" style="background: var(--neutral-400); color: white; width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem;">SM</div>
-                                <div>
-                                    <strong style="display: block; color: #0f172a; font-size: 0.925rem;">Sophia Martinez</strong>
-                                    <span style="display: block; color: #64748b; font-size: 0.8rem; margin-top: 2px;">Vietnam</span>
-                                </div>
+                            <div class="action-group">
+                                <button type="button" class="edit-btn js-open-edit-guest" 
+                                        data-code="G-101" 
+                                        data-name="Alexander Wright"
+                                        data-nation="United States"
+                                        data-passport="US-9920148"
+                                        data-email="alex.wright@example.com"
+                                        data-phone="+1 415 892 3401"
+                                        data-notes="Prefers room near elevator."
+                                        data-vip="GOLD VIP">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button type="button" class="delete-btn js-delete-guest"><i class="fa-solid fa-trash"></i></button>
                             </div>
-                        </td>
-                        <td>07919823019</td>
-                        <td>sophia.m@example.com</td>
-                        <td>+84 908 112 334</td>
-                        <td>2 Stays</td>
-                        <td><span class="badge-vip-silver">SILVER</span></td>
-                        <td>
-                            <button class="btn btn-small btn-cta" style="opacity: 0.65;">Profile</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
-                                <div class="user-avatar" style="background: linear-gradient(135deg, #c8e6f0, #90c8dc); color: #0a4864; width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem;">DC</div>
-                                <div>
-                                    <strong style="display: block; color: #0f172a; font-size: 0.925rem;">David Chen</strong>
-                                    <span style="display: block; color: #64748b; font-size: 0.8rem; margin-top: 2px;">Hong Kong</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>HK-881029</td>
-                        <td>david.chen@example.com</td>
-                        <td>+852 9123 4567</td>
-                        <td>8 Stays</td>
-                        <td><span class="badge-vip-platinum">PLATINUM VIP</span></td>
-                        <td>
-                            <button class="btn btn-small btn-cta" style="opacity: 0.65;">Profile</button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-
-            <div class="table-footer">
-                <p>Showing <strong>1-3</strong> of <strong>18</strong> entries</p>
-
-                <div class="pagination">
-                    <button type="button" class="page-btn disabled">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-
-                    <button type="button" class="page-btn active">1</button>
-                    <button type="button" class="page-btn">2</button>
-
-                    <button type="button" class="page-btn">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-
         </section>
 
     </main>
 </div>
 
-<!-- Scripts: Sử dụng file admin-sidebar.js thống nhất hệ thống -->
+<!-- TÍCH HỢP TRỰC TIẾP MODAL CHỈNH SỬA HỒ SƠ KHÁCH HÀNG -->
+<div class="modal-backdrop" id="editGuestModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3>
+                <i class="fa-solid fa-user-pen"></i>
+                <span id="modalGuestTitle">Guest Profile Detail</span>
+            </h3>
+            <button type="button" class="modal-close" data-close-modal="true">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form id="editGuestForm" class="modal-form">
+            <input type="hidden" id="modalGuestCode" />
+
+            <!-- Tên khách hàng -->
+            <div class="form-group">
+                <label class="form-label">Guest Name</label>
+                <input type="text" id="modalGuestName" class="form-input" required="required" />
+            </div>
+
+            <!-- CMND / Hộ chiếu -->
+            <div class="form-group">
+                <label class="form-label">Identity / Passport</label>
+                <input type="text" id="modalGuestPassport" class="form-input" required="required" />
+            </div>
+
+            <!-- Contact Email -->
+            <div class="form-group">
+                <label class="form-label">Contact Email</label>
+                <input type="email" id="modalGuestEmail" class="form-input" required="required" />
+            </div>
+
+            <!-- Số điện thoại -->
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="text" id="modalGuestPhone" class="form-input" required="required" />
+            </div>
+
+            <!-- Quốc tịch -->
+            <div class="form-group">
+                <label class="form-label">Nationality</label>
+                <input type="text" id="modalGuestNation" class="form-input" />
+            </div>
+
+            <!-- Hạng hội viên -->
+            <div class="form-group">
+                <label class="form-label">VIP Level</label>
+                <select id="modalGuestVip" class="form-select">
+                    <option value="STANDARD">STANDARD</option>
+                    <option value="SILVER">SILVER</option>
+                    <option value="GOLD VIP">GOLD VIP</option>
+                    <option value="PLATINUM VIP">PLATINUM VIP</option>
+                </select>
+            </div>
+
+            <!-- Ghi chú đặc biệt -->
+            <div class="form-group">
+                <label class="form-label">Special Notes</label>
+                <textarea id="modalGuestNotes" class="form-input" rows="3" placeholder="e.g. Feather pillow allergy, late checkout request..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-outline btn-medium" data-close-modal="true">Cancel</button>
+                <button type="submit" class="btn btn-cta btn-medium">Save Profile</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script th:src="@{/js/admin-sidebar.js}"></script>
+
+<script>
+    const editGuestModal = document.getElementById("editGuestModal");
+
+    // Lắng nghe Click mở Modal Sửa
+    document.getElementById("guestsTableBody").addEventListener("click", (e) => {
+        const btn = e.target.closest(".js-open-edit-guest");
+        if (btn) {
+            e.preventDefault();
+            document.getElementById("modalGuestTitle").textContent = "Edit Guest Profile";
+            document.getElementById("modalGuestCode").value = btn.getAttribute("data-code");
+            document.getElementById("modalGuestName").value = btn.getAttribute("data-name");
+            document.getElementById("modalGuestNation").value = btn.getAttribute("data-nation");
+            document.getElementById("modalGuestPassport").value = btn.getAttribute("data-passport");
+            document.getElementById("modalGuestEmail").value = btn.getAttribute("data-email");
+            document.getElementById("modalGuestPhone").value = btn.getAttribute("data-phone");
+            document.getElementById("modalGuestNotes").value = btn.getAttribute("data-notes");
+            document.getElementById("modalGuestVip").value = btn.getAttribute("data-vip");
+            
+            editGuestModal.classList.add("active");
+        }
+
+        const delBtn = e.target.closest(".js-delete-guest");
+        if (delBtn && confirm("Remove this guest record?")) {
+            delBtn.closest("tr").remove();
+        }
+    });
+
+    // Tạo mới khách hàng
+    document.getElementById("btnRegisterGuest").addEventListener("click", () => {
+        document.getElementById("modalGuestTitle").textContent = "Register New Guest";
+        document.getElementById("modalGuestCode").value = "";
+        document.getElementById("modalGuestName").value = "";
+        document.getElementById("modalGuestNation").value = "Vietnam";
+        document.getElementById("modalGuestPassport").value = "";
+        document.getElementById("modalGuestEmail").value = "";
+        document.getElementById("modalGuestPhone").value = "";
+        document.getElementById("modalGuestNotes").value = "";
+        document.getElementById("modalGuestVip").value = "STANDARD";
+        
+        editGuestModal.classList.add("active");
+    });
+
+    document.querySelectorAll("[data-close-modal]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            editGuestModal.classList.remove("active");
+        });
+    });
+
+    editGuestModal.addEventListener("click", (e) => {
+        if (e.target === editGuestModal) {
+            editGuestModal.classList.remove("active");
+        }
+    });
+
+    // Lưu ảo
+    document.getElementById("editGuestForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const code = document.getElementById("modalGuestCode").value;
+        const name = document.getElementById("modalGuestName").value;
+        const nation = document.getElementById("modalGuestNation").value;
+        const passport = document.getElementById("modalGuestPassport").value;
+        const email = document.getElementById("modalGuestEmail").value;
+        const phone = document.getElementById("modalGuestPhone").value;
+        const notes = document.getElementById("modalGuestNotes").value;
+        const vip = document.getElementById("modalGuestVip").value;
+
+        const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+
+        if (!code) {
+            // Thêm mới
+            const newTr = document.createElement("tr");
+            const newCode = "G-" + Date.now();
+            newTr.innerHTML = `
+                <td>
+                    <div class="user-info">
+                        <div class="user-avatar" style="background: var(--primary-600); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">${initials}</div>
+                        <div>
+                            <strong class="js-name">${name}</strong>
+                            <span class="js-nation">${nation}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="js-passport">${passport}</td>
+                <td class="js-email">${email}</td>
+                <td class="js-phone">${phone}</td>
+                <td class="js-notes">${notes}</td>
+                <td><span class="role housekeeper js-vip">${vip}</span></td>
+                <td>
+                    <div class="action-group">
+                        <button type="button" class="edit-btn js-open-edit-guest" 
+                                data-code="${newCode}" data-name="${name}" data-nation="${nation}"
+                                data-passport="${passport}" data-email="${email}" data-phone="${phone}"
+                                data-notes="${notes}" data-vip="${vip}"><i class="fa-solid fa-pen"></i></button>
+                        <button type="button" class="delete-btn js-delete-guest"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </td>
+            `;
+            document.getElementById("guestsTableBody").appendChild(newTr);
+        } else {
+            // Sửa
+            const rows = document.querySelectorAll("#guestsTableBody tr");
+            rows.forEach(row => {
+                const btn = row.querySelector(".js-open-edit-guest");
+                if (btn && btn.getAttribute("data-code") === code) {
+                    row.querySelector(".js-name").textContent = name;
+                    row.querySelector(".js-nation").textContent = nation;
+                    row.querySelector(".js-passport").textContent = passport;
+                    row.querySelector(".js-email").textContent = email;
+                    row.querySelector(".js-phone").textContent = phone;
+                    row.querySelector(".js-notes").textContent = notes;
+                    
+                    const vipSpan = row.querySelector(".js-vip");
+                    vipSpan.textContent = vip;
+                    vipSpan.className = `role js-vip ${vip === 'PLATINUM VIP' ? 'platinum' : (vip === 'GOLD VIP' ? 'housekeeper' : 'admin')}`;
+
+                    btn.setAttribute("data-name", name);
+                    btn.setAttribute("data-nation", nation);
+                    btn.setAttribute("data-passport", passport);
+                    btn.setAttribute("data-email", email);
+                    btn.setAttribute("data-phone", phone);
+                    btn.setAttribute("data-notes", notes);
+                    btn.setAttribute("data-vip", vip);
+                }
+            });
+        }
+        editGuestModal.classList.remove("active");
+    });
+</script>
 </body>
 </html>

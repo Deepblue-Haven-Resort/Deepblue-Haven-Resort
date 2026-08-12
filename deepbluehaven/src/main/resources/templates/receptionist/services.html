@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Service Orders | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/accounts.css}">
+    <!-- CSS Lễ tân hỗ trợ hiển thị Modal backdrop tối chuẩn -->
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="admin-layout">
+
+    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
+
+    <main class="admin-main">
+
+        <section class="account-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2><strong>Room Service & Guest Requests</strong></h2>
+                </div>
+                <button class="btn btn-cta btn-medium" id="btnPlaceOrder">
+                    <i class="fa-solid fa-plus"></i> Place Service Order
+                </button>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search by room or service...">
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="account-table">
+                    <thead>
+                    <tr>
+                        <th>Order Ref</th>
+                        <th>Room & Guest</th>
+                        <th>Service Requested</th>
+                        <th>Qty</th>
+                        <th>Total Cost</th>
+                        <th>Order Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="servicesTableBody">
+                    <tr data-order-id="srv-101">
+                        <td><strong>#SRV-101</strong></td>
+                        <td>
+                            <strong>Room 101</strong><br>
+                            <small>Johnathan Doe</small>
+                        </td>
+                        <td>Club Sandwich & Fruit Juice</td>
+                        <td>2</td>
+                        <td><strong>320,000 VND</strong></td>
+                        <td><span class="status status-warning js-status">PENDING</span></td>
+                        <td>
+                            <div class="action-group">
+                                <button class="btn btn-small btn-cta badge js-advance-status">Confirm</button>
+                                <button class="delete-btn js-cancel-order"><i class="fa-solid fa-ban"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-order-id="srv-102">
+                        <td><strong>#SRV-102</strong></td>
+                        <td>
+                            <strong>Room 205</strong><br>
+                            <small>Jessica Miller</small>
+                        </td>
+                        <td>Aromatherapy Body Massage</td>
+                        <td>1</td>
+                        <td><strong>1,200,000 VND</strong></td>
+                        <td><span class="status status-info js-status">PROCESSING</span></td>
+                        <td>
+                            <div class="action-group">
+                                <button class="btn btn-small btn-success badge js-advance-status">Complete</button>
+                                <button class="delete-btn js-cancel-order"><i class="fa-solid fa-ban"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- TÍCH HỢP TRỰC TIẾP FORM MODAL ĐẶT DỊCH VỤ HỘ KHÁCH -->
+<div class="modal-backdrop" id="placeServiceModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3>
+                <i class="fa-solid fa-bell-concierge"></i>
+                <span>Place Service Order</span>
+            </h3>
+            <button type="button" class="modal-close" data-close-modal="true">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form id="placeServiceForm" class="modal-form">
+            
+            <!-- Chọn phòng của khách -->
+            <div class="form-group">
+                <label class="form-label">Target Room</label>
+                <select id="orderRoom" class="form-select">
+                    <option value="Room 101">Room 101 (Johnathan Doe)</option>
+                    <option value="Room 205">Room 205 (Jessica Miller)</option>
+                    <option value="Room 304">Room 304 (Emma Watson)</option>
+                </select>
+            </div>
+
+            <!-- Chọn loại dịch vụ chính -->
+            <div class="form-group">
+                <label class="form-label">Service Category</label>
+                <select id="orderCategory" class="form-select">
+                    <option value="FOOD_BEVERAGE">Food & Beverage (Nhà hàng / Đồ uống)</option>
+                    <option value="SPA">Spa & Massage</option>
+                    <option value="LAUNDRY">Laundry (Giặt là quần áo)</option>
+                    <option value="MINIBAR">Minibar Consumables</option>
+                </select>
+            </div>
+
+            <!-- Chọn tên món / dịch vụ -->
+            <div class="form-group">
+                <label class="form-label">Select Service Item</label>
+                <select id="orderItem" class="form-select">
+                    <option value="Club Sandwich & Fruit Juice" data-price="320000">Club Sandwich & Fruit Juice (320,000 VND)</option>
+                    <option value="Aromatherapy Body Massage" data-price="1200000">Aromatherapy Body Massage (1,200,000 VND)</option>
+                    <option value="Dry Laundry Express" data-price="150000">Dry Laundry Express (150,000 VND)</option>
+                </select>
+            </div>
+
+            <!-- Số lượng -->
+            <div class="form-group">
+                <label class="form-label">Quantity</label>
+                <input type="number" id="orderQty" class="form-input" min="1" value="1" required="required" />
+            </div>
+
+            <!-- Ghi chú của khách -->
+            <div class="form-group">
+                <label class="form-label">Special Requests</label>
+                <textarea id="orderNotes" class="form-input" rows="2" placeholder="e.g. Ice on the side, no nuts..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-outline btn-medium" data-close-modal="true">Cancel</button>
+                <button type="submit" class="btn btn-cta btn-medium">Submit Order</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:src="@{/js/admin-sidebar.js}"></script>
+
+<script>
+    const placeServiceModal = document.getElementById("placeServiceModal");
+
+    // Click mở Modal Đặt dịch vụ hộ
+    document.getElementById("btnPlaceOrder").addEventListener("click", () => {
+        document.getElementById("orderQty").value = "1";
+        document.getElementById("orderNotes").value = "";
+        placeServiceModal.classList.add("active");
+    });
+
+    // Đóng Modal
+    document.querySelectorAll("[data-close-modal]").forEach(btn => {
+        
+        btn.addEventListener("click", () => {
+            placeServiceModal.classList.remove("active");
+        });
+    });
+
+    placeServiceModal.addEventListener("click", (e) => {
+        if (e.target === placeServiceModal) {
+            placeServiceModal.classList.remove("active");
+        }
+    });
+
+    // Xử lý nộp đơn đặt (LƯU ẢO)
+    document.getElementById("placeServiceForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const roomSelect = document.getElementById("orderRoom");
+        const roomName = roomSelect.value;
+        const guestName = roomSelect.options[roomSelect.selectedIndex].text.match(/\((.*?)\)/)[1];
+        
+        const itemSelect = document.getElementById("orderItem");
+        const itemName = itemSelect.value;
+        const price = parseInt(itemSelect.options[itemSelect.selectedIndex].getAttribute("data-price"));
+        const qty = parseInt(document.getElementById("orderQty").value);
+
+        const totalCost = (price * qty).toLocaleString("vi-VN") + " VND";
+        const randomRef = "#SRV-" + (Math.floor(Math.random() * 900) + 100);
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><strong>${randomRef}</strong></td>
+            <td>
+                <strong>${roomName}</strong><br>
+                <small>${guestName}</small>
+            </td>
+            <td>${itemName}</td>
+            <td>${qty}</td>
+            <td><strong>${totalCost}</strong></td>
+            <td><span class="status status-warning js-status">PENDING</span></td>
+            <td>
+                <div class="action-group">
+                    <button class="btn btn-small btn-cta badge js-advance-status">Confirm</button>
+                    <button class="delete-btn js-cancel-order"><i class="fa-solid fa-ban"></i></button>
+                </div>
+            </td>
+        `;
+        document.getElementById("servicesTableBody").appendChild(tr);
+        placeServiceModal.classList.remove("active");
+    });
+
+    // Quản lý thay đổi tiến trình Trạng thái ảo ngay trên bảng
+    document.getElementById("servicesTableBody").addEventListener("click", (e) => {
+        const btn = e.target.closest(".js-advance-status");
+        if (btn) {
+            e.preventDefault();
+            const tr = btn.closest("tr");
+            const statusSpan = tr.querySelector(".js-status");
+            const actionTd = btn.parentElement;
+
+            if (statusSpan.textContent === "PENDING") {
+                statusSpan.textContent = "PROCESSING";
+                statusSpan.className = "status status-info js-status";
+                btn.textContent = "Complete";
+                btn.className = "btn btn-small btn-success badge js-advance-status";
+            } else if (statusSpan.textContent === "PROCESSING") {
+                statusSpan.textContent = "DELIVERED";
+                statusSpan.className = "status status-success js-status";
+                actionTd.innerHTML = `<span class="body-4">No Action</span>`;
+            }
+        }
+
+        const cancelBtn = e.target.closest(".js-cancel-order");
+        if (cancelBtn) {
+            e.preventDefault();
+            const tr = cancelBtn.closest("tr");
+            const statusSpan = tr.querySelector(".js-status");
+            statusSpan.textContent = "CANCELLED";
+            statusSpan.className = "status status-error js-status";
+            cancelBtn.parentElement.innerHTML = `<span class="body-4">No Action</span>`;
+        }
+    });
+</script>
+</body>
+</html>

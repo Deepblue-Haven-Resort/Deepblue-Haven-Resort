@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Rules & Discounts | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/accounts.css}">
+    <!-- CSS Lễ tân hỗ trợ hiển thị Modal backdrop tối chuẩn -->
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+
+        <!-- Gọi sidebar của manager -->
+        <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+        <main class="admin-main">
+
+            <!-- HERO SECTION -->
+            <section class="dashboard-hero manager-hero">
+                <div>
+                    <span class="page-label">Revenue Optimization</span>
+                    <h1>Pricing Controls & Vouchers</h1>
+                    <p>Manage seasonal multipliers, holiday surcharges, and discount codes to maximize occupancy.</p>
+                </div>
+            </section>
+
+            <!-- THANH TABS CHUYỂN ĐỔI GIAO DIỆN ĐỒNG BỘ THEO HỆ THỐNG -->
+            <div class="filter-bar" style="margin-bottom: var(--spacing-md); display: flex; gap: var(--spacing-sm); border-bottom: 2px solid var(--border-color); padding-bottom: var(--spacing-xs);">
+                <button type="button" class="btn btn-cta btn-medium" id="tabRulesBtn">
+                    <i class="fa-solid fa-chart-line"></i> Pricing Rules
+                </button>
+                <button type="button" class="btn btn-outline btn-medium" id="tabDiscountsBtn">
+                    <i class="fa-solid fa-ticket"></i> Discounts & Vouchers
+                </button>
+            </div>
+
+            <!-- SECTION 1: PRICING RULES (Quy tắc giá mùa vụ) -->
+            <div id="sectionRules">
+                <section class="account-panel">
+                    <div class="panel-header">
+                        <h2><strong>Seasonal Pricing Multipliers</strong></h2>
+                        <button type="button" class="btn btn-cta btn-medium" id="btnCreateRule">
+                            <i class="fa-solid fa-plus"></i>
+                            Add Rule
+                        </button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>Rule Name</th>
+                                    <th>Season / Date Range</th>
+                                    <th>Multiplier Rate</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rulesTableBody">
+                                <tr>
+                                    <td><strong>Peak Summer Surcharge</strong></td>
+                                    <td>01/06/2026 - 31/08/2026</td>
+                                    <td><span class="role admin">x 1.50</span></td>
+                                    <td><span class="status status-success">Active</span></td>
+                                    <td>
+                                        <div class="action-group">
+                                            <button type="button" class="edit-btn js-edit-rule" data-id="r1" data-name="Peak Summer Surcharge" data-dates="01/06/2026 - 31/08/2026" data-rate="1.50" data-status="Active"><i class="fa-solid fa-pen"></i></button>
+                                            <button type="button" class="delete-btn js-delete-rule"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tet Holiday Surcharge</strong></td>
+                                    <td>28/01/2026 - 05/02/2026</td>
+                                    <td><span class="role admin">x 1.80</span></td>
+                                    <td><span class="status status-error">Expired</span></td>
+                                    <td>
+                                        <div class="action-group">
+                                            <button type="button" class="edit-btn js-edit-rule" data-id="r2" data-name="Tet Holiday Surcharge" data-dates="28/01/2026 - 05/02/2026" data-rate="1.80" data-status="Expired"><i class="fa-solid fa-pen"></i></button>
+                                            <button type="button" class="delete-btn js-delete-rule"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- SECTION 2: DISCOUNTS & VOUCHERS -->
+            <div id="sectionDiscounts" style="display: none;">
+                <section class="account-panel">
+                    <div class="panel-header">
+                        <h2><strong>Vouchers & Promo Codes</strong></h2>
+                        <button type="button" class="btn btn-cta btn-medium" id="btnCreateDiscount">
+                            <i class="fa-solid fa-plus"></i>
+                            Create Voucher
+                        </button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>Promo Code</th>
+                                    <th>Discount Type</th>
+                                    <th>Value</th>
+                                    <th>Usage Limit</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="discountsTableBody">
+                                <tr>
+                                    <td><strong>WELCOME10</strong></td>
+                                    <td>Percentage</td>
+                                    <td>10%</td>
+                                    <td>500 / 1000</td>
+                                    <td><span class="status status-success">Active</span></td>
+                                    <td>
+                                        <div class="action-group">
+                                            <button type="button" class="edit-btn js-edit-discount" data-id="d1" data-code="WELCOME10" data-type="Percentage" data-val="10%" data-limit="0 / 1000" data-status="Active"><i class="fa-solid fa-pen"></i></button>
+                                            <button type="button" class="delete-btn js-delete-discount"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- MODAL 1: EDIT RULE -->
+            <div class="modal-backdrop" id="editRuleModal">
+                <div class="modal-dialog">
+                    <div class="modal-header">
+                        <h3><i class="fa-solid fa-chart-line"></i> <span id="ruleModalTitle">Pricing Rule Settings</span></h3>
+                        <button type="button" class="modal-close" data-close-modal="true"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <form id="editRuleForm" class="modal-form">
+                        <input type="hidden" id="ruleId" />
+                        <div class="form-group">
+                            <label class="form-label">Rule Name</label>
+                            <input type="text" id="ruleName" class="form-input" required="required" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Active Period</label>
+                            <input type="text" id="ruleDates" class="form-input" required="required" placeholder="e.g. 01/06/2026 - 31/08/2026" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Multiplier Rate</label>
+                            <input type="text" id="ruleRate" class="form-input" required="required" placeholder="e.g. 1.50" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select id="ruleStatus" class="form-select">
+                                <option value="Active">Active</option>
+                                <option value="Expired">Expired</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline btn-medium" data-close-modal="true">Cancel</button>
+                            <button type="submit" class="btn btn-cta btn-medium">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- MODAL 2: EDIT DISCOUNT -->
+            <div class="modal-backdrop" id="editDiscountModal">
+                <div class="modal-dialog">
+                    <div class="modal-header">
+                        <h3><i class="fa-solid fa-ticket"></i> <span id="discountModalTitle">Voucher Configuration</span></h3>
+                        <button type="button" class="modal-close" data-close-modal="true"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <form id="editDiscountForm" class="modal-form">
+                        <input type="hidden" id="discountId" />
+                        <div class="form-group">
+                            <label class="form-label">Promo Code</label>
+                            <input type="text" id="discountCode" class="form-input" required="required" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Discount Type</label>
+                            <select id="discountType" class="form-select">
+                                <option value="Percentage">Percentage (%)</option>
+                                <option value="Fixed Amount">Fixed Amount (VND)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Value</label>
+                            <input type="text" id="discountVal" class="form-input" required="required" placeholder="e.g. 10% or 500,000" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Usage Limit</label>
+                            <input type="text" id="discountLimit" class="form-input" required="required" placeholder="e.g. 1000" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select id="discountStatus" class="form-select">
+                                <option value="Active">Active</option>
+                                <option value="Expired">Expired</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline btn-medium" data-close-modal="true">Cancel</button>
+                            <button type="submit" class="btn btn-cta btn-medium">Save Voucher</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script th:src="@{/js/admin-sidebar.js}"></script>
+    <script>
+        // XỬ LÝ CHUYỂN TAB MƯỢT MÀ
+        const tabRulesBtn = document.getElementById("tabRulesBtn");
+        const tabDiscountsBtn = document.getElementById("tabDiscountsBtn");
+        const sectionRules = document.getElementById("sectionRules");
+        const sectionDiscounts = document.getElementById("sectionDiscounts");
+
+        tabRulesBtn.addEventListener("click", () => {
+            tabRulesBtn.className = "btn btn-medium btn-cta";
+            tabDiscountsBtn.className = "btn btn-medium btn-outline";
+            sectionRules.style.display = "block";
+            sectionDiscounts.style.display = "none";
+        });
+
+        tabDiscountsBtn.addEventListener("click", () => {
+            tabDiscountsBtn.className = "btn btn-medium btn-cta";
+            tabRulesBtn.className = "btn btn-medium btn-outline";
+            sectionRules.style.display = "none";
+            sectionDiscounts.style.display = "block";
+        });
+
+        // XỬ LÝ MODAL RULE
+        const editRuleModal = document.getElementById("editRuleModal");
+        
+        document.getElementById("rulesTableBody").addEventListener("click", (e) => {
+            const btn = e.target.closest(".js-edit-rule");
+            if (btn) {
+                document.getElementById("ruleModalTitle").textContent = "Modify Pricing Rule";
+                document.getElementById("ruleId").value = btn.getAttribute("data-id");
+                document.getElementById("ruleName").value = btn.getAttribute("data-name");
+                document.getElementById("ruleDates").value = btn.getAttribute("data-dates");
+                document.getElementById("ruleRate").value = btn.getAttribute("data-rate");
+                document.getElementById("ruleStatus").value = btn.getAttribute("data-status");
+                editRuleModal.classList.add("active");
+            }
+            const delBtn = e.target.closest(".js-delete-rule");
+            if (delBtn && confirm("Delete pricing rule?")) {
+                delBtn.closest("tr").remove();
+            }
+        });
+
+        document.getElementById("btnCreateRule").addEventListener("click", () => {
+            document.getElementById("ruleModalTitle").textContent = "Add Pricing Rule";
+            document.getElementById("ruleId").value = "";
+            document.getElementById("ruleName").value = "";
+            document.getElementById("ruleDates").value = "";
+            document.getElementById("ruleRate").value = "1.00";
+            document.getElementById("ruleStatus").value = "Active";
+            editRuleModal.classList.add("active");
+        });
+
+        // XỬ LÝ MODAL DISCOUNT
+        const editDiscountModal = document.getElementById("editDiscountModal");
+
+        document.getElementById("discountsTableBody").addEventListener("click", (e) => {
+            const btn = e.target.closest(".js-edit-discount");
+            if (btn) {
+                document.getElementById("discountModalTitle").textContent = "Modify Discount Voucher";
+                document.getElementById("discountId").value = btn.getAttribute("data-id");
+                document.getElementById("discountCode").value = btn.getAttribute("data-code");
+                document.getElementById("discountType").value = btn.getAttribute("data-type");
+                document.getElementById("discountVal").value = btn.getAttribute("data-val");
+                document.getElementById("discountLimit").value = btn.getAttribute("data-limit");
+                document.getElementById("discountStatus").value = btn.getAttribute("data-status");
+                editDiscountModal.classList.add("active");
+            }
+            const delBtn = e.target.closest(".js-delete-discount");
+            if (delBtn && confirm("Delete voucher?")) {
+                delBtn.closest("tr").remove();
+            }
+        });
+
+        document.getElementById("btnCreateDiscount").addEventListener("click", () => {
+            document.getElementById("discountModalTitle").textContent = "Create Voucher";
+            document.getElementById("discountId").value = "";
+            document.getElementById("discountCode").value = "";
+            document.getElementById("discountType").value = "Percentage";
+            document.getElementById("discountVal").value = "10%";
+            document.getElementById("discountLimit").value = "1000";
+            document.getElementById("discountStatus").value = "Active";
+            editDiscountModal.classList.add("active");
+        });
+
+        // ĐÓNG MODALS
+        document.querySelectorAll("[data-close-modal]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                editRuleModal.classList.remove("active");
+                editDiscountModal.classList.remove("active");
+            });
+        });
+
+        // Đóng khi click ngoài
+        editRuleModal.addEventListener("click", (e) => {
+            if (e.target === editRuleModal) editRuleModal.classList.remove("active");
+        });
+        editDiscountModal.addEventListener("click", (e) => {
+            if (e.target === editDiscountModal) editDiscountModal.classList.remove("active");
+        });
+
+        // SUBMIT RULES FORM (Lưu ảo)
+        document.getElementById("editRuleForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const id = document.getElementById("ruleId").value;
+            const name = document.getElementById("ruleName").value;
+            const dates = document.getElementById("ruleDates").value;
+            const rate = document.getElementById("ruleRate").value;
+            const status = document.getElementById("ruleStatus").value;
+
+            if (!id) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${name}</strong></td>
+                    <td>${dates}</td>
+                    <td><span class="role admin">x ${rate}</span></td>
+                    <td><span class="status ${status === 'Active' ? 'status-success' : 'status-error'}">${status}</span></td>
+                    <td>
+                        <div class="action-group">
+                            <button type="button" class="edit-btn js-edit-rule" data-id="${Date.now()}" data-name="${name}" data-dates="${dates}" data-rate="${rate}" data-status="${status}"><i class="fa-solid fa-pen"></i></button>
+                            <button type="button" class="delete-btn js-delete-rule"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                document.getElementById("rulesTableBody").appendChild(tr);
+            } else {
+                const rows = document.querySelectorAll("#rulesTableBody tr");
+                rows.forEach(row => {
+                    const btn = row.querySelector(".js-edit-rule");
+                    if (btn && btn.getAttribute("data-id") === id) {
+                        row.querySelector("td:nth-child(1) strong").textContent = name;
+                        row.querySelector("td:nth-child(2)").textContent = dates;
+                        row.querySelector("td:nth-child(3) span").textContent = "x " + rate;
+                        const stat = row.querySelector("td:nth-child(4) span");
+                        stat.textContent = status;
+                        stat.className = `status ${status === 'Active' ? 'status-success' : 'status-error'}`;
+                    }
+                });
+            }
+            editRuleModal.classList.remove("active");
+        });
+
+        // SUBMIT DISCOUNTS FORM (Lưu ảo)
+        document.getElementById("editDiscountForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const id = document.getElementById("discountId").value;
+            const code = document.getElementById("discountCode").value.toUpperCase();
+            const type = document.getElementById("discountType").value;
+            const val = document.getElementById("discountVal").value;
+            const limit = document.getElementById("discountLimit").value;
+            const status = document.getElementById("discountStatus").value;
+
+            if (!id) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${code}</strong></td>
+                    <td>${type}</td>
+                    <td>${val}</td>
+                    <td>0 / ${limit}</td>
+                    <td><span class="status ${status === 'Active' ? 'status-success' : 'status-error'}">${status}</span></td>
+                    <td>
+                        <div class="action-group">
+                            <button type="button" class="edit-btn js-edit-discount" data-id="${Date.now()}" data-code="${code}" data-type="${type}" data-val="${val}" data-limit="0 / ${limit}" data-status="${status}"><i class="fa-solid fa-pen"></i></button>
+                            <button type="button" class="delete-btn js-delete-discount"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                document.getElementById("discountsTableBody").appendChild(tr);
+            } else {
+                const rows = document.querySelectorAll("#discountsTableBody tr");
+                rows.forEach(row => {
+                    const btn = row.querySelector(".js-edit-discount");
+                    if (btn && btn.getAttribute("data-id") === id) {
+                        row.querySelector("td:nth-child(1) strong").textContent = code;
+                        row.querySelector("td:nth-child(2)").textContent = type;
+                        row.querySelector("td:nth-child(3)").textContent = val;
+                        const stat = row.querySelector("td:nth-child(5) span");
+                        stat.textContent = status;
+                        stat.className = `status ${status === 'Active' ? 'status-success' : 'status-error'}`;
+                    }
+                });
+            }
+            editDiscountModal.classList.remove("active");
+        });
+    </script>
+</body>
+
+</html>

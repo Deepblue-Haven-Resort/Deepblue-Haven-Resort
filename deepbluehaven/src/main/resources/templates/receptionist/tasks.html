@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Cleaning Assignments | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/accounts.css}">
+    <!-- CSS Lễ tân hỗ trợ hiển thị Modal backdrop tối chuẩn -->
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="admin-layout">
+
+    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
+
+    <main class="admin-main">
+
+        <section class="account-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2><strong>Cleaning Tasks Dashboard</strong></h2>
+                </div>
+                <button class="btn btn-cta btn-medium" id="btnAssignCleaning">
+                    <i class="fa-solid fa-plus"></i> Assign Cleaning Task
+                </button>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search tasks by room or assigned housekeeper...">
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="account-table">
+                    <thead>
+                    <tr>
+                        <th>Task ID</th>
+                        <th>Target Room</th>
+                        <th>Assigned Housekeeper</th>
+                        <th>Priority / Notes</th>
+                        <th>Target Finished By</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="cleaningTasksTableBody">
+                    <tr data-task-id="tsk-101">
+                        <td><strong>#TSK-101</strong></td>
+                        <td><strong>Room 102</strong></td>
+                        <td>Jessica Miller</td>
+                        <td>Standard checkout clean. Change linens.</td>
+                        <td>18:00</td>
+                        <td><span class="status status-warning js-status">PENDING</span></td>
+                        <td>
+                            <div class="action-group">
+                                <button class="btn btn-small btn-cta badge js-edit-task" data-id="tsk-101" data-room="Room 102" data-staff="Jessica Miller" data-notes="Standard checkout clean. Change linens." data-due="18:00">Edit</button>
+                                <button class="delete-btn js-cancel-task"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- TÍCH HỢP TRỰC TIẾP FORM MODAL GÁN TASK CHO HOUSEKEEPER -->
+<div class="modal-backdrop" id="assignCleaningModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3>
+                <i class="fa-solid fa-broom"></i>
+                <span id="modalTitle">Assign Cleaning Task</span>
+            </h3>
+            <button type="button" class="modal-close" data-close-modal="true">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form id="assignCleaningForm" class="modal-form">
+            <input type="hidden" id="modalTaskId" />
+
+            <!-- Chọn phòng cần dọn -->
+            <div class="form-group">
+                <label class="form-label">Target Room</label>
+                <select id="modalRoom" class="form-select">
+                    <option value="Room 101">Room 101</option>
+                    <option value="Room 102">Room 102</option>
+                    <option value="Room 203">Room 203</option>
+                    <option value="Room 305">Room 305</option>
+                </select>
+            </div>
+
+            <!-- Gán nhân viên dọn phòng -->
+            <div class="form-group">
+                <label class="form-label">Assign Housekeeper</label>
+                <select id="modalStaff" class="form-select">
+                    <option value="Jessica Miller">Jessica Miller</option>
+                    <option value="Johnathan Doe">Johnathan Doe</option>
+                    <option value="White Harris">White Harris</option>
+                </select>
+            </div>
+
+            <!-- Thời hạn hoàn thành -->
+            <div class="form-group">
+                <label class="form-label">Target Finished By</label>
+                <input type="text" id="modalDue" class="form-input" placeholder="e.g. 18:00" required="required" />
+            </div>
+
+            <!-- Ghi chú, yêu cầu đặc biệt -->
+            <div class="form-group">
+                <label class="form-label">Priority & Special Notes</label>
+                <textarea id="modalNotes" class="form-input" rows="2" placeholder="e.g. Clean VIP setup, replace towels..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-outline btn-medium" data-close-modal="true">Cancel</button>
+                <button type="submit" class="btn btn-cta btn-medium">Assign Task</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:src="@{/js/admin-sidebar.js}"></script>
+
+<script>
+    const assignCleaningModal = document.getElementById("assignCleaningModal");
+
+    // Click mở Modal để Sửa Task
+    document.getElementById("cleaningTasksTableBody").addEventListener("click", (e) => {
+        const btn = e.target.closest(".js-edit-task");
+        if (btn) {
+            e.preventDefault();
+            document.getElementById("modalTitle").textContent = "Modify Cleaning Task";
+            document.getElementById("modalTaskId").value = btn.getAttribute("data-id");
+            document.getElementById("modalRoom").value = btn.getAttribute("data-room");
+            document.getElementById("modalStaff").value = btn.getAttribute("data-staff");
+            document.getElementById("modalDue").value = btn.getAttribute("data-due");
+            document.getElementById("modalNotes").value = btn.getAttribute("data-notes");
+            
+            assignCleaningModal.classList.add("active");
+        }
+
+        const delBtn = e.target.closest(".js-cancel-task");
+        if (delBtn && confirm("Cancel and delete this task?")) {
+            delBtn.closest("tr").remove();
+        }
+    });
+
+    // Mở Modal để Thêm mới
+    document.getElementById("btnAssignCleaning").addEventListener("click", () => {
+        document.getElementById("modalTitle").textContent = "Assign Cleaning Task";
+        document.getElementById("modalTaskId").value = "";
+        document.getElementById("modalDue").value = "";
+        document.getElementById("modalNotes").value = "";
+        assignCleaningModal.classList.add("active");
+    });
+
+    // Đóng Modal
+    document.querySelectorAll("[data-close-modal]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            assignCleaningModal.classList.remove("active");
+        });
+    });
+
+    assignCleaningModal.addEventListener("click", (e) => {
+        if (e.target === assignCleaningModal) {
+            assignCleaningModal.classList.remove("active");
+        }
+    });
+
+    // Submit form (Lưu ảo)
+    document.getElementById("assignCleaningForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const id = document.getElementById("modalTaskId").value;
+        const room = document.getElementById("modalRoom").value;
+        const staff = document.getElementById("modalStaff").value;
+        const due = document.getElementById("modalDue").value;
+        const notes = document.getElementById("modalNotes").value;
+
+        if (id) {
+            // Cập nhật task hiện có
+            const rows = document.querySelectorAll("#cleaningTasksTableBody tr");
+            rows.forEach(row => {
+                const btn = row.querySelector(".js-edit-task");
+                if (btn && btn.getAttribute("data-id") === id) {
+                    row.querySelector("td:nth-child(2) strong").textContent = room;
+                    row.querySelector("td:nth-child(3)").textContent = staff;
+                    row.querySelector("td:nth-child(4)").textContent = notes;
+                    row.querySelector("td:nth-child(5)").textContent = due;
+
+                    btn.setAttribute("data-room", room);
+                    btn.setAttribute("data-staff", staff);
+                    btn.setAttribute("data-notes", notes);
+                    btn.setAttribute("data-due", due);
+                }
+            });
+        } else {
+            // Gán mới
+            const newTr = document.createElement("tr");
+            const newId = "tsk-" + Date.now();
+            newTr.innerHTML = `
+                <td><strong>#TSK-${Math.floor(Math.random() * 900) + 100}</strong></td>
+                <td><strong>${room}</strong></td>
+                <td>${staff}</td>
+                <td>${notes}</td>
+                <td>${due}</td>
+                <td><span class="status status-warning js-status">PENDING</span></td>
+                <td>
+                    <div class="action-group">
+                        <button class="btn btn-small btn-cta badge js-edit-task" data-id="${newId}" data-room="${room}" data-staff="${staff}" data-notes="${notes}" data-due="${due}">Edit</button>
+                        <button class="delete-btn js-cancel-task"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </td>
+            `;
+            document.getElementById("cleaningTasksTableBody").appendChild(newTr);
+        }
+        assignCleaningModal.classList.remove("active");
+    });
+</script>
+</body>
+</html>

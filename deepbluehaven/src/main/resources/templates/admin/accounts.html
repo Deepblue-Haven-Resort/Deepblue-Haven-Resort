@@ -14,6 +14,8 @@
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/accounts.css}">
+    <!-- CSS bổ trợ hiển thị modal backdrop tối chuẩn -->
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -118,7 +120,7 @@
 
                             <button type="button" data-status="ACTIVE">
                                 <span class="status-dot active"></span>
-                                <strong></strong>Active</strong>
+                                <strong>Active</strong>
                             </button>
 
                             <button type="button" data-status="LOCKED">
@@ -150,19 +152,26 @@
                                     <div class="user-info">
                                         <div>
                                             <a th:href="@{/admin/profile-employee}" class="user-name-link">
-                                                <strong>Trần Hoàng Nam</strong>
+                                                <strong class="js-display-name">Trần Hoàng Nam</strong>
                                             </a>
-                                            <span>Housekeeper Account</span>
+                                            <span class="js-display-dept">Housekeeper Account</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td>nam.housekeeping@deepblue.com</td>
-                                <td><span class="role housekeeping">Housekeeper</span></td>
+                                <td><span class="role housekeeping js-display-role">Housekeeper</span></td>
                                 <td><span class="status status-success">Active</span></td>
                                 <td>21/05/2026</td>
                                 <td>
                                     <div class="action-group">
-                                        <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="edit-btn js-open-edit-staff" 
+                                                data-username="nam.housekeeping" 
+                                                data-fullname="Trần Hoàng Nam" 
+                                                data-phone="+84-909-123-456" 
+                                                data-department="HOUSEKEEPER" 
+                                                data-role="ROLE_HOUSEKEEPER">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
                                         <button class="lock-btn"><i class="fa-solid fa-lock"></i></button>
                                         <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
                                     </div>
@@ -174,92 +183,27 @@
                                     <div class="user-info">
                                         <div>
                                             <a th:href="@{/admin/profile-employee}" class="user-name-link">
-                                                <strong>Lê Thanh Vy</strong>
+                                                <strong class="js-display-name">Lê Thanh Vy</strong>
                                             </a>
-                                            <span>Manager Account</span>
+                                            <span class="js-display-dept">Manager Account</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td>vy.manager@deepblue.com</td>
-                                <td><span class="role manager">Manager</span></td>
+                                <td><span class="role manager js-display-role">Manager</span></td>
                                 <td><span class="status status-error">Locked</span></td>
                                 <td>18/05/2026</td>
                                 <td>
                                     <div class="action-group">
-                                        <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
+                                        <button class="edit-btn js-open-edit-staff" 
+                                                data-username="vy.manager" 
+                                                data-fullname="Lê Thanh Vy" 
+                                                data-phone="+84-918-765-432" 
+                                                data-department="MANAGER" 
+                                                data-role="ROLE_MANAGER">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
                                         <button class="unlock-btn"><i class="fa-solid fa-unlock"></i></button>
-                                        <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="user-info">
-                                        <div>
-                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
-                                                <strong>Phạm Quốc Bảo</strong>
-                                            </a>
-                                            <span>Receptionist Account</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>bao.reception@deepblue.com</td>
-                                <td><span class="role receptionist">Receptionist</span></td>
-                                <td><span class="status status-success">Active</span></td>
-                                <td>17/05/2026</td>
-                                <td>
-                                    <div class="action-group">
-                                        <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
-                                        <button class="lock-btn"><i class="fa-solid fa-lock"></i></button>
-                                        <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="user-info">
-                                        <div>
-                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
-                                                <strong>Đặng Hải Yến</strong>
-                                            </a>
-                                            <span>Admin Account</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>yen.admin@deepblue.com</td>
-                                <td><span class="role admin">Admin</span></td>
-                                <td><span class="status status-success">Active</span></td>
-                                <td>15/05/2026</td>
-                                <td>
-                                    <div class="action-group">
-                                        <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
-                                        <button class="lock-btn"><i class="fa-solid fa-lock"></i></button>
-                                        <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="user-info">
-                                        <div>
-                                            <a th:href="@{/admin/profile-employee}" class="user-name-link">
-                                                <strong>Nguyễn Văn Kiệt</strong>
-                                            </a>
-                                            <span>Manager Account</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>kiet.manager@deepblue.com</td>
-                                <td><span class="role manager">Manager</span></td>
-                                <td><span class="status status-success">Active</span></td>
-                                <td>14/05/2026</td>
-                                <td>
-                                    <div class="action-group">
-                                        <button class="edit-btn"><i class="fa-solid fa-pen"></i></button>
-                                        <button class="lock-btn"><i class="fa-solid fa-lock"></i></button>
                                         <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
                                     </div>
                                 </td>
@@ -267,32 +211,136 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="table-footer">
-                    <p id="accountTableSummary">Hiển thị <strong>1-5</strong> trong <strong>128</strong> tài khoản</p>
-
-                    <div class="pagination" id="accountPagination">
-                        <button class="page-btn disabled">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-
-                        <button class="page-btn active">1</button>
-                        <button class="page-btn">2</button>
-
-                        <span class="page-dots">...</span>
-                        <button class="page-btn">13</button>
-
-                        <button class="page-btn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
             </section>
 
         </main>
     </div>
+
+    <!-- TÍCH HỢP TRỰC TIẾP FORM MODAL EDIT STAFF -->
+    <div class="modal-backdrop" id="editStaffModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Chỉnh sửa thông tin nhân viên</span>
+                </h3>
+                <button type="button" class="modal-close" data-close-modal="true">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="editStaffForm" method="post" class="modal-form">
+                <input type="hidden" id="modalUsername" />
+
+                <!-- Tên nhân viên -->
+                <div class="form-group">
+                    <label class="form-label">Họ và tên</label>
+                    <input type="text" id="modalFullName" class="form-input" required="required" />
+                </div>
+
+                <!-- Số điện thoại -->
+                <div class="form-group">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="text" id="modalPhone" class="form-input" required="required" />
+                </div>
+
+                <!-- Phòng ban -->
+                <div class="form-group">
+                    <label class="form-label">Phòng ban (Department)</label>
+                    <select id="modalDepartment" class="form-select">
+                        <option value="RECEPTIONIST">Lễ tân (RECEPTIONIST)</option>
+                        <option value="HOUSEKEEPER">Buồng phòng (HOUSEKEEPER)</option>
+                        <option value="MAINTENANCE">Bảo trì (MAINTENANCE)</option>
+                        <option value="MANAGER">Quản lý (MANAGER)</option>
+                    </select>
+                </div>
+
+                <!-- Quyền hạn -->
+                <div class="form-group">
+                    <label class="form-label">Quyền hạn (Role)</label>
+                    <select id="modalRole" class="form-select">
+                        <option value="ROLE_RECEPTIONIST">Receptionist</option>
+                        <option value="ROLE_HOUSEKEEPER">Housekeeper</option>
+                        <option value="ROLE_MANAGER">Manager</option>
+                        <option value="ROLE_ADMIN">Admin</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline btn-medium" data-close-modal="true">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-cta btn-medium">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div th:replace="~{fragments/toast :: toast}"></div>
     <script th:src="@{/js/admin-sidebar.js}"></script>
-    <script th:src="@{/js/admin/accounts.js}"></script>
+
+    <!-- Script điều khiển Modal chỉnh sửa trực tiếp -->
+    <script>
+        const editStaffModal = document.getElementById("editStaffModal");
+
+        // Lắng nghe sự kiện click mở Modal sửa đổi
+        document.querySelectorAll(".js-open-edit-staff").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                document.getElementById("modalUsername").value = btn.getAttribute("data-username");
+                document.getElementById("modalFullName").value = btn.getAttribute("data-fullname");
+                document.getElementById("modalPhone").value = btn.getAttribute("data-phone");
+                document.getElementById("modalDepartment").value = btn.getAttribute("data-department");
+                document.getElementById("modalRole").value = btn.getAttribute("data-role");
+                
+                editStaffModal.classList.add("active");
+            });
+        });
+
+        // Lắng nghe đóng Modal
+        document.querySelectorAll("[data-close-modal]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                editStaffModal.classList.remove("active");
+            });
+        });
+
+        editStaffModal.addEventListener("click", (e) => {
+            if (e.target === editStaffModal) {
+                editStaffModal.classList.remove("active");
+            }
+        });
+
+        // Xử lý gửi Form sửa đổi (Lưu ảo trực tiếp lên giao diện)
+        document.getElementById("editStaffForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const username = document.getElementById("modalUsername").value;
+            const fullName = document.getElementById("modalFullName").value;
+            const department = document.getElementById("modalDepartment").value;
+            const role = document.getElementById("modalRole").value;
+
+            // Tìm và cập nhật lại dòng dữ liệu tương ứng trên bảng
+            const editButtons = document.querySelectorAll(".js-open-edit-staff");
+            editButtons.forEach(btn => {
+                if (btn.getAttribute("data-username") === username) {
+                    const row = btn.closest("tr");
+                    
+                    row.querySelector(".js-display-name").textContent = fullName;
+                    row.querySelector(".js-display-dept").textContent = department + " Account";
+                    
+                    const roleSpan = row.querySelector(".js-display-role");
+                    const roleText = role.replace("ROLE_", "");
+                    roleSpan.textContent = roleText;
+                    roleSpan.className = `role js-display-role ${roleText.toLowerCase()}`;
+
+                    // Cập nhật lại thuộc tính của nút bấm để mở ra dữ liệu mới lần sau
+                    btn.setAttribute("data-fullname", fullName);
+                    btn.setAttribute("data-phone", document.getElementById("modalPhone").value);
+                    btn.setAttribute("data-department", department);
+                    btn.setAttribute("data-role", role);
+                }
+            });
+
+            editStaffModal.classList.remove("active");
+        });
+    </script>
 </body>
 
 </html>

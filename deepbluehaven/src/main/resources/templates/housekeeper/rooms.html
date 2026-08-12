@@ -11,8 +11,8 @@
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/housekeeper/rooms.css}">
-
-
+    <!-- CSS Lễ tân hỗ trợ hiển thị Backdrop cho Modal tối chuẩn -->
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -55,82 +55,84 @@
             </div>
 
             <!-- ROOM GRID -->
-            <div class="stats-grid rooms-status-grid">
+            <div class="stats-grid rooms-status-grid" id="roomGridContainer">
 
-
-                <article class="chart-card">
+                <article class="chart-card" data-room-id="101">
                     <div class="card-header">
                         <div>
                             <h2><strong>Room 101</strong></h2>
                             <small class="body-4">Superior King · Floor 1</small>
                         </div>
-                        <span class="status status-success">AVAILABLE</span>
+                        <span class="status status-success js-room-status">AVAILABLE</span>
                     </div>
                     <div class="user-info">
                         <div>
-                            <strong class="body-3">Last cleaned: 09:15 AM</strong>
-                            <span>Ready for guests</span>
+                            <strong class="body-3 js-room-note">Last cleaned: 09:15 AM</strong>
+                            <span class="js-room-desc">Ready for guests</span>
                         </div>
                     </div>
                     <div class="text-center">
-                        <button class="btn btn-small btn-cta">Update</button>
+                        <button class="btn btn-small btn-cta js-clean-btn">Update</button>
+                        <button class="btn btn-small btn-outline js-report-btn" data-room="Room 101"><i class="fa-solid fa-triangle-exclamation"></i> Report</button>
                     </div>
                 </article>
 
-                <article class="chart-card">
+                <article class="chart-card" data-room-id="102">
                     <div class="card-header">
                         <div>
                             <h2><strong>Room 102</strong></h2>
                             <small class="body-4">Superior Twin · Floor 1</small>
                         </div>
-                        <span class="status status-info">CLEANING</span>
+                        <span class="status status-info js-room-status">CLEANING</span>
                     </div>
                     <div class="user-info">
                         <div>
-                            <strong class="body-3">Note: Guest checked out</strong>
-                            <span>Cleaning in progress</span>
+                            <strong class="body-3 js-room-note">Note: Guest checked out</strong>
+                            <span class="js-room-desc">Cleaning in progress</span>
                         </div>
                     </div>
                     <div class="text-center">
-                        <button class="btn btn-small btn-success">Complete</button>
+                        <button class="btn btn-small btn-success js-clean-btn">Complete</button>
+                        <button class="btn btn-small btn-outline js-report-btn" data-room="Room 102"><i class="fa-solid fa-triangle-exclamation"></i> Report</button>
                     </div>
                 </article>
 
-                <article class="chart-card">
+                <article class="chart-card" data-room-id="204">
                     <div class="card-header">
                         <div>
                             <h2><strong>Room 204</strong></h2>
                             <small class="body-4">Deluxe Ocean View · Floor 2</small>
                         </div>
-                        <span class="status status-warning">PENDING</span>
+                        <span class="status status-warning js-room-status">PENDING</span>
                     </div>
                     <div class="user-info">
                         <div>
-                            <strong class="body-3">Note: Clean before 02:00 PM</strong>
-                            <span>Awaiting housekeeper</span>
+                            <strong class="body-3 js-room-note">Note: Clean before 02:00 PM</strong>
+                            <span class="js-room-desc">Awaiting housekeeper</span>
                         </div>
                     </div>
                     <div class="text-center">
-                        <button class="btn btn-small btn-cta">Start Cleaning</button>
+                        <button class="btn btn-small btn-cta js-clean-btn">Start Cleaning</button>
+                        <button class="btn btn-small btn-outline js-report-btn" data-room="Room 204"><i class="fa-solid fa-triangle-exclamation"></i> Report</button>
                     </div>
                 </article>
 
-                <article class="chart-card">
+                <article class="chart-card" data-room-id="305">
                     <div class="card-header">
                         <div>
                             <h2><strong>Room 305</strong></h2>
                             <small class="body-4">Ocean Suite · Floor 3</small>
                         </div>
-                        <span class="status status-error">MAINTENANCE</span>
+                        <span class="status status-error js-room-status">MAINTENANCE</span>
                     </div>
                     <div class="user-info">
                         <div>
-                            <strong class="body-3">Issue: Loud AC noise</strong>
-                            <span>Maintenance team inspecting</span>
+                            <strong class="body-3 js-room-note">Issue: Loud AC noise</strong>
+                            <span class="js-room-desc">Maintenance team inspecting</span>
                         </div>
                     </div>
                     <div class="text-center">
-                        <button class="btn btn-small btn-warning">Details</button>
+                        <button class="btn btn-small btn-warning" disabled="disabled">Locked</button>
                     </div>
                 </article>
 
@@ -141,6 +143,156 @@
     </main>
 </div>
 
+<!-- TÍCH HỢP TRỰC TIẾP MODAL BÁO CÁO SỰ CỐ PHÒNG -->
+<div class="modal-backdrop" id="reportIncidentModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3>
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>Report Room Incident</span>
+            </h3>
+            <button type="button" class="modal-close" data-close-modal="true">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form id="reportIncidentForm" class="modal-form">
+            <input type="hidden" id="incidentRoomId" />
+
+            <!-- Số phòng -->
+            <div class="form-group">
+                <label class="form-label">Target Room</label>
+                <input type="text" id="incidentRoomName" class="form-input" readonly="readonly" />
+            </div>
+
+            <!-- Loại sự cố -->
+            <div class="form-group">
+                <label class="form-label">Incident Category</label>
+                <select id="incidentCategory" class="form-select">
+                    <option value="AC_HEATING">AC & Heating (Hỏng Điều hòa/Lò sưởi)</option>
+                    <option value="PLUMBING">Plumbing (Hỏng Vòi nước/Đường ống)</option>
+                    <option value="ELECTRICAL">Electrical (Hỏng Điện/Bóng đèn)</option>
+                    <option value="FURNITURE">Furniture (Hỏng Giường/Tủ/Cửa)</option>
+                    <option value="HOUSEKEEPING">Other Issues</option>
+                </select>
+            </div>
+
+            <!-- Chi tiết sự cố -->
+            <div class="form-group">
+                <label class="form-label">Describe Details</label>
+                <textarea id="incidentDetail" class="form-input" rows="3" required="required" placeholder="Describe the problem, e.g. Water leak in bathroom toilet..."></textarea>
+            </div>
+
+            <!-- Độ khẩn cấp -->
+            <div class="form-group">
+                <label class="form-label">Urgency Level</label>
+                <select id="incidentUrgency" class="form-select">
+                    <option value="NORMAL">NORMAL - Resolve within 24h</option>
+                    <option value="URGENT">URGENT - Dispatch maintenance immediately</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-outline btn-medium" data-close-modal="true">Cancel</button>
+                <button type="submit" class="btn btn-cta btn-medium">Submit Report</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script th:src="@{/js/admin-sidebar.js}"></script>
+
+<script>
+    const reportIncidentModal = document.getElementById("reportIncidentModal");
+
+    // Lắng nghe click các nút trong Grid phòng
+    document.getElementById("roomGridContainer").addEventListener("click", (e) => {
+        const reportBtn = e.target.closest(".js-report-btn");
+        if (reportBtn) {
+            e.preventDefault();
+            const roomName = reportBtn.getAttribute("data-room");
+            const card = reportBtn.closest("article");
+            const roomId = card.getAttribute("data-room-id");
+
+            document.getElementById("incidentRoomId").value = roomId;
+            document.getElementById("incidentRoomName").value = roomName;
+            document.getElementById("incidentDetail").value = "";
+            document.getElementById("incidentCategory").value = "AC_HEATING";
+            document.getElementById("incidentUrgency").value = "NORMAL";
+
+            reportIncidentModal.classList.add("active");
+        }
+
+        // Đổi trạng thái dọn dẹp ảo khác
+        const cleanBtn = e.target.closest(".js-clean-btn");
+        if (cleanBtn) {
+            e.preventDefault();
+            const card = cleanBtn.closest("article");
+            const statusSpan = card.querySelector(".js-room-status");
+            const noteStrong = card.querySelector(".js-room-note");
+            const descSpan = card.querySelector(".js-room-desc");
+
+            if (statusSpan.textContent === "PENDING") {
+                statusSpan.textContent = "CLEANING";
+                statusSpan.className = "status status-info js-room-status";
+                cleanBtn.textContent = "Complete";
+                cleanBtn.className = "btn btn-small btn-success js-clean-btn";
+            } else {
+                statusSpan.textContent = "AVAILABLE";
+                statusSpan.className = "status status-success js-room-status";
+                noteStrong.textContent = "Last cleaned: Just now";
+                descSpan.textContent = "Ready for guests";
+                cleanBtn.style.display = "none";
+                card.querySelector(".js-report-btn").style.display = "none";
+            }
+        }
+    });
+
+    // Đóng Modal
+    document.querySelectorAll("[data-close-modal]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            reportIncidentModal.classList.remove("active");
+        });
+    });
+
+    reportIncidentModal.addEventListener("click", (e) => {
+        if (e.target === reportIncidentModal) {
+            reportIncidentModal.classList.remove("active");
+        }
+    });
+
+    // Submit báo cáo sự cố phòng (LƯU ẢO)
+    document.getElementById("reportIncidentForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const roomId = document.getElementById("incidentRoomId").value;
+        const details = document.getElementById("incidentDetail").value;
+
+        // Tìm card phòng tương ứng
+        const card = document.querySelector(`article[data-room-id="${roomId}"]`);
+        if (card) {
+            const statusSpan = card.querySelector(".js-room-status");
+            const noteStrong = card.querySelector(".js-room-note");
+            const descSpan = card.querySelector(".js-room-desc");
+
+            // Chuyển phòng sang trạng thái MAINTENANCE
+            statusSpan.textContent = "MAINTENANCE";
+            statusSpan.className = "status status-error js-room-status";
+            noteStrong.textContent = "Issue: " + details;
+            descSpan.textContent = "Maintenance team inspecting";
+
+            // Ẩn các nút hành động, thay bằng nút khóa bảo trì
+            const cleanBtn = card.querySelector(".js-clean-btn");
+            if (cleanBtn) cleanBtn.style.display = "none";
+            
+            const reportBtn = card.querySelector(".js-report-btn");
+            if (reportBtn) reportBtn.style.display = "none";
+
+            // Thêm nút Locked tượng trưng
+            const btnGroup = cleanBtn.parentElement;
+            btnGroup.innerHTML = `<button class="btn btn-small btn-warning" disabled="disabled">Locked</button>`;
+        }
+
+        reportIncidentModal.classList.remove("active");
+    });
+</script>
 </body>
 </html>

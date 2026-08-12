@@ -141,6 +141,25 @@ public class ReceptionistController {
         model.addAttribute("activePage", "guests");
         return "receptionist/guests";
     }
+    @GetMapping("/services")
+    public String servicesPage(Model model, HttpServletRequest req) {
+        Worker receptionist = getActiveReceptionist(req);
+        if (receptionist == null) {
+            return "redirect:/staff-login";
+        }
+        model.addAttribute("activePage", "services");
+        return "receptionist/services";
+    }
+    
+    @GetMapping("/tasks")
+    public String tasksPage(Model model, HttpServletRequest req) {
+        Worker receptionist = getActiveReceptionist(req);
+        if (receptionist == null) {
+            return "redirect:/staff-login";
+        }
+        model.addAttribute("activePage", "tasks");
+        return "receptionist/tasks";
+    }
 
     @GetMapping("/profile")
     public String profilePage(Model model, HttpServletRequest req) {

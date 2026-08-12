@@ -157,7 +157,10 @@ function renderTable(items) {
             <td>${createdDateStr}</td>
             <td>
                 <div class="action-group">
-                    <button class="edit-btn" data-id="${worker.id}"><i class="fa-solid fa-pen"></i></button>
+                    <button class="edit-btn" 
+                            data-id="${worker.id}"
+                            data-username="${escapeHtml(worker.username || "")}"
+                            data-phone="${escapeHtml(worker.phoneNumber || "0901234567")}"><i class="fa-solid fa-pen"></i></button>
                     ${isActive
                         ? `<button class="lock-btn" data-id="${worker.id}"><i class="fa-solid fa-lock"></i></button>`
                         : `<button class="unlock-btn" data-id="${worker.id}"><i class="fa-solid fa-unlock"></i></button>`
@@ -263,8 +266,27 @@ if (accountTableBody) {
         const unlockBtn = e.target.closest(".unlock-btn");
         const deleteBtn = e.target.closest(".delete-btn");
 
+        // Cấu hình mở Modal chỉnh sửa nhân viên thay vì chuyển hướng trang
         if (editBtn) {
-            window.location.href = getApiUrl(`admin/accounts/${editBtn.dataset.id}/edit`);
+            const tr = editBtn.closest("tr");
+            if (!tr) return;
+
+            const fullName = tr.querySelector(".user-name-link strong").textContent.trim();
+            const email = tr.querySelector("td:nth-child(2)").textContent.trim();
+            const role = tr.querySelector("td:nth-child(3) span").textContent.trim().toUpperCase();
+            const username = editBtn.getAttribute("data-username") || "staff.user";
+            const phone = editBtn.getAttribute("data-phone") || "0901234567";
+
+            document.getElementById("modalStaffUsername").value = username;
+            document.getElementById("modalStaffFullName").value = fullName;
+            document.getElementById("modalStaffEmail").value = email;
+            document.getElementById("modalStaffPhone").value = phone;
+            document.getElementById("modalStaffRole").value = role;
+
+            const editStaffModal = document.getElementById("editStaffModal");
+            if (editStaffModal) {
+                editStaffModal.classList.add("active");
+            }
             return;
         }
 

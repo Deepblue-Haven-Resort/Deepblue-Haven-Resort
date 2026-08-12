@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resort Staff Directory | Deep Blue Haven</title>
+    <title>Resort Staff & Tasks | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/accounts.css}">
+    <!-- CSS Lễ tân hỗ trợ hiển thị Modal backdrop tối chuẩn -->
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -19,156 +20,379 @@
 <body>
     <div class="admin-layout">
 
-        
+        <!-- Gọi sidebar của manager -->
         <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
         <main class="admin-main">
 
-            
+            <!-- HERO SECTION -->
             <section class="dashboard-hero manager-hero">
                 <div>
                     <span class="page-label">Management Desk</span>
-                    <h1>Resort Staff Directory</h1>
-                    <p>Manage employee records, monitor weighted performance scores, and coordinate shifts.</p>
+                    <h1>Resort Staff Coordination</h1>
+                    <p>Manage employee records, coordinate shifts, and assign housekeeping/maintenance tasks.</p>
                 </div>
             </section>
 
-            
-            <section class="stats-grid">
-                <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                    <div>
-                        <span>Total Employees</span>
-                        <strong>25</strong>
-                        <small>Active in directory</small>
-                    </div>
-                </article>
+            <!-- TABS CHUYỂN ĐỔI GIAO DIỆN HỢP LÝ -->
+            <div class="filter-bar" style="margin-bottom: var(--spacing-md); display: flex; gap: var(--spacing-sm); border-bottom: 2px solid var(--border-color); padding-bottom: var(--spacing-xs);">
+                <button type="button" class="btn btn-cta btn-medium" id="tabRosterBtn">
+                    <i class="fa-solid fa-users"></i> Employee Roster
+                </button>
+                <button type="button" class="btn btn-outline btn-medium" id="tabTasksBtn">
+                    <i class="fa-solid fa-clipboard-list"></i> Housekeeper Task Board
+                </button>
+            </div>
 
-                <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-headset"></i>
-                    </div>
-                    <div>
-                        <span>Receptionists</span>
-                        <strong>7</strong>
-                        <small>Lobby desks assigned</small>
-                    </div>
-                </article>
+            <!-- SECTION 1: EMPLOYEE ROSTER -->
+            <div id="sectionRoster">
+                <section class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <article class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div>
+                            <span>Total Employees</span>
+                            <strong id="statTotalEmp">25</strong>
+                        </div>
+                    </article>
 
-                <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-broom"></i>
-                    </div>
-                    <div>
-                        <span>Housekeepers</span>
-                        <strong>13</strong>
-                        <small>Cleaning rooms queue</small>
-                    </div>
-                </article>
+                    <article class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <div>
+                            <span>Receptionists</span>
+                            <strong>7</strong>
+                        </div>
+                    </article>
 
-                <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                    <div>
-                        <span>Average Performance</span>
-                        <strong>85.4%</strong>
-                        <small>Weighted team rating</small>
-                    </div>
-                </article>
-            </section>
+                    <article class="stat-card">
+                        <div class="stat-icon gold">
+                            <i class="fa-solid fa-broom"></i>
+                        </div>
+                        <div>
+                            <span>Housekeepers</span>
+                            <strong>13</strong>
+                        </div>
+                    </article>
+                </section>
 
-            
-            <section class="manager-panel">
-                <div class="panel-header">
-                    <div>
-                        <h2>Employee Roster</h2>
+                <section class="account-panel">
+                    <div class="panel-header">
+                        <h2><strong>Employee Roster</strong></h2>
                     </div>
-                    <div class="filter-options">
-                        <button type="button" class="btn btn-cta btn-medium">Register New Staff</button>
+
+                    <div class="filter-bar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search staff by code, name, phone, or role...">
+                        </div>
                     </div>
-                </div>
 
-                
-                <div class="filter-bar">
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search staff by code, name, phone, or role...">
+                    <div class="table-wrapper">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>Employee Code</th>
+                                    <th>Employee Name</th>
+                                    <th>Department (Role)</th>
+                                    <th>Phone Number</th>
+                                    <th>Account Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rosterTableBody">
+                                <tr>
+                                    <td><strong>SEED-EMP-006</strong></td>
+                                    <td>Jessica Miller</td>
+                                    <td>RECEPTIONIST</td>
+                                    <td>+1-555-102-3045</td>
+                                    <td><span class="status status-success">ACTIVE</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-small delete-btn badge js-toggle-lock">Lock Account</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>SEED-EMP-024</strong></td>
+                                    <td>White Harris</td>
+                                    <td>HOUSEKEEPER</td>
+                                    <td>+1-555-304-8902</td>
+                                    <td><span class="status status-error">INACTIVE</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-small lock-btn badge js-toggle-lock">Unlock</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
+                </section>
+            </div>
 
-                
-                <div class="table-wrapper">
-                    <table class="activity-table">
-                        <thead>
-                            <tr>
-                                <th>Employee Code</th>
-                                <th>Employee Name</th>
-                                <th>Department</th>
-                                <th>Phone Number</th>
-                                <th>Performance Score</th>
-                                <th>Status</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            
-                            <tr>
-                                <td><strong>SEED-EMP-006</strong></td>
-                                <td>Jessica Miller</td>
-                                <td>Reception</td>
-                                <td>+1-555-102-3045</td>
-                                <td><strong>88.5%</strong></td>
-                                <td><span class="status status-success">ACTIVE</span></td>
-                                <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn delete-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Lock Account</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>SEED-EMP-024</strong></td>
-                                <td>White Harris</td>
-                                <td>Housekeeping</td>
-                                <td>+1-555-304-8902</td>
-                                <td><strong>72.1%</strong></td>
-                                <td><span class="status status-danger">LOCKED</span></td>
-                                <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn lock-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Unlock</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                
-                <div class="table-footer">
-                    <p>Hiển thị <strong>1-2</strong> trong số <strong>25</strong> nhân viên</p>
-                    <div class="pagination">
-                        <button type="button" class="page-btn disabled">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button type="button" class="page-btn active">1</button>
-                        <button type="button" class="page-btn">2</button>
-                        <span class="page-dots">...</span>
-                        <button type="button" class="page-btn">3</button>
-                        <button type="button" class="page-btn">
-                            <i class="fa-solid fa-chevron-right"></i>
+            <!-- SECTION 2: TASK BOARD (GÁN VIỆC NHÂN VIÊN) -->
+            <div id="sectionTasks" style="display: none;">
+                <section class="account-panel">
+                    <div class="panel-header">
+                        <h2><strong>Active Cleaning & Maintenance Assignments</strong></h2>
+                        <button type="button" class="btn btn-cta btn-medium" id="btnAssignTask">
+                            <i class="fa-solid fa-plus"></i>
+                            Assign New Task
                         </button>
                     </div>
-                </div>
-            </section>
+
+                    <div class="table-wrapper">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>Task ID</th>
+                                    <th>Target Room</th>
+                                    <th>Assigned Staff</th>
+                                    <th>Task Description</th>
+                                    <th>Due Date / Time</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="taskTableBody">
+                                <tr>
+                                    <td><strong>#TSK-201</strong></td>
+                                    <td><strong>Room 101</strong></td>
+                                    <td>White Harris</td>
+                                    <td>Deep cleaning & change linens</td>
+                                    <td>11/08/2026 - 18:00</td>
+                                    <td><span class="status status-warning">PENDING</span></td>
+                                    <td>
+                                        <div class="action-group">
+                                            <button type="button" class="edit-btn js-edit-task" data-id="201" data-room="Room 101" data-staff="White Harris" data-desc="Deep cleaning & change linens" data-due="2026-08-11T18:00" data-status="PENDING"><i class="fa-solid fa-pen"></i></button>
+                                            <button type="button" class="delete-btn js-delete-task" title="Cancel Task"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
 
         </main>
     </div>
 
+    <!-- TÍCH HỢP TRỰC TIẾP MODAL GÁN VIỆC CHO HOUSEKEEPER -->
+    <div class="modal-backdrop" id="assignTaskModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>
+                    <i class="fa-solid fa-broom"></i>
+                    <span id="modalTaskTitle">Task Assignment</span>
+                </h3>
+                <button type="button" class="modal-close" data-close-modal="true">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="assignTaskForm" class="modal-form">
+                <input type="hidden" id="taskId" />
+
+                <!-- Chọn phòng -->
+                <div class="form-group">
+                    <label class="form-label">Target Room</label>
+                    <select id="taskRoom" class="form-select">
+                        <option value="Room 101">Room 101</option>
+                        <option value="Room 102">Room 102</option>
+                        <option value="Room 201">Room 201</option>
+                        <option value="Room 202">Room 202</option>
+                    </select>
+                </div>
+
+                <!-- Gán nhân viên -->
+                <div class="form-group">
+                    <label class="form-label">Assign Housekeeper</label>
+                    <select id="taskStaff" class="form-select">
+                        <option value="White Harris">White Harris (Housekeeper)</option>
+                        <option value="Jessica Miller">Jessica Miller (Receptionist)</option>
+                        <option value="Mary Johnson">Mary Johnson (Housekeeper)</option>
+                    </select>
+                </div>
+
+                <!-- Mô tả công việc -->
+                <div class="form-group">
+                    <label class="form-label">Task Description</label>
+                    <input type="text" id="taskDesc" class="form-input" required="required" placeholder="e.g. Clean bathroom and reload minibar" />
+                </div>
+
+                <!-- Hạn hoàn thành -->
+                <div class="form-group">
+                    <label class="form-label">Due Date & Time</label>
+                    <input type="datetime-local" id="taskDue" class="form-input" required="required" />
+                </div>
+
+                <!-- Trạng thái công việc -->
+                <div class="form-group">
+                    <label class="form-label">Task Status</label>
+                    <select id="taskStatus" class="form-select">
+                        <option value="PENDING">PENDING</option>
+                        <option value="PROCESSING">PROCESSING</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline btn-medium" data-close-modal="true">Cancel</button>
+                    <button type="submit" class="btn btn-cta btn-medium">Assign Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script th:src="@{/js/admin-sidebar.js}"></script>
+
+    <script>
+        // CHUYỂN ĐỔI TAB
+        const tabRosterBtn = document.getElementById("tabRosterBtn");
+        const tabTasksBtn = document.getElementById("tabTasksBtn");
+        const sectionRoster = document.getElementById("sectionRoster");
+        const sectionTasks = document.getElementById("sectionTasks");
+
+        tabRosterBtn.addEventListener("click", () => {
+            tabRosterBtn.className = "btn btn-medium btn-cta";
+            tabTasksBtn.className = "btn btn-medium btn-outline";
+            sectionRoster.style.display = "block";
+            sectionTasks.style.display = "none";
+        });
+
+        tabTasksBtn.addEventListener("click", () => {
+            tabTasksBtn.className = "btn btn-medium btn-cta";
+            tabRosterBtn.className = "btn btn-medium btn-outline";
+            sectionRoster.style.display = "none";
+            sectionTasks.style.display = "block";
+        });
+
+        // LOCK / UNLOCK TÀI KHOẢN (LƯU ẢO)
+        document.getElementById("rosterTableBody").addEventListener("click", (e) => {
+            const btn = e.target.closest(".js-toggle-lock");
+            if (btn) {
+                e.preventDefault();
+                const tr = btn.closest("tr");
+                const statusSpan = tr.querySelector(".status");
+                if (statusSpan.textContent === "ACTIVE") {
+                    statusSpan.textContent = "INACTIVE";
+                    statusSpan.className = "status status-error";
+                    btn.textContent = "Unlock";
+                    btn.className = "btn btn-small lock-btn badge js-toggle-lock";
+                } else {
+                    statusSpan.textContent = "ACTIVE";
+                    statusSpan.className = "status status-success";
+                    btn.textContent = "Lock Account";
+                    btn.className = "btn btn-small delete-btn badge js-toggle-lock";
+                }
+            }
+        });
+
+        // QUẢN LÝ TASK (MODAL & LƯU ẢO)
+        const assignTaskModal = document.getElementById("assignTaskModal");
+
+        document.getElementById("taskTableBody").addEventListener("click", (e) => {
+            const btn = e.target.closest(".js-edit-task");
+            if (btn) {
+                e.preventDefault();
+                document.getElementById("modalTaskTitle").textContent = "Modify Task Assignment";
+                document.getElementById("taskId").value = btn.getAttribute("data-id");
+                document.getElementById("taskRoom").value = btn.getAttribute("data-room");
+                document.getElementById("taskStaff").value = btn.getAttribute("data-staff");
+                document.getElementById("taskDesc").value = btn.getAttribute("data-desc");
+                document.getElementById("taskDue").value = btn.getAttribute("data-due");
+                document.getElementById("taskStatus").value = btn.getAttribute("data-status");
+                assignTaskModal.classList.add("active");
+            }
+            const delBtn = e.target.closest(".js-delete-task");
+            if (delBtn && confirm("Cancel this task?")) {
+                delBtn.closest("tr").remove();
+            }
+        });
+
+        document.getElementById("btnAssignTask").addEventListener("click", () => {
+            document.getElementById("modalTaskTitle").textContent = "Assign New Task";
+            document.getElementById("taskId").value = "";
+            document.getElementById("taskRoom").value = "Room 101";
+            document.getElementById("taskStaff").value = "White Harris";
+            document.getElementById("taskDesc").value = "";
+            
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById("taskDue").value = now.toISOString().slice(0, 16);
+            document.getElementById("taskStatus").value = "PENDING";
+            
+            assignTaskModal.classList.add("active");
+        });
+
+        document.querySelectorAll("[data-close-modal]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                assignTaskModal.classList.remove("active");
+            });
+        });
+
+        assignTaskModal.addEventListener("click", (e) => {
+            if (e.target === assignTaskModal) {
+                assignTaskModal.classList.remove("active");
+            }
+        });
+
+        document.getElementById("assignTaskForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const id = document.getElementById("taskId").value;
+            const room = document.getElementById("taskRoom").value;
+            const staff = document.getElementById("taskStaff").value;
+            const desc = document.getElementById("taskDesc").value;
+            const due = document.getElementById("taskDue").value;
+            const status = document.getElementById("taskStatus").value;
+
+            const formattedDue = due.replace("T", " ");
+
+            let rowUpdated = false;
+            const rows = document.querySelectorAll("#taskTableBody tr");
+            
+            rows.forEach(row => {
+                const editBtn = row.querySelector(".js-edit-task");
+                if (editBtn && editBtn.getAttribute("data-id") === id) {
+                    row.querySelector("td:nth-child(2) strong").textContent = room;
+                    row.querySelector("td:nth-child(3)").textContent = staff;
+                    row.querySelector("td:nth-child(4)").textContent = desc;
+                    row.querySelector("td:nth-child(5)").textContent = formattedDue;
+                    
+                    const statusSpan = row.querySelector("td:nth-child(6) span");
+                    statusSpan.textContent = status;
+                    statusSpan.className = `status ${status === 'COMPLETED' ? 'status-success' : (status === 'PROCESSING' ? 'status-info' : 'status-warning')}`;
+                    
+                    editBtn.setAttribute("data-room", room);
+                    editBtn.setAttribute("data-staff", staff);
+                    editBtn.setAttribute("data-desc", desc);
+                    editBtn.setAttribute("data-due", due);
+                    editBtn.setAttribute("data-status", status);
+                    rowUpdated = true;
+                }
+            });
+
+            if (!rowUpdated) {
+                const tr = document.createElement("tr");
+                const randomId = Math.floor(Math.random() * 900) + 100;
+                tr.innerHTML = `
+                    <td><strong>#TSK-${randomId}</strong></td>
+                    <td><strong>${room}</strong></td>
+                    <td>${staff}</td>
+                    <td>${desc}</td>
+                    <td>${formattedDue}</td>
+                    <td><span class="status ${status === 'COMPLETED' ? 'status-success' : (status === 'PROCESSING' ? 'status-info' : 'status-warning')}">${status}</span></td>
+                    <td>
+                        <div class="action-group">
+                            <button type="button" class="edit-btn js-edit-task" data-id="${randomId}" data-room="${room}" data-staff="${staff}" data-desc="${desc}" data-due="${due}" data-status="${status}"><i class="fa-solid fa-pen"></i></button>
+                            <button type="button" class="delete-btn js-delete-task"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                document.getElementById("taskTableBody").appendChild(tr);
+            }
+            assignTaskModal.classList.remove("active");
+        });
+    </script>
 </body>
 
 </html>

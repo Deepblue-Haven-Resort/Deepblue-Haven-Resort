@@ -10,8 +10,9 @@
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <!-- CSS Lễ tân hỗ trợ hiển thị Modal backdrop tối chuẩn -->
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -19,154 +20,373 @@
 <body>
     <div class="admin-layout">
 
-        
+        <!-- Gọi sidebar của manager -->
         <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
         <main class="admin-main">
 
-            
             <section class="dashboard-hero manager-hero">
                 <div>
-                    <span class="page-label">Operations Desk</span>
-                    <h1>Resort Room Rack Grid</h1>
-                    <p>Real-time room status, housekeeping coordination, and maintenance logs.</p>
+                    <span class="page-label">System Administration</span>
+                    <h1>Room Inventory Management</h1>
+                    <p>Configure room details, base rates, amenities, and switch statuses to maintenance.</p>
                 </div>
             </section>
 
-            
+            <!-- STATS CARDS -->
             <section class="stats-grid">
                 <article class="stat-card">
-                    <div class="stat-icon">
+                    <div class="stat-icon blue">
+                        <i class="fa-solid fa-hotel"></i>
+                    </div>
+                    <div>
+                        <span>TOTAL Rooms</span>
+                        <strong id="statTotalRooms">45</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon green">
                         <i class="fa-solid fa-circle-check"></i>
                     </div>
                     <div>
-                        <span>Available Rooms</span>
-                        <strong>24</strong>
-                        <small>Ready for guest check-in</small>
+                        <span>AVAILABLE Rooms</span>
+                        <strong id="statAvailRooms">32</strong>
                     </div>
                 </article>
 
                 <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-bed"></i>
+                    <div class="stat-icon gold">
+                        <i class="fa-solid fa-user-tag"></i>
                     </div>
                     <div>
-                        <span>Occupied Rooms</span>
-                        <strong>34</strong>
-                        <small>Active guest in-house bookings</small>
+                        <span>OCCUPIED Rooms</span>
+                        <strong id="statOccupiedRooms">10</strong>
                     </div>
                 </article>
 
-                <article class="stat-card warning">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-broom"></i>
-                    </div>
-                    <div>
-                        <span>Cleaning Queue</span>
-                        <strong>8</strong>
-                        <small>Housekeepers assigned</small>
-                    </div>
-                </article>
-
-                <article class="stat-card warning">
-                    <div class="stat-icon">
+                <article class="stat-card">
+                    <div class="stat-icon red">
                         <i class="fa-solid fa-wrench"></i>
                     </div>
                     <div>
-                        <span>Out of Order</span>
-                        <strong>4</strong>
-                        <small>Maintenance scheduled</small>
+                        <span>MAINTENANCE Rooms</span>
+                        <strong id="statMaintRooms">3</strong>
                     </div>
                 </article>
             </section>
 
-            
-            <section class="manager-panel">
+            <section class="account-panel">
                 <div class="panel-header">
                     <div>
-                        <h2>Resort Rooms Inventory</h2>
+                        <h2><strong>Resort Rooms Registry</strong></h2>
                     </div>
-                    <div class="filter-options">
-                        <button type="button" class="btn btn-cta btn-medium">Add New Room</button>
-                    </div>
+                    <button type="button" class="btn btn-cta btn-medium" id="btnCreateRoom">
+                        <i class="fa-solid fa-plus"></i>
+                        Add New Room
+                    </button>
                 </div>
 
-                
                 <div class="filter-bar">
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search rooms by number, floor, type...">
+                        <input type="text" placeholder="Search rooms by number, floor, amenities...">
                     </div>
                 </div>
 
-               
                 <div class="table-wrapper">
-                    <table class="activity-table">
+                    <table class="account-table">
                         <thead>
                             <tr>
                                 <th>Room Number</th>
                                 <th>Room Type</th>
                                 <th>Max Capacity</th>
-                                <th>Base Nightly Price</th>
-                                <th>Current Status</th>
-                                <th>Housekeeper Assigned</th>
-                                <th class="text-center">Action</th>
+                                <th>Base Rate</th>
+                                <th>Amenities Included</th>
+                                <th>Room Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            
+                        <tbody id="roomTableBody">
                             <tr>
                                 <td><strong>Room 101</strong></td>
-                                <td>Premium Room</td>
-                                <td>3 Guests</td>
-                                <td><strong>2,100,000 VND</strong></td>
+                                <td>SUPERIOR_KING</td>
+                                <td>2 Guests</td>
+                                <td><strong>1,200,000 VND</strong></td>
+                                <td>WiFi, Minibar, Ocean View</td>
                                 <td><span class="status status-success">AVAILABLE</span></td>
-                                <td>Mary Johnson</td>
                                 <td>
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Edit</button>
+                                    <div class="action-group">
+                                        <button type="button" class="edit-btn js-open-edit-room" 
+                                                data-id="101" data-number="101" data-type="SUPERIOR_KING" 
+                                                data-capacity="2" data-price="1,200,000" 
+                                                data-amenities="WiFi, Minibar, Ocean View" data-status="AVAILABLE" 
+                                                data-image="/assets/images/rooms/room101.jpg">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button type="button" class="delete-btn js-quick-maintenance" title="Switch to Maintenance"><i class="fa-solid fa-wrench"></i></button>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td><strong>Room 102</strong></td>
-                                <td>Deluxe Suite</td>
+                                <td><strong>Room 305</strong></td>
+                                <td>OCEAN_SUITE</td>
                                 <td>4 Guests</td>
                                 <td><strong>3,500,000 VND</strong></td>
-                                <td><span class="status">OCCUPIED</span></td>
-                                <td>David Miller</td>
+                                <td>WiFi, Minibar, Ocean View, Jacuzzi</td>
+                                <td><span class="status status-error">MAINTENANCE</span></td>
                                 <td>
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Edit</button>
+                                    <div class="action-group">
+                                        <button type="button" class="edit-btn js-open-edit-room" 
+                                                data-id="305" data-number="305" data-type="OCEAN_SUITE" 
+                                                data-capacity="4" data-price="3,500,000" 
+                                                data-amenities="WiFi, Minibar, Ocean View, Jacuzzi" data-status="MAINTENANCE" 
+                                                data-image="/assets/images/rooms/room305.jpg">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button type="button" class="delete-btn js-quick-maintenance" title="Switch to Maintenance"><i class="fa-solid fa-wrench"></i></button>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
-                
-                <div class="table-footer">
-                    <p>Hiển thị <strong>1-2</strong> trong số <strong>62</strong> phòng</p>
-                    <div class="pagination">
-                        <button type="button" class="page-btn disabled">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button type="button" class="page-btn active">1</button>
-                        <button type="button" class="page-btn">2</button>
-                        <span class="page-dots">...</span>
-                        <button type="button" class="page-btn">3</button>
-                        <button type="button" class="page-btn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
             </section>
 
         </main>
     </div>
 
+    <!-- TÍCH HỢP TRỰC TIẾP MODAL THÊM/SỬA PHÒNG -->
+    <div class="modal-backdrop" id="editRoomModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>
+                    <i class="fa-solid fa-hotel"></i>
+                    <span id="modalRoomTitle">Chỉnh Sửa Phòng</span>
+                </h3>
+                <button type="button" class="modal-close" data-close-modal="true">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="editRoomForm" method="post" class="modal-form">
+                <input type="hidden" id="modalRoomId" />
+
+                <!-- Số phòng -->
+                <div class="form-group">
+                    <label class="form-label">Số phòng</label>
+                    <input type="text" id="modalRoomNumber" class="form-input" required="required" placeholder="e.g. 101" />
+                </div>
+
+                <!-- Loại phòng -->
+                <div class="form-group">
+                    <label class="form-label">Loại phòng</label>
+                    <select id="modalRoomType" class="form-select">
+                        <option value="SUPERIOR_KING">SUPERIOR_KING</option>
+                        <option value="SUPERIOR_TWIN">SUPERIOR_TWIN</option>
+                        <option value="DELUXE_KING">DELUXE_KING</option>
+                        <option value="OCEAN_SUITE">OCEAN_SUITE</option>
+                    </select>
+                </div>
+
+                <!-- Sức chứa tối đa -->
+                <div class="form-group">
+                    <label class="form-label">Sức chứa tối đa (Guests)</label>
+                    <input type="number" id="modalRoomCapacity" class="form-input" required="required" min="1" value="2" />
+                </div>
+
+                <!-- Giá phòng nền -->
+                <div class="form-group">
+                    <label class="form-label">Giá nền (VND / đêm)</label>
+                    <input type="text" id="modalRoomPrice" class="form-input" required="required" placeholder="e.g. 1,200,000" />
+                </div>
+
+                <!-- Tiện nghi -->
+                <div class="form-group">
+                    <label class="form-label">Tiện nghi (Amenities cách nhau dấu phẩy)</label>
+                    <input type="text" id="modalRoomAmenities" class="form-input" placeholder="e.g. WiFi, Minibar, Ocean View" />
+                </div>
+
+                <!-- Đường dẫn hình ảnh -->
+                <div class="form-group">
+                    <label class="form-label">Đường dẫn ảnh phòng</label>
+                    <input type="text" id="modalRoomImage" class="form-input" placeholder="e.g. /assets/images/rooms/room101.jpg" />
+                </div>
+
+                <!-- Trạng thái phòng -->
+                <div class="form-group">
+                    <label class="form-label">Trạng thái phòng</label>
+                    <select id="modalRoomStatus" class="form-select">
+                        <option value="AVAILABLE">AVAILABLE (Có sẵn)</option>
+                        <option value="OCCUPIED">OCCUPIED (Đang ở)</option>
+                        <option value="CLEANING">CLEANING (Đang dọn)</option>
+                        <option value="MAINTENANCE">MAINTENANCE (Bảo trì)</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline btn-medium" data-close-modal="true">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-cta btn-medium">Lưu phòng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script th:src="@{/js/admin-sidebar.js}"></script>
+
+    <script>
+        const editRoomModal = document.getElementById("editRoomModal");
+
+        // Click mở Modal Sửa
+        document.getElementById("roomTableBody").addEventListener("click", (e) => {
+            const editBtn = e.target.closest(".js-open-edit-room");
+            if (editBtn) {
+                e.preventDefault();
+                document.getElementById("modalRoomTitle").textContent = "Chỉnh Sửa Phòng";
+                document.getElementById("modalRoomId").value = editBtn.getAttribute("data-id");
+                document.getElementById("modalRoomNumber").value = editBtn.getAttribute("data-number");
+                document.getElementById("modalRoomType").value = editBtn.getAttribute("data-type");
+                document.getElementById("modalRoomCapacity").value = editBtn.getAttribute("data-capacity");
+                document.getElementById("modalRoomPrice").value = editBtn.getAttribute("data-price");
+                document.getElementById("modalRoomAmenities").value = editBtn.getAttribute("data-amenities");
+                document.getElementById("modalRoomImage").value = editBtn.getAttribute("data-image");
+                document.getElementById("modalRoomStatus").value = editBtn.getAttribute("data-status");
+                
+                editRoomModal.classList.add("active");
+            }
+
+            // Xử lý chuyển nhanh sang trạng thái MAINTENANCE
+            const maintBtn = e.target.closest(".js-quick-maintenance");
+            if (maintBtn) {
+                e.preventDefault();
+                const tr = maintBtn.closest("tr");
+                const statusSpan = tr.querySelector("td:nth-child(6) span");
+                const editButton = tr.querySelector(".js-open-edit-room");
+                
+                statusSpan.textContent = "MAINTENANCE";
+                statusSpan.className = "status status-error";
+                editButton.setAttribute("data-status", "MAINTENANCE");
+                updateStats();
+            }
+        });
+
+        // Click mở Modal Thêm mới
+        document.getElementById("btnCreateRoom").addEventListener("click", () => {
+            document.getElementById("modalRoomTitle").textContent = "Thêm Phòng Mới";
+            document.getElementById("modalRoomId").value = "";
+            document.getElementById("modalRoomNumber").value = "";
+            document.getElementById("modalRoomType").value = "SUPERIOR_KING";
+            document.getElementById("modalRoomCapacity").value = "2";
+            document.getElementById("modalRoomPrice").value = "1,000,000";
+            document.getElementById("modalRoomAmenities").value = "WiFi, Minibar";
+            document.getElementById("modalRoomImage").value = "/assets/images/rooms/room-placeholder.jpg";
+            document.getElementById("modalRoomStatus").value = "AVAILABLE";
+            
+            editRoomModal.classList.add("active");
+        });
+
+        // Đóng Modal
+        document.querySelectorAll("[data-close-modal]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                editRoomModal.classList.remove("active");
+            });
+        });
+
+        editRoomModal.addEventListener("click", (e) => {
+            if (e.target === editRoomModal) {
+                editRoomModal.classList.remove("active");
+            }
+        });
+
+        // Submit form (Lưu ảo)
+        document.getElementById("editRoomForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const id = document.getElementById("modalRoomId").value;
+            const number = document.getElementById("modalRoomNumber").value;
+            const type = document.getElementById("modalRoomType").value;
+            const capacity = document.getElementById("modalRoomCapacity").value;
+            const price = document.getElementById("modalRoomPrice").value;
+            const amenities = document.getElementById("modalRoomAmenities").value;
+            const image = document.getElementById("modalRoomImage").value;
+            const status = document.getElementById("modalRoomStatus").value;
+
+            if (id) {
+                // Sửa dòng hiện tại
+                const rows = document.querySelectorAll("#roomTableBody tr");
+                rows.forEach(row => {
+                    const btn = row.querySelector(".js-open-edit-room");
+                    if (btn && btn.getAttribute("data-id") === id) {
+                        row.querySelector("td:nth-child(1) strong").textContent = "Room " + number;
+                        row.querySelector("td:nth-child(2)").textContent = type;
+                        row.querySelector("td:nth-child(3)").textContent = capacity + " Guests";
+                        row.querySelector("td:nth-child(4) strong").textContent = price + " VND";
+                        row.querySelector("td:nth-child(5)").textContent = amenities;
+                        
+                        const statusSpan = row.querySelector("td:nth-child(6) span");
+                        statusSpan.textContent = status;
+                        statusSpan.className = `status ${status === 'AVAILABLE' ? 'status-success' : (status === 'MAINTENANCE' ? 'status-error' : 'status-info')}`;
+                        
+                        // Cập nhật dataset
+                        btn.setAttribute("data-number", number);
+                        btn.setAttribute("data-type", type);
+                        btn.setAttribute("data-capacity", capacity);
+                        btn.setAttribute("data-price", price);
+                        btn.setAttribute("data-amenities", amenities);
+                        btn.setAttribute("data-image", image);
+                        btn.setAttribute("data-status", status);
+                    }
+                });
+            } else {
+                // Tạo mới dòng
+                const tr = document.createElement("tr");
+                const newId = Date.now().toString();
+                tr.innerHTML = `
+                    <td><strong>Room ${number}</strong></td>
+                    <td>${type}</td>
+                    <td>${capacity} Guests</td>
+                    <td><strong>${price} VND</strong></td>
+                    <td>${amenities}</td>
+                    <td><span class="status ${status === 'AVAILABLE' ? 'status-success' : (status === 'MAINTENANCE' ? 'status-error' : 'status-info')}">${status}</span></td>
+                    <td>
+                        <div class="action-group">
+                            <button type="button" class="edit-btn js-open-edit-room" 
+                                    data-id="${newId}" data-number="${number}" data-type="${type}" 
+                                    data-capacity="${capacity}" data-price="${price}" 
+                                    data-amenities="${amenities}" data-status="${status}" 
+                                    data-image="${image}">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button type="button" class="delete-btn js-quick-maintenance" title="Switch to Maintenance"><i class="fa-solid fa-wrench"></i></button>
+                        </div>
+                    </td>
+                `;
+                document.getElementById("roomTableBody").appendChild(tr);
+            }
+            editRoomModal.classList.remove("active");
+            updateStats();
+        });
+
+        // Hàm cập nhật thống kê ảo trên stat-cards
+        function updateStats() {
+            const rows = document.querySelectorAll("#roomTableBody tr");
+            let total = rows.length;
+            let avail = 0;
+            let occupied = 0;
+            let maint = 0;
+
+            rows.forEach(row => {
+                const status = row.querySelector("td:nth-child(6) span").textContent;
+                if (status === "AVAILABLE") avail++;
+                else if (status === "OCCUPIED") occupied++;
+                else if (status === "MAINTENANCE") maint++;
+            });
+
+            document.getElementById("statTotalRooms").textContent = total;
+            document.getElementById("statAvailRooms").textContent = avail;
+            document.getElementById("statOccupiedRooms").textContent = occupied;
+            document.getElementById("statMaintRooms").textContent = maint;
+        }
+    </script>
 </body>
 
 </html>

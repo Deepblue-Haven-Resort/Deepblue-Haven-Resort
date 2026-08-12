@@ -10,7 +10,6 @@
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -19,12 +18,12 @@
 <body>
     <div class="admin-layout">
 
-        
+        <!-- Gọi sidebar của manager -->
         <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
         <main class="admin-main">
 
-            
+            <!-- HERO SECTION -->
             <section class="dashboard-hero manager-hero">
                 <div>
                     <span class="page-label">Financial Desk</span>
@@ -33,65 +32,65 @@
                 </div>
             </section>
 
-            
+            <            <!-- STATS COUNTER GRID -->
             <section class="stats-grid">
+                <!-- UNPAID Invoices (Màu Đỏ - Class red) -->
                 <article class="stat-card">
-                    <div class="stat-icon">
+                    <div class="stat-icon red">
                         <i class="fa-solid fa-file-invoice-dollar"></i>
                     </div>
                     <div>
-                        <span>Unpaid Invoices</span>
+                        <span>UNPAID Invoices</span>
                         <strong>12</strong>
                         <small>Awaiting settlement</small>
                     </div>
                 </article>
 
+                <!-- PAID Invoices (Màu Xanh lá - Class green) -->
                 <article class="stat-card">
-                    <div class="stat-icon">
+                    <div class="stat-icon green">
                         <i class="fa-solid fa-receipt"></i>
                     </div>
                     <div>
-                        <span>Paid Invoices</span>
+                        <span>PAID Invoices</span>
                         <strong>184</strong>
                         <small>Fully processed</small>
                     </div>
                 </article>
 
+                <!-- Digital Payments (Màu Xanh dương - Class blue) -->
                 <article class="stat-card">
-                    <div class="stat-icon">
+                    <div class="stat-icon blue">
                         <i class="fa-solid fa-credit-card"></i>
                     </div>
                     <div>
                         <span>Digital Payments</span>
                         <strong>78%</strong>
-                        <small>VNPay & Card methods</small>
+                        <small>E_WALLET & Card methods</small>
                     </div>
                 </article>
 
+                <!-- Cash Ledger (Màu Vàng cam - Class gold) -->
                 <article class="stat-card">
-                    <div class="stat-icon">
+                    <div class="stat-icon gold">
                         <i class="fa-solid fa-money-bill-wave"></i>
                     </div>
                     <div>
                         <span>Cash Ledger</span>
                         <strong>12,400,000 VND</strong>
-                        <small>Physical cash in vault</small>
+                        <small>Physical CASH in vault</small>
                     </div>
                 </article>
             </section>
-
-            
-            <section class="manager-panel">
+            <!-- OPERATION PANEL -->
+            <section class="account-panel">
                 <div class="panel-header">
                     <div>
-                        <h2>Financial Invoice Registry</h2>
-                    </div>
-                    <div class="filter-options">
-                        <button type="button" class="btn btn-outline btn-medium">Export Ledger (PDF)</button>
+                        <h2><strong>Financial Invoice Registry</strong></h2>
                     </div>
                 </div>
 
-               
+                <!-- FILTER BAR -->
                 <div class="filter-bar">
                     <div class="search-box">
                         <i class="fa-solid fa-magnifying-glass"></i>
@@ -99,36 +98,32 @@
                     </div>
                 </div>
 
-                
+                <!-- INVOICES TABLE -->
                 <div class="table-wrapper">
-                    <table class="activity-table">
+                    <table class="account-table">
                         <thead>
                             <tr>
                                 <th>Invoice Code</th>
                                 <th>Booking Ref</th>
-                                <th>Customer details</th>
+                                <th>Customer Details</th>
                                 <th>Total Amount</th>
                                 <th>Paid Amount</th>
                                 <th>Payment Method</th>
-                                <th>Status</th>
-                                <th class="text-center">Action</th>
+                                <th>Invoice Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
                             <tr>
                                 <td><strong>#INV-1025</strong></td>
                                 <td>DBH-2026-001</td>
                                 <td>John Smith</td>
                                 <td><strong>4,125,000 VND</strong></td>
                                 <td>4,125,000 VND</td>
-                                <td>Credit Card</td>
+                                <td>CREDIT_CARD</td>
                                 <td><span class="status status-success">PAID</span></td>
                                 <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Receipt</button>
-                                    </div>
+                                    <button type="button" class="btn btn-small edit-btn badge">Receipt</button>
                                 </td>
                             </tr>
                             <tr>
@@ -137,20 +132,17 @@
                                 <td>Oliver Clark</td>
                                 <td><strong>3,500,000 VND</strong></td>
                                 <td>0 VND</td>
-                                <td>VNPay E-Wallet</td>
-                                <td><span class="status status-danger">UNPAID</span></td>
+                                <td>E_WALLET</td>
+                                <td><span class="status status-error">UNPAID</span></td>
                                 <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn btn-cta btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Confirm Pay</button>
-                                    </div>
+                                    <button type="button" class="btn btn-small btn-cta badge">Confirm Pay</button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                
+                <!-- TABLE FOOTER & PAGINATION -->
                 <div class="table-footer">
                     <p>Hiển thị <strong>1-2</strong> trong số <strong>196</strong> hóa đơn</p>
                     <div class="pagination">

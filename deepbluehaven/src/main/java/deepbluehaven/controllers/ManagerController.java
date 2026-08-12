@@ -32,39 +32,51 @@ public class ManagerController {
     
     @GetMapping("/manager/bookings")
     public String managerBookings(Model model) {
-    model.addAttribute("activePage", "bookings");
-    return "manager/bookings";
-   }
+        model.addAttribute("activePage", "bookings");
+        return "manager/bookings";
+    }
 
     @GetMapping("/manager/rooms")
     public String managerRooms(Model model) {
-    model.addAttribute("activePage", "rooms");
-    return "manager/rooms";
-   }
+        model.addAttribute("activePage", "rooms");
+        return "manager/rooms";
+    }
 
     @GetMapping("/manager/services")
     public String managerServices(Model model) {
-    model.addAttribute("activePage", "services");
-    return "manager/services";
+        model.addAttribute("activePage", "services");
+        return "manager/services";
     }
 
     @GetMapping("/manager/staff")
     public String managerStaff(Model model) {
-    model.addAttribute("activePage", "staff");
-    return "manager/staff";
+        model.addAttribute("activePage", "staff");
+        return "manager/staff";
     }
 
     @GetMapping("/manager/revenue")
     public String managerRevenue(Model model) {
-    model.addAttribute("activePage", "revenue");
-    return "manager/revenue";
+        model.addAttribute("activePage", "revenue");
+        return "manager/revenue";
     }
 
-@GetMapping("/manager/reports")
-public String managerReports(Model model) {
-    model.addAttribute("activePage", "reports");
-    return "manager/reports";
-}
+    @GetMapping("/manager/reports")
+    public String managerReports(Model model) {
+        model.addAttribute("activePage", "reports");
+        return "manager/reports";
+    }
+        @GetMapping("/manager/pricing")
+    public String managerPricing(Model model) {
+        model.addAttribute("activePage", "pricing");
+        return "manager/pricing";
+    }
+
+    /* Đã bổ sung thêm endpoint settings dành cho Manager */
+    @GetMapping("/manager/settings")
+    public String managerSettings(Model model) {
+        model.addAttribute("activePage", "settings");
+        return "manager/settings";
+    }
 
     @PostMapping("/manager/confirm-booking/{id}")
     public String confirmBooking(@PathVariable("id") Long id, RedirectAttributes redirectAttrs) {

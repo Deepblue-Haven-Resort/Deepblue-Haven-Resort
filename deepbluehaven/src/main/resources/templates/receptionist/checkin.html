@@ -100,7 +100,6 @@
                                     <strong class="total-amount-val" th:text="${item.totalAmountStr + ' VND'}">3,500,000 VND</strong>
                                 </td>
 
-                                <!-- FORM FOR CHECK-IN EXECUTION -->
                                 <form th:action="@{/receptionist/check-in/execute}" method="post">
                                     <input type="hidden" name="bookingId" th:value="${item.bookingId}" />
                                     <td class="text-center cell-nowrap">
@@ -141,8 +140,6 @@
 
         </main>
     </div>
-
-    <!-- WALK-IN BOOKING MODAL -->
     <div class="modal-backdrop" id="walkInModal">
         <div class="modal-dialog">
             <div class="modal-header">
@@ -213,7 +210,7 @@
         </div>
     </div>
 
-    <!-- ĐỔI ĐƯỜNG DẪN JS SANG ADMIN-SIDEBAR -->
+
     <script th:src="@{/js/admin-sidebar.js}"></script>
     <script th:src="@{/assets/js/receptionist/receptionist.js}"></script>
 </body>

@@ -4,14 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resort Service Orders | Deep Blue Haven</title>
+    <title>Resort Service Orders & Catalog | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/booking-detail-modal.css}">
+
+    <!-- Nạp thêm CSS phụ của Lễ tân để có backdrop chuẩn cho Modal CRUD -->
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -19,12 +22,10 @@
 <body>
     <div class="admin-layout">
 
-       
         <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
         <main class="admin-main">
 
-            
             <section class="dashboard-hero manager-hero">
                 <div>
                     <span class="page-label">Operations Desk</span>
@@ -33,151 +34,640 @@
                 </div>
             </section>
 
-           
-            <section class="stats-grid">
-                <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-clock"></i>
-                    </div>
-                    <div>
-                        <span>Pending Orders</span>
-                        <strong>9</strong>
-                        <small>Awaiting confirmation</small>
-                    </div>
-                </article>
+            <!-- TABS CHUYỂN ĐỔI CHUYÊN NGHIỆP -->
+            <div class="filter-bar" style="margin-bottom: var(--spacing-md); display: flex; gap: var(--spacing-sm); border-bottom: 2px solid var(--border-color); padding-bottom: var(--spacing-xs);">
+                <button type="button" class="btn btn-cta btn-medium" id="tabOrdersBtn">
+                    <i class="fa-solid fa-list-check"></i> Guest Orders
+                </button>
+                <button type="button" class="btn btn-outline btn-medium" id="tabCatalogBtn">
+                    <i class="fa-solid fa-folder-plus"></i> Service Catalog (CRUD)
+                </button>
+            </div>
 
-                <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-spinner"></i>
-                    </div>
-                    <div>
-                        <span>In Process</span>
-                        <strong>14</strong>
-                        <small>Assigned to staff</small>
-                    </div>
-                </article>
+            <!-- SECTION 1: GUEST SERVICE ORDERS (Nguyên bản gốc của bạn) -->
+            <div id="sectionOrders">
+                <section class="stats-grid">
+                    <article class="stat-card">
+                        <div class="stat-icon gold">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div>
+                            <span>PENDING Orders</span>
+                            <strong>9</strong>
+                            <small>Awaiting confirmation</small>
+                        </div>
+                    </article>
 
-                <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </div>
-                    <div>
-                        <span>Completed Today</span>
-                        <strong>42</strong>
-                        <small>Delivered successfully</small>
-                    </div>
-                </article>
+                    <article class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fa-solid fa-spinner"></i>
+                        </div>
+                        <div>
+                            <span>PROCESSING Orders</span>
+                            <strong>14</strong>
+                            <small>Assigned to staff</small>
+                        </div>
+                    </article>
 
-                <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-money-bill-trend-up"></i>
-                    </div>
-                    <div>
-                        <span>Service Revenue</span>
-                        <strong>18,450,000 VND</strong>
-                        <small>Today's total earnings</small>
-                    </div>
-                </article>
-            </section>
+                    <article class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div>
+                            <span>DELIVERED Today</span>
+                            <strong>42</strong>
+                            <small>Settled & updated spent</small>
+                        </div>
+                    </article>
 
-           
-            <section class="manager-panel">
-                <div class="panel-header">
-                    <div>
-                        <h2>Resort Services Registry</h2>
-                    </div>
-                    <div class="filter-options">
-                        <button type="button" class="btn btn-outline btn-medium">Configure Catalog</button>
-                    </div>
-                </div>
+                    <article class="stat-card">
+                        <div class="stat-icon red">
+                            <i class="fa-solid fa-money-bill-trend-up"></i>
+                        </div>
+                        <div>
+                            <span>Service Revenue</span>
+                            <strong>18,450,000 VND</strong>
+                            <small>Today's total earnings</small>
+                        </div>
+                    </article>
+                </section>
 
-                
-                <div class="filter-bar">
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search orders by room, guest, or service category...">
+                <section class="account-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2><strong>Resort Services Registry</strong></h2>
+                        </div>
                     </div>
-                </div>
 
-                
-                <div class="table-wrapper">
-                    <table class="activity-table">
-                        <thead>
-                            <tr>
-                                <th>Order Ref</th>
-                                <th>Room & Guest</th>
-                                <th>Service Category</th>
-                                <th>Service Requested</th>
-                                <th>Quantity</th>
-                                <th>Total Cost</th>
-                                <th>Status</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                           
-                            <tr>
-                                <td><strong>#SRV-1024</strong></td>
-                                <td>
-                                    <strong>Room 204</strong><br>
-                                    <small>John Smith</small>
-                                </td>
-                                <td>Food & Beverage</td>
-                                <td>Club Sandwich & Orange Juice</td>
-                                <td>2</td>
-                                <td><strong>350,000 VND</strong></td>
-                                <td><span class="status status-warning">PENDING</span></td>
-                                <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn btn-cta btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Approve</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#SRV-1023</strong></td>
-                                <td>
-                                    <strong>Room 105</strong><br>
-                                    <small>Sarah Connor</small>
-                                </td>
-                                <td>Spa & Wellness</td>
-                                <td>Aromatherapy Massage</td>
-                                <td>1</td>
-                                <td><strong>1,200,000 VND</strong></td>
-                                <td><span class="status">PROCESSING</span></td>
-                                <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Details</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="filter-bar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search orders by room, guest, or service category...">
+                        </div>
+                    </div>
 
-                
-                <div class="table-footer">
-                    <p>Hiển thị <strong>1-2</strong> trong số <strong>65</strong> đơn dịch vụ</p>
-                    <div class="pagination">
-                        <button type="button" class="page-btn disabled">
-                            <i class="fa-solid fa-chevron-left"></i>
+                    <div class="table-wrapper">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>Order Ref</th>
+                                    <th>Room & Guest</th>
+                                    <th>Service Category</th>
+                                    <th>Service Requested</th>
+                                    <th>Qty</th>
+                                    <th>Total Cost</th>
+                                    <th>Order Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>#SRV-1001</strong></td>
+                                    <td>
+                                        <strong>Room 204</strong><br>
+                                        <small>John Smith</small>
+                                    </td>
+                                    <td>FOOD_BEVERAGE</td>
+                                    <td>Club Sandwich & Orange Juice</td>
+                                    <td>2</td>
+                                    <td><strong>350,000 VND</strong></td>
+                                    <td><span class="status status-warning">PENDING</span></td>
+                                    <td>
+                                        <button type="button" 
+                                                class="btn btn-small btn-cta badge js-open-service-modal"
+                                                data-order-ref="#SRV-1001"
+                                                data-room-guest="Room 204 (John Smith)"
+                                                data-service-requested="Club Sandwich & Orange Juice (Qty: 2)"
+                                                data-total-price="350,000 VND"
+                                                data-order-status="PENDING">
+                                            Approve
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#SRV-1002</strong></td>
+                                    <td>
+                                        <strong>Room 105</strong><br>
+                                        <small>Sarah Connor</small>
+                                    </td>
+                                    <td>SPA</td>
+                                    <td>Aromatherapy Massage</td>
+                                    <td>1</td>
+                                    <td><strong>1,200,000 VND</strong></td>
+                                    <td><span class="status status-info">COMFIRMED</span></td>
+                                    <td>
+                                        <button type="button" 
+                                                class="btn btn-small btn-warning badge js-open-service-modal"
+                                                data-order-ref="#SRV-1002"
+                                                data-room-guest="Room 105 (Sarah Connor)"
+                                                data-service-requested="Aromatherapy Massage (Qty: 1)"
+                                                data-total-price="1,200,000 VND"
+                                                data-order-status="COMFIRMED">
+                                            Start Preparing
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#SRV-1003</strong></td>
+                                    <td>
+                                        <strong>Room 312</strong><br>
+                                        <small>David Miller</small>
+                                    </td>
+                                    <td>LAUNDRY</td>
+                                    <td>Express Wet Cleaning</td>
+                                    <td>4</td>
+                                    <td><strong>240,000 VND</strong></td>
+                                    <td><span class="status status-info">PROCESSING</span></td>
+                                    <td>
+                                        <button type="button" 
+                                                class="btn btn-small btn-cta badge js-open-service-modal"
+                                                data-order-ref="#SRV-1003"
+                                                data-room-guest="Room 312 (David Miller)"
+                                                data-service-requested="Express Wet Cleaning (Qty: 4)"
+                                                data-total-price="240,000 VND"
+                                                data-order-status="PROCESSING">
+                                            Deliver
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#SRV-1004</strong></td>
+                                    <td>
+                                        <strong>Room 401</strong><br>
+                                        <small>Emma Watson</small>
+                                    </td>
+                                    <td>MINIBAR</td>
+                                    <td>Heineken Beer & Pringles</td>
+                                    <td>3</td>
+                                    <td><strong>180,000 VND</strong></td>
+                                    <td><span class="status status-success">DELIVERED</span></td>
+                                    <td>
+                                        <button type="button" 
+                                                class="btn btn-small edit-btn badge js-open-service-modal"
+                                                data-order-ref="#SRV-1004"
+                                                data-room-guest="Room 401 (Emma Watson)"
+                                                data-service-requested="Heineken Beer & Pringles (Qty: 3)"
+                                                data-total-price="180,000 VND"
+                                                data-order-status="DELIVERED">
+                                            Details
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#SRV-1005</strong></td>
+                                    <td>
+                                        <strong>Room 210</strong><br>
+                                        <small>Bruce Wayne</small>
+                                    </td>
+                                    <td>TRANSPORT</td>
+                                    <td>Motorbike Rental (24h)</td>
+                                    <td>1</td>
+                                    <td><strong>200,000 VND</strong></td>
+                                    <td><span class="status status-success">COMPLETED</span></td>
+                                    <td>
+                                        <button type="button" 
+                                                class="btn btn-small edit-btn badge js-open-service-modal"
+                                                data-order-ref="#SRV-1005"
+                                                data-room-guest="Room 210 (Bruce Wayne)"
+                                                data-service-requested="Motorbike Rental (Qty: 1)"
+                                                data-total-price="200,000 VND"
+                                                data-order-status="COMPLETED">
+                                            Details
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#SRV-1006</strong></td>
+                                    <td>
+                                        <strong>Room 102</strong><br>
+                                        <small>Clark Kent</small>
+                                    </td>
+                                    <td>SPORT</td>
+                                    <td>Tennis Court Booking</td>
+                                    <td>2</td>
+                                    <td><strong>500,000 VND</strong></td>
+                                    <td><span class="status status-error">CANCELLED</span></td>
+                                    <td>
+                                        <button type="button" 
+                                                class="btn btn-small edit-btn badge js-open-service-modal"
+                                                data-order-ref="#SRV-1006"
+                                                data-room-guest="Room 102 (Clark Kent)"
+                                                data-service-requested="Tennis Court Booking (Qty: 2)"
+                                                data-total-price="500,000 VND"
+                                                data-order-status="CANCELLED">
+                                            Details
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- SECTION 2: SERVICE CATALOG (CRUD DANH MỤC DỊCH VỤ GỐC) -->
+            <div id="sectionCatalog" style="display: none;">
+                <section class="account-panel">
+                    <div class="panel-header">
+                        <h2><strong>Service Items Catalog</strong></h2>
+                        <button type="button" class="btn btn-cta btn-medium" id="btnCreateService">
+                            <i class="fa-solid fa-plus"></i>
+                            Add Catalog Item
                         </button>
-                        <button type="button" class="page-btn active">1</button>
-                        <button type="button" class="page-btn">2</button>
-                        <span class="page-dots">...</span>
-                        <button type="button" class="page-btn">3</button>
-                        <button type="button" class="page-btn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
                     </div>
-                </div>
-            </section>
+
+                    <div class="table-wrapper">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>Photo</th>
+                                    <th>Service Name</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Price</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="catalogTableBody">
+                                <tr>
+                                    <td>
+                                        <img src="/assets/images/services/sandwich.jpg" class="service-img-cell" alt="Service" style="width: 60px; height: 40px; object-fit: cover; border-radius: var(--radius-sm);" />
+                                    </td>
+                                    <td><strong>Club Sandwich & Orange Juice</strong></td>
+                                    <td><span class="role admin">FOOD_BEVERAGE</span></td>
+                                    <td>Served fresh with French fries</td>
+                                    <td><strong>150,000 VND</strong></td>
+                                    <td>
+                                        <div class="action-group">
+                                            <button type="button" 
+                                                    class="edit-btn js-open-edit-service"
+                                                    data-id="1"
+                                                    data-name="Club Sandwich & Orange Juice"
+                                                    data-category="FOOD_BEVERAGE"
+                                                    data-price="150,000"
+                                                    data-description="Served fresh with French fries"
+                                                    data-image="/assets/images/services/sandwich.jpg">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </button>
+                                            <button type="button" class="delete-btn js-delete-service" title="Delete Service"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
 
         </main>
     </div>
 
+    <!-- TÍCH HỢP TRỰC TIẾP MODAL 1: CHI TIẾT VÀ DUYỆT ĐƠN HÀNG CỦA KHÁCH -->
+    <div class="modal-backdrop" id="serviceOrderModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>
+                    <i class="fa-solid fa-bell-concierge"></i>
+                    <span id="modalOrderRef">#SRV-1000</span>
+                </h3>
+                <button type="button" class="modal-close" data-close-booking-detail="true">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: var(--spacing-sm) 0;">
+                <p>Order Status: <strong id="modalOrderStatusBadge" class="role manager">PENDING</strong></p>
+                
+                <div class="form-group">
+                    <label class="form-label">Room & Guest</label>
+                    <div id="modalRoomGuest" style="font-weight: bold; padding: var(--spacing-xs) 0;">Room 101</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Requested Service</label>
+                    <div id="modalServiceRequested" style="padding: var(--spacing-xs) 0;">Orange Juice</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Total Price</label>
+                    <div id="modalTotalPrice" style="font-weight: bold; color: var(--primary-color); padding: var(--spacing-xs) 0;">350,000 VND</div>
+                </div>
+
+                <form id="serviceOrderForm" class="modal-form">
+                    <div class="form-group" id="modalActionContainer">
+                        <!-- JS chèn select ở đây -->
+                    </div>
+                    <div class="form-actions" style="margin-top: var(--spacing-md);">
+                        <button type="button" class="btn btn-outline btn-medium" data-close-booking-detail="true">Close</button>
+                        <button type="submit" class="btn btn-cta btn-medium" id="modalSubmitBtn">Update Status</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TÍCH HỢP TRỰC TIẾP MODAL 2: THÊM/SỬA CATALOG DỊCH VỤ GỐC -->
+    <div class="modal-backdrop" id="editServiceModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>
+                    <i class="fa-solid fa-bell-concierge"></i>
+                    <span id="modalServiceTitle">Chỉnh Sửa Dịch Vụ</span>
+                </h3>
+                <button type="button" class="modal-close" data-close-modal="true">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="editServiceForm" class="modal-form">
+                <input type="hidden" id="modalServiceId" />
+                <div class="form-group">
+                    <label class="form-label">Service Name</label>
+                    <input type="text" id="modalServiceName" class="form-input" required="required" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select id="modalServiceCategory" class="form-select">
+                        <option value="FOOD_BEVERAGE">FOOD_BEVERAGE</option>
+                        <option value="SPA">SPA</option>
+                        <option value="LAUNDRY">LAUNDRY</option>
+                        <option value="MINIBAR">MINIBAR</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price (VND)</label>
+                    <input type="text" id="modalServicePrice" class="form-input" required="required" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <input type="text" id="modalServiceDescription" class="form-input" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="text" id="modalServiceImage" class="form-input" />
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline btn-medium" data-close-modal="true">Cancel</button>
+                    <button type="submit" class="btn btn-cta btn-medium">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script th:src="@{/js/admin-sidebar.js}"></script>
+
+    <script>
+        // JS điều khiển chuyển tab
+        const tabOrdersBtn = document.getElementById("tabOrdersBtn");
+        const tabCatalogBtn = document.getElementById("tabCatalogBtn");
+        const sectionOrders = document.getElementById("sectionOrders");
+        const sectionCatalog = document.getElementById("sectionCatalog");
+
+        tabOrdersBtn.addEventListener("click", () => {
+            tabOrdersBtn.className = "btn btn-medium btn-cta";
+            tabCatalogBtn.className = "btn btn-medium btn-outline";
+            sectionOrders.style.display = "block";
+            sectionCatalog.style.display = "none";
+        });
+
+        tabCatalogBtn.addEventListener("click", () => {
+            tabCatalogBtn.className = "btn btn-medium btn-cta";
+            tabOrdersBtn.className = "btn btn-medium btn-outline";
+            sectionOrders.style.display = "none";
+            sectionCatalog.style.display = "block";
+        });
+
+        // MODAL DUYỆT ĐƠN HÀNG GỐC CỦA BẠN (Sử dụng active chuẩn)
+        const serviceOrderModal = document.getElementById("serviceOrderModal");
+        const modalOrderStatusBadge = document.getElementById("modalOrderStatusBadge");
+        const modalActionContainer = document.getElementById("modalActionContainer");
+        const modalSubmitBtn = document.getElementById("modalSubmitBtn");
+
+        document.querySelectorAll(".js-open-service-modal").forEach(button => {
+            button.addEventListener("click", () => {
+                const status = button.getAttribute("data-order-status");
+                const orderRef = button.getAttribute("data-order-ref");
+                
+                document.getElementById("modalOrderRef").textContent = "Order Ref: " + orderRef;
+                document.getElementById("modalRoomGuest").textContent = button.getAttribute("data-room-guest");
+                document.getElementById("modalServiceRequested").textContent = button.getAttribute("data-service-requested");
+                document.getElementById("modalTotalPrice").textContent = button.getAttribute("data-total-price");
+                
+                modalOrderStatusBadge.textContent = status;
+                modalActionContainer.innerHTML = ""; 
+                modalSubmitBtn.style.display = "inline-block"; 
+
+                if (status === "PENDING") {
+                    modalActionContainer.innerHTML = `
+                        <label class="form-label">Approve or Cancel Request</label>
+                        <select id="modalOrderStatus" name="status" class="form-select">
+                            <option value="COMFIRMED">COMFIRMED - Accept & Prepare</option>
+                            <option value="CANCELLED">CANCELLED - Reject Order</option>
+                        </select>
+                    `;
+                    modalSubmitBtn.textContent = "Confirm Selection";
+                } else if (status === "COMFIRMED") {
+                    modalActionContainer.innerHTML = `
+                        <label class="form-label">Preparation Workflow</label>
+                        <select id="modalOrderStatus" name="status" class="form-select">
+                            <option value="PROCESSING">PROCESSING - Start Cooking/Preparing</option>
+                            <option value="CANCELLED">CANCELLED - Cancel Order</option>
+                        </select>
+                    `;
+                    modalSubmitBtn.textContent = "Proceed to Prep";
+                } else if (status === "PROCESSING") {
+                    modalActionContainer.innerHTML = `
+                        <label class="form-label">Delivery Fulfillment</label>
+                        <select id="modalOrderStatus" name="status" class="form-select">
+                            <option value="DELIVERED">DELIVERED - Served to Guest Room</option>
+                        </select>
+                    `;
+                    modalSubmitBtn.textContent = "Complete Delivery";
+                } else {
+                    modalActionContainer.innerHTML = `
+                        <div>
+                            <i class="fa-solid fa-lock"></i>
+                            This service order is archived and cannot be modified.
+                        </div>
+                    `;
+                    modalSubmitBtn.style.display = "none"; 
+                }
+                
+                serviceOrderModal.classList.add("active");
+            });
+        });
+
+        function closeServiceOrderModal() {
+            serviceOrderModal.classList.remove("active");
+        }
+
+        document.querySelectorAll("[data-close-booking-detail]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                closeServiceOrderModal();
+            });
+        });
+
+        // MODAL CRUD SERVICE CATALOG
+        const editServiceModal = document.getElementById("editServiceModal");
+
+        document.getElementById("catalogTableBody").addEventListener("click", (e) => {
+            const button = e.target.closest(".js-open-edit-service");
+            if (button) {
+                e.preventDefault();
+                document.getElementById("modalServiceTitle").textContent = "Chỉnh Sửa Dịch Vụ";
+                document.getElementById("modalServiceId").value = button.getAttribute("data-id");
+                document.getElementById("modalServiceName").value = button.getAttribute("data-name");
+                document.getElementById("modalServiceCategory").value = button.getAttribute("data-category");
+                document.getElementById("modalServicePrice").value = button.getAttribute("data-price");
+                document.getElementById("modalServiceDescription").value = button.getAttribute("data-description");
+                document.getElementById("modalServiceImage").value = button.getAttribute("data-image");
+                
+                editServiceModal.classList.add("active");
+            }
+
+            const deleteBtn = e.target.closest(".js-delete-service");
+            if (deleteBtn) {
+                e.preventDefault();
+                if (confirm("Remove this item from catalog?")) {
+                    deleteBtn.closest("tr").remove();
+                }
+            }
+        });
+
+        document.getElementById("btnCreateService").addEventListener("click", () => {
+            document.getElementById("modalServiceTitle").textContent = "Thêm Dịch Vụ Mới";
+            document.getElementById("modalServiceId").value = "";
+            document.getElementById("modalServiceName").value = "";
+            document.getElementById("modalServiceCategory").value = "FOOD_BEVERAGE";
+            document.getElementById("modalServicePrice").value = "150,000";
+            document.getElementById("modalServiceDescription").value = "";
+            document.getElementById("modalServiceImage").value = "/assets/images/services/service-placeholder.jpg";
+            editServiceModal.classList.add("active");
+        });
+
+        document.querySelectorAll("[data-close-modal]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                editServiceModal.classList.remove("active");
+            });
+        });
+
+        // Đóng khi click ngoài
+        editServiceModal.addEventListener("click", (e) => {
+            if (e.target === editServiceModal) {
+                editServiceModal.classList.remove("active");
+            }
+        });
+
+        // Submit form Đơn hàng của khách
+        const serviceOrderForm = document.getElementById("serviceOrderForm");
+        if (serviceOrderForm) {
+            serviceOrderForm.addEventListener("submit", (e) => {
+                e.preventDefault(); 
+                const orderRefRaw = document.getElementById("modalOrderRef").textContent;
+                const orderRef = orderRefRaw.replace("Order Ref: ", "").trim();
+                const newStatus = document.getElementById("modalOrderStatus").value;
+                
+                const rows = document.querySelectorAll(".account-table tbody tr");
+                rows.forEach(row => {
+                    const cellRef = row.querySelector("td:nth-child(1) strong");
+                    if (cellRef && cellRef.textContent === orderRef) {
+                        
+                        const statusSpan = row.querySelector("td:nth-child(7) span");
+                        statusSpan.textContent = newStatus;
+                        statusSpan.className = "status"; 
+                        
+                        if (newStatus === "PENDING") {
+                            statusSpan.classList.add("status-warning");
+                        } else if (newStatus === "DELIVERED" || newStatus === "COMPLETED") {
+                            statusSpan.classList.add("status-success");
+                        } else if (newStatus === "CANCELLED") {
+                            statusSpan.classList.add("status-error");
+                        } else {
+                            statusSpan.classList.add("status-info");
+                        }
+                        
+                        const actionTd = row.querySelector("td:nth-child(8)");
+                        actionTd.innerHTML = "";
+                        
+                        let newBtn = document.createElement("button");
+                        newBtn.type = "button";
+                        newBtn.classList.add("btn", "btn-small", "badge", "js-open-service-modal");
+                        newBtn.setAttribute("data-order-ref", orderRef);
+                        newBtn.setAttribute("data-room-guest", row.querySelector("td:nth-child(2)").innerText.replace(/\n/g, ' '));
+                        newBtn.setAttribute("data-service-requested", row.querySelector("td:nth-child(4)").textContent);
+                        newBtn.setAttribute("data-total-price", row.querySelector("td:nth-child(6) strong").textContent);
+                        newBtn.setAttribute("data-order-status", newStatus);
+                        
+                        if (newStatus === "COMFIRMED") {
+                            newBtn.classList.add("btn-warning");
+                            newBtn.textContent = "Start Preparing";
+                        } else if (newStatus === "PROCESSING") {
+                            newBtn.classList.add("btn-cta");
+                            newBtn.textContent = "Deliver";
+                        } else {
+                            newBtn.classList.add("edit-btn");
+                            newBtn.textContent = "Details";
+                        }
+                        actionTd.appendChild(newBtn);
+                    }
+                });
+                closeServiceOrderModal();
+            });
+        }
+
+        // Submit form Lưu ảo Catalog
+        const editServiceForm = document.getElementById("editServiceForm");
+        if (editServiceForm) {
+            editServiceForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const id = document.getElementById("modalServiceId").value;
+                const name = document.getElementById("modalServiceName").value;
+                const category = document.getElementById("modalServiceCategory").value;
+                const price = document.getElementById("modalServicePrice").value;
+                const description = document.getElementById("modalServiceDescription").value;
+                const image = document.getElementById("modalServiceImage").value;
+
+                let rowUpdated = false;
+                const rows = document.querySelectorAll("#catalogTableBody tr");
+                
+                rows.forEach(row => {
+                    const editBtn = row.querySelector(".js-open-edit-service");
+                    if (editBtn && editBtn.getAttribute("data-id") === id) {
+                        row.querySelector("td:nth-child(2) strong").textContent = name;
+                        row.querySelector("td:nth-child(4)").textContent = description;
+                        row.querySelector("td:nth-child(5) strong").textContent = price + " VND";
+                        row.querySelector("td:nth-child(3) span").textContent = category;
+                        row.querySelector(".service-img-cell").src = image;
+
+                        editBtn.setAttribute("data-name", name);
+                        editBtn.setAttribute("data-category", category);
+                        editBtn.setAttribute("data-price", price);
+                        editBtn.setAttribute("data-description", description);
+                        editBtn.setAttribute("data-image", image);
+                        rowUpdated = true;
+                    }
+                });
+
+                if (!rowUpdated) {
+                    const newTr = document.createElement("tr");
+                    const randomId = Date.now().toString();
+                    newTr.innerHTML = `
+                        <td><img src="${image}" class="service-img-cell" style="width: 60px; height: 40px; object-fit: cover; border-radius: var(--radius-sm);" /></td>
+                        <td><strong>${name}</strong></td>
+                        <td><span class="role admin">${category}</span></td>
+                        <td>${description}</td>
+                        <td><strong>${price} VND</strong></td>
+                        <td>
+                            <div class="action-group">
+                                <button type="button" class="edit-btn js-open-edit-service" data-id="${randomId}" data-name="${name}" data-category="${category}" data-price="${price}" data-description="${description}" data-image="${image}"><i class="fa-solid fa-pen"></i></button>
+                                <button type="button" class="delete-btn js-delete-service" title="Delete Service"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    document.getElementById("catalogTableBody").appendChild(newTr);
+                }
+                editServiceModal.classList.remove("active");
+            });
+        }
+    </script>
 </body>
 
 </html>

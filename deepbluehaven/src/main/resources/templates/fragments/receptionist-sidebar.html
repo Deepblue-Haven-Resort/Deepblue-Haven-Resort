@@ -12,7 +12,7 @@
             <i class="fa-solid fa-gauge-high"></i>
             <span>Operations Desk</span>
         </a>
-
+        
         <a th:href="@{/receptionist/check-in}"
            th:class="${activePage == 'check-in'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-key"></i>
@@ -35,6 +35,17 @@
            th:class="${activePage == 'guests'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-users"></i>
             <span>Guest Directory</span>
+        </a>
+        <a th:href="@{/receptionist/services}"
+           th:class="${activePage == 'services'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-bell-concierge"></i>
+            <span>Guest Services</span>
+        </a>
+      
+        <a th:href="@{/receptionist/tasks}"
+           th:class="${activePage == 'tasks'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-broom"></i>
+            <span>Room Cleaning Tasks</span>
         </a>
 
         <a th:href="@{/receptionist/profile}"

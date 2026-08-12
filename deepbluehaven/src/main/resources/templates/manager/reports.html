@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resort Analytical Reports Desk | Deep Blue Haven</title>
+    <title>Resort Analytical Reports & Pricing Rules | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -19,24 +18,25 @@
 <body>
     <div class="admin-layout">
 
-        
+        <!-- Gọi sidebar của manager -->
         <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
         <main class="admin-main">
 
-            
+            <!-- HERO SECTION -->
             <section class="dashboard-hero manager-hero">
                 <div>
-                    <span class="page-label">Analytics Desk</span>
-                    <h1>Analytical Reports Desk</h1>
-                    <p>Compile resort metrics, generate physical ledger documents, and review season pricing rules.</p>
+                    <span class="page-label">Analytics & Revenue Management</span>
+                    <h1>Analytical Reports & Pricing Controls</h1>
+                    <p>Compile resort operational metrics, audit transactions, and adjust seasonal room price multipliers.</p>
                 </div>
             </section>
 
-            
-            <section class="stats-grid">
+                        <!-- STATS COUNTER GRID -->
+            <section class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <!-- RevPAR (Màu Xanh lá - Class green) -->
                 <article class="stat-card">
-                    <div class="stat-icon">
+                    <div class="stat-icon green">
                         <i class="fa-solid fa-chart-line"></i>
                     </div>
                     <div>
@@ -46,8 +46,9 @@
                     </div>
                 </article>
 
+                <!-- ADR (Màu Xanh dương - Class blue) -->
                 <article class="stat-card">
-                    <div class="stat-icon">
+                    <div class="stat-icon blue">
                         <i class="fa-solid fa-hotel"></i>
                     </div>
                     <div>
@@ -57,38 +58,26 @@
                     </div>
                 </article>
 
+                <!-- Active PRICING RULES (Màu Vàng cam - Class gold) -->
                 <article class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-people-group"></i>
-                    </div>
-                    <div>
-                        <span>Guest Lifetime Points</span>
-                        <strong>18,420 pts</strong>
-                        <small>Loyalty database total</small>
-                    </div>
-                </article>
-
-                <article class="stat-card">
-                    <div class="stat-icon">
+                    <div class="stat-icon gold">
                         <i class="fa-solid fa-scale-balanced"></i>
                     </div>
                     <div>
-                        <span>Pricing Rules</span>
+                        <span>Active PRICING RULES</span>
                         <strong>3 Active</strong>
                         <small>Seasonal rate multipliers</small>
                     </div>
                 </article>
             </section>
-
-            
-            <section class="manager-panel">
+            <!-- SECTION 1: REPORTS -->
+            <section class="account-panel" style="margin-bottom: var(--space-32);">
                 <div class="panel-header">
                     <div>
-                        <h2>Report Generation Panel</h2>
+                        <h2><strong>Analytical Reports Desk</strong></h2>
                     </div>
                 </div>
 
-                
                 <div class="filter-bar">
                     <div class="search-box">
                         <i class="fa-solid fa-calendar-days"></i>
@@ -96,30 +85,25 @@
                     </div>
                 </div>
 
-                
                 <div class="table-wrapper">
-                    <table class="activity-table">
+                    <table class="account-table">
                         <thead>
                             <tr>
                                 <th>Report Template</th>
                                 <th>Description</th>
                                 <th>Export Format</th>
                                 <th>Primary Target Data</th>
-                                <th class="text-center">Action</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
                             <tr>
                                 <td><strong>Financial Revenue Summary</strong></td>
                                 <td>Calculates room charges, extra service orders, and tax logs.</td>
                                 <td>PDF Ledger / Excel</td>
                                 <td>Invoices & Payments</td>
                                 <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Download</button>
-                                    </div>
+                                    <button type="button" class="btn btn-small edit-btn badge">Download</button>
                                 </td>
                             </tr>
                             <tr>
@@ -128,27 +112,64 @@
                                 <td>Excel Sheet</td>
                                 <td>Room Logs & Bookings</td>
                                 <td>
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Download</button>
-                                    </div>
+                                    <button type="button" class="btn btn-small edit-btn badge">Download</button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+            </section>
 
-            
-                <div class="table-footer">
-                    <p>Hiển thị <strong>1-2</strong> trong số <strong>4</strong> mẫu báo cáo</p>
-                    <div class="pagination">
-                        <button type="button" class="page-btn disabled">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button type="button" class="page-btn active">1</button>
-                        <button type="button" class="page-btn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
+            <!-- SECTION 2: PRICING RULES -->
+            <section class="account-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2><strong>Resort Active Pricing Rules</strong></h2>
                     </div>
+                    <div class="filter-options">
+                        <button type="button" class="btn btn-small btn-cta">Create Pricing Rule</button>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="account-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Room Type</th>
+                                <th>Multiplier Rate</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>#PR-001</strong></td>
+                                <td>PRESIDENT</td>
+                                <td><strong>1.5x (Peak season)</strong></td>
+                                <td>2026-06-01</td>
+                                <td>2026-08-31</td>
+                                <td><span class="status status-success">ACTIVE</span></td>
+                                <td>
+                                    <button type="button" class="btn btn-small edit-btn badge">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>#PR-002</strong></td>
+                                <!-- Đã sửa đổi loại phòng thành SUIT khớp chuẩn 100% với Spec -->
+                                <td>SUIT</td>
+                                <td><strong>1.2x (Weekend multiplier)</strong></td>
+                                <td>2026-08-01</td>
+                                <td>2026-12-31</td>
+                                <td><span class="status status-success">ACTIVE</span></td>
+                                <td>
+                                    <button type="button" class="btn btn-small edit-btn badge">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
