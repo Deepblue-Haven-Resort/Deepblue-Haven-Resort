@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_context_path" th:content="@{/}" />
     <title>Create Employee Account | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
@@ -338,6 +339,20 @@
                                     <label for="address">Address</label>
                                     <input id="address" type="text" th:field="*{address}" placeholder="Da Nang, Viet Nam">
                                     <small class="field-hint">Optional but recommended for employee profile.</small>
+                                </div>
+
+                                <div class="form-group full-width" style="grid-column: 1 / -1;">
+                                    <label for="avatarUrl">Avatar Picture (Cloudinary)</label>
+                                    <div style="display: flex; gap: 8px; align-items: center;">
+                                        <input id="avatarUrl" type="text" th:field="*{avatarUrl}" placeholder="https://res.cloudinary.com/...">
+                                        <input type="file" id="workerAvatarFileInput" accept="image/*" style="display:none">
+                                        <button type="button" class="btn outline-btn" id="uploadWorkerAvatarBtn">
+                                            <i class="fa-solid fa-cloud-arrow-up"></i> Upload
+                                        </button>
+                                    </div>
+                                    <div id="workerAvatarPreviewBox" style="margin-top: 8px; display: none;">
+                                        <img id="workerAvatarPreview" src="" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1;" />
+                                    </div>
                                 </div>
 
                             </div>

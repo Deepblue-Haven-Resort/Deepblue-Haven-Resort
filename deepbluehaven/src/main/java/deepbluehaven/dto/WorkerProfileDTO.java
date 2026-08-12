@@ -25,7 +25,16 @@ public class WorkerProfileDTO {
         @Email(message = "Must be a valid email format")
         private String email;
 
+        private String avatarUrl;
+
         public Request() {}
+
+        public String getAvatarUrl() {
+            return avatarUrl;
+        }
+        public void setAvatarUrl(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
+        }
 
         public String getFullName() { 
             return fullName; }
@@ -60,8 +69,16 @@ public class WorkerProfileDTO {
         private Integer roleLevel;
         private String phoneNumber;
         private String email;
+        private String avatarUrl;
 
         public Response() {}
+
+        public String getAvatarUrl() {
+            return avatarUrl;
+        }
+        public void setAvatarUrl(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
+        }
 
         public Long getWorkerId() { 
             return workerId; }

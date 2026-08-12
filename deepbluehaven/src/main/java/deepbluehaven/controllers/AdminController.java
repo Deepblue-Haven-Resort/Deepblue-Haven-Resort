@@ -168,6 +168,14 @@ public class AdminController {
         return "admin/setting-admin";
     }
 
+    @PostMapping("/admin/settings")
+    public String saveAdminSettings(@RequestParam(required = false) String resortName,
+                                    @RequestParam(required = false) String taxRate,
+                                    RedirectAttributes redirectAttrs) {
+        redirectAttrs.addFlashAttribute("successMessage", "System settings updated successfully.");
+        return "redirect:/admin/settings";
+    }
+
     @GetMapping("/admin/accounts/stats")
     @ResponseBody
     public ResponseEntity<Map<String, Long>> getStats() {

@@ -63,6 +63,19 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
+    public List<BookingHistoryDTO.Response> getAllBookingsForStaff() {
+        List<Booking> bookings = bookingRepository.findAllWithDetailsAndRoom();
+        List<BookingHistoryDTO.Response> result = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+
+        for (Booking booking : bookings) {
+            result.add(toHistoryResponse(booking, today));
+        }
+
+        return result;
+    }
+
+    @Transactional(readOnly = true)
     public List<BookingHistoryDTO.Response> getValidBookingsByCustomer(Long customerId) {
         List<Booking> bookings = bookingRepository.findByCustomerIdWithDetailsAndRoom(customerId);
         List<BookingHistoryDTO.Response> result = new ArrayList<>();

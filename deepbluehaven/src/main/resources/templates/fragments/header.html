@@ -62,8 +62,9 @@
 
     <div class="user-menu" id="userMenu">
       <button class="icon-btn user-btn" id="userBtn" type="button" aria-label="Tài khoản" aria-haspopup="menu"
-        aria-expanded="false">
-        <i class="fa-regular fa-user"></i>
+        aria-expanded="false" style="padding: 2px; overflow: hidden; display: inline-flex; align-items: center; justify-content: center;">
+        <img th:if="${customerProfile != null && customerProfile.avatarUrl != null}" th:src="${customerProfile.avatarUrl}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" alt="Avatar" />
+        <i th:if="${customerProfile == null || customerProfile.avatarUrl == null}" class="fa-regular fa-user"></i>
       </button>
 
       <div class="user-dropdown" id="userDropdown" role="menu">

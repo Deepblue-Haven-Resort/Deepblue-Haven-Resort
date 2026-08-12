@@ -74,6 +74,9 @@ public class CustomerService {
         if (req.getBirthDay() != null) {
             profile.setBirthDay(req.getBirthDay());
         }
+        if (req.getAvatarUrl() != null && !req.getAvatarUrl().isBlank()) {
+            profile.setAvatarUrl(req.getAvatarUrl().trim());
+        }
 
         customerProfileRepository.save(profile);
         return toProfileResponse(profile);
@@ -85,6 +88,7 @@ public class CustomerService {
         dto.setFullName(profile.getFullName() != null ? profile.getFullName() : profile.getCustomer().getUsername());
         dto.setEmail(profile.getEmail() != null ? profile.getEmail() : "");
         dto.setPhoneNumber(profile.getPhoneNumber() != null ? profile.getPhoneNumber() : "");
+        dto.setAvatarUrl(profile.getAvatarUrl() != null ? profile.getAvatarUrl() : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80");
         dto.setBirthDay(profile.getBirthDay());
         dto.setTotalBookings(profile.getTotalBookings() != null ? profile.getTotalBookings() : 0);
         dto.setTotalSpent(profile.getTotalSpent() != null ? profile.getTotalSpent() : BigDecimal.ZERO);

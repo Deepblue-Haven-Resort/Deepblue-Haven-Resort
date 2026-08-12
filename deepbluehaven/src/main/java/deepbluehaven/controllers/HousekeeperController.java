@@ -18,15 +18,20 @@ import deepbluehaven.services.HousekeeperService;
 import deepbluehaven.services.WorkerService;
 import jakarta.servlet.http.HttpSession;
 
+import deepbluehaven.pojo.Room;
+import deepbluehaven.repositories.RoomRepository;
+
 @Controller
 public class HousekeeperController {
 
     private final HousekeeperService housekeeperService;
     private final WorkerService workerService;
+    private final RoomRepository roomRepository;
 
-    public HousekeeperController(HousekeeperService housekeeperService, WorkerService workerService) {
+    public HousekeeperController(HousekeeperService housekeeperService, WorkerService workerService, RoomRepository roomRepository) {
         this.housekeeperService = housekeeperService;
         this.workerService = workerService;
+        this.roomRepository = roomRepository;
     }
 
     private Long getLoggedInWorkerId(HttpSession session) {
@@ -61,6 +66,8 @@ public class HousekeeperController {
 
     @GetMapping("/housekeeper/rooms")
     public String rooms(Model model) {
+        List<Room> rooms = roomRepository.findAll();
+        model.addAttribute("rooms", rooms);
         model.addAttribute("activePage", "rooms");
         return "housekeeper/rooms";
     }

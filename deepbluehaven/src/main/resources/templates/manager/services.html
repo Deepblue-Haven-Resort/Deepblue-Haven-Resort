@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_context_path" th:content="@{/}" />
     <title>Resort Service Orders | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
@@ -99,30 +100,32 @@
                             </tr>
                         </thead>
                         <tbody>
-                           
-                            <tr>
-                                <td><strong>Club Sandwich & Orange Juice</strong></td>
-                                <td>Food & Beverage</td>
-                                <td><strong>350,000 VND</strong></td>
-                                <td><span class="status status-success">ACTIVE</span></td>
+                            <tr th:each="s : ${services}"
+                                th:data-id="${s.id}"
+                                th:data-name="${s.name}"
+                                th:data-category="${s.category}"
+                                th:data-price="${s.basePrice}"
+                                th:data-status="${s.status}"
+                                th:data-image="${s.images != null && !s.images.isEmpty() ? s.images[0] : ''}">
+                                <td><strong th:text="${s.name}">Club Sandwich & Orange Juice</strong></td>
+                                <td th:text="${s.category}">Food & Beverage</td>
+                                <td><strong th:text="|${#numbers.formatDecimal(s.basePrice, 0, 'COMMA', 0, 'POINT')} VND|">350,000 VND</strong></td>
+                                <td>
+                                    <span th:class="|status ${s.status == T(deepbluehaven.pojo.enums.ServiceStatus).ACTIVE ? 'status-success' : 'status-danger'}|"
+                                          th:text="${s.status}">ACTIVE</span>
+                                </td>
                                 <td>
                                     <div style="display: flex; gap: 8px; justify-content: center;">
                                         <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
-                                        <button type="button" class="btn danger-btn delete-btn btn-small">Delete</button>
+                                        <form th:action="@{'/manager/services/' + ${s.id} + '/status'}" method="post" style="display: inline;">
+                                            <input type="hidden" name="status" th:value="${s.status == T(deepbluehaven.pojo.enums.ServiceStatus).ACTIVE ? 'HIDDEN' : 'ACTIVE'}" />
+                                            <button type="submit" class="btn warning-btn btn-small" th:text="${s.status == T(deepbluehaven.pojo.enums.ServiceStatus).ACTIVE ? 'Hide' : 'Activate'}">Hide</button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td><strong>Aromatherapy Massage</strong></td>
-                                <td>Spa & Wellness</td>
-                                <td><strong>1,200,000 VND</strong></td>
-                                <td><span class="status status-success">ACTIVE</span></td>
-                                <td>
-                                    <div style="display: flex; gap: 8px; justify-content: center;">
-                                        <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
-                                        <button type="button" class="btn danger-btn delete-btn btn-small">Delete</button>
-                                    </div>
-                                </td>
+                            <tr th:if="${#lists.isEmpty(services)}">
+                                <td colspan="5" class="text-center" style="padding: 24px; color: var(--gray-500);">No services registered in database.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -159,23 +162,24 @@
                 </button>
             </div>
             
-            <form id="serviceForm">
+            <form id="serviceForm" th:action="@{/manager/services/save}" method="post">
+                <input type="hidden" name="id" id="serviceId">
                 <div class="modal-body">
                     <div class="modal-form-grid single-col">
                         <div class="form-group">
                             <label>Service Name <span>*</span></label>
-                            <input type="text" id="serviceName" required placeholder="e.g. Aromatherapy Massage">
+                            <input type="text" id="serviceName" name="name" required placeholder="e.g. Aromatherapy Massage">
                         </div>
                         <div class="form-group">
                             <label>Category <span>*</span></label>
-                            <input type="hidden" id="serviceCategory" required>
+                            <input type="hidden" id="serviceCategory" name="category" required>
                             <div class="filter-dropdown form-filter-dropdown" data-input="serviceCategory">
                                 <button class="filter-btn form-filter-btn" type="button">
                                     <span class="filter-label"><strong>Select Category</strong></span>
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </button>
                                 <div class="filter-menu form-filter-menu">
-                                    <button type="button" data-value="FNB"><strong>Food & Beverage</strong></button>
+                                    <button type="button" data-value="FOOD_BEVERAGE"><strong>Food & Beverage</strong></button>
                                     <button type="button" data-value="SPA"><strong>Spa & Wellness</strong></button>
                                     <button type="button" data-value="LAUNDRY"><strong>Laundry</strong></button>
                                     <button type="button" data-value="OTHER"><strong>Other</strong></button>
@@ -184,11 +188,11 @@
                         </div>
                         <div class="form-group">
                             <label>Price (VND) <span>*</span></label>
-                            <input type="number" id="servicePrice" required min="0" step="10000" placeholder="e.g. 500000">
+                            <input type="number" id="servicePrice" name="basePrice" required min="0" step="10000" placeholder="e.g. 500000">
                         </div>
                         <div class="form-group">
                             <label>Status <span>*</span></label>
-                            <input type="hidden" id="serviceStatus" required value="ACTIVE">
+                            <input type="hidden" id="serviceStatus" name="status" required value="ACTIVE">
                             <div class="filter-dropdown form-filter-dropdown" data-input="serviceStatus">
                                 <button class="filter-btn form-filter-btn" type="button">
                                     <span class="filter-label"><strong>Active</strong></span>
@@ -196,8 +200,22 @@
                                 </button>
                                 <div class="filter-menu form-filter-menu">
                                     <button type="button" data-value="ACTIVE"><strong>Active</strong></button>
-                                    <button type="button" data-value="INACTIVE"><strong>Inactive</strong></button>
+                                    <button type="button" data-value="HIDDEN"><strong>Hidden</strong></button>
+                                    <button type="button" data-value="OUT_OF_STOCK"><strong>Out of Stock</strong></button>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Service Image (Cloudinary)</label>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="text" id="serviceImageUrl" name="imageUrl" placeholder="https://res.cloudinary.com/...">
+                                <input type="file" id="serviceImageFileInput" accept="image/*" style="display:none">
+                                <button type="button" class="btn outline-btn" id="uploadServiceImageBtn">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload
+                                </button>
+                            </div>
+                            <div id="serviceImagePreviewBox" style="margin-top: 8px; display: none;">
+                                <img id="serviceImagePreview" src="" style="max-height: 80px; border-radius: 6px; border: 1px solid #cbd5e1; object-fit: cover;" />
                             </div>
                         </div>
                     </div>
@@ -213,6 +231,7 @@
 
     <script th:src="@{/js/admin-sidebar.js}"></script>
     <script th:src="@{/js/manager/services.js}"></script>
+    <script th:src="@{/js/table-pagination.js}"></script>
 </body>
 
 </html>

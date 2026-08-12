@@ -30,6 +30,47 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentStep = 1;
     const totalSteps = 3;
 
+    // Cloudinary Worker Avatar Upload (Edit Mode)
+    const uploadEditWorkerAvatarBtn = document.getElementById('uploadEditWorkerAvatarBtn');
+    const editWorkerAvatarFileInput = document.getElementById('editWorkerAvatarFileInput');
+    const avatarUrlInput = document.getElementById('avatarUrl');
+    const editWorkerAvatarPreview = document.getElementById('editWorkerAvatarPreview');
+    const editWorkerAvatarPreviewBox = document.getElementById('editWorkerAvatarPreviewBox');
+
+    if (uploadEditWorkerAvatarBtn && editWorkerAvatarFileInput) {
+        uploadEditWorkerAvatarBtn.addEventListener('click', () => editWorkerAvatarFileInput.click());
+        editWorkerAvatarFileInput.addEventListener('change', async () => {
+            const file = editWorkerAvatarFileInput.files[0];
+            if (!file) return;
+
+            const workerId = document.getElementById('workerId')?.value?.trim() || document.getElementById('employeeCode')?.value?.trim() || document.getElementById('username')?.value?.trim() || 'worker';
+            const folder = 'deepbluehaven/workers/worker-' + workerId.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', folder);
+
+            try {
+                let ctx = document.querySelector('meta[name="_context_path"]')?.content;
+                if (!ctx || ctx === "/") {
+                    ctx = window.location.pathname.startsWith('/deepbluehaven') ? '/deepbluehaven' : '';
+                }
+                const apiUrl = ctx.replace(/\/$/, '') + '/api/upload/image';
+                const res = await fetch(apiUrl, { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success && data.url) {
+                    if (avatarUrlInput) avatarUrlInput.value = data.url;
+                    if (editWorkerAvatarPreview) editWorkerAvatarPreview.src = data.url;
+                    if (editWorkerAvatarPreviewBox) editWorkerAvatarPreviewBox.style.display = 'block';
+                    alert('Worker avatar uploaded to Cloudinary successfully!');
+                } else {
+                    alert(data.message || 'Upload failed');
+                }
+            } catch (err) {
+                alert('Upload request failed.');
+            }
+        });
+    }
+
     const roleConfig = {
         HOUSEKEEPER: {
             department: "HOUSEKEEPING",

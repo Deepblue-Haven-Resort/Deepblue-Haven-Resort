@@ -65,6 +65,8 @@ public class WorkerEditFormDTO {
     @Size(max = 255, message = "Address cannot exceed 255 characters")
     private String address;
 
+    private String avatarUrl;
+
     private String employeeCode;
 
     private String username;
@@ -184,6 +186,14 @@ public class WorkerEditFormDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public String getEmployeeCode() {

@@ -99,12 +99,16 @@ public class SeedDataRunner implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        if (isSeeded()) {
-            LOGGER.info("Seed data  already exists. Skipping SeedDataRunner.");
+        boolean forceReset = args != null && args.length > 0 && "reset".equalsIgnoreCase(args[0]);
+
+        if (!forceReset && isSeeded()) {
+            LOGGER.info("Seed data already exists. Skipping SeedDataRunner.");
             return;
         }
 
         LOGGER.info("Starting SeedDataRunner...");
+
+        resetDatabaseAndSequences();
 
         List<MembershipTier> membershipTiers = seedMembershipTiers();
         List<Resort> resorts = seedResorts();
@@ -290,6 +294,7 @@ public class SeedDataRunner implements CommandLineRunner {
             profile.setDateOfBirth(LocalDate.of(1985 + (i % 15), (i % 12) + 1, (i % 25) + 1));
             profile.setAddress(100 + i * 12 + " Ocean Boulevard, Suite " + (i + 1));
             profile.setPerformanceScore(75.0 + (i % 24) * 0.9);
+            profile.setAvatarUrl("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=250&q=80");
             persist(profile);
         }
         entityManager.flush();
@@ -355,6 +360,7 @@ public class SeedDataRunner implements CommandLineRunner {
             profile.setTotalPoints(i * 450);
             profile.setSegment(i % 2 == 0 ? "LEISURE" : "BUSINESS");
             profile.setMembershipTier(tiers.get(i % tiers.size()));
+            profile.setAvatarUrl("https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80");
             persist(profile);
         }
         entityManager.flush();
@@ -982,6 +988,45 @@ public class SeedDataRunner implements CommandLineRunner {
             log.setCurrentStatus(i % 2 == 0 ? "CONFIRMED" : "CLEANING");
             log.setMetadata("{\"source\":\"SeedDataRunner\",\"executor\":\"SystemSeeder\",\"step\":" + i + "}");
             persist(log);
+        }
+        entityManager.flush();
+    }
+
+    private void resetDatabaseAndSequences() {
+        LOGGER.info("Resetting database tables and identity sequences so IDs start from 1...");
+        try {
+            entityManager.createNativeQuery("EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL'").executeUpdate();
+            entityManager.createNativeQuery("EXEC sp_MSforeachtable 'DELETE FROM ?'").executeUpdate();
+            entityManager.createNativeQuery("EXEC sp_MSforeachtable 'IF OBJECTPROPERTY(OBJECT_ID(\"?\"), ''TableHasIdentity'') = 1 DBCC CHECKIDENT(\"?\", RESEED, 1)'").executeUpdate();
+            entityManager.createNativeQuery("EXEC sp_MSforeachtable 'ALTER TABLE ? CHECK CONSTRAINT ALL'").executeUpdate();
+            entityManager.flush();
+            LOGGER.info("Successfully cleared database tables and reset identity sequences to start from 1.");
+        } catch (Exception e) {
+            LOGGER.warn("sp_MSforeachtable failed or not supported, executing individual table reset: {}", e.getMessage());
+            resetIndividualTables();
+        }
+    }
+
+    private void resetIndividualTables() {
+        String[] tables = {
+            "room_tags", "room_images", "service_images",
+            "AuthAccessLog", "BookingDetail", "BookingLog", "InvoiceStatusLog",
+            "PaymentTransaction", "Invoice", "ServiceOrder", "Comment",
+            "ChatMessage", "ChatSession", "InventoryTransaction", "InventoryItem",
+            "CustomerLoyaltyLog", "Notification", "Log", "Task", "RoomHighlight",
+            "RoomStatusLog", "WorkerRoomAssignmentLog", "CustomerDiscount",
+            "Discount", "PricingRule", "ServicePoint", "Service", "TaskType",
+            "WorkerRoleTag", "WorkerProfile", "CustomerProfile", "Room",
+            "Customer", "Worker", "Supplier", "Resort", "MembershipTier"
+        };
+
+        for (String table : tables) {
+            try {
+                entityManager.createNativeQuery("DELETE FROM [" + table + "]").executeUpdate();
+                entityManager.createNativeQuery("DBCC CHECKIDENT ('[" + table + "]', RESEED, 1)").executeUpdate();
+            } catch (Exception ignored) {
+                // Table might not exist or might not have an identity column (e.g., collection tables)
+            }
         }
         entityManager.flush();
     }

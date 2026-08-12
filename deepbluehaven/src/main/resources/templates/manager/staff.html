@@ -99,34 +99,35 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
-                            <tr>
-                                <td><strong>SEED-EMP-006</strong></td>
-                                <td>Jessica Miller</td>
-                                <td>Reception</td>
-                                <td>+1-555-102-3045</td>
-                                <td><strong>88.5%</strong></td>
-                                <td><span class="status status-success">ACTIVE</span></td>
+                            <tr th:each="w : ${staffList}">
+                                <td><strong th:text="${w.employeeCode != null ? w.employeeCode : 'EMP-' + w.id}">SEED-EMP-006</strong></td>
                                 <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn delete-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Lock Account</button>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <img th:src="${w.profile != null && w.profile.avatarUrl != null ? w.profile.avatarUrl : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=250&q=80'}"
+                                             style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1;" alt="Avatar" />
+                                        <span th:text="${w.profile != null ? w.profile.fullName : 'Staff #' + w.id}">Jessica Miller</span>
+                                    </div>
+                                </td>
+                                <td th:text="${w.profile != null && w.profile.role != null ? w.profile.role : 'Staff'}">Reception</td>
+                                <td th:text="${w.profile != null ? w.profile.phone : 'N/A'}">+1-555-102-3045</td>
+                                <td><strong>100.0%</strong></td>
+                                <td>
+                                    <span th:class="|status ${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'status-success' : 'status-danger'}|"
+                                          th:text="${w.status}">ACTIVE</span>
+                                </td>
+                                <td>
+                                    <div class="filter-options" style="display: flex; justify-content: center; gap: 8px;">
+                                        <form th:action="@{'/admin/accounts/' + ${w.id} + '/status'}" method="post" style="display: inline;">
+                                            <input type="hidden" name="status" th:value="${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'LOCKED' : 'ACTIVE'}" />
+                                            <button type="submit" class="btn btn-small"
+                                                    th:classappend="${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'delete-btn' : 'lock-btn'}"
+                                                    th:text="${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'Lock' : 'Unlock'}">Toggle Lock</button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td><strong>SEED-EMP-024</strong></td>
-                                <td>White Harris</td>
-                                <td>Housekeeping</td>
-                                <td>+1-555-304-8902</td>
-                                <td><strong>72.1%</strong></td>
-                                <td><span class="status status-danger">LOCKED</span></td>
-                                <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn lock-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Unlock</button>
-                                    </div>
-                                </td>
+                            <tr th:if="${#lists.isEmpty(staffList)}">
+                                <td colspan="7" class="text-center" style="padding: 24px; color: var(--gray-500);">No employees registered in database.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -154,6 +155,7 @@
     </div>
 
     <script th:src="@{/js/admin-sidebar.js}"></script>
+    <script th:src="@{/js/table-pagination.js}"></script>
 </body>
 
 </html>

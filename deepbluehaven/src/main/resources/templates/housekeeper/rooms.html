@@ -57,82 +57,29 @@
             <!-- ROOM GRID -->
             <div class="stats-grid rooms-status-grid">
 
-
-                <article class="chart-card">
+                <article class="chart-card" th:each="r : ${rooms}">
                     <div class="card-header">
                         <div>
-                            <h2><strong>Room 101</strong></h2>
-                            <small class="body-4">Superior King · Floor 1</small>
+                            <h2><strong th:text="|Room ${r.roomNumber}|">Room 101</strong></h2>
+                            <small class="body-4" th:text="|${r.roomType} · Floor ${r.floor != null ? r.floor : 1}|">Superior King · Floor 1</small>
                         </div>
-                        <span class="status status-success">AVAILABLE</span>
+                        <span th:class="|status ${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'status-success' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING ? 'status-info' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).OCCUPIED ? 'status-warning' : 'status-error'))}|"
+                              th:text="${r.status}">AVAILABLE</span>
                     </div>
                     <div class="user-info">
                         <div>
-                            <strong class="body-3">Last cleaned: 09:15 AM</strong>
-                            <span>Ready for guests</span>
+                            <strong class="body-3" th:text="|Max ${r.maxCapacity} Guests|">2 Guests</strong>
+                            <span th:text="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'Ready for guests' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING ? 'Cleaning needed' : 'Occupied / In Use')}">Status note</span>
                         </div>
                     </div>
-                    <div class="text-center">
-                        <button class="btn btn-small btn-cta">Update</button>
+                    <div class="text-center" style="margin-top: 12px;">
+                        <a th:href="@{/housekeeper/tasks}" class="btn btn-small btn-cta">View Tasks</a>
                     </div>
                 </article>
 
-                <article class="chart-card">
-                    <div class="card-header">
-                        <div>
-                            <h2><strong>Room 102</strong></h2>
-                            <small class="body-4">Superior Twin · Floor 1</small>
-                        </div>
-                        <span class="status status-info">CLEANING</span>
-                    </div>
-                    <div class="user-info">
-                        <div>
-                            <strong class="body-3">Note: Guest checked out</strong>
-                            <span>Cleaning in progress</span>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <button class="btn btn-small btn-success">Complete</button>
-                    </div>
-                </article>
-
-                <article class="chart-card">
-                    <div class="card-header">
-                        <div>
-                            <h2><strong>Room 204</strong></h2>
-                            <small class="body-4">Deluxe Ocean View · Floor 2</small>
-                        </div>
-                        <span class="status status-warning">PENDING</span>
-                    </div>
-                    <div class="user-info">
-                        <div>
-                            <strong class="body-3">Note: Clean before 02:00 PM</strong>
-                            <span>Awaiting housekeeper</span>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <button class="btn btn-small btn-cta">Start Cleaning</button>
-                    </div>
-                </article>
-
-                <article class="chart-card">
-                    <div class="card-header">
-                        <div>
-                            <h2><strong>Room 305</strong></h2>
-                            <small class="body-4">Ocean Suite · Floor 3</small>
-                        </div>
-                        <span class="status status-error">MAINTENANCE</span>
-                    </div>
-                    <div class="user-info">
-                        <div>
-                            <strong class="body-3">Issue: Loud AC noise</strong>
-                            <span>Maintenance team inspecting</span>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <button class="btn btn-small btn-warning">Details</button>
-                    </div>
-                </article>
+                <div th:if="${#lists.isEmpty(rooms)}" style="grid-column: 1 / -1; text-align: center; padding: 32px; color: var(--gray-500);">
+                    No rooms currently in inventory.
+                </div>
 
             </div>
 

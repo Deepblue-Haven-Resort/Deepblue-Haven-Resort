@@ -13,6 +13,12 @@
             <span>Operations Desk</span>
         </a>
 
+        <a th:href="@{/receptionist/bookings}"
+           th:class="${activePage == 'bookings'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Reservations</span>
+        </a>
+
         <a th:href="@{/receptionist/check-in}"
            th:class="${activePage == 'check-in'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-key"></i>

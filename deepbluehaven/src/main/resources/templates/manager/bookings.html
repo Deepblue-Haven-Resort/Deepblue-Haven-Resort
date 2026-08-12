@@ -57,44 +57,37 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><strong>DBH-2026-001</strong></td>
+                            <tr th:each="b : ${bookings}">
+                                <td><strong th:text="${b.bookingCode}">DBH-2026-001</strong></td>
                                 <td>
-                                    <strong>John Smith</strong><br>
+                                    <strong th:text="${b.guestName}">John Smith</strong><br>
+                                    <small th:text="${b.guestEmail}">john@example.com</small>
                                 </td>
                                 <td>
-                                    <strong>Room 304</strong><br>
+                                    <strong th:text="|Room ${b.roomNumber}|">Room 304</strong><br>
+                                    <small th:text="${b.roomType}">Deluxe Room</small>
                                 </td>
                                 <td>
-                                    <span>2026-08-03</span> to <span>2026-08-05</span><br>
+                                    <span th:text="${b.checkIn != null ? #temporals.format(b.checkIn, 'yyyy-MM-dd') : 'N/A'}">2026-08-03</span> to <span th:text="${b.checkOut != null ? #temporals.format(b.checkOut, 'yyyy-MM-dd') : 'N/A'}">2026-08-05</span><br>
                                 </td>
-                                <td><strong>4,125,000 VND</strong></td>
-                                <td><span class="badge-status checkout">Checked-Out</span></td>
+                                <td><strong th:text="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|">4,125,000 VND</strong></td>
                                 <td>
-                                    
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Details</button>
+                                    <span th:class="|badge-status ${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CONFIRMED || b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CHECKED_IN ? 'inhouse' : 'checkout'}|"
+                                          th:text="${b.rawStatus}">CONFIRMED</span>
+                                </td>
+                                <td>
+                                    <div class="filter-options" style="display: flex; justify-content: center; gap: 8px;">
+                                        <form th:if="${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
+                                              th:action="@{'/manager/confirm-booking/' + ${b.id}}" method="post">
+                                            <button type="submit" class="btn btn-cta btn-small">Confirm</button>
+                                        </form>
+                                        <span th:if="${b.rawStatus != T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
+                                              th:text="${b.rawStatus}">Active</span>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td><strong>DBH-2026-002</strong></td>
-                                <td>
-                                    <strong>Oliver Clark</strong><br>
-                                </td>
-                                <td>
-                                    <strong>Room 101</strong><br>
-                                </td>
-                                <td>
-                                    <span>2026-08-04</span> to <span>2026-08-07</span><br>
-                                </td>
-                                <td><strong>3,500,000 VND</strong></td>
-                                <td><span class="badge-status inhouse">In-House</span></td>
-                                <td>
-                                    <div class="filter-options" style="display: flex; justify-content: center;">
-                                        <button type="button" class="btn edit-btn btn-small" style="width: 120px; min-width: 120px; justify-content: center;">Details</button>
-                                    </div>
-                                </td>
+                            <tr th:if="${#lists.isEmpty(bookings)}">
+                                <td colspan="7" class="text-center" style="padding: 24px; color: var(--gray-500);">No reservations registered.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -122,6 +115,7 @@
     </div>
 
     <script th:src="@{/js/admin-sidebar.js}"></script>
+    <script th:src="@{/js/table-pagination.js}"></script>
 </body>
 
 </html>
