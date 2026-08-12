@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Employee Account | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/create-employee.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/edit-employee.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+
+        <div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+
+        <main class="admin-main">
+
+            <section class="create-employee-page">
+                <div class="wizard-shell">
+
+                    <aside class="wizard-sidebar">
+                        <div class="wizard-brand-card">
+                            <div class="wizard-brand-icon">
+                                <i class="fa-solid fa-user-pen"></i>
+                            </div>
+
+                            <div>
+                                <h2>Edit Employee</h2>
+                                <!-- Hiển thị thông tin mã nhân viên (read-only) -->
+                                <div style="color: var(--white); opacity: 0.8; font-size: 0.8rem; margin-top: 4px;">
+                                    <span th:text="${editWorkerForm != null ? editWorkerForm.employeeCode : 'EMP-001'}">EMP-001</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="wizard-progress">
+                            <button class="wizard-step active" type="button" data-step-button="1">
+                                <span>1</span>
+                                <div>
+                                    <strong>Role & Level</strong>
+                                </div>
+                            </button>
+
+                            <button class="wizard-step" type="button" data-step-button="2">
+                                <span>2</span>
+                                <div>
+                                    <strong>Personal Info</strong>
+                                </div>
+                            </button>
+
+                            <button class="wizard-step" type="button" data-step-button="3">
+                                <span>3</span>
+                                <div>
+                                    <strong>Permissions & Security</strong>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div class="wizard-security-note">
+                            <i class="fa-solid fa-lock"></i>
+                            <div>
+                                <strong>Permission Protected</strong>
+                                <p>Only authorized admins can create or modify employee accounts.</p>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <form class="wizard-form" id="editEmployeeForm"
+                        th:action="@{/admin/accounts/{id}/edit(id=${workerId})}"
+                        th:object="${editWorkerForm}"
+                        method="post">
+
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}">
+
+                        <div id="serverValidationErrors" hidden th:if="${validationErrors != null}">
+                            <span class="server-validation-error"
+                                th:each="error : ${validationErrors}"
+                                th:data-field="${error.field}"
+                                th:data-message="${error.message}"></span>
+                        </div>
+
+                        <!-- STEP 1 -->
+                        <section class="wizard-panel active" data-step-panel="1">
+                            <div class="panel-heading">
+                                <div>
+                                    <span>Step 1</span>
+                                    <h2>Role & Permission Level</h2>
+                                </div>
+
+                                <div class="panel-icon">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+
+                                <!-- DEPARTMENT -->
+                                <div class="form-group">
+                                    <label for="department">Department <span>*</span></label>
+
+                                    <input type="hidden" id="department" th:field="*{department}" data-required>
+
+                                    <div class="filter-dropdown form-filter-dropdown" data-input="department">
+                                        <button class="filter-btn form-filter-btn" type="button">
+                                            <span class="filter-label"><strong>Select department</strong></span>
+                                            <i class="fa-solid fa-chevron-down"></i>
+                                        </button>
+
+                                        <div class="filter-menu form-filter-menu">
+                                            <button type="button" data-value="HOUSEKEEPING">
+                                                <strong>Housekeeping</strong>
+                                            </button>
+
+                                            <button type="button" data-value="RECEPTION">
+                                                <strong>Reception</strong>
+                                            </button>
+
+                                            <button type="button" data-value="MANAGEMENT">
+                                                <strong>Management</strong>
+                                            </button>
+
+                                            <button type="button" data-value="ADMINISTRATION">
+                                                <strong>Administration</strong>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <small class="field-error"></small>
+                                </div>
+
+                                <!-- ROLE -->
+                                <div class="form-group">
+                                    <label for="role">Role <span>*</span></label>
+
+                                    <input type="hidden" id="role" th:field="*{role}" data-required>
+
+                                    <div class="filter-dropdown form-filter-dropdown" data-input="role">
+                                        <button class="filter-btn form-filter-btn" type="button">
+                                            <span class="filter-label"><strong>Select role</strong></span>
+                                            <i class="fa-solid fa-chevron-down"></i>
+                                        </button>
+
+                                        <div class="filter-menu form-filter-menu">
+                                            <button type="button" data-value="HOUSEKEEPER">
+                                                <strong>Housekeeper</strong>
+                                            </button>
+
+                                            <button type="button" data-value="RECEPTIONIST">
+                                                <strong>Receptionist</strong>
+                                            </button>
+
+                                            <button type="button" data-value="MANAGER">
+                                                <strong>Manager</strong>
+                                            </button>
+
+                                            <button type="button" data-value="ADMIN">
+                                                <strong>Admin</strong>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <small class="field-error"></small>
+                                </div>
+
+                                <!-- PERMISSION LEVEL -->
+                                <div class="form-group">
+                                    <label for="permissionLevel">Permission Level <span>*</span></label>
+
+                                    <input type="hidden" id="permissionLevel" th:field="*{permissionLevel}" data-required>
+
+                                    <div class="filter-dropdown form-filter-dropdown" data-input="permissionLevel">
+                                        <button class="filter-btn form-filter-btn" type="button">
+                                            <span class="filter-label"><strong>Select level</strong></span>
+                                            <i class="fa-solid fa-chevron-down"></i>
+                                        </button>
+
+                                        <div class="filter-menu form-filter-menu">
+                                            <button type="button" data-value="1">
+                                                <strong>Level 1</strong>
+                                            </button>
+
+                                            <button type="button" data-value="2">
+                                                <strong>Level 2</strong>
+                                            </button>
+
+                                            <button type="button" data-value="3">
+                                                <strong>Level 3</strong>
+                                            </button>
+
+                                            <button type="button" data-value="4">
+                                                <strong>Level 4</strong>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <small class="field-error"></small>
+                                </div>
+
+                                <!-- ACCOUNT STATUS -->
+                                <div class="form-group">
+                                    <label for="accountStatus">Account Status</label>
+
+                                    <input type="hidden" id="accountStatus" th:field="*{accountStatus}" data-required>
+
+                                    <div class="filter-dropdown form-filter-dropdown" data-input="accountStatus">
+                                        <button class="filter-btn form-filter-btn" type="button">
+                                            <span class="filter-label"><strong>Active</strong></span>
+                                            <i class="fa-solid fa-chevron-down"></i>
+                                        </button>
+
+                                        <div class="filter-menu form-filter-menu">
+                                            <button type="button" data-value="ACTIVE">
+                                                <strong>Active</strong>
+                                            </button>
+
+                                            <button type="button" data-value="INACTIVE">
+                                                <strong>Inactive</strong>
+                                            </button>
+
+                                            <button type="button" data-value="LOCKED">
+                                                <strong>Locked</strong>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="role-preview-card">
+                                <div class="preview-header">
+                                    <div>
+                                        <span>Role Preview</span>
+                                        <h3 id="rolePreviewTitle">No role selected</h3>
+                                    </div>
+                                    <span class="status status-info" id="rolePreviewBadge">Waiting</span>
+                                </div>
+
+                                <p id="rolePreviewDescription">
+                                    Select a role to preview default permissions and access scope.
+                                </p>
+
+                                <div class="preview-permission-list" id="rolePreviewPermissions">
+                                    <span>Dashboard access</span>
+                                    <span>Module visibility</span>
+                                    <span>Update scope</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- STEP 2 -->
+                        <section class="wizard-panel" data-step-panel="2">
+                            <div class="panel-heading">
+                                <div>
+                                    <span>Step 2</span>
+                                    <h2>Personal Information</h2>
+                                </div>
+
+                                <div class="panel-icon">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+
+                                <div class="form-group">
+                                    <label for="fullName">Full Name <span>*</span></label>
+                                    <input id="fullName" type="text" th:field="*{fullName}" placeholder="Trần Hoàng Nam" data-required>
+                                    <small class="field-error"></small>
+                                </div>
+
+                                <!-- GENDER -->
+                                <div class="form-group">
+                                    <label for="gender">Gender <span>*</span></label>
+
+                                    <input type="hidden" id="gender" th:field="*{gender}" data-required>
+
+                                    <div class="filter-dropdown form-filter-dropdown" data-input="gender">
+                                        <button class="filter-btn form-filter-btn" type="button">
+                                            <span class="filter-label"><strong>Select gender</strong></span>
+                                            <i class="fa-solid fa-chevron-down"></i>
+                                        </button>
+
+                                        <div class="filter-menu form-filter-menu">
+                                            <button type="button" data-value="MALE">
+                                                <strong>Male</strong>
+                                            </button>
+
+                                            <button type="button" data-value="FEMALE">
+                                                <strong>Female</strong>
+                                            </button>
+
+                                            <button type="button" data-value="OTHER">
+                                                <strong>Other</strong>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <small class="field-error"></small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="dateOfBirth">Date of Birth <span>*</span></label>
+                                    <input id="dateOfBirth" type="date" th:field="*{dateOfBirth}" data-required>
+                                    <small class="field-error"></small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="phone">Phone Number <span>*</span></label>
+                                    <input id="phone" type="tel" th:field="*{phone}" placeholder="Example: 0902814800"
+                                        data-required data-phone>
+                                    <small class="field-error"></small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email <span>*</span></label>
+                                    <input id="email" type="email" th:field="*{email}" placeholder="employee@deepblue.com"
+                                        data-required data-email>
+                                    <small class="field-error"></small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <input id="address" type="text" th:field="*{address}" placeholder="Da Nang, Viet Nam">
+                                    <small class="field-hint">Optional but recommended for employee profile.</small>
+                                </div>
+
+                            </div>
+                        </section>
+
+                        <!-- STEP 3 -->
+                        <section class="wizard-panel" data-step-panel="3">
+                            <div class="panel-heading">
+                                <div>
+                                    <span>Step 3</span>
+                                    <h2>Permissions & Security</h2>
+                                </div>
+
+                                <div class="panel-icon">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- SECURITY: PASSWORD RESET (OPTIONAL) -->
+                            <div class="security-section">
+                                <label class="change-password-toggle">
+                                    <input type="checkbox" id="changePassword" th:field="*{changePassword}">
+                                    <strong><i class="fa-solid fa-key"></i> Change account password</strong>
+                                </label>
+                                
+                                <div class="password-fields-container" id="passwordFieldsContainer" style="display: none;">
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label for="password">New Password <span>*</span></label>
+                                            <div class="password-field">
+                                                <input id="password" type="password" th:field="*{password}"
+                                                    placeholder="Enter new password" data-password>
+                                                <button type="button" class="toggle-password" data-toggle-password="password">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
+                                            </div>
+                                            <small class="field-error"></small>
+                                        </div>
+        
+                                        <div class="form-group">
+                                            <label for="confirmPassword">Confirm Password <span>*</span></label>
+                                            <div class="password-field">
+                                                <input id="confirmPassword" type="password" th:field="*{confirmPassword}"
+                                                    placeholder="Confirm password" data-confirm-password>
+                                                <button type="button" class="toggle-password"
+                                                    data-toggle-password="confirmPassword">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
+                                            </div>
+                                            <small class="field-error"></small>
+                                        </div>
+                                    </div>
+                                    <small class="field-hint">If you leave this unchecked, the current password will remain unchanged.</small>
+                                </div>
+                            </div>
+
+                            <hr style="border: 0; border-top: 1px dashed var(--primary-200); margin: 24px 0;">
+
+                            <div class="permission-toolbar">
+                                <label class="use-default-permission">
+                                    <input
+                                        type="checkbox"
+                                        id="useDefaultPermissions"
+                                        th:field="*{useDefaultPermissions}">
+                                    <span>Use default permissions by selected role</span>
+                                </label>
+
+                                <button type="button" class="outline-btn" id="resetPermissionBtn">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                    Reset
+                                </button>
+                            </div>
+
+                            <div class="permission-matrix">
+                                <div class="permission-module"
+                                    th:each="permission : ${allPermissions}">
+                                    <div class="module-info">
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                        <div>
+                                            <strong
+                                                th:text="${#strings.capitalizeWords(
+                                                    #strings.toLowerCase(
+                                                        #strings.replace(permission.name(), '_', ' ')
+                                                    )
+                                                )}">
+                                                Permission
+                                            </strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="permission-checks">
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                th:field="*{permissions}"
+                                                th:value="${permission}">
+                                            Enabled
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <small class="permission-error" id="permissionError"></small>
+                        </section>
+
+                        <div class="wizard-actions">
+                            <button class="secondary-btn" type="button" id="prevBtn">
+                                <i class="fa-solid fa-chevron-left"></i>
+                                Back
+                            </button>
+
+                            <!-- Thêm khoảng trống để căn phải -->
+                            <div style="flex: 1;"></div>
+
+                            <button class="primary-btn" type="button" id="nextBtn">
+                                Next
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+
+                            <button class="primary-btn submit-btn" type="submit" id="submitBtn" hidden>
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                Save Changes
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <div th:replace="~{fragments/toast :: toast}"></div>
+
+    <script th:src="@{/js/admin-sidebar.js}"></script>
+    <script th:src="@{/js/admin/edit-employee.js}"></script>
+</body>
+
+</html>

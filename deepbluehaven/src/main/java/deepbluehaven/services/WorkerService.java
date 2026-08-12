@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import deepbluehaven.dto.WorkerCreateFormDTO;
+import deepbluehaven.dto.WorkerEditFormDTO;
 import deepbluehaven.dto.WorkerDTO;
 import deepbluehaven.pojo.Worker;
 import deepbluehaven.pojo.WorkerProfile;
@@ -97,6 +98,99 @@ public class WorkerService {
                                 "username",
                                 "Username, employee ID or email already exists");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public WorkerEditFormDTO getWorkerForEdit(Long workerId) {
+        Worker worker = getWorker(workerId);
+        WorkerProfile profile = worker.getProfile();
+        
+        WorkerEditFormDTO form = new WorkerEditFormDTO();
+        form.setEmployeeCode(worker.getEmployeeCode());
+        form.setUsername(worker.getUsername());
+        form.setAccountStatus(worker.getStatus());
+        
+        if (profile != null) {
+            form.setFullName(profile.getFullName());
+            form.setGender(profile.getGender());
+            form.setDateOfBirth(profile.getDateOfBirth());
+            form.setPhone(profile.getPhoneNumber());
+            form.setEmail(profile.getEmail());
+            form.setAddress(profile.getAddress());
+            form.setDepartment(profile.getDepartment());
+            form.setRole(profile.getRole());
+            form.setPermissionLevel(profile.getRoleLevel());
+        }
+        
+        Set<PermissionTag> currentPermissions = EnumSet.noneOf(PermissionTag.class);
+        for (WorkerRoleTag tag : worker.getRoleTags()) {
+            currentPermissions.add(tag.getPermissionTag());
+        }
+        
+        if (profile != null && profile.getRole() != null) {
+            boolean matchesDefault = currentPermissions.equals(profile.getRole().getDefaultPermissions());
+            form.setUseDefaultPermissions(matchesDefault);
+            if (!matchesDefault) {
+                form.setPermissions(currentPermissions);
+            }
+        }
+        
+        return form;
+    }
+
+    @Transactional
+    public Worker updateWorker(Long workerId, WorkerEditFormDTO form) {
+        Worker worker = getWorker(workerId);
+        WorkerProfile profile = worker.getProfile();
+        
+        validateRoleDepartment(form.getRole(), form.getDepartment());
+        
+        String email = normalizeEmail(form.getEmail());
+        if (!email.equalsIgnoreCase(profile.getEmail())) {
+            validateUniqueEmail(email);
+        }
+        
+        worker.setStatus(form.getAccountStatus());
+        if (form.isChangePassword() && form.getPassword() != null && !form.getPassword().isBlank()) {
+            worker.setPasswordHash(passwordEncoder.encode(form.getPassword()));
+            worker.setForceChangePassword(true);
+        }
+        
+        profile.setFullName(form.getFullName().trim());
+        profile.setRole(form.getRole());
+        profile.setRoleLevel(form.getPermissionLevel());
+        profile.setPhoneNumber(form.getPhone().trim());
+        profile.setEmail(email);
+        profile.setDepartment(form.getDepartment());
+        profile.setGender(form.getGender());
+        profile.setDateOfBirth(form.getDateOfBirth());
+        profile.setAddress(normalizeNullable(form.getAddress()));
+        
+        worker.getRoleTags().clear();
+        
+        Set<PermissionTag> permissions;
+        if (form.isUseDefaultPermissions()) {
+            permissions = form.getRole().getDefaultPermissions();
+        } else {
+            if (form.getPermissions() == null || form.getPermissions().isEmpty()) {
+                throw new WorkerFormExceptionService("permissions", "Select at least one permission");
+            }
+            permissions = EnumSet.copyOf(form.getPermissions());
+        }
+        
+        String sourceDescription = form.isUseDefaultPermissions()
+                ? "Default permission of role " + form.getRole().name()
+                : "Custom permission selected at worker update";
+
+        for (PermissionTag permission : permissions) {
+            WorkerRoleTag roleTag = new WorkerRoleTag();
+            roleTag.setWorker(worker);
+            roleTag.setPermissionTag(permission);
+            roleTag.setDescription(sourceDescription);
+            worker.getRoleTags().add(roleTag);
+        }
+        
+        return workerRepository.save(worker);
     }
 
     @Transactional(readOnly = true)
