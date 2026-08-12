@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_context_path" th:content="@{/}" />
     <title>Room Inventory & Status | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
@@ -101,36 +102,37 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
-                            <tr>
-                                <td><strong>Room 101</strong></td>
-                                <td>Premium Room</td>
-                                <td>3 Guests</td>
-                                <td><strong>2,100,000 VND</strong></td>
-                                <td><span class="status status-success">AVAILABLE</span></td>
-                                <td>Mary Johnson</td>
+                            <tr th:each="r : ${rooms}"
+                                th:data-id="${r.id}"
+                                th:data-number="${r.roomNumber}"
+                                th:data-type="${r.roomType}"
+                                th:data-capacity="${r.capacity}"
+                                th:data-price="${r.basePrice}"
+                                th:data-area="${r.area}"
+                                th:data-status="${r.status}"
+                                th:data-image="${r.images != null && !r.images.isEmpty() ? r.images[0] : ''}">
+                                <td><strong th:text="|Room ${r.roomNumber}|">Room 101</strong></td>
+                                <td th:text="${r.roomType}">Premium Room</td>
+                                <td th:text="|${r.capacity != null ? r.capacity : 2} Guests|">3 Guests</td>
+                                <td><strong th:text="|${#numbers.formatDecimal(r.basePrice, 0, 'COMMA', 0, 'POINT')} VND|">2,100,000 VND</strong></td>
+                                <td>
+                                    <span th:class="|status ${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'status-success' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'status-danger' : '')}|"
+                                          th:text="${r.status}">AVAILABLE</span>
+                                </td>
+                                <td>Unassigned</td>
                                 <td>
                                     <div style="display: flex; gap: 8px; justify-content: center;">
-                                        <button type="button" class="btn outline-btn assign-btn btn-small">Assign Task</button>
                                         <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
-                                        <button type="button" class="btn warning-btn maintenance-btn btn-small">Maintenance</button>
+                                        <button type="button" class="btn outline-btn assign-btn btn-small" th:data-room-id="${r.id}" th:data-room-number="${r.roomNumber}">Assign Task</button>
+                                        <form th:action="@{'/manager/rooms/' + ${r.id} + '/status'}" method="post" style="display: inline;">
+                                            <input type="hidden" name="status" th:value="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'AVAILABLE' : 'MAINTENANCE'}" />
+                                            <button type="submit" class="btn warning-btn btn-small" th:text="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'Available' : 'Maintenance'}">Maintenance</button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td><strong>Room 102</strong></td>
-                                <td>Deluxe Suite</td>
-                                <td>4 Guests</td>
-                                <td><strong>3,500,000 VND</strong></td>
-                                <td><span class="status">OCCUPIED</span></td>
-                                <td>David Miller</td>
-                                <td>
-                                    <div style="display: flex; gap: 8px; justify-content: center;">
-                                        <button type="button" class="btn outline-btn assign-btn btn-small">Assign Task</button>
-                                        <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
-                                        <button type="button" class="btn warning-btn maintenance-btn btn-small">Maintenance</button>
-                                    </div>
-                                </td>
+                            <tr th:if="${#lists.isEmpty(rooms)}">
+                                <td colspan="7" class="text-center" style="padding: 24px; color: var(--gray-500);">No rooms registered in database.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -167,44 +169,45 @@
                 </button>
             </div>
             
-            <form id="roomForm">
+            <form id="roomForm" th:action="@{/manager/rooms/save}" method="post">
+                <input type="hidden" name="id" id="roomId">
                 <div class="modal-body">
                     <div class="modal-form-grid">
                         <div class="form-group">
                             <label>Room Number <span>*</span></label>
-                            <input type="text" id="roomNumber" required placeholder="e.g. Room 101">
+                            <input type="text" id="roomNumber" name="roomNumber" required placeholder="e.g. Room 101">
                         </div>
                         <div class="form-group">
                             <label>Room Type <span>*</span></label>
-                            <input type="hidden" id="roomType" required>
+                            <input type="hidden" id="roomType" name="roomType" required>
                             <div class="filter-dropdown form-filter-dropdown" data-input="roomType">
                                 <button class="filter-btn form-filter-btn" type="button">
                                     <span class="filter-label"><strong>Select Type</strong></span>
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </button>
                                 <div class="filter-menu form-filter-menu">
-                                    <button type="button" data-value="PREMIUM"><strong>Premium Room</strong></button>
-                                    <button type="button" data-value="DELUXE"><strong>Deluxe Suite</strong></button>
                                     <button type="button" data-value="STANDARD"><strong>Standard Room</strong></button>
-                                    <button type="button" data-value="PRESIDENTIAL"><strong>Presidential Suite</strong></button>
+                                    <button type="button" data-value="PREMIUM"><strong>Premium Room</strong></button>
+                                    <button type="button" data-value="SUITE"><strong>Deluxe Suite</strong></button>
+                                    <button type="button" data-value="PRESIDENT"><strong>President Suite</strong></button>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Max Capacity <span>*</span></label>
-                            <input type="number" id="capacity" required min="1" max="10" placeholder="e.g. 2">
+                            <input type="number" id="capacity" name="capacity" required min="1" max="10" placeholder="e.g. 2">
                         </div>
                         <div class="form-group">
                             <label>Base Price (VND) <span>*</span></label>
-                            <input type="number" id="basePrice" required min="0" step="100000" placeholder="e.g. 1000000">
+                            <input type="number" id="basePrice" name="basePrice" required min="0" step="100000" placeholder="e.g. 1000000">
                         </div>
                         <div class="form-group">
                             <label>Area (sqm)</label>
-                            <input type="number" id="area" min="10" placeholder="e.g. 35">
+                            <input type="number" id="area" name="area" min="10" placeholder="e.g. 35">
                         </div>
                         <div class="form-group">
                             <label>Status <span>*</span></label>
-                            <input type="hidden" id="roomStatus" required value="AVAILABLE">
+                            <input type="hidden" id="roomStatus" name="status" required value="AVAILABLE">
                             <div class="filter-dropdown form-filter-dropdown" data-input="roomStatus">
                                 <button class="filter-btn form-filter-btn" type="button">
                                     <span class="filter-label"><strong>Available</strong></span>
@@ -215,6 +218,19 @@
                                     <button type="button" data-value="OCCUPIED"><strong>Occupied</strong></button>
                                     <button type="button" data-value="MAINTENANCE"><strong>Maintenance</strong></button>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="form-group full-width" style="grid-column: 1 / -1;">
+                            <label>Room Image (Cloudinary)</label>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="text" id="roomImageUrl" name="imageUrl" placeholder="https://res.cloudinary.com/...">
+                                <input type="file" id="roomImageFileInput" accept="image/*" style="display:none">
+                                <button type="button" class="btn outline-btn" id="uploadRoomImageBtn">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload
+                                </button>
+                            </div>
+                            <div id="roomImagePreviewBox" style="margin-top: 8px; display: none;">
+                                <img id="roomImagePreview" src="" style="max-height: 100px; border-radius: 6px; border: 1px solid #cbd5e1; object-fit: cover;" />
                             </div>
                         </div>
                     </div>
@@ -238,7 +254,8 @@
                 </button>
             </div>
             
-            <form id="assignTaskForm">
+            <form id="assignTaskForm" th:action="@{/manager/tasks/assign}" method="post">
+                <input type="hidden" name="roomId" id="assignRoomId">
                 <div class="modal-body">
                     <div class="modal-form-grid single-col">
                         <div class="form-group">
@@ -247,31 +264,32 @@
                         </div>
                         <div class="form-group">
                             <label>Task Type <span>*</span></label>
-                            <input type="hidden" id="taskType" required>
+                            <input type="hidden" id="taskType" name="action" required value="Cleaning & Prep">
                             <div class="filter-dropdown form-filter-dropdown" data-input="taskType">
                                 <button class="filter-btn form-filter-btn" type="button">
-                                    <span class="filter-label"><strong>Select Task Type</strong></span>
+                                    <span class="filter-label"><strong>Cleaning</strong></span>
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </button>
                                 <div class="filter-menu form-filter-menu">
-                                    <button type="button" data-value="CLEANING"><strong>Cleaning</strong></button>
-                                    <button type="button" data-value="MAINTENANCE"><strong>Maintenance</strong></button>
-                                    <button type="button" data-value="INSPECTION"><strong>Inspection</strong></button>
+                                    <button type="button" data-value="Cleaning & Prep"><strong>Cleaning</strong></button>
+                                    <button type="button" data-value="Maintenance Check"><strong>Maintenance</strong></button>
+                                    <button type="button" data-value="Quality Inspection"><strong>Inspection</strong></button>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Assign To (Housekeeper) <span>*</span></label>
-                            <input type="hidden" id="taskAssignee" required>
+                            <input type="hidden" id="taskAssignee" name="assigneeId" required>
                             <div class="filter-dropdown form-filter-dropdown" data-input="taskAssignee">
                                 <button class="filter-btn form-filter-btn" type="button">
                                     <span class="filter-label"><strong>Select Housekeeper</strong></span>
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </button>
                                 <div class="filter-menu form-filter-menu">
-                                    <button type="button" data-value="1"><strong>Mary Johnson</strong></button>
-                                    <button type="button" data-value="2"><strong>David Miller</strong></button>
-                                    <button type="button" data-value="3"><strong>Susan Clark</strong></button>
+                                    <button th:each="h : ${housekeepers}" type="button" th:data-value="${h.id}">
+                                        <strong th:text="${h.profile != null ? h.profile.fullName : 'Housekeeper #' + h.id}">Housekeeper Name</strong>
+                                    </button>
+                                    <button th:if="${#lists.isEmpty(housekeepers)}" type="button" data-value=""><strong>No Housekeepers</strong></button>
                                 </div>
                             </div>
                         </div>
@@ -303,6 +321,7 @@
 
     <script th:src="@{/js/admin-sidebar.js}"></script>
     <script th:src="@{/js/manager/rooms.js}"></script>
+    <script th:src="@{/js/table-pagination.js}"></script>
 </body>
 
 </html>

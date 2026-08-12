@@ -69,11 +69,20 @@ public class WorkerDTO {
         private String role;
         private String phoneNumber;
         private String email;
+        private String avatarUrl;
         private Integer roleLevel;
         private List<PermissionTag> roleTags;
         private LocalDateTime createdAt;
 
         public Response() {}
+
+        public String getAvatarUrl() {
+            return avatarUrl;
+        }
+
+        public void setAvatarUrl(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
+        }
 
         public Long getId() { 
             return id; }

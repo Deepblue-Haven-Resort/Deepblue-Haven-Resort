@@ -12,7 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
         addBtn.addEventListener('click', () => {
             title.innerHTML = '<i class="fa-solid fa-bell-concierge"></i> Add New Service';
             form.reset();
-            window.setDropdownValue('serviceCategory', '');
+            if (document.getElementById('serviceId')) document.getElementById('serviceId').value = '';
+            if (document.getElementById('serviceImageUrl')) document.getElementById('serviceImageUrl').value = '';
+            if (document.getElementById('serviceImagePreviewBox')) document.getElementById('serviceImagePreviewBox').style.display = 'none';
+            window.setDropdownValue('serviceCategory', 'FOOD_BEVERAGE');
             window.setDropdownValue('serviceStatus', 'ACTIVE');
             modal.classList.add('active');
         });
@@ -38,45 +41,30 @@ document.addEventListener('DOMContentLoaded', () => {
     editBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const row = e.target.closest('tr');
-            const serviceName = row.querySelector('td:nth-child(1)').textContent.trim();
-            const category = row.querySelector('td:nth-child(2)').textContent.trim();
-            const priceStr = row.querySelector('td:nth-child(3)').textContent.trim();
+            const id = row.dataset.id || '';
+            const serviceName = row.dataset.name || row.querySelector('td:nth-child(1)').textContent.trim();
+            const category = row.dataset.category || 'FOOD_BEVERAGE';
+            const price = row.dataset.price || '100000';
+            const status = row.dataset.status || 'ACTIVE';
+            const existingImg = row.dataset.image || '';
             
             title.innerHTML = '<i class="fa-solid fa-bell-concierge"></i> Edit Service';
+            if (document.getElementById('serviceId')) document.getElementById('serviceId').value = id;
             document.getElementById('serviceName').value = serviceName;
-            
-            if (category.includes('Food')) window.setDropdownValue('serviceCategory', 'FNB');
-            else if (category.includes('Spa')) window.setDropdownValue('serviceCategory', 'SPA');
-            else if (category.includes('Laundry')) window.setDropdownValue('serviceCategory', 'LAUNDRY');
-            else window.setDropdownValue('serviceCategory', 'OTHER');
-            
-            document.getElementById('servicePrice').value = priceStr.replace(/\D/g, '');
-            window.setDropdownValue('serviceStatus', 'ACTIVE');
+            window.setDropdownValue('serviceCategory', category);
+            document.getElementById('servicePrice').value = price;
+            window.setDropdownValue('serviceStatus', status);
+
+            if (document.getElementById('serviceImageUrl')) document.getElementById('serviceImageUrl').value = existingImg;
+            if (document.getElementById('serviceImagePreview') && existingImg) {
+                document.getElementById('serviceImagePreview').src = existingImg;
+                document.getElementById('serviceImagePreviewBox').style.display = 'block';
+            } else if (document.getElementById('serviceImagePreviewBox')) {
+                document.getElementById('serviceImagePreviewBox').style.display = 'none';
+            }
             
             modal.classList.add('active');
         });
-    });
-
-    // Handle Delete Buttons
-    const deleteBtns = document.querySelectorAll('.delete-btn');
-    deleteBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const row = e.target.closest('tr');
-            const serviceName = row.querySelector('td:nth-child(1)').textContent.trim();
-            
-            if (confirm(`Are you sure you want to delete "${serviceName}"?`)) {
-                row.remove();
-                alert(`Service "${serviceName}" deleted.`);
-            }
-        });
-    });
-
-    // Form submission
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert('Service saved successfully!');
-        closeModal();
-        // In a real app, this would refresh the table or add a new row
     });
 
     // --- Custom Dropdown Logic ---
@@ -136,4 +124,53 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
+
+    // Cloudinary Service Image Upload
+    const uploadServiceImageBtn = document.getElementById('uploadServiceImageBtn');
+    const serviceImageFileInput = document.getElementById('serviceImageFileInput');
+    const serviceImageUrlInput = document.getElementById('serviceImageUrl');
+    const serviceImagePreview = document.getElementById('serviceImagePreview');
+    const serviceImagePreviewBox = document.getElementById('serviceImagePreviewBox');
+
+    if (uploadServiceImageBtn && serviceImageFileInput) {
+        uploadServiceImageBtn.addEventListener('click', () => {
+            serviceImageFileInput.click();
+        });
+
+        serviceImageFileInput.addEventListener('change', async () => {
+            const file = serviceImageFileInput.files[0];
+            if (!file) return;
+
+            const serviceId = document.getElementById('serviceId')?.value?.trim();
+            const rawServiceName = document.getElementById('serviceName')?.value?.trim() || 'new-service';
+            const slug = rawServiceName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            const serviceFolder = 'deepbluehaven/services/service-' + (serviceId ? serviceId : slug);
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', serviceFolder);
+
+            try {
+                let ctx = document.querySelector('meta[name="_context_path"]')?.content;
+                if (!ctx || ctx === "/") {
+                    ctx = window.location.pathname.startsWith('/deepbluehaven') ? '/deepbluehaven' : '';
+                }
+                const apiUrl = ctx.replace(/\/$/, '') + '/api/upload/image';
+                const res = await fetch(apiUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success && data.url) {
+                    if (serviceImageUrlInput) serviceImageUrlInput.value = data.url;
+                    if (serviceImagePreview) serviceImagePreview.src = data.url;
+                    if (serviceImagePreviewBox) serviceImagePreviewBox.style.display = 'block';
+                    alert('Service image uploaded to Cloudinary successfully!');
+                } else {
+                    alert(data.message || 'Upload failed');
+                }
+            } catch (err) {
+                alert('Upload request failed.');
+            }
+        });
+    }
 });

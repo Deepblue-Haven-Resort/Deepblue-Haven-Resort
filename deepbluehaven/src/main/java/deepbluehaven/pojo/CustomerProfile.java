@@ -57,11 +57,22 @@ public class CustomerProfile {
     @Column(name = "segment", nullable = true, length = 50)
     private String segment;
 
+    @Column(name = "avatar_url", nullable = true, length = 550)
+    private String avatarUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "membership_tier_id", nullable = true)
     private MembershipTier membershipTier;
 
     public CustomerProfile() {}
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
 
     public Long getCustomerId() { 
         return customerId; }

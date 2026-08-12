@@ -7,8 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function getApiUrl(path) {
         let ctx = document.querySelector('meta[name="_context_path"]')?.content;
         if (!ctx || ctx === "/") {
-            const match = window.location.pathname.match(/^\/([^\/]+)/);
-            ctx = (match && match[1] === "deepbluehaven") ? "/" + match[1] : "";
+            ctx = window.location.pathname.startsWith('/deepbluehaven') ? '/deepbluehaven' : '';
         }
         return ctx.replace(/\/$/, "") + (path.startsWith("/") ? path : "/" + path);
     }
@@ -75,6 +74,70 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    const avatarEditBtn = document.getElementById("avatarEditBtn");
+    const avatarFileInput = document.getElementById("avatarFileInput");
+    const avatarImagePreview = document.getElementById("avatarImagePreview");
+    const avatarIconFallback = document.getElementById("avatarIconFallback");
+    const avatarUrlInput = document.getElementById("avatarUrl");
+
+    if (avatarEditBtn && avatarFileInput) {
+        avatarEditBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            avatarFileInput.click();
+        });
+
+        avatarFileInput.addEventListener("change", async function () {
+            const file = avatarFileInput.files[0];
+            if (!file) return;
+
+            const customerId = document.querySelector('.customer-profile')?.dataset?.customerId || 'guest';
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("folder", `deepbluehaven/customers/customer-${customerId}`);
+
+            if (typeof showToast === "function") {
+                showToast("info", "Uploading", "Uploading image to Cloudinary...");
+            }
+
+            try {
+                const response = await fetch(getApiUrl("/api/upload/image"), {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success && data.url) {
+                    if (avatarUrlInput) avatarUrlInput.value = data.url;
+                    
+                    if (avatarImagePreview) {
+                        avatarImagePreview.src = data.url;
+                        avatarImagePreview.style.display = "block";
+                    } else if (avatarIconFallback) {
+                        const newImg = document.createElement("img");
+                        newImg.id = "avatarImagePreview";
+                        newImg.src = data.url;
+                        newImg.alt = "Avatar";
+                        newImg.style.cssText = "width: 100%; height: 100%; object-fit: cover; border-radius: 50%;";
+                        avatarIconFallback.parentNode.insertBefore(newImg, avatarIconFallback);
+                        avatarIconFallback.remove();
+                    }
+
+                    if (typeof showToast === "function") {
+                        showToast("success", "Uploaded", "Avatar uploaded to Cloudinary successfully! Press Save Changes to apply.");
+                    }
+                } else {
+                    if (typeof showToast === "function") {
+                        showToast("error", "Upload Failed", data.message || "Failed to upload avatar.");
+                    }
+                }
+            } catch (err) {
+                if (typeof showToast === "function") {
+                    showToast("error", "Error", "Cloudinary upload request failed.");
+                }
+            }
+        });
+    }
+
     profileForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
@@ -82,12 +145,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const email = document.getElementById("email")?.value || "";
         const phoneNumber = document.getElementById("phone")?.value || "";
         const birthDay = document.getElementById("birthday")?.value || null;
+        const avatarUrl = document.getElementById("avatarUrl")?.value || null;
 
         const payload = {
             fullName: fullName,
             email: email,
             phoneNumber: phoneNumber,
-            birthDay: birthDay
+            birthDay: birthDay,
+            avatarUrl: avatarUrl
         };
 
         try {

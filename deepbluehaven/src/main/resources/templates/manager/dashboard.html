@@ -312,7 +312,19 @@
                     </tr>
                     </tbody>
                 </table>
-                
+            </div>
+
+            <div class="table-footer">
+                <p>Hiển thị <strong>1-8</strong> trong số <strong th:text="${dashboardData.liveActivities != null ? #lists.size(dashboardData.liveActivities) : 0}">10</strong> kết quả</p>
+                <div class="pagination">
+                    <button type="button" class="page-btn disabled">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="page-btn active">1</button>
+                    <button type="button" class="page-btn">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
 
         </section>
@@ -322,5 +334,6 @@
 
 <script th:src="@{/js/admin-sidebar.js}"></script>
 <script th:src="@{/assets/js/manager/dashboard.js}"></script>
+<script th:src="@{/js/table-pagination.js}"></script>
 </body>
 </html>

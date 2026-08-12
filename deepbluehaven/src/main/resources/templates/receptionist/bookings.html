@@ -72,84 +72,35 @@
                     </thead>
 
                     <tbody>
-                    <tr>
-                        <td><strong>#BK-9021</strong></td>
+                    <tr th:each="b : ${bookings}">
+                        <td><strong th:text="${b.bookingCode}">#BK-9021</strong></td>
                         <td>
                             <div class="user-info">
                                 <div>
-                                    <strong>Alexander Wright</strong>
-                                    <span>alex.wright@example.com</span>
+                                    <strong th:text="${b.guestName}">Alexander Wright</strong>
+                                    <span th:text="${b.guestEmail}">alex.wright@example.com</span>
                                 </div>
                             </div>
                         </td>
-                        <td>Ocean Villa (304)</td>
-                        <td>03 Aug 2026</td>
-                        <td>06 Aug 2026</td>
-                        <td>$1,450.00</td>
-                        <td><span class="status status-success">CONFIRMED</span></td>
+                        <td th:text="|${b.roomType} (${b.roomNumber})|">Ocean Villa (304)</td>
+                        <td th:text="${b.checkIn != null ? #temporals.format(b.checkIn, 'dd MMM yyyy') : 'N/A'}">03 Aug 2026</td>
+                        <td th:text="${b.checkOut != null ? #temporals.format(b.checkOut, 'dd MMM yyyy') : 'N/A'}">06 Aug 2026</td>
+                        <td th:text="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|">1,450,000 VND</td>
                         <td>
-                            <button class="btn btn-small btn-cta" style="opacity: 0.65;">Edit</button>
+                            <span th:class="|status ${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CONFIRMED ? 'status-success' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CHECKED_IN ? 'status-info' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CANCELLED ? 'status-error' : 'status-warning'))}|"
+                                  th:text="${b.rawStatus}">CONFIRMED</span>
+                        </td>
+                        <td>
+                            <form th:if="${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
+                                  th:action="@{'/receptionist/confirm-booking/' + ${b.id}}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-small btn-cta">Confirm</button>
+                            </form>
+                            <span th:if="${b.rawStatus != T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
+                                  th:text="${b.rawStatus}">Active</span>
                         </td>
                     </tr>
-
-                    <tr>
-                        <td><strong>#BK-9018</strong></td>
-                        <td>
-                            <div class="user-info">
-                                <div>
-                                    <strong>Sophia Martinez</strong>
-                                    <span>sophia.m@example.com</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Deluxe Twin (112)</td>
-                        <td>01 Aug 2026</td>
-                        <td>03 Aug 2026</td>
-                        <td>$620.00</td>
-                        <td><span class="status status-info">CHECKED_IN</span></td>
-                        <td>
-                            <button class="btn btn-small btn-cta" style="opacity: 0.65;">View</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td><strong>#BK-9010</strong></td>
-                        <td>
-                            <div class="user-info">
-                                <div>
-                                    <strong>Liam O'Connor</strong>
-                                    <span>liam.oc@example.com</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Superior King (101)</td>
-                        <td>28 Jul 2026</td>
-                        <td>01 Aug 2026</td>
-                        <td>$980.00</td>
-                        <td><span class="status status-success">CHECKED_OUT</span></td>
-                        <td>
-                            <button class="btn btn-small btn-cta" style="opacity: 0.65;">Folio</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td><strong>#BK-8990</strong></td>
-                        <td>
-                            <div class="user-info">
-                                <div>
-                                    <strong>Elena Rostova</strong>
-                                    <span>elena.r@example.com</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>Garden View (205)</td>
-                        <td>30 Jul 2026</td>
-                        <td>03 Aug 2026</td>
-                        <td>$0.00</td>
-                        <td><span class="status status-error">CANCELLED</span></td>
-                        <td>
-                            <button class="btn btn-small btn-cta" disabled style="opacity: 0.65;">Closed</button>
-                        </td>
+                    <tr th:if="${#lists.isEmpty(bookings)}">
+                        <td colspan="8" style="text-align: center; padding: 24px; color: var(--gray-500);">No reservations found in system.</td>
                     </tr>
                     </tbody>
                 </table>

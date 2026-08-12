@@ -51,34 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    ruleForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert('Pricing Rule saved successfully!');
-        closeRuleModal();
-    });
-
-    // --- Modal Logic (Discounts) ---
-    const discountModal = document.getElementById('discountModal');
-    const addDiscountBtn = document.getElementById('addDiscountBtn');
-    const closeDiscountModalBtn = document.getElementById('closeDiscountModalBtn');
-    const cancelDiscountModalBtn = document.getElementById('cancelDiscountModalBtn');
-    const discountForm = document.getElementById('discountForm');
-    const discountTitle = document.getElementById('discountModalTitle');
-
-    const closeDiscountModal = () => discountModal.classList.remove('active');
-    if (closeDiscountModalBtn) closeDiscountModalBtn.addEventListener('click', closeDiscountModal);
-    if (cancelDiscountModalBtn) cancelDiscountModalBtn.addEventListener('click', closeDiscountModal);
-
-    if (addDiscountBtn) {
-        addDiscountBtn.addEventListener('click', () => {
-            discountTitle.innerHTML = '<i class="fa-solid fa-ticket"></i> Add Discount Code';
-            discountForm.reset();
-            window.setDropdownValue('discountType', 'PERCENTAGE');
-            window.setDropdownValue('discountStatus', 'ACTIVE');
-            discountModal.classList.add('active');
-        });
-    }
-
     document.querySelectorAll('.edit-discount-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             discountTitle.innerHTML = '<i class="fa-solid fa-ticket"></i> Edit Discount Code';
@@ -86,19 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('discountCode').value = row.querySelector('td:nth-child(1)').textContent.trim();
             
             const type = row.querySelector('td:nth-child(2)').textContent.trim();
-            window.setDropdownValue('discountType', type === 'Percentage' ? 'PERCENTAGE' : 'FIXED');
+            window.setDropdownValue('discountType', type.toLowerCase().includes('percentage') ? 'PERCENTAGE' : 'FIXED_AMOUNT');
             
             document.getElementById('discountValue').value = row.querySelector('td:nth-child(3)').textContent.trim().replace(/\D/g, '');
             const statusText = row.querySelector('td:nth-child(5) .status').textContent.trim();
             window.setDropdownValue('discountStatus', statusText === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE');
             discountModal.classList.add('active');
         });
-    });
-
-    discountForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert('Discount Code saved successfully!');
-        closeDiscountModal();
     });
 
     // Close Modals on outside click

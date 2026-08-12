@@ -23,7 +23,7 @@
 <body class="home-page">
   <div th:replace="~{fragments/header :: header(activePage='profile')}"></div>
 
-<main class="customer-profile">
+<main class="customer-profile" th:data-customer-id="${profile != null ? profile.customerId : (session.loggedInCustomerId != null ? session.loggedInCustomerId : 'guest')}">
 
     <div class="container">
         <section class="profile-layout">
@@ -33,9 +33,12 @@
 
                 <div class="profile-user">
 
-                    <div class="profile-avatar">
-                        <i class="fa-regular fa-user"></i>
+                    <div class="profile-avatar" style="overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer;">
+                        <img id="avatarImagePreview" th:if="${profile != null && profile.avatarUrl != null}" th:src="${profile.avatarUrl}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+                        <i id="avatarIconFallback" th:if="${profile == null || profile.avatarUrl == null}" class="fa-regular fa-user"></i>
+                        <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" />
                         <button type="button"
+                                id="avatarEditBtn"
                                 class="profile-avatar__edit"
                                 aria-label="Change profile picture">
                             <i class="fa-solid fa-camera"></i>
@@ -201,6 +204,27 @@
                                            id="birthday"
                                            name="birthDay"
                                            th:value="${profile != null && profile.birthDay != null ? profile.birthDay : ''}"
+                                           readonly>
+
+                                </div>
+
+                            </div>
+
+                            <div class="profile-field" style="grid-column: 1 / -1;">
+
+                                <label for="avatarUrl">
+                                    Avatar Picture URL
+                                </label>
+
+                                <div class="profile-input">
+
+                                    <i class="fa-solid fa-image"></i>
+
+                                    <input type="url"
+                                           id="avatarUrl"
+                                           name="avatarUrl"
+                                           placeholder="https://example.com/avatar.jpg"
+                                           th:value="${profile != null ? profile.avatarUrl : ''}"
                                            readonly>
 
                                 </div>

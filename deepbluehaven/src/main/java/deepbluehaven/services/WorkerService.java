@@ -75,6 +75,9 @@ public class WorkerService {
         profile.setGender(form.getGender());
         profile.setDateOfBirth(form.getDateOfBirth());
         profile.setAddress(normalizeNullable(form.getAddress()));
+        if (form.getAvatarUrl() != null && !form.getAvatarUrl().isBlank()) {
+            profile.setAvatarUrl(form.getAvatarUrl().trim());
+        }
 
         worker.setProfile(profile);
 
@@ -117,6 +120,7 @@ public class WorkerService {
             form.setPhone(profile.getPhoneNumber());
             form.setEmail(profile.getEmail());
             form.setAddress(profile.getAddress());
+            form.setAvatarUrl(profile.getAvatarUrl());
             form.setDepartment(profile.getDepartment());
             form.setRole(profile.getRole());
             form.setPermissionLevel(profile.getRoleLevel());
@@ -165,6 +169,9 @@ public class WorkerService {
         profile.setGender(form.getGender());
         profile.setDateOfBirth(form.getDateOfBirth());
         profile.setAddress(normalizeNullable(form.getAddress()));
+        if (form.getAvatarUrl() != null && !form.getAvatarUrl().isBlank()) {
+            profile.setAvatarUrl(form.getAvatarUrl().trim());
+        }
         
         worker.getRoleTags().clear();
         
@@ -411,6 +418,7 @@ public class WorkerService {
             dto.setRole(worker.getProfile().getRole() != null ? worker.getProfile().getRole().name() : null);
             dto.setPhoneNumber(worker.getProfile().getPhoneNumber());
             dto.setEmail(worker.getProfile().getEmail());
+            dto.setAvatarUrl(worker.getProfile().getAvatarUrl() != null ? worker.getProfile().getAvatarUrl() : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=250&q=80");
             dto.setRoleLevel(worker.getProfile().getRoleLevel());
         }
         return dto;

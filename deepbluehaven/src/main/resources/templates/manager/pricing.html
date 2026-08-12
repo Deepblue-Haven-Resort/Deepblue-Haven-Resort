@@ -15,7 +15,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+
     <style>
         .tabs {
             display: flex;
@@ -23,6 +23,7 @@
             margin-bottom: 24px;
             border-bottom: 1px solid var(--gray-200);
         }
+
         .tab-btn {
             padding: 12px 24px;
             background: none;
@@ -33,13 +34,16 @@
             cursor: pointer;
             border-bottom: 2px solid transparent;
         }
+
         .tab-btn.active {
             color: var(--primary-600);
             border-bottom-color: var(--primary-600);
         }
+
         .tab-content {
             display: none;
         }
+
         .tab-content.active {
             display: block;
         }
@@ -72,15 +76,16 @@
                             <h2>Seasonal Pricing Rules</h2>
                         </div>
                         <div class="filter-options">
-                            <button type="button" class="btn btn-cta btn-medium" id="addRuleBtn">Add Pricing Rule</button>
+                            <button type="button" class="btn btn-cta btn-medium" id="addRuleBtn">Add Pricing
+                                Rule</button>
                         </div>
                     </div>
-                    
+
                     <div class="table-wrapper">
                         <table class="activity-table">
                             <thead>
                                 <tr>
-                                    <th>Rule Name</th>
+                                    <th>Room Type</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
                                     <th>Multiplier</th>
@@ -89,29 +94,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><strong>Summer Peak Season</strong></td>
-                                    <td>01/06/2026</td>
-                                    <td>31/08/2026</td>
-                                    <td><strong>x 1.5</strong></td>
+                                <tr th:each="r : ${pricingRules}">
+                                    <td><strong th:text="${r.roomType}">Summer Peak Season</strong></td>
+                                    <td th:text="${r.startDate}">01/06/2026</td>
+                                    <td th:text="${r.endDate}">31/08/2026</td>
+                                    <td><strong th:text="|x ${r.multiplier}|">x 1.5</strong></td>
                                     <td><span class="status status-success">ACTIVE</span></td>
                                     <td>
                                         <div style="display: flex; gap: 8px; justify-content: center;">
-                                            <button type="button" class="btn outline-btn edit-rule-btn btn-small">Edit</button>
+                                            <button type="button"
+                                                class="btn outline-btn edit-rule-btn btn-small">Edit</button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td><strong>New Year Eve</strong></td>
-                                    <td>30/12/2025</td>
-                                    <td>02/01/2026</td>
-                                    <td><strong>x 2.0</strong></td>
-                                    <td><span class="status">EXPIRED</span></td>
-                                    <td>
-                                        <div style="display: flex; gap: 8px; justify-content: center;">
-                                            <button type="button" class="btn outline-btn edit-rule-btn btn-small">Edit</button>
-                                        </div>
-                                    </td>
+                                <tr th:if="${#lists.isEmpty(pricingRules)}">
+                                    <td colspan="6" class="text-center" style="padding: 20px; color: var(--gray-500);">
+                                        No seasonal pricing rules configured.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -125,10 +123,11 @@
                             <h2>Promotional Discount Codes</h2>
                         </div>
                         <div class="filter-options">
-                            <button type="button" class="btn btn-cta btn-medium" id="addDiscountBtn">Add Discount</button>
+                            <button type="button" class="btn btn-cta btn-medium" id="addDiscountBtn">Add
+                                Discount</button>
                         </div>
                     </div>
-                    
+
                     <div class="table-wrapper">
                         <table class="activity-table">
                             <thead>
@@ -142,29 +141,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><strong>SUMMER26</strong></td>
-                                    <td>Percentage</td>
-                                    <td><strong>10%</strong></td>
-                                    <td>31/08/2026</td>
-                                    <td><span class="status status-success">ACTIVE</span></td>
+                                <tr th:each="d : ${discounts}">
+                                    <td><strong th:text="${d.code}">SUMMER26</strong></td>
+                                    <td th:text="${d.type}">Percentage</td>
+                                    <td><strong th:text="${d.discountValue}">10%</strong></td>
+                                    <td th:text="${d.endDate != null ? d.endDate : 'No expiry'}">31/08/2026</td>
+                                    <td><span th:class="|status ${d.isActive ? 'status-success' : 'status-error'}|"
+                                            th:text="${d.isActive ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span></td>
                                     <td>
                                         <div style="display: flex; gap: 8px; justify-content: center;">
-                                            <button type="button" class="btn outline-btn edit-discount-btn btn-small">Edit</button>
+                                            <button type="button"
+                                                class="btn outline-btn edit-discount-btn btn-small">Edit</button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td><strong>WELCOME500</strong></td>
-                                    <td>Fixed Amount</td>
-                                    <td><strong>500,000 VND</strong></td>
-                                    <td>31/12/2026</td>
-                                    <td><span class="status status-success">ACTIVE</span></td>
-                                    <td>
-                                        <div style="display: flex; gap: 8px; justify-content: center;">
-                                            <button type="button" class="btn outline-btn edit-discount-btn btn-small">Edit</button>
-                                        </div>
-                                    </td>
+                                <tr th:if="${#lists.isEmpty(discounts)}">
+                                    <td colspan="6" class="text-center" style="padding: 20px; color: var(--gray-500);">
+                                        No discount codes found.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -183,7 +176,8 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <form id="ruleForm">
+            <form id="ruleForm" th:action="@{/manager/pricing/rules/save}" method="post">
+                <input type="hidden" name="roomType" value="STANDARD">
                 <div class="modal-body">
                     <div class="modal-form-grid">
                         <div class="form-group">
@@ -192,15 +186,16 @@
                         </div>
                         <div class="form-group">
                             <label>Start Date <span>*</span></label>
-                            <input type="date" id="ruleStartDate" required>
+                            <input type="date" id="ruleStartDate" name="startDate" required>
                         </div>
                         <div class="form-group">
                             <label>End Date <span>*</span></label>
-                            <input type="date" id="ruleEndDate" required>
+                            <input type="date" id="ruleEndDate" name="endDate" required>
                         </div>
                         <div class="form-group">
                             <label>Multiplier <span>*</span></label>
-                            <input type="number" id="ruleMultiplier" required min="0.1" step="0.1" placeholder="e.g. 1.5">
+                            <input type="number" id="ruleMultiplier" name="multiplier" required min="0.1" step="0.1"
+                                placeholder="e.g. 1.5">
                         </div>
                         <div class="form-group">
                             <label>Status <span>*</span></label>
@@ -235,16 +230,17 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <form id="discountForm">
+            <form id="discountForm" th:action="@{/manager/pricing/discounts/save}" method="post">
                 <div class="modal-body">
                     <div class="modal-form-grid">
                         <div class="form-group">
                             <label>Code <span>*</span></label>
-                            <input type="text" id="discountCode" required placeholder="e.g. SUMMER26" style="text-transform: uppercase;">
+                            <input type="text" id="discountCode" name="code" required placeholder="e.g. SUMMER26"
+                                style="text-transform: uppercase;">
                         </div>
                         <div class="form-group">
                             <label>Discount Type <span>*</span></label>
-                            <input type="hidden" id="discountType" value="PERCENTAGE" required>
+                            <input type="hidden" id="discountType" name="type" value="PERCENTAGE" required>
                             <div class="filter-dropdown form-filter-dropdown" data-input="discountType">
                                 <button class="filter-btn form-filter-btn" type="button">
                                     <span class="filter-label"><strong>Percentage</strong></span>
@@ -252,17 +248,19 @@
                                 </button>
                                 <div class="filter-menu form-filter-menu">
                                     <button type="button" data-value="PERCENTAGE"><strong>Percentage</strong></button>
-                                    <button type="button" data-value="FIXED"><strong>Fixed Amount</strong></button>
+                                    <button type="button" data-value="FIXED_AMOUNT"><strong>Fixed
+                                            Amount</strong></button>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Value <span>*</span></label>
-                            <input type="number" id="discountValue" required min="1" placeholder="e.g. 10">
+                            <input type="number" id="discountValue" name="discountValue" required min="1"
+                                placeholder="e.g. 10">
                         </div>
                         <div class="form-group">
                             <label>Valid Until <span>*</span></label>
-                            <input type="date" id="discountExpiry" required>
+                            <input type="date" id="discountExpiry" name="endDate" required>
                         </div>
                         <div class="form-group">
                             <label>Status <span>*</span></label>

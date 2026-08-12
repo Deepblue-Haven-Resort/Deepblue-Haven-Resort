@@ -36,6 +36,47 @@ document.addEventListener("DOMContentLoaded", () => {
     let identityRequestSequence = 0;
     const totalSteps = 5;
 
+    // Cloudinary Worker Avatar Upload
+    const uploadWorkerAvatarBtn = document.getElementById('uploadWorkerAvatarBtn');
+    const workerAvatarFileInput = document.getElementById('workerAvatarFileInput');
+    const avatarUrlInput = document.getElementById('avatarUrl');
+    const workerAvatarPreview = document.getElementById('workerAvatarPreview');
+    const workerAvatarPreviewBox = document.getElementById('workerAvatarPreviewBox');
+
+    if (uploadWorkerAvatarBtn && workerAvatarFileInput) {
+        uploadWorkerAvatarBtn.addEventListener('click', () => workerAvatarFileInput.click());
+        workerAvatarFileInput.addEventListener('change', async () => {
+            const file = workerAvatarFileInput.files[0];
+            if (!file) return;
+
+            const code = employeeCodeInput?.value?.trim() || usernameInput?.value?.trim() || fullNameInput?.value?.trim() || 'new-worker';
+            const folder = 'deepbluehaven/workers/worker-' + code.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', folder);
+
+            try {
+                let ctx = document.querySelector('meta[name="_context_path"]')?.content;
+                if (!ctx || ctx === "/") {
+                    ctx = window.location.pathname.startsWith('/deepbluehaven') ? '/deepbluehaven' : '';
+                }
+                const apiUrl = ctx.replace(/\/$/, '') + '/api/upload/image';
+                const res = await fetch(apiUrl, { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success && data.url) {
+                    if (avatarUrlInput) avatarUrlInput.value = data.url;
+                    if (workerAvatarPreview) workerAvatarPreview.src = data.url;
+                    if (workerAvatarPreviewBox) workerAvatarPreviewBox.style.display = 'block';
+                    alert('Worker avatar uploaded to Cloudinary successfully!');
+                } else {
+                    alert(data.message || 'Upload failed');
+                }
+            } catch (err) {
+                alert('Cloudinary upload failed');
+            }
+        });
+    }
+
     const roleConfig = {
         HOUSEKEEPER: {
             department: "HOUSEKEEPING",

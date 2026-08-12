@@ -62,7 +62,18 @@ public class WorkerProfile {
     @Column(name = "performance_score", nullable = true)
     private Double performanceScore = 90.0;
 
+    @Column(name = "avatar_url", nullable = true, length = 550)
+    private String avatarUrl;
+
     public WorkerProfile() {
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public Double getPerformanceScore() {

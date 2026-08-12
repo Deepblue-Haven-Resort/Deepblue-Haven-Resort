@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
-    
+
     <!-- Đồng bộ stylesheet: Sử dụng admin-sidebar.css của toàn hệ thống và css Lễ tân -->
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
@@ -18,300 +19,328 @@
 </head>
 
 <body>
-<!-- Dùng cấu trúc chuẩn admin-layout và admin-main để thừa hưởng responsive từ sidebar hệ thống -->
-<div class="admin-layout">
+    <!-- Dùng cấu trúc chuẩn admin-layout và admin-main để thừa hưởng responsive từ sidebar hệ thống -->
+    <div class="admin-layout">
 
-    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar(activePage='guests')}"></div>
+        <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar(activePage='guests')}"></div>
 
-    <main class="admin-main">
+        <main class="admin-main">
 
-        <!-- Đồng bộ sang lớp panel của Lễ tân để thừa hưởng CSS responsive bảng -->
-        <section class="reception-panel">
+            <!-- Đồng bộ sang lớp panel của Lễ tân để thừa hưởng CSS responsive bảng -->
+            <section class="reception-panel">
 
-            <div class="panel-header">
-                <div>
-                    <h2><strong>Guest Directory & Registration</strong></h2>
+                <div class="panel-header">
+                    <div>
+                        <h2><strong>Guest Directory & Registration</strong></h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-12);">
+                        <button class="btn btn-small btn-cta" id="registerGuestBtn">
+                            <i class="fa-solid fa-user-plus"></i> Register New Guest
+                        </button>
+                    </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: var(--space-12);">
-                    <button class="btn btn-small btn-cta" id="registerGuestBtn">
-                        <i class="fa-solid fa-user-plus"></i> Register New Guest
-                    </button>
+
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search by guest name, passport, or email...">
+                    </div>
                 </div>
-            </div>
 
-            <div class="filter-bar">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search by guest name, passport, or email...">
+                <div class="table-wrapper">
+                    <!-- ĐỔI TÊN CLASS THÀNH activity-table ĐỂ ĐỒNG BỘ CSS RESPONSIVE BẢNG LỄ TÂN -->
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Guest Name</th>
+                                <th>Identity / Passport</th>
+                                <th>Contact Email</th>
+                                <th>Phone Number</th>
+                                <th>Total Stays</th>
+                                <th>VIP Level</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
+                                        <div class="user-avatar"
+                                            style="background: var(--primary-600); color: white; width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem;">
+                                            AW</div>
+                                        <div>
+                                            <strong
+                                                style="display: block; color: #0f172a; font-size: 0.925rem;">Alexander
+                                                Wright</strong>
+                                            <span
+                                                style="display: block; color: #64748b; font-size: 0.8rem; margin-top: 2px;">United
+                                                States</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>US-9920148</td>
+                                <td>alex.wright@example.com</td>
+                                <td>+1 415 892 3401</td>
+                                <td>4 Stays</td>
+                                <td><span class="badge-vip-gold">GOLD VIP</span></td>
+                                <td>
+                                    <button class="btn btn-small btn-cta edit-guest-btn" style="opacity: 0.65;"
+                                        data-name="Alexander Wright" data-passport="US-9920148"
+                                        data-email="alex.wright@example.com" data-phone="+1 415 892 3401"
+                                        data-vip="GOLD" data-note="Prefers high floor">Profile</button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
+                                        <div class="user-avatar"
+                                            style="background: var(--neutral-400); color: white; width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem;">
+                                            SM</div>
+                                        <div>
+                                            <strong style="display: block; color: #0f172a; font-size: 0.925rem;">Sophia
+                                                Martinez</strong>
+                                            <span
+                                                style="display: block; color: #64748b; font-size: 0.8rem; margin-top: 2px;">Vietnam</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>07919823019</td>
+                                <td>sophia.m@example.com</td>
+                                <td>+84 908 112 334</td>
+                                <td>2 Stays</td>
+                                <td><span class="badge-vip-silver">SILVER</span></td>
+                                <td>
+                                    <button class="btn btn-small btn-cta edit-guest-btn" style="opacity: 0.65;"
+                                        data-name="Sophia Martinez" data-passport="07919823019"
+                                        data-email="sophia.m@example.com" data-phone="+84 908 112 334" data-vip="SILVER"
+                                        data-note="">Profile</button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
+                                        <div class="user-avatar"
+                                            style="background: linear-gradient(135deg, #c8e6f0, #90c8dc); color: #0a4864; width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem;">
+                                            DC</div>
+                                        <div>
+                                            <strong style="display: block; color: #0f172a; font-size: 0.925rem;">David
+                                                Chen</strong>
+                                            <span
+                                                style="display: block; color: #64748b; font-size: 0.8rem; margin-top: 2px;">Hong
+                                                Kong</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>HK-881029</td>
+                                <td>david.chen@example.com</td>
+                                <td>+852 9123 4567</td>
+                                <td>8 Stays</td>
+                                <td><span class="badge-vip-platinum">PLATINUM VIP</span></td>
+                                <td>
+                                    <button class="btn btn-small btn-cta edit-guest-btn" style="opacity: 0.65;"
+                                        data-name="David Chen" data-passport="HK-881029"
+                                        data-email="david.chen@example.com" data-phone="+852 9123 4567"
+                                        data-vip="PLATINUM" data-note="VIP guest, suite only">Profile</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
 
-            <div class="table-wrapper">
-                <!-- ĐỔI TÊN CLASS THÀNH activity-table ĐỂ ĐỒNG BỘ CSS RESPONSIVE BẢNG LỄ TÂN -->
-                <table class="activity-table">
-                    <thead>
-                    <tr>
-                        <th>Guest Name</th>
-                        <th>Identity / Passport</th>
-                        <th>Contact Email</th>
-                        <th>Phone Number</th>
-                        <th>Total Stays</th>
-                        <th>VIP Level</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
+                <div class="table-footer">
+                    <p>Showing <strong>1-3</strong> of <strong>18</strong> entries</p>
 
-                    <tbody>
-                    <tr>
-                        <td>
-                            <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
-                                <div class="user-avatar" style="background: var(--primary-600); color: white; width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem;">AW</div>
-                                <div>
-                                    <strong style="display: block; color: #0f172a; font-size: 0.925rem;">Alexander Wright</strong>
-                                    <span style="display: block; color: #64748b; font-size: 0.8rem; margin-top: 2px;">United States</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>US-9920148</td>
-                        <td>alex.wright@example.com</td>
-                        <td>+1 415 892 3401</td>
-                        <td>4 Stays</td>
-                        <td><span class="badge-vip-gold">GOLD VIP</span></td>
-                        <td>
-                            <button class="btn btn-small btn-cta edit-guest-btn" style="opacity: 0.65;"
-                                data-name="Alexander Wright" data-passport="US-9920148" data-email="alex.wright@example.com" data-phone="+1 415 892 3401" data-vip="GOLD" data-note="Prefers high floor">Profile</button>
-                        </td>
-                    </tr>
+                    <div class="pagination">
+                        <button type="button" class="page-btn disabled">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
 
-                    <tr>
-                        <td>
-                            <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
-                                <div class="user-avatar" style="background: var(--neutral-400); color: white; width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem;">SM</div>
-                                <div>
-                                    <strong style="display: block; color: #0f172a; font-size: 0.925rem;">Sophia Martinez</strong>
-                                    <span style="display: block; color: #64748b; font-size: 0.8rem; margin-top: 2px;">Vietnam</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>07919823019</td>
-                        <td>sophia.m@example.com</td>
-                        <td>+84 908 112 334</td>
-                        <td>2 Stays</td>
-                        <td><span class="badge-vip-silver">SILVER</span></td>
-                        <td>
-                            <button class="btn btn-small btn-cta edit-guest-btn" style="opacity: 0.65;"
-                                data-name="Sophia Martinez" data-passport="07919823019" data-email="sophia.m@example.com" data-phone="+84 908 112 334" data-vip="SILVER" data-note="">Profile</button>
-                        </td>
-                    </tr>
+                        <button type="button" class="page-btn active">1</button>
+                        <button type="button" class="page-btn">2</button>
 
-                    <tr>
-                        <td>
-                            <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
-                                <div class="user-avatar" style="background: linear-gradient(135deg, #c8e6f0, #90c8dc); color: #0a4864; width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem;">DC</div>
-                                <div>
-                                    <strong style="display: block; color: #0f172a; font-size: 0.925rem;">David Chen</strong>
-                                    <span style="display: block; color: #64748b; font-size: 0.8rem; margin-top: 2px;">Hong Kong</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>HK-881029</td>
-                        <td>david.chen@example.com</td>
-                        <td>+852 9123 4567</td>
-                        <td>8 Stays</td>
-                        <td><span class="badge-vip-platinum">PLATINUM VIP</span></td>
-                        <td>
-                            <button class="btn btn-small btn-cta edit-guest-btn" style="opacity: 0.65;"
-                                data-name="David Chen" data-passport="HK-881029" data-email="david.chen@example.com" data-phone="+852 9123 4567" data-vip="PLATINUM" data-note="VIP guest, suite only">Profile</button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="table-footer">
-                <p>Showing <strong>1-3</strong> of <strong>18</strong> entries</p>
-
-                <div class="pagination">
-                    <button type="button" class="page-btn disabled">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-
-                    <button type="button" class="page-btn active">1</button>
-                    <button type="button" class="page-btn">2</button>
-
-                    <button type="button" class="page-btn">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
+                        <button type="button" class="page-btn">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-        </section>
+            </section>
 
-    </main>
-</div>
+        </main>
+    </div>
 
-<!-- Scripts: Sử dụng file admin-sidebar.js thống nhất hệ thống -->
-<script th:src="@{/js/admin-sidebar.js}"></script>
+    <!-- Scripts: Sử dụng file admin-sidebar.js thống nhất hệ thống -->
+    <script th:src="@{/js/admin-sidebar.js}"></script>
 
-<!-- ============================================================
+    <!-- ============================================================
      MODAL: Edit / View Guest Profile
      ============================================================ -->
-<div class="modal-overlay" id="editGuestModal">
-    <div class="modal-container">
-        <div class="modal-header">
-            <h3><i class="fa-solid fa-id-card"></i> Guest Profile</h3>
-            <button type="button" class="modal-close" id="closeEditGuestModal"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <form id="editGuestForm">
-            <div class="modal-body">
-                <div class="modal-form-grid">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="guestName" placeholder="Full name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Identity / Passport No.</label>
-                        <input type="text" id="guestPassport" placeholder="Passport or CMND number" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="tel" id="guestPhone" placeholder="e.g. +84 901 234 567">
-                    </div>
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" id="guestEmail" placeholder="guest@example.com">
-                    </div>
-                    <div class="form-group">
-                        <label>VIP / Membership Level</label>
-                        <input type="hidden" id="guestVip" value="NONE">
-                        <div class="filter-dropdown form-filter-dropdown" data-input="guestVip">
-                            <button class="filter-btn form-filter-btn" type="button">
-                                <span class="filter-label"><strong>Select Level</strong></span>
-                                <i class="fa-solid fa-chevron-down"></i>
-                            </button>
-                            <div class="filter-menu form-filter-menu">
-                                <button type="button" data-value="NONE"><strong>None (Regular)</strong></button>
-                                <button type="button" data-value="SILVER"><strong>Silver</strong></button>
-                                <button type="button" data-value="GOLD"><strong>Gold VIP</strong></button>
-                                <button type="button" data-value="PLATINUM"><strong>Platinum VIP</strong></button>
+    <div class="modal-overlay" id="editGuestModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-id-card"></i> Guest Profile</h3>
+                <button type="button" class="modal-close" id="closeEditGuestModal"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="editGuestForm">
+                <div class="modal-body">
+                    <div class="modal-form-grid">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="guestName" placeholder="Full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Identity / Passport No.</label>
+                            <input type="text" id="guestPassport" placeholder="Passport or CMND number" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="guestPhone" placeholder="e.g. +84 901 234 567">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="guestEmail" placeholder="guest@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>VIP / Membership Level</label>
+                            <input type="hidden" id="guestVip" value="NONE">
+                            <div class="filter-dropdown form-filter-dropdown" data-input="guestVip">
+                                <button class="filter-btn form-filter-btn" type="button">
+                                    <span class="filter-label"><strong>Select Level</strong></span>
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-menu form-filter-menu">
+                                    <button type="button" data-value="NONE"><strong>None (Regular)</strong></button>
+                                    <button type="button" data-value="SILVER"><strong>Silver</strong></button>
+                                    <button type="button" data-value="GOLD"><strong>Gold VIP</strong></button>
+                                    <button type="button" data-value="PLATINUM"><strong>Platinum VIP</strong></button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Special Notes</label>
-                        <textarea id="guestNote" placeholder="Dietary restrictions, room preferences, allergies…" rows="3" style="resize:vertical;"></textarea>
+                        <div class="form-group">
+                            <label>Special Notes</label>
+                            <textarea id="guestNote" placeholder="Dietary restrictions, room preferences, allergies…"
+                                rows="3" style="resize:vertical;"></textarea>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn outline-btn" id="cancelEditGuestModal">Cancel</button>
-                <button type="submit" class="btn btn-cta"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
-            </div>
-        </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-btn" id="cancelEditGuestModal">Cancel</button>
+                    <button type="submit" class="btn btn-cta"><i class="fa-solid fa-floppy-disk"></i> Save
+                        Changes</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<!-- ============================================================
+    <!-- ============================================================
      MODAL: Register New Guest
      ============================================================ -->
-<div class="modal-overlay" id="registerGuestModal">
-    <div class="modal-container">
-        <div class="modal-header">
-            <h3><i class="fa-solid fa-user-plus"></i> Register New Guest</h3>
-            <button type="button" class="modal-close" id="closeRegisterGuestModal"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <form id="registerGuestForm">
-            <div class="modal-body">
-                <div class="modal-form-grid">
-                    <div class="form-group">
-                        <label>Full Name <span>*</span></label>
-                        <input type="text" id="regName" placeholder="Full name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Identity / Passport No. <span>*</span></label>
-                        <input type="text" id="regPassport" placeholder="Passport or CMND number" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Phone Number <span>*</span></label>
-                        <input type="tel" id="regPhone" placeholder="e.g. +84 901 234 567" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" id="regEmail" placeholder="guest@example.com">
-                    </div>
-                    <div class="form-group">
-                        <label>Nationality</label>
-                        <input type="text" id="regNationality" placeholder="e.g. Vietnam, United States">
-                    </div>
-                    <div class="form-group">
-                        <label>Special Notes</label>
-                        <textarea id="regNote" placeholder="Dietary restrictions, preferences…" rows="3" style="resize:vertical;"></textarea>
+    <div class="modal-overlay" id="registerGuestModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-plus"></i> Register New Guest</h3>
+                <button type="button" class="modal-close" id="closeRegisterGuestModal"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="registerGuestForm">
+                <div class="modal-body">
+                    <div class="modal-form-grid">
+                        <div class="form-group">
+                            <label>Full Name <span>*</span></label>
+                            <input type="text" id="regName" placeholder="Full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Identity / Passport No. <span>*</span></label>
+                            <input type="text" id="regPassport" placeholder="Passport or CMND number" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number <span>*</span></label>
+                            <input type="tel" id="regPhone" placeholder="e.g. +84 901 234 567" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="regEmail" placeholder="guest@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Nationality</label>
+                            <input type="text" id="regNationality" placeholder="e.g. Vietnam, United States">
+                        </div>
+                        <div class="form-group">
+                            <label>Special Notes</label>
+                            <textarea id="regNote" placeholder="Dietary restrictions, preferences…" rows="3"
+                                style="resize:vertical;"></textarea>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn outline-btn" id="cancelRegisterGuestModal">Cancel</button>
-                <button type="submit" class="btn btn-cta"><i class="fa-solid fa-user-check"></i> Register Guest</button>
-            </div>
-        </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-btn" id="cancelRegisterGuestModal">Cancel</button>
+                    <button type="submit" class="btn btn-cta"><i class="fa-solid fa-user-check"></i> Register
+                        Guest</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-(function() {
-    // --- Dropdown init ---
-    function initDropdowns(container) {
-        const dropdowns = container.querySelectorAll('.filter-dropdown[data-input]');
-        dropdowns.forEach(dd => {
-            const btn = dd.querySelector('.filter-btn, .form-filter-btn');
-            const menu = dd.querySelector('.filter-menu, .form-filter-menu');
-            const label = dd.querySelector('.filter-label strong');
-            const input = document.getElementById(dd.dataset.input);
-            if (btn) btn.addEventListener('click', e => { e.stopPropagation(); dropdowns.forEach(o => o !== dd && o.classList.remove('active')); dd.classList.toggle('active'); });
-            if (menu) menu.querySelectorAll('button').forEach(opt => opt.addEventListener('click', () => { if (label) label.textContent = opt.textContent.trim(); if (input) input.value = opt.dataset.value; dd.classList.remove('active'); }));
-        });
-        document.addEventListener('click', () => dropdowns.forEach(d => d.classList.remove('active')));
-    }
+    <script>
+        (function () {
+            // --- Dropdown init ---
+            function initDropdowns(container) {
+                const dropdowns = container.querySelectorAll('.filter-dropdown[data-input]');
+                dropdowns.forEach(dd => {
+                    const btn = dd.querySelector('.filter-btn, .form-filter-btn');
+                    const menu = dd.querySelector('.filter-menu, .form-filter-menu');
+                    const label = dd.querySelector('.filter-label strong');
+                    const input = document.getElementById(dd.dataset.input);
+                    if (btn) btn.addEventListener('click', e => { e.stopPropagation(); dropdowns.forEach(o => o !== dd && o.classList.remove('active')); dd.classList.toggle('active'); });
+                    if (menu) menu.querySelectorAll('button').forEach(opt => opt.addEventListener('click', () => { if (label) label.textContent = opt.textContent.trim(); if (input) input.value = opt.dataset.value; dd.classList.remove('active'); }));
+                });
+                document.addEventListener('click', () => dropdowns.forEach(d => d.classList.remove('active')));
+            }
 
-    function setDd(inputId, value) {
-        const input = document.getElementById(inputId);
-        const dd = document.querySelector('.filter-dropdown[data-input="' + inputId + '"]');
-        if (!input || !dd) return;
-        input.value = value;
-        const opt = dd.querySelector('.filter-menu button[data-value="' + value + '"]');
-        const lbl = dd.querySelector('.filter-label strong');
-        if (opt && lbl) lbl.textContent = opt.textContent.trim();
-    }
+            function setDd(inputId, value) {
+                const input = document.getElementById(inputId);
+                const dd = document.querySelector('.filter-dropdown[data-input="' + inputId + '"]');
+                if (!input || !dd) return;
+                input.value = value;
+                const opt = dd.querySelector('.filter-menu button[data-value="' + value + '"]');
+                const lbl = dd.querySelector('.filter-label strong');
+                if (opt && lbl) lbl.textContent = opt.textContent.trim();
+            }
 
-    function openModal(id) { document.getElementById(id).classList.add('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+            function openModal(id) { document.getElementById(id).classList.add('active'); }
+            function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-    // --- Edit Guest Modal ---
-    initDropdowns(document.getElementById('editGuestModal'));
+            // --- Edit Guest Modal ---
+            initDropdowns(document.getElementById('editGuestModal'));
 
-    document.querySelectorAll('.edit-guest-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.getElementById('guestName').value    = btn.dataset.name || '';
-            document.getElementById('guestPassport').value = btn.dataset.passport || '';
-            document.getElementById('guestPhone').value   = btn.dataset.phone || '';
-            document.getElementById('guestEmail').value   = btn.dataset.email || '';
-            document.getElementById('guestNote').value    = btn.dataset.note || '';
-            setDd('guestVip', btn.dataset.vip || 'NONE');
-            openModal('editGuestModal');
-        });
-    });
-    document.getElementById('closeEditGuestModal').addEventListener('click',  () => closeModal('editGuestModal'));
-    document.getElementById('cancelEditGuestModal').addEventListener('click', () => closeModal('editGuestModal'));
-    document.getElementById('editGuestModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('editGuestModal'); });
-    document.getElementById('editGuestForm').addEventListener('submit', e => { e.preventDefault(); alert('Guest profile saved!'); closeModal('editGuestModal'); });
+            document.querySelectorAll('.edit-guest-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('guestName').value = btn.dataset.name || '';
+                    document.getElementById('guestPassport').value = btn.dataset.passport || '';
+                    document.getElementById('guestPhone').value = btn.dataset.phone || '';
+                    document.getElementById('guestEmail').value = btn.dataset.email || '';
+                    document.getElementById('guestNote').value = btn.dataset.note || '';
+                    setDd('guestVip', btn.dataset.vip || 'NONE');
+                    openModal('editGuestModal');
+                });
+            });
+            document.getElementById('closeEditGuestModal').addEventListener('click', () => closeModal('editGuestModal'));
+            document.getElementById('cancelEditGuestModal').addEventListener('click', () => closeModal('editGuestModal'));
+            document.getElementById('editGuestModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('editGuestModal'); });
+            document.getElementById('editGuestForm').addEventListener('submit', e => { e.preventDefault(); alert('Guest profile saved!'); closeModal('editGuestModal'); });
 
-    // --- Register Guest Modal ---
-    document.getElementById('registerGuestBtn').addEventListener('click', () => openModal('registerGuestModal'));
-    document.getElementById('closeRegisterGuestModal').addEventListener('click',  () => closeModal('registerGuestModal'));
-    document.getElementById('cancelRegisterGuestModal').addEventListener('click', () => closeModal('registerGuestModal'));
-    document.getElementById('registerGuestModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('registerGuestModal'); });
-    document.getElementById('registerGuestForm').addEventListener('submit', e => { e.preventDefault(); alert('Guest registered!'); closeModal('registerGuestModal'); });
-})();
-</script>
+            // --- Register Guest Modal ---
+            document.getElementById('registerGuestBtn').addEventListener('click', () => openModal('registerGuestModal'));
+            document.getElementById('closeRegisterGuestModal').addEventListener('click', () => closeModal('registerGuestModal'));
+            document.getElementById('cancelRegisterGuestModal').addEventListener('click', () => closeModal('registerGuestModal'));
+            document.getElementById('registerGuestModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('registerGuestModal'); });
+            document.getElementById('registerGuestForm').addEventListener('submit', e => { e.preventDefault(); alert('Guest registered!'); closeModal('registerGuestModal'); });
+        })();
+    </script>
 </body>
+
 </html>

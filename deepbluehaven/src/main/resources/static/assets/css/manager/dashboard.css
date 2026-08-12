@@ -819,3 +819,72 @@
     border-color: var(--success-500, #10b981);
     white-space: nowrap;
 }
+
+/* TABLE FOOTER & PAGINATION */
+.table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-16, 16px);
+    padding: var(--space-16, 16px) 0 0;
+    margin-top: 16px;
+    border-top: var(--border-1, 1px) solid var(--primary-200, #e2e8f0);
+}
+
+.table-footer p {
+    color: var(--neutral-600, #475569);
+    font-size: 0.92rem;
+    font-weight: 500;
+}
+
+.table-footer p strong {
+    color: var(--primary-800, #1e293b);
+    font-weight: 800;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.page-btn {
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--primary-200, #cbd5e1);
+    border-radius: 12px;
+    background: var(--surface-0, #ffffff);
+    color: var(--primary-800, #1e293b);
+    font-size: 0.92rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.22s ease;
+}
+
+.page-btn i {
+    font-size: 0.85rem;
+}
+
+.page-btn:hover {
+    background: var(--primary-100, #f1f5f9);
+    border-color: var(--primary-300, #94a3b8);
+    transform: translateY(-1px);
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, var(--primary-700, #0f172a), var(--primary-500, #334155));
+    color: #ffffff;
+    border-color: var(--primary-600, #1e293b);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.page-btn.disabled,
+.page-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}

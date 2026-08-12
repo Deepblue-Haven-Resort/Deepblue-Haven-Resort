@@ -50,6 +50,13 @@ public class ReceptionistController {
         return "receptionist/dashboard";
     }
 
+    @GetMapping("/bookings")
+    public String bookingsPage(Model model) {
+        model.addAttribute("bookings", bookingService.getAllBookingsForStaff());
+        model.addAttribute("activePage", "bookings");
+        return "receptionist/bookings";
+    }
+
     @GetMapping("/check-in")
     public String checkInPage(Model model) {
         List<ReceptionistDTO.CheckInQueueItem> checkInQueue = receptionistService.getPendingCheckInQueue();

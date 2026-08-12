@@ -23,4 +23,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<Invoice> findByBookingId(Long bookingId);
 
     List<Invoice> findByCustomerId(Long customerId);
+
+    @Query("SELECT DISTINCT i FROM Invoice i LEFT JOIN FETCH i.booking b LEFT JOIN FETCH b.customer c LEFT JOIN FETCH c.profile p ORDER BY i.timestamp DESC")
+    List<Invoice> findAllWithBookingAndCustomer();
 }

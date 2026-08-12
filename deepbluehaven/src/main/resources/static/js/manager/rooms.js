@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
         addBtn.addEventListener('click', () => {
             title.textContent = 'Add New Room';
             form.reset();
+            if (document.getElementById('roomId')) document.getElementById('roomId').value = '';
+            if (document.getElementById('roomImageUrl')) document.getElementById('roomImageUrl').value = '';
+            if (document.getElementById('roomImagePreviewBox')) document.getElementById('roomImagePreviewBox').style.display = 'none';
+            window.setDropdownValue('roomType', 'STANDARD');
+            window.setDropdownValue('roomStatus', 'AVAILABLE');
             modal.classList.add('active');
         });
     }
@@ -36,48 +41,34 @@ document.addEventListener('DOMContentLoaded', () => {
     editBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const row = e.target.closest('tr');
-            const roomNum = row.querySelector('td:nth-child(1)').textContent.trim();
-            const roomType = row.querySelector('td:nth-child(2)').textContent.trim();
-            const capacityStr = row.querySelector('td:nth-child(3)').textContent.trim();
-            const priceStr = row.querySelector('td:nth-child(4)').textContent.trim();
+            const id = row.dataset.id || '';
+            const roomNum = row.dataset.number || row.querySelector('td:nth-child(1)').textContent.replace(/\D/g, '');
+            const roomType = row.dataset.type || 'STANDARD';
+            const capacity = row.dataset.capacity || '2';
+            const price = row.dataset.price || '1000000';
+            const area = row.dataset.area || '';
+            const status = row.dataset.status || 'AVAILABLE';
+            const existingImg = row.dataset.image || '';
             
-            // Basic parsing for demo
             title.textContent = 'Edit Room ' + roomNum;
+            if (document.getElementById('roomId')) document.getElementById('roomId').value = id;
             document.getElementById('roomNumber').value = roomNum;
+            window.setDropdownValue('roomType', roomType);
+            document.getElementById('capacity').value = capacity;
+            document.getElementById('basePrice').value = price;
+            if (document.getElementById('area')) document.getElementById('area').value = area;
+            window.setDropdownValue('roomStatus', status);
             
-            if (roomType.includes('Premium')) window.setDropdownValue('roomType', 'PREMIUM');
-            else if (roomType.includes('Deluxe')) window.setDropdownValue('roomType', 'DELUXE');
-            else window.setDropdownValue('roomType', 'STANDARD');
-            
-            document.getElementById('capacity').value = capacityStr.replace(/\D/g, '');
-            document.getElementById('basePrice').value = priceStr.replace(/\D/g, '');
-            
+            if (document.getElementById('roomImageUrl')) document.getElementById('roomImageUrl').value = existingImg;
+            if (document.getElementById('roomImagePreview') && existingImg) {
+                document.getElementById('roomImagePreview').src = existingImg;
+                document.getElementById('roomImagePreviewBox').style.display = 'block';
+            } else if (document.getElementById('roomImagePreviewBox')) {
+                document.getElementById('roomImagePreviewBox').style.display = 'none';
+            }
+
             modal.classList.add('active');
         });
-    });
-
-    // Handle Maintenance Buttons
-    const maintenanceBtns = document.querySelectorAll('.maintenance-btn');
-    maintenanceBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const row = e.target.closest('tr');
-            const roomNum = row.querySelector('td:nth-child(1)').textContent.trim();
-            
-            if (confirm(`Are you sure you want to set ${roomNum} to Maintenance?`)) {
-                // Change status cell
-                const statusCell = row.querySelector('td:nth-child(5)');
-                statusCell.innerHTML = '<span class="status status-danger">MAINTENANCE</span>';
-                alert(`${roomNum} is now under maintenance.`);
-            }
-        });
-    });
-
-    // Form submission
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert('Room saved successfully!');
-        closeModal();
-        // In a real app, this would refresh the table or add a new row
     });
 
     // --- Modal Logic (Assign Task) ---
@@ -93,22 +84,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.assign-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const row = e.target.closest('tr');
-            const roomNum = row.querySelector('td:nth-child(1)').textContent.trim();
+            const roomId = btn.dataset.roomId || row.dataset.id || '';
+            const roomNum = btn.dataset.roomNumber || row.dataset.number || '';
+            if (document.getElementById('assignRoomId')) {
+                document.getElementById('assignRoomId').value = roomId;
+            }
             if (document.getElementById('taskRoomNumber')) {
-                document.getElementById('taskRoomNumber').value = roomNum;
+                document.getElementById('taskRoomNumber').value = 'Room ' + roomNum;
             }
             if (assignForm) assignForm.reset();
+            window.setDropdownValue('taskType', 'Cleaning & Prep');
             if (assignModal) assignModal.classList.add('active');
         });
     });
-
-    if (assignForm) {
-        assignForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Task assigned successfully!');
-            closeAssignModal();
-        });
-    }
 
     if (assignModal) {
         assignModal.addEventListener('click', (e) => {
@@ -173,4 +161,53 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
+
+    // Cloudinary Room Image Upload
+    const uploadRoomImageBtn = document.getElementById('uploadRoomImageBtn');
+    const roomImageFileInput = document.getElementById('roomImageFileInput');
+    const roomImageUrlInput = document.getElementById('roomImageUrl');
+    const roomImagePreview = document.getElementById('roomImagePreview');
+    const roomImagePreviewBox = document.getElementById('roomImagePreviewBox');
+
+    if (uploadRoomImageBtn && roomImageFileInput) {
+        uploadRoomImageBtn.addEventListener('click', () => {
+            roomImageFileInput.click();
+        });
+
+        roomImageFileInput.addEventListener('change', async () => {
+            const file = roomImageFileInput.files[0];
+            if (!file) return;
+
+            const roomId = document.getElementById('roomId')?.value?.trim();
+            const rawRoomNum = document.getElementById('roomNumber')?.value?.trim() || 'new-room';
+            const slug = rawRoomNum.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            const roomFolder = 'deepbluehaven/rooms/room-' + (roomId ? roomId : slug);
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', roomFolder);
+
+            try {
+                let ctx = document.querySelector('meta[name="_context_path"]')?.content;
+                if (!ctx || ctx === "/") {
+                    ctx = window.location.pathname.startsWith('/deepbluehaven') ? '/deepbluehaven' : '';
+                }
+                const apiUrl = ctx.replace(/\/$/, '') + '/api/upload/image';
+                const res = await fetch(apiUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success && data.url) {
+                    if (roomImageUrlInput) roomImageUrlInput.value = data.url;
+                    if (roomImagePreview) roomImagePreview.src = data.url;
+                    if (roomImagePreviewBox) roomImagePreviewBox.style.display = 'block';
+                    alert('Room image uploaded to Cloudinary successfully!');
+                } else {
+                    alert(data.message || 'Upload failed');
+                }
+            } catch (err) {
+                alert('Upload request failed.');
+            }
+        });
+    }
 });

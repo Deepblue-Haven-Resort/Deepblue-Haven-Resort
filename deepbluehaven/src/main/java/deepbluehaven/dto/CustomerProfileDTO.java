@@ -25,7 +25,16 @@ public class CustomerProfileDTO {
         @Email(message = "Must be a valid email format")
         private String email;
 
+        private String avatarUrl;
+
         public Request() {}
+
+        public String getAvatarUrl() {
+            return avatarUrl;
+        }
+        public void setAvatarUrl(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
+        }
 
         public LocalDate getBirthDay() { 
             return birthDay; }
@@ -54,6 +63,7 @@ public class CustomerProfileDTO {
         private String fullName;
         private String phoneNumber;
         private String email;
+        private String avatarUrl;
         private Integer totalBookings;
         private BigDecimal totalSpent;
         private Integer totalPoints;
@@ -61,6 +71,13 @@ public class CustomerProfileDTO {
         private Long membershipTierId;
 
         public Response() {}
+
+        public String getAvatarUrl() {
+            return avatarUrl;
+        }
+        public void setAvatarUrl(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
+        }
 
         public Long getCustomerId() { 
             return customerId; }
