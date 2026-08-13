@@ -16,6 +16,10 @@
             <i class="fa-solid fa-users-gear"></i>
             <span>Account Management</span>
         </a>
+        <a th:href="@{/admin/logs}" th:class="${activePage == 'logs'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Audit Logs</span>
+        </a>
         <a th:href="@{/admin/reports}" th:class="${activePage == 'reports'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-file-lines"></i>
             <span>Reports</span>

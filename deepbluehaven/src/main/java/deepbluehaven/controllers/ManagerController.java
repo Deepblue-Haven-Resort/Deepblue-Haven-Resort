@@ -18,7 +18,9 @@ import deepbluehaven.pojo.PricingRule;
 import deepbluehaven.pojo.Room;
 import deepbluehaven.pojo.Task;
 import deepbluehaven.pojo.Worker;
+import deepbluehaven.pojo.enums.ActionCode;
 import deepbluehaven.pojo.enums.DiscountType;
+import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.pojo.enums.Role;
 import deepbluehaven.pojo.enums.RoomStatus;
 import deepbluehaven.pojo.enums.RoomType;
@@ -33,6 +35,7 @@ import deepbluehaven.repositories.TaskRepository;
 import deepbluehaven.repositories.TaskTypeRepository;
 import deepbluehaven.repositories.WorkerRepository;
 import deepbluehaven.services.BookingService;
+import deepbluehaven.services.LogService;
 import deepbluehaven.services.ManagerDashboardService;
 
 import deepbluehaven.pojo.Resort;
@@ -55,6 +58,7 @@ public class ManagerController {
     private final TaskTypeRepository taskTypeRepository;
     private final InvoiceRepository invoiceRepository;
     private final ResortRepository resortRepository;
+    private final LogService logService;
 
     public ManagerController(ManagerDashboardService managerDashboardService,
                              BookingService bookingService,
@@ -66,7 +70,8 @@ public class ManagerController {
                              TaskRepository taskRepository,
                              TaskTypeRepository taskTypeRepository,
                              InvoiceRepository invoiceRepository,
-                             ResortRepository resortRepository) {
+                             ResortRepository resortRepository,
+                             LogService logService) {
         this.managerDashboardService = managerDashboardService;
         this.bookingService = bookingService;
         this.pricingRuleRepository = pricingRuleRepository;
@@ -78,12 +83,15 @@ public class ManagerController {
         this.taskTypeRepository = taskTypeRepository;
         this.invoiceRepository = invoiceRepository;
         this.resortRepository = resortRepository;
+        this.logService = logService;
     }
 
     @GetMapping("/manager/dashboard")
     public String managerDashboard(Model model) {
         ManagerDashboardDTO dashboardData = managerDashboardService.getDashboardData();
         model.addAttribute("dashboardData", dashboardData);
+        model.addAttribute("recentLogs", logService.getRecentManagerOperationalLogs());
+        model.addAttribute("recentBookingLogs", logService.getRecentManagerBookingLogs());
         model.addAttribute("activePage", "dashboard");
 
         return "manager/dashboard";
@@ -144,12 +152,19 @@ public class ManagerController {
         return "manager/pricing";
     }
 
+    private Long getLoggedInWorkerId(jakarta.servlet.http.HttpSession session) {
+        if (session == null) return null;
+        Object id = session.getAttribute("loggedInWorkerId");
+        return id instanceof Long ? (Long) id : null;
+    }
+
     @PostMapping("/manager/pricing/rules/save")
     public String savePricingRule(@RequestParam String roomType,
                                   @RequestParam BigDecimal multiplier,
                                   @RequestParam String startDate,
                                   @RequestParam String endDate,
-                                  RedirectAttributes redirectAttrs) {
+                                  RedirectAttributes redirectAttrs,
+                                  jakarta.servlet.http.HttpSession session) {
         try {
             RoomType rt;
             try {
@@ -166,6 +181,10 @@ public class ManagerController {
             rule.setStartDate(LocalDate.parse(startDate));
             rule.setEndDate(LocalDate.parse(endDate));
             pricingRuleRepository.save(rule);
+
+            logService.log(ObjectType.SYSTEM, ActionCode.UPDATE, rule.getId(),
+                    "Manager created pricing rule for " + rt + " (multiplier: " + multiplier + ")", session);
+
             redirectAttrs.addFlashAttribute("successMessage", "Pricing rule saved successfully!");
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to save pricing rule: " + e.getMessage());
@@ -178,7 +197,8 @@ public class ManagerController {
                                @RequestParam String type,
                                @RequestParam BigDecimal discountValue,
                                @RequestParam(required = false) String endDate,
-                               RedirectAttributes redirectAttrs) {
+                               RedirectAttributes redirectAttrs,
+                               jakarta.servlet.http.HttpSession session) {
         try {
             DiscountType dt;
             try {
@@ -197,6 +217,10 @@ public class ManagerController {
             }
             discount.setIsActive(true);
             discountRepository.save(discount);
+
+            logService.log(ObjectType.SYSTEM, ActionCode.UPDATE, discount.getId(),
+                    "Manager created discount code: " + code.toUpperCase(), session);
+
             redirectAttrs.addFlashAttribute("successMessage", "Discount code saved successfully!");
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to save discount: " + e.getMessage());
@@ -207,11 +231,20 @@ public class ManagerController {
     @PostMapping("/manager/rooms/{id}/status")
     public String updateRoomStatus(@PathVariable Long id,
                                    @RequestParam RoomStatus status,
-                                   RedirectAttributes redirectAttrs) {
+                                   RedirectAttributes redirectAttrs,
+                                   jakarta.servlet.http.HttpSession session) {
         try {
             Room room = roomRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Room not found"));
+            RoomStatus oldStatus = room.getStatus();
             room.setStatus(status);
             roomRepository.save(room);
+
+            Worker worker = null;
+            Long wId = getLoggedInWorkerId(session);
+            if (wId != null) worker = workerRepository.findById(wId).orElse(null);
+
+            logService.logRoomStatusChange(room, oldStatus, status, worker);
+
             redirectAttrs.addFlashAttribute("successMessage", "Room #" + room.getRoomNumber() + " status updated to " + status);
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to update room status: " + e.getMessage());
@@ -223,7 +256,8 @@ public class ManagerController {
     public String assignTask(@RequestParam Long roomId,
                              @RequestParam Long assigneeId,
                              @RequestParam(required = false) String action,
-                             RedirectAttributes redirectAttrs) {
+                             RedirectAttributes redirectAttrs,
+                             jakarta.servlet.http.HttpSession session) {
         try {
             Room room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Room not found"));
             Worker assignee = workerRepository.findById(assigneeId).orElseThrow(() -> new IllegalArgumentException("Worker not found"));
@@ -242,8 +276,17 @@ public class ManagerController {
             task.setAction(action != null && !action.isBlank() ? action : "Cleaning and preparing room #" + room.getRoomNumber());
             taskRepository.save(task);
 
+            RoomStatus oldStatus = room.getStatus();
             room.setStatus(RoomStatus.CLEANING);
             roomRepository.save(room);
+
+            Worker worker = null;
+            Long wId = getLoggedInWorkerId(session);
+            if (wId != null) worker = workerRepository.findById(wId).orElse(null);
+
+            logService.logRoomStatusChange(room, oldStatus, RoomStatus.CLEANING, worker);
+            logService.log(ObjectType.WORKER, ActionCode.UPDATE, assigneeId,
+                    "Manager assigned housekeeping task for Room #" + room.getRoomNumber() + " to Worker #" + assigneeId, session);
 
             redirectAttrs.addFlashAttribute("successMessage", "Task assigned to " + (assignee.getProfile() != null ? assignee.getProfile().getFullName() : assignee.getUsername()) + " for Room #" + room.getRoomNumber());
         } catch (Exception e) {
@@ -253,10 +296,14 @@ public class ManagerController {
     }
 
     @PostMapping("/manager/confirm-booking/{id}")
-    public String confirmBooking(@PathVariable("id") Long id, RedirectAttributes redirectAttrs) {
+    public String confirmBooking(@PathVariable("id") Long id, RedirectAttributes redirectAttrs,
+                                 jakarta.servlet.http.HttpSession session) {
         try {
-            boolean success = bookingService.confirmBookingByStaff(id, 1L);
+            Long wId = getLoggedInWorkerId(session);
+            boolean success = bookingService.confirmBookingByStaff(id, wId != null ? wId : 1L);
             if (success) {
+                logService.log(ObjectType.BOOKING, ActionCode.UPDATE, id,
+                        "Manager confirmed booking #" + id, session);
                 redirectAttrs.addFlashAttribute("successMessage", "Booking #" + id + " has been successfully CONFIRMED!");
             } else {
                 redirectAttrs.addFlashAttribute("errorMessage", "Failed to confirm booking #" + id);
@@ -276,7 +323,8 @@ public class ManagerController {
                            @RequestParam(required = false) Integer area,
                            @RequestParam RoomStatus status,
                            @RequestParam(required = false) String imageUrl,
-                           RedirectAttributes redirectAttrs) {
+                           RedirectAttributes redirectAttrs,
+                           jakarta.servlet.http.HttpSession session) {
         try {
             RoomType rt;
             try {
@@ -288,6 +336,7 @@ public class ManagerController {
             }
 
             Room room;
+            boolean isNew = (id == null);
             if (id != null) {
                 room = roomRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Room not found"));
             } else {
@@ -314,6 +363,9 @@ public class ManagerController {
             }
 
             roomRepository.save(room);
+            logService.log(ObjectType.ROOM, isNew ? ActionCode.CREATE : ActionCode.UPDATE, room.getId(),
+                    "Manager saved room #" + roomNumber + " (" + rt + ")", session);
+
             redirectAttrs.addFlashAttribute("successMessage", "Room #" + roomNumber + " saved successfully!");
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to save room: " + e.getMessage());
@@ -328,7 +380,8 @@ public class ManagerController {
                               @RequestParam BigDecimal basePrice,
                               @RequestParam ServiceStatus status,
                               @RequestParam(required = false) String imageUrl,
-                              RedirectAttributes redirectAttrs) {
+                              RedirectAttributes redirectAttrs,
+                              jakarta.servlet.http.HttpSession session) {
         try {
             ServiceCategory serviceCategory;
             try {
@@ -342,6 +395,7 @@ public class ManagerController {
             }
 
             Service service;
+            boolean isNew = (id == null);
             if (id != null) {
                 service = serviceRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Service not found"));
             } else {
@@ -368,6 +422,9 @@ public class ManagerController {
             }
 
             serviceRepository.save(service);
+            logService.log(ObjectType.SERVICE, isNew ? ActionCode.CREATE : ActionCode.UPDATE, service.getId(),
+                    "Manager saved service '" + name + "'", session);
+
             redirectAttrs.addFlashAttribute("successMessage", "Service '" + name + "' saved successfully!");
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to save service: " + e.getMessage());
@@ -378,15 +435,34 @@ public class ManagerController {
     @PostMapping("/manager/services/{id}/status")
     public String updateServiceStatus(@PathVariable Long id,
                                       @RequestParam ServiceStatus status,
-                                      RedirectAttributes redirectAttrs) {
+                                      RedirectAttributes redirectAttrs,
+                                      jakarta.servlet.http.HttpSession session) {
         try {
             Service service = serviceRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Service not found"));
             service.setStatus(status);
             serviceRepository.save(service);
+            logService.log(ObjectType.SERVICE, ActionCode.UPDATE, id,
+                    "Manager updated service status for '" + service.getName() + "' to " + status, session);
             redirectAttrs.addFlashAttribute("successMessage", "Service '" + service.getName() + "' status updated to " + status);
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to update service status: " + e.getMessage());
         }
         return "redirect:/manager/services";
+    }
+
+    @GetMapping("/manager/settings")
+    public String managerSettings(Model model) {
+        model.addAttribute("activePage", "settings");
+        return "manager/settings";
+    }
+
+    @GetMapping("/manager/logs")
+    public String managerLogs(Model model) {
+        model.addAttribute("activePage", "logs");
+        model.addAttribute("operationalLogs", logService.getManagerOperationalLogs());
+        model.addAttribute("bookingLogs", logService.getManagerBookingLogs());
+        model.addAttribute("roomStatusLogs", logService.getManagerRoomStatusLogs());
+        model.addAttribute("invoiceStatusLogs", logService.getManagerInvoiceStatusLogs());
+        return "manager/logs";
     }
 }

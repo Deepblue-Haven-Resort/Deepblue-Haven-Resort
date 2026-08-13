@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import deepbluehaven.dto.CustomerProfileDTO;
+import deepbluehaven.pojo.enums.ActionCode;
+import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.services.CustomerService;
+import deepbluehaven.services.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -19,9 +22,11 @@ import jakarta.servlet.http.HttpSession;
 public class CustomerApiController {
 
     private final CustomerService customerService;
+    private final LogService logService;
 
-    public CustomerApiController(CustomerService customerService) {
+    public CustomerApiController(CustomerService customerService, LogService logService) {
         this.customerService = customerService;
+        this.logService = logService;
     }
 
     @PostMapping("/update")
@@ -37,6 +42,9 @@ public class CustomerApiController {
 
         Long customerId = (Long) session.getAttribute("loggedInCustomerId");
         CustomerProfileDTO.Response updatedProfile = customerService.updateCustomerProfile(customerId, requestDTO);
+
+        logService.log(ObjectType.USER, ActionCode.UPDATE, customerId, 
+                "Customer ID #" + customerId + " updated profile information", session);
 
         return ResponseEntity.ok(Map.of(
             "success", true,

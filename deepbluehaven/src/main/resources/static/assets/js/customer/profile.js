@@ -169,8 +169,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.success) {
                 if (typeof showToast === "function") {
                     showToast("success", "Success", "Profile updated successfully!");
-                } else {
-                    alert("Profile updated successfully!");
                 }
 
                 inputs.forEach(function (input) {
@@ -186,15 +184,11 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 if (typeof showToast === "function") {
                     showToast("error", "Failed", data.message || "Profile update failed.");
-                } else {
-                    alert(data.message || "Profile update failed.");
                 }
             }
         } catch (err) {
             if (typeof showToast === "function") {
                 showToast("error", "Error", "An error occurred while updating profile.");
-            } else {
-                alert("An error occurred while updating profile.");
             }
         }
     });

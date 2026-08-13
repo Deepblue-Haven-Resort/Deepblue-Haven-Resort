@@ -152,9 +152,6 @@ function initForgotPasswordFlow() {
                 throw new Error();
             if (typeof showToast === 'function') {
                 showToast("success", "Success", "A new OTP code has been sent.");
-            } 
-            else {
-                alert("A new OTP code has been sent.");
             }
         } catch (error) {
             otpError.textContent = "Failed to resend OTP. Please try again.";
@@ -260,10 +257,7 @@ function initForgotPasswordFlow() {
             }
 
             if (typeof showToast === 'function') {
-                showToast("success", "Success", "Password reset successfully! Please login.");
-            } 
-            else {
-                alert("Password reset successfully! Please login with your new password.");
+                showToast("success", "Success", "Password reset successfully! Please login with your new password.");
             }
             closeModal(resetModal);
             resetForgotForm();

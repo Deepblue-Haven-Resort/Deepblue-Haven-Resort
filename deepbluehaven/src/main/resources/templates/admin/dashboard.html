@@ -80,7 +80,6 @@
 
                     <div class="chart-legend">
                         <span><i class="legend-bar"></i> New Users</span>
-                        <span><i class="legend-line"></i> Active Sessions</span>
                     </div>
 
                     <div class="combo-chart">
@@ -101,18 +100,6 @@
                                 <span></span>
                                 <span></span>
                             </div>
-
-                            <svg class="line-layer" viewBox="0 0 700 260" preserveAspectRatio="none">
-                                <polyline points="50,200 150,150 250,175 350,105 450,135 550,70 650,115"></polyline>
-
-                                <circle cx="50" cy="200" r="6"></circle>
-                                <circle cx="150" cy="150" r="6"></circle>
-                                <circle cx="250" cy="175" r="6"></circle>
-                                <circle cx="350" cy="105" r="6"></circle>
-                                <circle cx="450" cy="135" r="6"></circle>
-                                <circle cx="550" cy="70" r="6"></circle>
-                                <circle cx="650" cy="115" r="6"></circle>
-                            </svg>
 
                             <div class="bar-layer">
                                 <div class="bar-item">
@@ -232,11 +219,11 @@
                         </div>
                         <div>
                             <span>Login Failed</span>
-                            <strong class="warning-text">3</strong>
+                            <strong class="warning-text" th:text="${failedLoginCount != null ? failedLoginCount : 0}">0</strong>
                         </div>
                         <div>
                             <span>Active Sessions</span>
-                            <strong>24</strong>
+                            <strong th:text="${activeSessionCount != null ? activeSessionCount : 0}">0</strong>
                         </div>
                     </div>
                 </article>
@@ -246,22 +233,31 @@
                         <div>
                             <h2><strong>Recent Activities</strong></h2>
                         </div>
+                        <a th:href="@{/admin/logs}" class="chip primary">View All</a>
                     </div>
 
                     <div class="activity-list">
-                        <div class="activity-item">
-                            <i class="fa-solid fa-user-plus"></i>
-                            <p><strong>Admin</strong> created a new receptionist account</p>
+                        <div th:if="${#lists.isEmpty(authLogs) and #lists.isEmpty(recentLogs)}" class="activity-item">
+                            <i class="fa-solid fa-info-circle"></i>
+                            <p>No security or system activity recorded yet.</p>
                         </div>
-
-                        <div class="activity-item">
-                            <i class="fa-solid fa-lock"></i>
-                            <p><strong>Manager</strong> locked a suspicious account</p>
+                        <div th:each="authRecord : ${authLogs}" class="activity-item">
+                            <i class="fa-solid fa-user-shield"></i>
+                            <p>
+                                <strong th:text="${authRecord.action}">LOGIN_SUCCESS</strong>
+                                by <span th:text="${authRecord.accountType}">WORKER</span> 
+                                (ID: <span th:text="${authRecord.accountId}">1</span>) 
+                                - <small th:text="${#temporals.format(authRecord.timestamp, 'yyyy-MM-dd HH:mm')}">2026-08-12 12:00</small>
+                            </p>
                         </div>
-
-                        <div class="activity-item">
+                        <div th:each="logRecord : ${recentLogs}" class="activity-item">
                             <i class="fa-solid fa-shield-halved"></i>
-                            <p><strong>Admin</strong> updated staff permissions</p>
+                            <p>
+                                <strong th:text="${logRecord.actionCode}">ACTION</strong>
+                                on <span th:text="${logRecord.objectType}">OBJECT</span> 
+                                (ID: <span th:text="${logRecord.objectId}">0</span>) 
+                                - <small th:text="${#temporals.format(logRecord.timestamp, 'yyyy-MM-dd HH:mm')}">2026-08-12 12:00</small>
+                            </p>
                         </div>
                     </div>
                 </article>
@@ -489,8 +485,8 @@
 
         </main>
     </div>
-    <script th:src="@{/js/admin-sidebar.js}"></script>
-    <script th:src="@{/js/admin/dashboard.js}"></script>
+    <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+    <script th:src="@{/assets/js/admin/dashboard.js}"></script>
 </body>
 
 </body>

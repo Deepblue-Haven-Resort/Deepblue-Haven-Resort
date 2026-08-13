@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Housekeeper Settings | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/setting-admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <div th:replace="~{fragments/housekeeper-sidebar :: housekeeperSidebar}"></div>
+        <main class="admin-main">
+            <div class="setting-card">
+                <div class="setting-title">
+                    <i class="fa-solid fa-palette"></i>
+                    <h3>Appearance</h3>
+                </div>
+                <div class="setting-row">
+                    <strong>Theme Mode</strong>
+                    <div class="theme-switch">
+                        <button class="theme-btn active">
+                            <i class="fa-solid fa-sun"></i>
+                            Light
+                        </button>
+                        <button class="theme-btn">
+                            <i class="fa-solid fa-moon"></i>
+                            Dark
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting-card">
+                <div class="setting-title">
+                    <i class="fa-solid fa-language"></i>
+                    <h3>Language</h3>
+                </div>
+                <div class="setting-row">
+                    <strong>Display Language</strong>
+                    <select>
+                        <option value="en" selected>English</option>
+                        <option value="vi">Tiếng Việt</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="setting-card">
+                <div class="setting-title">
+                    <i class="fa-solid fa-bell"></i>
+                    <h3>Task Alerts</h3>
+                </div>
+                <div class="setting-row">
+                    <strong>New Task Assigned Notification</strong>
+                    <label class="toggle">
+                        <input type="checkbox" checked>
+                        <span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="setting-card">
+                <div class="setting-title">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <h3>Security</h3>
+                </div>
+                <div class="setting-row">
+                    <strong>Auto Logout Idle Session</strong>
+                    <label class="toggle">
+                        <input type="checkbox" checked>
+                        <span></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="logout-card">
+                <a th:href="@{/staff-logout}" style="text-decoration: none;">
+                    <button type="button">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Logout
+                    </button>
+                </a>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

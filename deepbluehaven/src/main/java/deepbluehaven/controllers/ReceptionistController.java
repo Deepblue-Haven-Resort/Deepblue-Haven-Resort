@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import deepbluehaven.dto.ReceptionistDTO;
-import deepbluehaven.pojo.Worker;
 import deepbluehaven.pojo.CustomerProfile;
+import deepbluehaven.pojo.Worker;
 import deepbluehaven.repositories.WorkerRepository;
 import deepbluehaven.services.BookingService;
 import deepbluehaven.services.ReceptionistService;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -158,6 +157,12 @@ public class ReceptionistController {
         model.addAttribute("worker", receptionist);
         model.addAttribute("activePage", "profile");
         return "receptionist/profile";
+    }
+
+    @GetMapping("/settings")
+    public String receptionistSettings(Model model) {
+        model.addAttribute("activePage", "settings");
+        return "receptionist/settings";
     }
 
     private Worker getActiveReceptionist(HttpServletRequest req) {

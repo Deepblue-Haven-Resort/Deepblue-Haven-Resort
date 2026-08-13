@@ -27,6 +27,9 @@ import deepbluehaven.repositories.CustomerRepository;
 import deepbluehaven.repositories.RoomRepository;
 import deepbluehaven.repositories.ServiceOrderRepository;
 
+import deepbluehaven.pojo.enums.ActionCode;
+import deepbluehaven.pojo.enums.ObjectType;
+
 @Service
 public class BookingService {
 
@@ -35,18 +38,21 @@ public class BookingService {
     private final CustomerRepository customerRepository;
     private final RoomRepository roomRepository;
     private final NotificationService notificationService;
+    private final LogService logService;
     private static final BigDecimal EXCHANGE_RATE_USD = new BigDecimal("26200");
 
     public BookingService(BookingRepository bookingRepository,
                           ServiceOrderRepository serviceOrderRepository,
                           CustomerRepository customerRepository,
                           RoomRepository roomRepository,
-                          NotificationService notificationService) {
+                          NotificationService notificationService,
+                          LogService logService) {
         this.bookingRepository = bookingRepository;
         this.serviceOrderRepository = serviceOrderRepository;
         this.customerRepository = customerRepository;
         this.roomRepository = roomRepository;
         this.notificationService = notificationService;
+        this.logService = logService;
     }
 
     @Transactional(readOnly = true)
@@ -159,6 +165,8 @@ public class BookingService {
         int year = booking.getBookingTime().getYear();
         String bookingCode = String.format("DBH-%d-%03d", year, booking.getId());
 
+        logService.logBookingStatusChange(booking, null, BookingStatus.PENDING, customerId, "Customer created booking " + bookingCode);
+
         notificationService.createCustomerNotification(
             customer,
             "Đặt phòng thành công",
@@ -181,6 +189,7 @@ public class BookingService {
             return false;
         }
 
+        BookingStatus oldStatus = booking.getStatus();
         booking.setStatus(BookingStatus.CONFIRMED);
         if (booking.getDetails() != null) {
             for (BookingDetail d : booking.getDetails()) {
@@ -188,6 +197,7 @@ public class BookingService {
             }
         }
         bookingRepository.save(booking);
+        logService.logBookingStatusChange(booking, oldStatus, BookingStatus.CONFIRMED, workerId, "Confirmed by staff #" + workerId);
         return true;
     }
 
@@ -200,8 +210,10 @@ public class BookingService {
             String code = String.format("DBH-%d-%03d", year, booking.getId());
             if (code.equalsIgnoreCase(bookingCode) || String.valueOf(booking.getId()).equals(bookingCode)) {
                 if (booking.getStatus() == BookingStatus.PENDING || booking.getStatus() == BookingStatus.CONFIRMED) {
+                    BookingStatus oldStatus = booking.getStatus();
                     booking.setStatus(BookingStatus.CANCELLED);
                     bookingRepository.save(booking);
+                    logService.logBookingStatusChange(booking, oldStatus, BookingStatus.CANCELLED, customerId, "Cancelled by customer #" + customerId);
                     notificationService.createCustomerNotification(
                         booking.getCustomer(),
                         "Đã hủy đơn đặt phòng",
@@ -225,6 +237,7 @@ public class BookingService {
             if (order.getStatus() == ServiceOrderStatus.PENDING || order.getStatus() == ServiceOrderStatus.CONFIRMED) {
                 order.setStatus(ServiceOrderStatus.CANCELLED);
                 serviceOrderRepository.save(order);
+                logService.log(ObjectType.SERVICE, ActionCode.DELETE, orderId, "Customer #" + customerId + " cancelled service order #" + orderId);
                 Customer cust = order.getCustomer() != null ? order.getCustomer() : (order.getBooking() != null ? order.getBooking().getCustomer() : null);
                 if (cust != null) {
                     String serviceName = order.getService() != null ? order.getService().getName() : "dịch vụ";

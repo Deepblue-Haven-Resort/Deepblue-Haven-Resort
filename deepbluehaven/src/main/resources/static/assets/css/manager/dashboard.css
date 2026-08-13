@@ -200,6 +200,32 @@
     min-height: 420px;
 }
 
+.chart-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.health-list.horizontal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-16);
+}
+
+.health-list.horizontal-grid div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+    padding: var(--space-16);
+    background: var(--primary-100);
+    border-radius: var(--radius-md);
+    border: var(--border-1) solid var(--primary-200);
+    border-bottom: none;
+}
+
+.health-list.horizontal-grid div strong {
+    font-size: 1.75rem;
+}
+
 .card-header {
     display: flex;
     justify-content: space-between;
@@ -732,6 +758,7 @@
 
     font-size: 0.8125rem;
     font-weight: 700;
+    white-space: nowrap;
 }
 
 .activity-badge.booking {
@@ -767,6 +794,46 @@
 .status-info {
     background: var(--primary-100);
     color: var(--primary-700);
+}
+
+.status-error {
+    background: var(--error-100);
+    color: var(--error-700);
+}
+
+.activity-filter-pill {
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-300);
+    color: var(--neutral-600);
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+}
+
+.activity-filter-pill:hover {
+    background: var(--primary-100);
+    color: var(--neutral-900);
+    border-color: var(--neutral-400);
+}
+
+.activity-filter-pill.active {
+    background: var(--primary-600);
+    color: var(--white);
+    border-color: var(--primary-600);
+    box-shadow: 0 2px 6px rgba(30, 116, 198, 0.25);
+}
+
+.activity-filter-pill.action-pill.active {
+    background: var(--warning-600);
+    border-color: var(--warning-600);
+    box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
 }
 
 /* RESPONSIVE */

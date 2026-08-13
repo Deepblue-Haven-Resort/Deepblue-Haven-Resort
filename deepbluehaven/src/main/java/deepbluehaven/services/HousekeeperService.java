@@ -17,18 +17,28 @@ import deepbluehaven.pojo.enums.TaskStatus;
 import deepbluehaven.repositories.RoomRepository;
 import deepbluehaven.repositories.TaskRepository;
 
+import deepbluehaven.pojo.Worker;
+import deepbluehaven.pojo.enums.ActionCode;
+import deepbluehaven.pojo.enums.ObjectType;
+import deepbluehaven.repositories.WorkerRepository;
+
 @Service
 public class HousekeeperService {
 
     private final TaskRepository taskRepository;
     private final RoomRepository roomRepository;
+    private final WorkerRepository workerRepository;
+    private final LogService logService;
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm a");
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy hh:mm a");
 
-    public HousekeeperService(TaskRepository taskRepository, RoomRepository roomRepository) {
+    public HousekeeperService(TaskRepository taskRepository, RoomRepository roomRepository,
+                              WorkerRepository workerRepository, LogService logService) {
         this.taskRepository = taskRepository;
         this.roomRepository = roomRepository;
+        this.workerRepository = workerRepository;
+        this.logService = logService;
     }
 
     @Transactional(readOnly = true)
@@ -67,11 +77,18 @@ public class HousekeeperService {
         task.setStatus(TaskStatus.CLEANING);
         taskRepository.save(task);
 
+        Worker worker = workerId != null ? workerRepository.findById(workerId).orElse(null) : null;
+
         if (task.getRoom() != null) {
             Room room = task.getRoom();
+            RoomStatus oldStatus = room.getStatus();
             room.setStatus(RoomStatus.CLEANING);
             roomRepository.save(room);
+            logService.logRoomStatusChange(room, oldStatus, RoomStatus.CLEANING, worker);
         }
+
+        logService.log(ObjectType.WORKER, ActionCode.UPDATE, taskId,
+                "Housekeeper started cleaning task #" + taskId + " for Room #" + (task.getRoom() != null ? task.getRoom().getRoomNumber() : "N/A"), workerId);
     }
 
     @Transactional
@@ -80,11 +97,18 @@ public class HousekeeperService {
         task.setStatus(TaskStatus.INSPECTED);
         taskRepository.save(task);
 
+        Worker worker = workerId != null ? workerRepository.findById(workerId).orElse(null) : null;
+
         if (task.getRoom() != null) {
             Room room = task.getRoom();
+            RoomStatus oldStatus = room.getStatus();
             room.setStatus(RoomStatus.AVAILABLE);
             roomRepository.save(room);
+            logService.logRoomStatusChange(room, oldStatus, RoomStatus.AVAILABLE, worker);
         }
+
+        logService.log(ObjectType.WORKER, ActionCode.UPDATE, taskId,
+                "Housekeeper completed cleaning task #" + taskId + " for Room #" + (task.getRoom() != null ? task.getRoom().getRoomNumber() : "N/A"), workerId);
     }
 
     @Transactional(readOnly = true)

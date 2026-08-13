@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import deepbluehaven.dto.RegisterDTO;
 import deepbluehaven.pojo.Customer;
 import deepbluehaven.pojo.Worker;
+import deepbluehaven.pojo.enums.ActionCode;
+import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.services.AuthService;
+import deepbluehaven.services.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -26,14 +29,17 @@ public class AuthController {
     private static final int SESSION_TIMEOUT_SECONDS = 60 * 60 * 8;
 
     private final AuthService authService;
+    private final LogService logService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, LogService logService) {
         this.authService = authService;
+        this.logService = logService;
     }
 
     @GetMapping("/login")
     public String loginPage(@RequestParam(value = "logout", required = false) String logout,
             @RequestParam(value = "error", required = false) String error,
+            Model model,
             HttpServletRequest request) {
 
         if (logout != null || error != null) {
@@ -46,11 +52,19 @@ public class AuthController {
             Object customerId = session.getAttribute("loggedInCustomerId");
 
             if (customerId != null) {
-                return "redirect:/home";
+                return "redirect:/";
             }
         }
 
         return "auth/login";
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.trim().isEmpty()) {
+            return xForwardedFor.split(",")[0].trim();
+        }
+        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "127.0.0.1";
     }
 
     @PostMapping("/login")
@@ -58,9 +72,12 @@ public class AuthController {
             @RequestParam("password") String password,
             HttpServletRequest request) {
 
+        String ip = getClientIp(request);
+        String userAgent = request.getHeader("User-Agent");
         Customer customer = authService.loginCustomer(username, password);
 
         if (customer == null) {
+            logService.logAuthAccess(null, "CUSTOMER", "LOGIN_FAILED", ip, userAgent);
             return "redirect:/login?error=true";
         }
 
@@ -76,23 +93,32 @@ public class AuthController {
         session.setAttribute("customerName", customer.getProfile().getFullName());
         session.setMaxInactiveInterval(SESSION_TIMEOUT_SECONDS);
 
-        return "redirect:/home";
+        logService.logAuthAccess(customer.getId(), "CUSTOMER", "LOGIN_SUCCESS", ip, userAgent);
+        logService.log(ObjectType.USER, ActionCode.CHECK_IN, customer.getId(), "Customer logged in: " + username, session);
+
+        return "redirect:/";
     }
 
     @GetMapping("/staff-login")
-    public String staffLoginPage(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+    public String staffLoginPage(@RequestParam(value = "logout", required = false) String logout,
+            @RequestParam(value = "error", required = false) String error,
+            Model model,
+            HttpServletRequest request) {
 
-        if (session == null) {
+        if (logout != null || error != null) {
             return "auth/staff-login";
         }
 
-        if (session.getAttribute("loggedInWorkerId") != null) {
-            return redirectWorkerByRole((String) session.getAttribute("workerRole"));
-        }
+        HttpSession session = request.getSession(false);
 
-        if (session.getAttribute("loggedInCustomerId") != null) {
-            return "redirect:/home";
+        if (session != null) {
+            if (session.getAttribute("loggedInWorkerId") != null) {
+                return redirectWorkerByRole((String) session.getAttribute("workerRole"));
+            }
+
+            if (session.getAttribute("loggedInCustomerId") != null) {
+                return "redirect:/";
+            }
         }
 
         return "auth/staff-login";
@@ -117,9 +143,12 @@ public class AuthController {
             @RequestParam("password") String password,
             HttpServletRequest request) {
 
+        String ip = getClientIp(request);
+        String userAgent = request.getHeader("User-Agent");
         Worker worker = authService.loginWorker(username, password);
 
         if (worker == null) {
+            logService.logAuthAccess(null, "WORKER", "LOGIN_FAILED", ip, userAgent);
             return "redirect:/staff-login?error=true";
         }
 
@@ -135,6 +164,10 @@ public class AuthController {
         session.setAttribute("workerRole", worker.getProfile().getRole().name());
         session.setAttribute("workerName", worker.getProfile().getFullName());
         session.setMaxInactiveInterval(SESSION_TIMEOUT_SECONDS);
+
+        logService.logAuthAccess(worker.getId(), worker.getProfile().getRole().name(), "LOGIN_SUCCESS", ip, userAgent);
+        logService.log(ObjectType.WORKER, ActionCode.CHECK_IN, worker.getId(), 
+                "Staff logged in: " + username + " (" + worker.getProfile().getRole() + ")", session);
 
         return redirectWorkerByRole(worker.getProfile().getRole().name());
     }
@@ -167,6 +200,10 @@ public class AuthController {
         HttpSession session = request.getSession(false);
 
         if (session != null) {
+            Long workerId = (Long) session.getAttribute("loggedInWorkerId");
+            if (workerId != null) {
+                logService.log(ObjectType.WORKER, ActionCode.CHECK_OUT, workerId, "Staff logged out", session);
+            }
             session.invalidate();
         }
     }
@@ -182,6 +219,9 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterDTO.Request request) {
         Customer customer = authService.registerCustomer(request);
+
+        logService.log(ObjectType.USER, ActionCode.CREATE, customer.getId(), 
+                "New customer account registered: " + customer.getUsername(), (Long) null);
 
         Map<String, Object> body = Map.of(
                 "id", customer.getId(),
@@ -222,9 +262,11 @@ public class AuthController {
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
         try {
             String identity = getRequiredValue(request, "identity");
-
             String newPassword = getRequiredValue(request, "newPassword");
             authService.resetPassword(identity, newPassword);
+
+            logService.log(ObjectType.USER, ActionCode.UPDATE, 0L, 
+                    "Password reset completed for identity: " + identity, (Long) null);
 
             return ResponseEntity.ok(
                     Map.of("message", "Password reset successfully"));

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("editEmployeeForm");
+    const form = document.getElementById("createEmployeeForm");
 
     if (!form) {
         return;
@@ -18,33 +18,38 @@ document.addEventListener("DOMContentLoaded", () => {
     const useDefaultPermissions = document.getElementById("useDefaultPermissions");
     const resetPermissionBtn = document.getElementById("resetPermissionBtn");
     const permissionError = document.getElementById("permissionError");
+    const confirmCreate = document.getElementById("confirmCreate");
+    const confirmError = document.getElementById("confirmError");
 
     const rolePreviewTitle = document.getElementById("rolePreviewTitle");
     const rolePreviewBadge = document.getElementById("rolePreviewBadge");
     const rolePreviewDescription = document.getElementById("rolePreviewDescription");
     const rolePreviewPermissions = document.getElementById("rolePreviewPermissions");
 
-    const changePasswordToggle = document.getElementById("changePassword");
-    const passwordFieldsContainer = document.getElementById("passwordFieldsContainer");
+    const fullNameInput = document.getElementById("fullName");
+    const employeeCodeInput = document.getElementById("employeeCode");
+    const usernameInput = document.getElementById("username");
+    const identityUrl = form.dataset.identityUrl;
 
     let currentStep = 1;
-    const totalSteps = 3;
+    let identityTimer = null;
+    let identityRequestSequence = 0;
+    const totalSteps = 5;
 
-    // Cloudinary Worker Avatar Upload (Edit Mode)
-    const uploadEditWorkerAvatarBtn = document.getElementById('uploadEditWorkerAvatarBtn');
-    const editWorkerAvatarFileInput = document.getElementById('editWorkerAvatarFileInput');
+    const uploadWorkerAvatarBtn = document.getElementById('uploadWorkerAvatarBtn');
+    const workerAvatarFileInput = document.getElementById('workerAvatarFileInput');
     const avatarUrlInput = document.getElementById('avatarUrl');
-    const editWorkerAvatarPreview = document.getElementById('editWorkerAvatarPreview');
-    const editWorkerAvatarPreviewBox = document.getElementById('editWorkerAvatarPreviewBox');
+    const workerAvatarPreview = document.getElementById('workerAvatarPreview');
+    const workerAvatarPreviewBox = document.getElementById('workerAvatarPreviewBox');
 
-    if (uploadEditWorkerAvatarBtn && editWorkerAvatarFileInput) {
-        uploadEditWorkerAvatarBtn.addEventListener('click', () => editWorkerAvatarFileInput.click());
-        editWorkerAvatarFileInput.addEventListener('change', async () => {
-            const file = editWorkerAvatarFileInput.files[0];
+    if (uploadWorkerAvatarBtn && workerAvatarFileInput) {
+        uploadWorkerAvatarBtn.addEventListener('click', () => workerAvatarFileInput.click());
+        workerAvatarFileInput.addEventListener('change', async () => {
+            const file = workerAvatarFileInput.files[0];
             if (!file) return;
 
-            const workerId = document.getElementById('workerId')?.value?.trim() || document.getElementById('employeeCode')?.value?.trim() || document.getElementById('username')?.value?.trim() || 'worker';
-            const folder = 'deepbluehaven/workers/worker-' + workerId.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            const code = employeeCodeInput?.value?.trim() || usernameInput?.value?.trim() || fullNameInput?.value?.trim() || 'new-worker';
+            const folder = 'deepbluehaven/workers/worker-' + code.toLowerCase().replace(/[^a-z0-9]+/g, '-');
             const formData = new FormData();
             formData.append('file', file);
             formData.append('folder', folder);
@@ -59,14 +64,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await res.json();
                 if (data.success && data.url) {
                     if (avatarUrlInput) avatarUrlInput.value = data.url;
-                    if (editWorkerAvatarPreview) editWorkerAvatarPreview.src = data.url;
-                    if (editWorkerAvatarPreviewBox) editWorkerAvatarPreviewBox.style.display = 'block';
-                    alert('Worker avatar uploaded to Cloudinary successfully!');
+                    if (workerAvatarPreview) workerAvatarPreview.src = data.url;
+                    if (workerAvatarPreviewBox) workerAvatarPreviewBox.style.display = 'block';
+                    showToast('success', 'Success', 'Worker avatar uploaded to Cloudinary successfully!');
                 } else {
-                    alert(data.message || 'Upload failed');
+                    showToast('error', 'Upload Failed', data.message || 'Upload failed');
                 }
             } catch (err) {
-                alert('Upload request failed.');
+                showToast('error', 'Upload Error', 'Cloudinary upload failed');
             }
         });
     }
@@ -122,27 +127,20 @@ document.addEventListener("DOMContentLoaded", () => {
             description: "Manager can supervise operations, assign tasks, update rooms and view/export reports.",
             preview: ["Assign tasks", "View reports", "Manage operations"],
             permissions: [
-                "VIEW_BOOKING",
-                "CREATE_BOOKING",
-                "CANCEL_BOOKING",
-                "CHECK_IN",
-                "CHECK_OUT",
-                "ASSIGN_ROOM",
-                "CREATE_SERVICE_ORDER",
-                "PROCESS_SERVICE_ORDER",
-                "CREATE_INVOICE",
-                "PROCESS_PAYMENT",
-                "APPLY_DISCOUNT",
-                "VIEW_TASK",
-                "UPDATE_TASK_STATUS",
-                "MANAGE_ROOM",
-                "MANAGE_SERVICE",
-                "MANAGE_INVENTORY",
-                "MANAGE_DISCOUNT",
-                "MANAGE_PRICING",
-                "MANAGE_MEMBERSHIP",
-                "VIEW_REPORT",
-                "MANAGE_COMMENT"
+                "DASHBOARD_VIEW",
+                "ROOM_VIEW",
+                "ROOM_UPDATE",
+                "ROOM_STATUS_UPDATE",
+                "BOOKING_VIEW",
+                "BOOKING_UPDATE",
+                "TASK_VIEW",
+                "TASK_CREATE",
+                "TASK_ASSIGN",
+                "TASK_UPDATE",
+                "TASK_INSPECT",
+                "INVOICE_VIEW",
+                "REPORT_VIEW",
+                "REPORT_EXPORT"
             ]
         },
 
@@ -191,12 +189,26 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/\b\w/g, (char) => char.toUpperCase());
     };
 
+    const formatReviewValue = (fieldName, value) => {
+        if (!value) {
+            return "-";
+        }
+
+        if (fieldName === "permissionLevel") {
+            return `Level ${value}`;
+        }
+
+        const enumFields = new Set(["department", "role", "accountStatus", "gender"]);
+        return enumFields.has(fieldName) ? formatEnumValue(value) : value;
+    };
+
     const escapeHtml = (value) => value
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+
 
     const setDropdownValue = (inputId, value, triggerChange = true) => {
         const input = document.getElementById(inputId);
@@ -278,17 +290,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 dropdown.classList.remove("active");
             });
         });
-        
-        // Restore values from inputs on load
-        dropdowns.forEach((dropdown) => {
-            const inputId = dropdown.dataset.input;
-            if (inputId) {
-                const input = document.getElementById(inputId);
-                if (input && input.value) {
-                    setDropdownValue(inputId, input.value, false);
-                }
-            }
-        });
     };
 
     /* ============================= */
@@ -320,6 +321,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (submitBtn) {
             submitBtn.hidden = currentStep !== totalSteps;
+        }
+
+        if (currentStep === totalSteps) {
+            updateReview();
         }
     };
 
@@ -400,8 +405,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        if (currentStep === 3 && permissionError?.textContent.trim()) {
+        if (currentStep === 4 && permissionError?.textContent.trim()) {
             messages.push(`Permissions: ${permissionError.textContent.trim()}`);
+        }
+
+        if (currentStep === 5 && confirmError?.textContent.trim()) {
+            messages.push(`Confirmation: ${confirmError.textContent.trim()}`);
         }
 
         return messages;
@@ -454,10 +463,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const validatePassword = (panel) => {
-        if (!changePasswordToggle || !changePasswordToggle.checked) {
-            return true;
-        }
-
         const password = panel.querySelector("[data-password]");
         const confirmPassword = panel.querySelector("[data-confirm-password]");
 
@@ -499,7 +504,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const validatePermissions = () => {
-        if (currentStep !== 3) {
+        if (currentStep !== 4) {
             return true;
         }
 
@@ -623,52 +628,139 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         updateRolePreview();
+        scheduleIdentityGeneration();
     };
 
     /* ============================= */
-    /* PASSWORD TOGGLE */
+    /* AUTO-GENERATED ACCOUNT */
     /* ============================= */
 
-    const togglePasswordVisibility = (btn) => {
-        const targetId = btn.dataset.togglePassword;
-        const input = document.getElementById(targetId);
-        const icon = btn.querySelector("i");
-
-        if (!input || !icon) return;
-
-        if (input.type === "password") {
-            input.type = "text";
-            icon.classList.replace("fa-eye", "fa-eye-slash");
-        } else {
-            input.type = "password";
-            icon.classList.replace("fa-eye-slash", "fa-eye");
+    const clearGeneratedIdentity = () => {
+        if (employeeCodeInput) {
+            employeeCodeInput.value = "";
+        }
+        if (usernameInput) {
+            usernameInput.value = "";
         }
     };
 
-    document.querySelectorAll("[data-toggle-password]").forEach((btn) => {
-        btn.addEventListener("click", () => togglePasswordVisibility(btn));
-    });
+    const generateIdentityPreview = async () => {
+        const fullName = fullNameInput?.value.trim();
+        const role = roleSelect?.value;
 
-    if (changePasswordToggle && passwordFieldsContainer) {
-        const updatePasswordFieldVisibility = () => {
-            if (changePasswordToggle.checked) {
-                passwordFieldsContainer.style.display = "block";
-                // Add required data attr when visible
-                passwordFieldsContainer.querySelectorAll("input[type='password']").forEach(i => i.setAttribute("data-required", "true"));
-            } else {
-                passwordFieldsContainer.style.display = "none";
-                // Remove required data attr when hidden and clear error
-                passwordFieldsContainer.querySelectorAll("input[type='password']").forEach(i => {
-                    i.removeAttribute("data-required");
-                    clearFieldError(i);
-                });
+        if (!identityUrl || !fullName || !role) {
+            clearGeneratedIdentity();
+            return;
+        }
+
+        const requestSequence = ++identityRequestSequence;
+        const query = new URLSearchParams({ fullName, role });
+
+        try {
+            const response = await fetch(`${identityUrl}?${query.toString()}`, {
+                headers: { Accept: "application/json" }
+            });
+
+            if (!response.ok) {
+                throw new Error("Unable to generate account identity");
             }
-        };
 
-        changePasswordToggle.addEventListener("change", updatePasswordFieldVisibility);
-        // Initial setup
-        updatePasswordFieldVisibility();
-    }
+            const data = await response.json();
+
+            if (requestSequence !== identityRequestSequence) {
+                return;
+            }
+
+            if (employeeCodeInput) {
+                employeeCodeInput.value = data.employeeCode || "";
+            }
+            if (usernameInput) {
+                usernameInput.value = data.username || "";
+            }
+
+            if (currentStep === totalSteps) {
+                updateReview();
+            }
+        } catch (error) {
+            clearGeneratedIdentity();
+            console.error(error);
+        }
+    };
+
+    const scheduleIdentityGeneration = () => {
+        window.clearTimeout(identityTimer);
+        identityTimer = window.setTimeout(generateIdentityPreview, 250);
+    };
+
+    /* ============================= */
+    /* REVIEW */
+    /* ============================= */
+
+    const updateReview = () => {
+        const fields = [
+            "department",
+            "role",
+            "permissionLevel",
+            "accountStatus",
+            "fullName",
+            "gender",
+            "dateOfBirth",
+            "phone",
+            "email",
+            "address",
+            "employeeCode",
+            "username"
+        ];
+
+        fields.forEach((fieldName) => {
+            const field = form.querySelector(`[name="${fieldName}"]`);
+            const review = document.querySelector(`[data-review="${fieldName}"]`);
+
+            if (!field || !review) {
+                return;
+            }
+
+            review.textContent = formatReviewValue(fieldName, field.value);
+        });
+
+        const loginAccess = form.querySelector('[name="loginAccess"]');
+        const locked = form.querySelector('[name="locked"]');
+        const forceChangePassword = form.querySelector('[name="forceChangePassword"]');
+
+        const loginAccessReview = document.querySelector('[data-review="loginAccess"]');
+        const lockedReview = document.querySelector('[data-review="locked"]');
+        const forceChangePasswordReview = document.querySelector('[data-review="forceChangePassword"]');
+
+        if (loginAccessReview && loginAccess) {
+            loginAccessReview.textContent = loginAccess.checked ? "Allowed" : "Not Allowed";
+        }
+
+        if (lockedReview && locked) {
+            lockedReview.textContent = locked.checked ? "Yes" : "No";
+        }
+
+        if (forceChangePasswordReview && forceChangePassword) {
+            forceChangePasswordReview.textContent = forceChangePassword.checked ? "Yes" : "No";
+        }
+
+        const selectedPermissions = [...document.querySelectorAll('input[name="permissions"]:checked')]
+            .map((input) => formatEnumValue(input.value));
+
+        const selectedPermissionsReview = document.getElementById("selectedPermissionsReview");
+
+        if (!selectedPermissionsReview) {
+            return;
+        }
+
+        if (!selectedPermissions.length) {
+            selectedPermissionsReview.textContent = "No permissions selected.";
+            return;
+        }
+
+        selectedPermissionsReview.innerHTML = selectedPermissions
+            .map((permission) => `<span>${permission}</span>`)
+            .join("");
+    };
 
     /* ============================= */
     /* STEP ACTIONS */
@@ -723,6 +815,11 @@ document.addEventListener("DOMContentLoaded", () => {
         roleSelect.addEventListener("change", syncRoleDefaults);
     }
 
+    if (fullNameInput) {
+        fullNameInput.addEventListener("input", scheduleIdentityGeneration);
+        fullNameInput.addEventListener("change", scheduleIdentityGeneration);
+    }
+
     if (useDefaultPermissions) {
         useDefaultPermissions.addEventListener("change", () => {
             if (useDefaultPermissions.checked) {
@@ -742,34 +839,161 @@ document.addEventListener("DOMContentLoaded", () => {
             if (input.checked === false && useDefaultPermissions) {
                 useDefaultPermissions.checked = false;
             }
+
+            if (permissionError) {
+                permissionError.textContent = "";
+            }
         });
     });
 
-    form.addEventListener("submit", (e) => {
-        const isValid = validateCurrentStep();
-        if (!isValid) {
-            e.preventDefault();
+    document.querySelectorAll("[data-required], [data-email], [data-phone], [data-password], [data-confirm-password]").forEach((field) => {
+        field.addEventListener("input", () => clearFieldError(field));
+        field.addEventListener("change", () => clearFieldError(field));
+    });
+
+    document.querySelectorAll("[data-toggle-password]").forEach((button) => {
+        button.addEventListener("click", () => {
+            const inputId = button.dataset.togglePassword;
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector("i");
+
+            if (!input || !icon) {
+                return;
+            }
+
+            const isPassword = input.type === "password";
+
+            input.type = isPassword ? "text" : "password";
+            icon.classList.toggle("fa-eye", !isPassword);
+            icon.classList.toggle("fa-eye-slash", isPassword);
+        });
+    });
+
+    form.addEventListener("submit", (event) => {
+        if (!validateCurrentStep()) {
+            event.preventDefault();
+            return;
+        }
+
+        if (confirmCreate && !confirmCreate.checked) {
+            event.preventDefault();
+
+            if (confirmError) {
+                confirmError.textContent = "Please confirm the account information before creating.";
+            }
+
+            showErrorToast(collectCurrentStepErrors());
+            return;
+        }
+
+        if (confirmError) {
+            confirmError.textContent = "";
         }
     });
 
-    const init = () => {
-        initFilterDropdowns();
-        showStep(1);
-        updateRolePreview();
+    if (confirmCreate) {
+        confirmCreate.addEventListener("change", () => {
+            if (confirmError) {
+                confirmError.textContent = "";
+            }
+        });
+    }
 
-        const serverErrors = document.querySelectorAll(".server-validation-error");
-        if (serverErrors.length > 0) {
-            const messages = Array.from(serverErrors).map(el => `${el.dataset.field}: ${el.dataset.message}`);
-            showErrorToast(messages);
+    const restoreServerValidationErrors = () => {
+        const errors = [...document.querySelectorAll(".server-validation-error")];
 
-            serverErrors.forEach((el) => {
-                const field = document.querySelector(`[name="${el.dataset.field}"]`);
-                if (field) {
-                    setFieldError(field, el.dataset.message);
-                }
-            });
+        if (!errors.length) {
+            return false;
         }
+
+        const fieldAliases = {
+            passwordMatching: "confirmPassword",
+            permissionSelectionValid: "permissions"
+        };
+
+        const fieldSteps = {
+            department: 1,
+            role: 1,
+            permissionLevel: 1,
+            accountStatus: 1,
+            fullName: 2,
+            gender: 2,
+            dateOfBirth: 2,
+            phone: 2,
+            email: 2,
+            address: 2,
+            employeeCode: 3,
+            username: 3,
+            password: 3,
+            confirmPassword: 3,
+            permissions: 4,
+            useDefaultPermissions: 4,
+            confirmCreate: 5
+        };
+
+        const messages = [];
+        let firstErrorStep = totalSteps;
+
+        errors.forEach((errorElement) => {
+            const originalField = errorElement.dataset.field || "";
+            const fieldName = fieldAliases[originalField] || originalField;
+            const message = errorElement.dataset.message || "The submitted information is invalid";
+            const step = fieldSteps[fieldName] || 1;
+
+            firstErrorStep = Math.min(firstErrorStep, step);
+            messages.push(message);
+
+            if (fieldName === "permissions") {
+                if (permissionError) {
+                    permissionError.textContent = message;
+                }
+                return;
+            }
+
+            if (fieldName === "confirmCreate") {
+                if (confirmError) {
+                    confirmError.textContent = message;
+                }
+                return;
+            }
+
+            const field = form.querySelector(`[name="${fieldName}"]`)
+                || document.getElementById(fieldName);
+
+            if (field) {
+                setFieldError(field, message);
+                messages[messages.length - 1] = `${getFieldLabel(field)}: ${message}`;
+            }
+        });
+
+        showStep(firstErrorStep);
+        showErrorToast(messages);
+        return true;
     };
 
-    init();
+    /* ============================= */
+    /* INIT */
+    /* ============================= */
+
+    initFilterDropdowns();
+
+    ["department", "role", "permissionLevel", "accountStatus", "gender"].forEach((inputId) => {
+        const input = document.getElementById(inputId);
+
+        if (input?.value) {
+            setDropdownValue(inputId, input.value, false);
+        }
+    });
+
+    const accountStatus = document.getElementById("accountStatus");
+    if (accountStatus && !accountStatus.value) {
+        setDropdownValue("accountStatus", "ACTIVE", false);
+    }
+
+    updateRolePreview();
+    scheduleIdentityGeneration();
+
+    if (!restoreServerValidationErrors()) {
+        showStep(1);
+    }
 });

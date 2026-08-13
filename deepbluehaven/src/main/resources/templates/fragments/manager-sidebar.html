@@ -15,52 +15,58 @@
         <a th:href="@{/manager/bookings}"
             th:class="${activePage == 'bookings'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-calendar-check"></i>
-            <span>Quản lý đặt phòng</span>
+            <span>Bookings</span>
         </a>
 
         <a th:href="@{/manager/rooms}" th:class="${activePage == 'rooms'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-bed"></i>
-            <span>Quản lý phòng</span>
+            <span>Rooms</span>
         </a>
 
         <a th:href="@{/manager/services}"
             th:class="${activePage == 'services'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-bell-concierge"></i>
-            <span>Dịch vụ</span>
+            <span>Services</span>
         </a>
 
         <a th:href="@{/manager/staff}" th:class="${activePage == 'staff'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-user-tie"></i>
-            <span>Nhân viên</span>
+            <span>Staff</span>
         </a>
 
         <a th:href="@{/manager/revenue}" th:class="${activePage == 'revenue'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-chart-line"></i>
-            <span>Doanh thu</span>
+            <span>Revenue</span>
         </a>
 
         <a th:href="@{/manager/reports}" th:class="${activePage == 'reports'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-file-lines"></i>
-            <span>Báo cáo</span>
+            <span>Reports</span>
         </a>
 
         <a th:href="@{/manager/pricing}" th:class="${activePage == 'pricing'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-tags"></i>
-            <span>Giá & Khuyến mãi</span>
+            <span>Pricing & Offers</span>
+        </a>
+
+        <a th:href="@{/manager/logs}" th:class="${activePage == 'logs'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Operational Logs</span>
         </a>
 
     </nav>
 
     <div class="sidebar-footer">
 
-        <a th:href="@{/settings}" class="sidebar-item">
+        <a th:href="@{/manager/settings}"
+           th:class="${activePage == 'settings'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-gear"></i>
-            <span>Cài đặt</span>
+            <span>Settings</span>
         </a>
 
         <a th:href="@{/staff-logout}" class="sidebar-item logout">
             <i class="fa-solid fa-right-from-bracket"></i>
-            <span>Đăng xuất</span>
+            <span>Logout</span>
         </a>
 
     </div>

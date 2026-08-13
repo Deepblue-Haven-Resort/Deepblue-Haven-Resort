@@ -25,11 +25,14 @@ import deepbluehaven.dto.WorkerCreateFormDTO;
 import deepbluehaven.dto.WorkerEditFormDTO;
 import deepbluehaven.dto.WorkerDTO;
 import deepbluehaven.pojo.Worker;
+import deepbluehaven.pojo.enums.ActionCode;
 import deepbluehaven.pojo.enums.Department;
 import deepbluehaven.pojo.enums.Gender;
+import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.pojo.enums.PermissionTag;
 import deepbluehaven.pojo.enums.Role;
 import deepbluehaven.pojo.enums.WorkerStatus;
+import deepbluehaven.services.LogService;
 import deepbluehaven.services.WorkerFormExceptionService;
 import deepbluehaven.services.WorkerService;
 import jakarta.validation.Valid;
@@ -38,15 +41,35 @@ import jakarta.validation.Valid;
 public class AdminController {
 
     private final WorkerService workerService;
+    private final LogService logService;
 
-    public AdminController(WorkerService workerService) {
+    public AdminController(WorkerService workerService, LogService logService) {
         this.workerService = workerService;
+        this.logService = logService;
     }
 
     @GetMapping("/admin/dashboard")
     public String dashboard(Model model) {
         model.addAttribute("activePage", "dashboard");
+        model.addAttribute("authLogs", logService.getRecentAdminAuthAccessLogs());
+        model.addAttribute("recentLogs", logService.getRecentAdminSystemLogs());
+        model.addAttribute("failedLoginCount", logService.getFailedLoginCount());
+        model.addAttribute("activeSessionCount", logService.getActiveSessionCount());
         return "admin/dashboard";
+    }
+
+    @GetMapping("/admin/logs")
+    public String logs(Model model) {
+        model.addAttribute("activePage", "logs");
+        model.addAttribute("authLogs", logService.getAdminAuthAccessLogs());
+        model.addAttribute("systemLogs", logService.getAdminSystemLogs());
+        return "admin/logs";
+    }
+
+    @GetMapping("/admin/reports")
+    public String reports(Model model) {
+        model.addAttribute("activePage", "reports");
+        return "admin/reports";
     }
 
     @GetMapping("/admin/accounts")
@@ -72,7 +95,8 @@ public class AdminController {
 
     @PostMapping("/admin/accounts/create")
     public String createEmployeeAccount(@Valid @ModelAttribute("createWorkerForm") WorkerCreateFormDTO form,
-            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes,
+            jakarta.servlet.http.HttpSession session) {
         if (bindingResult.hasErrors()) {
             addCreateWorkerOptions(model);
             addValidationErrors(bindingResult, model);
@@ -81,6 +105,8 @@ public class AdminController {
 
         try {
             Worker worker = workerService.createWorker(form);
+            logService.log(ObjectType.WORKER, ActionCode.CREATE, worker.getId(),
+                    "Admin created worker account: " + worker.getUsername() + " (" + form.getRole() + ")", session);
             redirectAttributes.addFlashAttribute("successMessage", "Employee account created successfully");
             return "redirect:/admin/accounts?createdWorkerId=" + worker.getId();
 
@@ -105,7 +131,8 @@ public class AdminController {
     @PostMapping("/admin/accounts/{id}/edit")
     public String editEmployeeAccount(@PathVariable Long id, 
             @Valid @ModelAttribute("editWorkerForm") WorkerEditFormDTO form,
-            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes,
+            jakarta.servlet.http.HttpSession session) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("workerId", id);
             addCreateWorkerOptions(model);
@@ -115,6 +142,8 @@ public class AdminController {
 
         try {
             workerService.updateWorker(id, form);
+            logService.log(ObjectType.WORKER, ActionCode.UPDATE, id,
+                    "Admin updated worker account ID: " + id, session);
             redirectAttributes.addFlashAttribute("successMessage", "Employee account updated successfully");
             return "redirect:/admin/accounts";
         } catch (WorkerFormExceptionService exception) {
@@ -171,7 +200,10 @@ public class AdminController {
     @PostMapping("/admin/settings")
     public String saveAdminSettings(@RequestParam(required = false) String resortName,
                                     @RequestParam(required = false) String taxRate,
-                                    RedirectAttributes redirectAttrs) {
+                                    RedirectAttributes redirectAttrs,
+                                    jakarta.servlet.http.HttpSession session) {
+        logService.log(ObjectType.SYSTEM, ActionCode.UPDATE, 0L,
+                "Admin updated system settings: resort=" + resortName + ", taxRate=" + taxRate, session);
         redirectAttrs.addFlashAttribute("successMessage", "System settings updated successfully.");
         return "redirect:/admin/settings";
     }
@@ -198,14 +230,20 @@ public class AdminController {
 
     @PatchMapping("/admin/accounts/{id}/status")
     @ResponseBody
-    public ResponseEntity<WorkerDTO.Response> updateStatus(@PathVariable Long id, @RequestParam WorkerStatus status) {
-        return ResponseEntity.ok(workerService.setStatus(id, status));
+    public ResponseEntity<WorkerDTO.Response> updateStatus(@PathVariable Long id, @RequestParam WorkerStatus status,
+            jakarta.servlet.http.HttpSession session) {
+        WorkerDTO.Response updated = workerService.setStatus(id, status);
+        logService.log(ObjectType.WORKER, ActionCode.UPDATE, id,
+                "Admin updated worker status to " + status + " for ID: " + id, session);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/admin/accounts/{id}")
     @ResponseBody
-    public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAccount(@PathVariable Long id, jakarta.servlet.http.HttpSession session) {
         workerService.deleteWorker(id);
+        logService.log(ObjectType.WORKER, ActionCode.DELETE, id,
+                "Admin deleted worker account ID: " + id, session);
         return ResponseEntity.noContent().build();
     }
 }

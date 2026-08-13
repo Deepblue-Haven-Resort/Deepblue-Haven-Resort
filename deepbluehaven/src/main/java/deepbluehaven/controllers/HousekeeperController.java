@@ -92,6 +92,12 @@ public class HousekeeperController {
         return "housekeeper/profile";
     }
 
+    @GetMapping("/housekeeper/settings")
+    public String housekeeperSettings(Model model) {
+        model.addAttribute("activePage", "settings");
+        return "housekeeper/settings";
+    }
+
     @PostMapping("/housekeeper/tasks/{id}/start")
     public String startTask(@PathVariable Long id, HttpSession session) {
         Long workerId = getLoggedInWorkerId(session);

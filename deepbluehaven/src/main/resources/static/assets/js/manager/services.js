@@ -1,4 +1,3 @@
-// services.js
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('serviceModal');
     const addBtn = document.getElementById('addServiceBtn');
@@ -7,36 +6,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('serviceForm');
     const title = document.getElementById('serviceModalTitle');
 
-    // Open Modal for Add
     if (addBtn) {
         addBtn.addEventListener('click', () => {
             title.innerHTML = '<i class="fa-solid fa-bell-concierge"></i> Add New Service';
             form.reset();
-            if (document.getElementById('serviceId')) document.getElementById('serviceId').value = '';
-            if (document.getElementById('serviceImageUrl')) document.getElementById('serviceImageUrl').value = '';
-            if (document.getElementById('serviceImagePreviewBox')) document.getElementById('serviceImagePreviewBox').style.display = 'none';
+            if (document.getElementById('serviceId')) 
+                document.getElementById('serviceId').value = '';
+            if (document.getElementById('serviceImageUrl')) 
+                document.getElementById('serviceImageUrl').value = '';
+            if (document.getElementById('serviceImagePreviewBox')) 
+                document.getElementById('serviceImagePreviewBox').style.display = 'none';
             window.setDropdownValue('serviceCategory', 'FOOD_BEVERAGE');
             window.setDropdownValue('serviceStatus', 'ACTIVE');
             modal.classList.add('active');
         });
     }
 
-    // Close Modal
     const closeModal = () => {
         modal.classList.remove('active');
     };
 
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (closeBtn) 
+        closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) 
+        cancelBtn.addEventListener('click', closeModal);
 
-    // Close on outside click
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeModal();
         }
     });
 
-    // Handle Edit Buttons
     const editBtns = document.querySelectorAll('.edit-btn');
     editBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -49,13 +49,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const existingImg = row.dataset.image || '';
             
             title.innerHTML = '<i class="fa-solid fa-bell-concierge"></i> Edit Service';
-            if (document.getElementById('serviceId')) document.getElementById('serviceId').value = id;
+            if (document.getElementById('serviceId')) 
+                document.getElementById('serviceId').value = id;
             document.getElementById('serviceName').value = serviceName;
             window.setDropdownValue('serviceCategory', category);
             document.getElementById('servicePrice').value = price;
             window.setDropdownValue('serviceStatus', status);
 
-            if (document.getElementById('serviceImageUrl')) document.getElementById('serviceImageUrl').value = existingImg;
+            if (document.getElementById('serviceImageUrl')) 
+                document.getElementById('serviceImageUrl').value = existingImg;
             if (document.getElementById('serviceImagePreview') && existingImg) {
                 document.getElementById('serviceImagePreview').src = existingImg;
                 document.getElementById('serviceImagePreviewBox').style.display = 'block';
@@ -67,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Custom Dropdown Logic ---
     const filterDropdowns = document.querySelectorAll('.filter-dropdown');
     
     filterDropdowns.forEach(dropdown => {
@@ -80,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn) {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                // close all others
                 filterDropdowns.forEach(other => {
                     if (other !== dropdown) other.classList.remove('active');
                 });
@@ -110,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Helper to set dropdown value programmatically
     window.setDropdownValue = function(inputId, value) {
         const hiddenInput = document.getElementById(inputId);
         const dropdown = document.querySelector(`.filter-dropdown[data-input="${inputId}"]`);
@@ -125,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Cloudinary Service Image Upload
     const uploadServiceImageBtn = document.getElementById('uploadServiceImageBtn');
     const serviceImageFileInput = document.getElementById('serviceImageFileInput');
     const serviceImageUrlInput = document.getElementById('serviceImageUrl');
@@ -161,15 +159,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 const data = await res.json();
                 if (data.success && data.url) {
-                    if (serviceImageUrlInput) serviceImageUrlInput.value = data.url;
-                    if (serviceImagePreview) serviceImagePreview.src = data.url;
-                    if (serviceImagePreviewBox) serviceImagePreviewBox.style.display = 'block';
-                    alert('Service image uploaded to Cloudinary successfully!');
+                    if (serviceImageUrlInput) 
+                        serviceImageUrlInput.value = data.url;
+                    if (serviceImagePreview) 
+                        serviceImagePreview.src = data.url;
+                    if (serviceImagePreviewBox) 
+                        serviceImagePreviewBox.style.display = 'block';
+                    showToast('success', 'Success', 'Service image uploaded to Cloudinary successfully!');
                 } else {
-                    alert(data.message || 'Upload failed');
+                    showToast('error', 'Upload Failed', data.message || 'Upload failed');
                 }
             } catch (err) {
-                alert('Upload request failed.');
+                showToast('error', 'Upload Error', 'Upload request failed.');
             }
         });
     }

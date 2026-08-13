@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}" />
+    <meta name="_context_path" th:content="@{/}" />
+    <title>Manager Operational Logs | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body>
+    <div class="admin-layout">
+
+        <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+        <main class="admin-main">
+            <section class="account-panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2><strong>Manager Operational Logs</strong></h2>
+                        <p>Monitor booking progress, room status changes &amp; financial invoices</p>
+                    </div>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="log-tabs">
+                    <button class="tab-btn active" onclick="switchTab('booking-tab', this)">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Booking History</span>
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('room-tab', this)">
+                        <i class="fa-solid fa-door-open"></i>
+                        <span>Room Status</span>
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('invoice-tab', this)">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span>Invoices & Billing</span>
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('general-tab', this)">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>General Operations</span>
+                    </button>
+                </div>
+
+                <!-- TAB 1: Booking Logs -->
+                <div id="booking-tab" class="tab-content active">
+                    <div class="table-responsive">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Timestamp</th>
+                                    <th>Booking ID</th>
+                                    <th>Previous Status</th>
+                                    <th>New Status</th>
+                                    <th>Notes / Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(bookingLogs)}">
+                                    <td colspan="6" class="text-center">No booking progress logs recorded yet.</td>
+                                </tr>
+                                <tr th:each="bLog : ${bookingLogs}">
+                                    <td th:text="${bLog.id}">#1</td>
+                                    <td th:text="${#temporals.format(bLog.timestamp, 'yyyy-MM-dd HH:mm:ss')}">2026-08-12 12:00:00</td>
+                                    <td th:text="${bLog.booking != null ? bLog.booking.id : 'N/A'}">101</td>
+                                    <td>
+                                        <span class="chip warning" th:text="${bLog.previousStatus}">PENDING</span>
+                                    </td>
+                                    <td>
+                                        <span class="chip success" th:text="${bLog.currentStatus}">CONFIRMED</span>
+                                    </td>
+                                    <td th:text="${bLog.note != null ? bLog.note : 'Status Transition'}">Note</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 2: Room Status Logs -->
+                <div id="room-tab" class="tab-content">
+                    <div class="table-responsive">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Timestamp</th>
+                                    <th>Room</th>
+                                    <th>Performed By</th>
+                                    <th>Previous Status</th>
+                                    <th>New Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(roomStatusLogs)}">
+                                    <td colspan="6" class="text-center">No room status logs recorded yet.</td>
+                                </tr>
+                                <tr th:each="rLog : ${roomStatusLogs}">
+                                    <td th:text="${rLog.id}">#1</td>
+                                    <td th:text="${#temporals.format(rLog.timestamp, 'yyyy-MM-dd HH:mm:ss')}">2026-08-12 12:00:00</td>
+                                    <td th:text="${rLog.room != null ? rLog.room.roomNumber : 'R.N/A'}">R.101</td>
+                                    <td th:text="${rLog.worker != null ? rLog.worker.profile.fullName : 'System'}">Housekeeping Staff</td>
+                                    <td>
+                                        <span class="chip warning" th:text="${rLog.previousStatus}">DIRTY</span>
+                                    </td>
+                                    <td>
+                                        <span class="chip success" th:text="${rLog.currentStatus}">CLEANING</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 3: Invoice Status Logs -->
+                <div id="invoice-tab" class="tab-content">
+                    <div class="table-responsive">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Timestamp</th>
+                                    <th>Invoice ID</th>
+                                    <th>Performed By</th>
+                                    <th>Previous Status</th>
+                                    <th>New Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(invoiceStatusLogs)}">
+                                    <td colspan="6" class="text-center">No invoice status logs recorded yet.</td>
+                                </tr>
+                                <tr th:each="iLog : ${invoiceStatusLogs}">
+                                    <td th:text="${iLog.id}">#1</td>
+                                    <td th:text="${#temporals.format(iLog.timestamp, 'yyyy-MM-dd HH:mm:ss')}">2026-08-12 12:00:00</td>
+                                    <td th:text="${iLog.invoice != null ? iLog.invoice.id : 'INV.N/A'}">INV.101</td>
+                                    <td th:text="${iLog.worker != null ? iLog.worker.profile.fullName : 'Cashier / VNPay'}">Cashier</td>
+                                    <td>
+                                        <span class="chip warning" th:text="${iLog.previousStatus}">UNPAID</span>
+                                    </td>
+                                    <td>
+                                        <span class="chip success" th:text="${iLog.currentStatus}">PAID</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 4: General Operational Logs -->
+                <div id="general-tab" class="tab-content">
+                    <div class="table-responsive">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Timestamp</th>
+                                    <th>Category</th>
+                                    <th>Action Code</th>
+                                    <th>Target ID</th>
+                                    <th>Executor (ID)</th>
+                                    <th>Details / Metadata</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(operationalLogs)}">
+                                    <td colspan="7" class="text-center">No general operational logs recorded yet.</td>
+                                </tr>
+                                <tr th:each="logItem : ${operationalLogs}">
+                                    <td th:text="${logItem.id}">#1</td>
+                                    <td th:text="${#temporals.format(logItem.timestamp, 'yyyy-MM-dd HH:mm:ss')}">2026-08-12 12:00:00</td>
+                                    <td>
+                                        <span class="chip blue" th:text="${logItem.objectType}">BOOKING</span>
+                                    </td>
+                                    <td>
+                                        <span class="chip success" th:text="${logItem.actionCode}">CREATE</span>
+                                    </td>
+                                    <td th:text="${logItem.objectId}">101</td>
+                                    <td th:text="${logItem.workerId != null ? logItem.workerId : 'Guest / System'}">1</td>
+                                    <td th:text="${logItem.metadata}">Description</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script th:src="@{/assets/js/manager/logs.js}"></script>
+</body>
+
+</html>

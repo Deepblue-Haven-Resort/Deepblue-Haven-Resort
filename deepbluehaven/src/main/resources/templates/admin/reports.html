@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Analytical Reports Desk | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+
+        <div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+
+        <main class="admin-main">
+            
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <span>RevPAR</span>
+                        <strong>1,845,000 VND</strong>
+                        <small>Revenue per available room</small>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-hotel"></i>
+                    </div>
+                    <div>
+                        <span>ADR</span>
+                        <strong>2,450,000 VND</strong>
+                        <small>Average daily room rate</small>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-people-group"></i>
+                    </div>
+                    <div>
+                        <span>System Total Users</span>
+                        <strong>128 Accounts</strong>
+                        <small>Active user database</small>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <span>Audit Security Logs</span>
+                        <strong>Active Logged</strong>
+                        <small>Security monitoring status</small>
+                    </div>
+                </article>
+            </section>
+
+            <section class="manager-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>System & Financial Reports</h2>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <input type="text" placeholder="Select Date Range (e.g., 2026-08-01 to 2026-08-07)...">
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Report Template</th>
+                                <th>Description</th>
+                                <th>Export Format</th>
+                                <th>Primary Target Data</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Financial Revenue Summary</strong></td>
+                                <td>Calculates room charges, extra service orders, and tax logs.</td>
+                                <td>PDF Ledger / Excel</td>
+                                <td>Invoices & Payments</td>
+                                <td>
+                                    <div class="table-action-center">
+                                        <button type="button" class="btn edit-btn btn-small">Download</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>System Security Audit Report</strong></td>
+                                <td>Audit worker activities, login logs, and access logs.</td>
+                                <td>CSV / Excel Sheet</td>
+                                <td>Audit Logs & System Events</td>
+                                <td>
+                                    <div class="table-action-center">
+                                        <button type="button" class="btn edit-btn btn-small">Download</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-footer">
+                    <p>Showing <strong>1-2</strong> of <strong>2</strong> report templates</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+</body>
+
+</html>

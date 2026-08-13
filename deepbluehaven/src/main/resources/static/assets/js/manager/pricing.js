@@ -1,23 +1,18 @@
-// pricing.js
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Tabs Logic ---
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Remove active class from all
             tabBtns.forEach(b => b.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
             
-            // Add active class to clicked
             btn.classList.add('active');
             const targetId = btn.getAttribute('data-target');
             document.getElementById(targetId).classList.add('active');
         });
     });
 
-    // --- Modal Logic (Pricing Rules) ---
     const ruleModal = document.getElementById('ruleModal');
     const addRuleBtn = document.getElementById('addRuleBtn');
     const closeRuleModalBtn = document.getElementById('closeRuleModalBtn');
@@ -43,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ruleTitle.innerHTML = '<i class="fa-solid fa-tags"></i> Edit Pricing Rule';
             const row = e.target.closest('tr');
             document.getElementById('ruleName').value = row.querySelector('td:nth-child(1)').textContent.trim();
-            // date parsing skipped for simple mockup
             document.getElementById('ruleMultiplier').value = row.querySelector('td:nth-child(4)').textContent.trim().replace('x ', '');
             const statusText = row.querySelector('td:nth-child(5) .status').textContent.trim();
             window.setDropdownValue('ruleStatus', statusText === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE');
@@ -67,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Close Modals on outside click
     [ruleModal, discountModal].forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -76,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Custom Dropdown Logic ---
     const filterDropdowns = document.querySelectorAll('.filter-dropdown');
 
     filterDropdowns.forEach(dropdown => {
@@ -111,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
         filterDropdowns.forEach(d => d.classList.remove('active'));
     });
 
-    // Helper to set dropdown value programmatically
     window.setDropdownValue = function(inputId, value) {
         const hidden = document.getElementById(inputId);
         const dropdown = document.querySelector(`.filter-dropdown[data-input="${inputId}"]`);

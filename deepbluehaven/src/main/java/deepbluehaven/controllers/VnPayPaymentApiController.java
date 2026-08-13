@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import deepbluehaven.dto.ApiResponse;
 import deepbluehaven.pojo.Booking;
+import deepbluehaven.pojo.enums.ActionCode;
+import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.repositories.BookingRepository;
 import deepbluehaven.services.BookingService;
+import deepbluehaven.services.LogService;
 import deepbluehaven.services.VnPayService;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -32,6 +35,9 @@ public class VnPayPaymentApiController {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private LogService logService;
 
     @GetMapping("/create-deposit")
     public ResponseEntity<ApiResponse<String>> createDepositUrl(@RequestParam("bookingId") Long bookingId,
@@ -71,9 +77,12 @@ public class VnPayPaymentApiController {
 
     @PostMapping("/staff-confirm")
     public ResponseEntity<ApiResponse<String>> confirmBookingByStaff(@RequestParam("bookingId") Long bookingId,
-                                                                      @RequestParam(value = "workerId", required = false, defaultValue = "1") Long workerId) {
+                                                                      @RequestParam(value = "workerId", required = false, defaultValue = "1") Long workerId,
+                                                                      HttpServletRequest request) {
         boolean success = bookingService.confirmBookingByStaff(bookingId, workerId);
         if (success) {
+            logService.log(ObjectType.BOOKING, ActionCode.CONFIRM, bookingId, 
+                    "Staff ID #" + workerId + " confirmed booking #" + bookingId, request.getSession(false));
             return ResponseEntity.ok(ApiResponse.success("Booking #" + bookingId + " has been confirmed by staff.", null));
         } else {
             return ResponseEntity.badRequest().body(ApiResponse.error("Failed to confirm booking #" + bookingId + ". Ensure status is PENDING."));
@@ -81,7 +90,7 @@ public class VnPayPaymentApiController {
     }
 
     @GetMapping({"/payment-return", "/callback"})
-    public ResponseEntity<ApiResponse<Map<String, String>>> processPaymentReturn(@RequestParam Map<String, String> queryParams) {
+    public ResponseEntity<ApiResponse<Map<String, String>>> processPaymentReturn(@RequestParam Map<String, String> queryParams, HttpServletRequest request) {
         boolean isValid = vnPayService.validateChecksum(queryParams);
         String responseCode = queryParams.get("vnp_ResponseCode");
 
@@ -92,6 +101,9 @@ public class VnPayPaymentApiController {
 
         if (isValid && "00".equals(responseCode)) {
             result.put("status", "PAID");
+            String txnRef = queryParams.get("vnp_TxnRef");
+            logService.log(ObjectType.PAYMENT, ActionCode.PAYMENT_SUCCESS, 0L, 
+                    "VNPay Payment SUCCESS for TxnRef: " + txnRef, request.getSession(false));
             return ResponseEntity.ok(ApiResponse.success("Payment completed successfully", result));
         } else {
             result.put("status", "FAILED");
