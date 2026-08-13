@@ -73,7 +73,8 @@ public class ManagerDashboardService {
 
         List<Room> allRooms = roomRepository.findAll();
         int totalRooms = allRooms.size();
-        if (totalRooms == 0) totalRooms = 62; 
+        if (totalRooms == 0) 
+            totalRooms = 62; 
 
         int occupiedCount = 0;
         int cleaningCount = 0;
@@ -81,9 +82,12 @@ public class ManagerDashboardService {
         int availableCount = 0;
 
         for (Room r : allRooms) {
-            if (r.getStatus() == RoomStatus.OCCUPIED) occupiedCount++;
-            else if (r.getStatus() == RoomStatus.CLEANING) cleaningCount++;
-            else if (r.getStatus() == RoomStatus.MAINTENANCE) maintenanceCount++;
+            if (r.getStatus() == RoomStatus.OCCUPIED) 
+                occupiedCount++;
+            else if (r.getStatus() == RoomStatus.CLEANING)
+                 cleaningCount++;
+            else if (r.getStatus() == RoomStatus.MAINTENANCE) 
+                maintenanceCount++;
             else availableCount++;
         }
 
@@ -103,10 +107,14 @@ public class ManagerDashboardService {
         int cancelledBookings = 0;
 
         for (Booking b : allBookings) {
-            if (b.getStatus() == BookingStatus.PENDING) pendingBookings++;
-            else if (b.getStatus() == BookingStatus.CONFIRMED) confirmedBookings++;
-            else if (b.getStatus() == BookingStatus.CHECKED_IN) checkedInBookings++;
-            else if (b.getStatus() == BookingStatus.CANCELLED) cancelledBookings++;
+            if (b.getStatus() == BookingStatus.PENDING) 
+                pendingBookings++;
+            else if (b.getStatus() == BookingStatus.CONFIRMED) 
+                confirmedBookings++;
+            else if (b.getStatus() == BookingStatus.CHECKED_IN) 
+                checkedInBookings++;
+            else if (b.getStatus() == BookingStatus.CANCELLED) 
+                cancelledBookings++;
         }
 
         if (allBookings.isEmpty()) {
@@ -372,79 +380,7 @@ public class ManagerDashboardService {
             alert3.setDescription("Minibar water low stock warning");
         }
         alertList.add(alert3);
-
         dto.setOperationalAlerts(alertList);
-
-        List<Log> recentLogs = logRepository.findTop10ByOrderByTimestampDesc();
-        List<ManagerDashboardDTO.LiveActivityItem> liveList = new ArrayList<>();
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-
-        List<Booking> recentBookings = bookingRepository.findAll();
-        for (Booking b : recentBookings) {
-            ManagerDashboardDTO.LiveActivityItem act = new ManagerDashboardDTO.LiveActivityItem();
-            act.setBookingId(b.getId());
-            act.setTimeStr(b.getBookingTime() != null ? b.getBookingTime().format(timeFormatter) : "10:25");
-            act.setCategory("booking");
-            act.setCategoryLabel("Booking");
-            act.setIconClass("fa-solid fa-calendar-check");
-            act.setSubject("Booking #DBH-2026-" + String.format("%03d", b.getId()));
-            act.setPerformer(b.getCustomer() != null ? b.getCustomer().getUsername() : "Customer");
-            act.setStatus(b.getStatus() != null ? b.getStatus().name() : "PENDING");
-            act.setStatusClass(b.getStatus() == BookingStatus.CONFIRMED ? "status-success" : (b.getStatus() == BookingStatus.PENDING ? "status-warning" : "status-info"));
-            act.setNote(b.getNote() != null ? b.getNote() : "Room booking");
-            liveList.add(act);
-        }
-
-        if (liveList.isEmpty()) {
-            ManagerDashboardDTO.LiveActivityItem a1 = new ManagerDashboardDTO.LiveActivityItem();
-            a1.setTimeStr("10:25");
-            a1.setCategory("booking");
-            a1.setCategoryLabel("Booking");
-            a1.setIconClass("fa-solid fa-calendar-check");
-            a1.setSubject("Booking #BK1024");
-            a1.setPerformer("Receptionist Sarah");
-            a1.setStatus("CONFIRMED");
-            a1.setStatusClass("status-success");
-            a1.setNote("Guest booked Ocean Suite");
-
-            ManagerDashboardDTO.LiveActivityItem a2 = new ManagerDashboardDTO.LiveActivityItem();
-            a2.setTimeStr("10:18");
-            a2.setCategory("room");
-            a2.setCategoryLabel("Room");
-            a2.setIconClass("fa-solid fa-bed");
-            a2.setSubject("Room 502");
-            a2.setPerformer("System");
-            a2.setStatus("CLEANING");
-            a2.setStatusClass("status-warning");
-            a2.setNote("Turnover after guest check-out");
-
-            ManagerDashboardDTO.LiveActivityItem a3 = new ManagerDashboardDTO.LiveActivityItem();
-            a3.setTimeStr("10:06");
-            a3.setCategory("payment");
-            a3.setCategoryLabel("Payment");
-            a3.setIconClass("fa-solid fa-credit-card");
-            a3.setSubject("Invoice #INV8821");
-            a3.setPerformer("Receptionist Emma");
-            a3.setStatus("PAID");
-            a3.setStatusClass("status-success");
-            a3.setNote("Paid via E-Wallet");
-
-            ManagerDashboardDTO.LiveActivityItem a4 = new ManagerDashboardDTO.LiveActivityItem();
-            a4.setTimeStr("09:52");
-            a4.setCategory("service");
-            a4.setCategoryLabel("Service");
-            a4.setIconClass("fa-solid fa-bell-concierge");
-            a4.setSubject("Service Order #SV221");
-            a4.setPerformer("Service Staff Michael");
-            a4.setStatus("DELIVERED");
-            a4.setStatusClass("status-info");
-            a4.setNote("Minibar Room 204");
-
-            liveList.addAll(List.of(a1, a2, a3, a4));
-        }
-
-        dto.setLiveActivities(liveList);
-
         return dto;
     }
 }

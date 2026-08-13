@@ -61,9 +61,15 @@
     --error-200: #fecaca;
     --error-100: #fee2e2;
 
-    --warning-600: #f59e0b;
-    --warning-500: #fbbf24;
-    --warning-400: #fcd34d;
+    --warning-900: #78350f;
+    --warning-800: #92400e;
+    --warning-700: #b45309;
+    --warning-600: #d97706;
+    --warning-500: #f59e0b;
+    --warning-400: #fbbf24;
+    --warning-300: #fcd34d;
+    --warning-200: #fde68a;
+    --warning-100: #fef3c7;
 
     --black: #000000;
     --white: #ffffff;

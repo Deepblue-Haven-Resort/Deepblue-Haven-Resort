@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}" />
+    <meta name="_context_path" th:content="@{/}" />
+    <title>Admin Audit & Security Logs | Deep Blue Haven</title>
+
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body>
+    <div class="admin-layout">
+
+        <div th:replace="~{fragments/admin-sidebar :: adminSidebar}"></div>
+
+        <main class="admin-main">
+            <section class="account-panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h2><strong>Admin Security &amp; Audit Logs</strong></h2>
+                        <p>Monitor information security, login sessions &amp; system audit logs</p>
+                    </div>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="log-tabs">
+                    <button class="tab-btn active" onclick="switchTab('auth-tab', this)">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>Security &amp; Authentication (auth_access_log)</span>
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('system-tab', this)">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>System &amp; Accounts Audit (log)</span>
+                    </button>
+                </div>
+
+                <!-- TAB 1: Auth Access Logs -->
+                <div id="auth-tab" class="tab-content active">
+                    <div class="table-responsive">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Timestamp</th>
+                                    <th>Account Type</th>
+                                    <th>Account ID</th>
+                                    <th>Action</th>
+                                    <th>IP Address</th>
+                                    <th>Device (User-Agent)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(authLogs)}">
+                                    <td colspan="7" class="text-center">No authentication security logs recorded yet.</td>
+                                </tr>
+                                <tr th:each="authItem : ${authLogs}">
+                                    <td th:text="${authItem.id}">#1</td>
+                                    <td th:text="${#temporals.format(authItem.timestamp, 'yyyy-MM-dd HH:mm:ss')}">2026-08-12 12:00:00</td>
+                                    <td>
+                                        <span class="chip blue" th:text="${authItem.accountType}">WORKER</span>
+                                    </td>
+                                    <td th:text="${authItem.accountId}">1</td>
+                                    <td>
+                                        <span class="chip success" th:text="${authItem.action}">LOGIN_SUCCESS</span>
+                                    </td>
+                                    <td th:text="${authItem.ipAddress}">192.168.1.10</td>
+                                    <td th:text="${authItem.userAgent != null ? authItem.userAgent : 'Browser'}">UserAgent</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 2: System Audit Logs -->
+                <div id="system-tab" class="tab-content">
+                    <div class="table-responsive">
+                        <table class="account-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Timestamp</th>
+                                    <th>Target Type</th>
+                                    <th>Action Code</th>
+                                    <th>Target ID</th>
+                                    <th>Executor (ID)</th>
+                                    <th>Details / Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(logs)}">
+                                    <td colspan="7" class="text-center">No system audit logs recorded yet.</td>
+                                </tr>
+                                <tr th:each="logItem : ${logs}">
+                                    <td th:text="${logItem.id}">#1</td>
+                                    <td th:text="${#temporals.format(logItem.timestamp, 'yyyy-MM-dd HH:mm:ss')}">2026-08-12 12:00:00</td>
+                                    <td>
+                                        <span class="chip blue" th:text="${logItem.objectType}">WORKER</span>
+                                    </td>
+                                    <td>
+                                        <span class="chip success" th:text="${logItem.actionCode}">LOCK</span>
+                                    </td>
+                                    <td th:text="${logItem.objectId}">101</td>
+                                    <td th:text="${logItem.workerId != null ? logItem.workerId : 'System'}">1</td>
+                                    <td th:text="${logItem.metadata}">Description</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script th:src="@{/assets/js/admin/logs.js}"></script>
+</body>
+
+</html>

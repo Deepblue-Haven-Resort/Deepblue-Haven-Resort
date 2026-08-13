@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import deepbluehaven.dto.BookingHistoryDTO;
+import deepbluehaven.pojo.enums.ActionCode;
+import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.services.BookingService;
+import deepbluehaven.services.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -21,9 +24,11 @@ import jakarta.servlet.http.HttpSession;
 public class BookingApiController {
 
     private final BookingService bookingService;
+    private final LogService logService;
 
-    public BookingApiController(BookingService bookingService) {
+    public BookingApiController(BookingService bookingService, LogService logService) {
         this.bookingService = bookingService;
+        this.logService = logService;
     }
 
     @PostMapping("/create")
@@ -46,6 +51,9 @@ public class BookingApiController {
 
         BookingHistoryDTO.Response bookingResp = bookingService.createRoomBooking(roomId, checkIn, checkOut, note, customerId);
 
+        logService.log(ObjectType.BOOKING, ActionCode.CREATE, bookingResp.getId(), 
+                "Customer ID #" + customerId + " created booking " + bookingResp.getBookingCode(), session);
+
         return ResponseEntity.ok(Map.of(
             "success", true,
             "message", "Đặt phòng thành công!",
@@ -63,6 +71,8 @@ public class BookingApiController {
         Long customerId = (Long) session.getAttribute("loggedInCustomerId");
         boolean success = bookingService.cancelBooking(bookingCode, customerId);
         if (success) {
+            logService.log(ObjectType.BOOKING, ActionCode.DELETE, 0L, 
+                    "Customer ID #" + customerId + " cancelled booking code: " + bookingCode, session);
             return ResponseEntity.ok(Map.of("success", true, "message", "Hủy đặt phòng thành công"));
         } else {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Không thể hủy đơn đặt phòng này"));
@@ -78,6 +88,8 @@ public class BookingApiController {
         Long customerId = (Long) session.getAttribute("loggedInCustomerId");
         boolean success = bookingService.cancelServiceOrder(orderId, customerId);
         if (success) {
+            logService.log(ObjectType.SERVICE, ActionCode.DELETE, orderId, 
+                    "Customer ID #" + customerId + " cancelled service order #" + orderId, session);
             return ResponseEntity.ok(Map.of("success", true, "message", "Hủy dịch vụ thành công"));
         } else {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Không thể hủy dịch vụ này"));

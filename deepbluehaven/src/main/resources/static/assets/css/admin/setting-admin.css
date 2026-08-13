@@ -593,19 +593,15 @@
 
 
 .logout-card {
-
-
     margin-top: var(--space-24);
-
-
     padding: var(--space-24);
-
-
     background: var(--error-100);
-
-
     border-radius: var(--radius-lg);
+}
 
+.logout-card a {
+    text-decoration: none;
+    display: block;
 }
 
 

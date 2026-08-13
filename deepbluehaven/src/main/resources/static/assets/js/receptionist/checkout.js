@@ -37,13 +37,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (resData.success && resData.data) {
                                 window.location.href = resData.data;
                             } else {
-                                alert('Could not generate VNPAY payment link: ' + (resData.message || 'Error'));
+                                showToast('error', 'Payment Error', 'Could not generate VNPAY payment link: ' + (resData.message || 'Error'));
                                 submitBtn.disabled = false;
                                 submitBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay via VNPAY Sandbox Gateway';
                             }
                         })
                         .catch(err => {
-                            alert('Error generating VNPAY link: ' + err);
+                            showToast('error', 'Payment Error', 'Error generating VNPAY link: ' + err);
                             submitBtn.disabled = false;
                             submitBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay via VNPAY Sandbox Gateway';
                         });

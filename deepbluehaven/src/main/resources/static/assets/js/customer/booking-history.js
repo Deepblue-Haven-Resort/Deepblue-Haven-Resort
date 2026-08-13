@@ -289,13 +289,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                     const data = await res.json();
                     if (data.success) {
-                        alert(`Đã hủy dịch vụ "${serviceName}" thành công.`);
-                        window.location.reload();
+                        showToast("success", "Thành công", `Đã hủy dịch vụ "${serviceName}" thành công.`);
+                        setTimeout(() => window.location.reload(), 1200);
                     } else {
-                        alert(data.message || "Không thể hủy dịch vụ.");
+                        showToast("error", "Lỗi hủy dịch vụ", data.message || "Không thể hủy dịch vụ.");
                     }
                 } catch (err) {
-                    alert("Đã xảy ra lỗi kết nối.");
+                    showToast("error", "Lỗi kết nối", "Đã xảy ra lỗi kết nối.");
                 }
             });
         });
@@ -418,13 +418,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    alert(`Đơn đặt phòng ${bookingCode} đã được hủy thành công.`);
-                    window.location.reload();
+                    showToast("success", "Thành công", `Đơn đặt phòng ${bookingCode} đã được hủy thành công.`);
+                    setTimeout(() => window.location.reload(), 1200);
                 } else {
-                    alert(data.message || "Không thể hủy đơn đặt phòng.");
+                    showToast("error", "Lỗi hủy đơn", data.message || "Không thể hủy đơn đặt phòng.");
                 }
             } catch (e) {
-                alert("Đã xảy ra lỗi khi kết nối máy chủ.");
+                showToast("error", "Lỗi kết nối", "Đã xảy ra lỗi khi kết nối máy chủ.");
             }
         });
     }

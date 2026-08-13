@@ -1,5 +1,6 @@
 package deepbluehaven.dto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -354,6 +355,42 @@ public class ManagerDashboardDTO {
         private String statusClass;
         private String note;
         private Long bookingId;
+        private int priorityWeight = 3;
+        private LocalDateTime rawTimestamp;
+        private String actionUrl;
+        private String actionLabel;
+        private String actionBtnClass = "btn-confirm-action";
+        private String actionIconClass = "fa-solid fa-check";
+
+        public String getActionUrl() { 
+            return actionUrl; }
+        public void setActionUrl(String actionUrl) {
+            this.actionUrl = actionUrl; }
+
+        public String getActionLabel() { 
+            return actionLabel; }
+        public void setActionLabel(String actionLabel) { 
+            this.actionLabel = actionLabel; }
+
+        public String getActionBtnClass() { 
+            return actionBtnClass; }
+        public void setActionBtnClass(String actionBtnClass) { 
+            this.actionBtnClass = actionBtnClass; }
+
+        public String getActionIconClass() { 
+            return actionIconClass; }
+        public void setActionIconClass(String actionIconClass) { 
+            this.actionIconClass = actionIconClass; }
+
+        public int getPriorityWeight() { 
+            return priorityWeight; }
+        public void setPriorityWeight(int priorityWeight) { 
+            this.priorityWeight = priorityWeight; }
+
+        public LocalDateTime getRawTimestamp() { 
+            return rawTimestamp; }
+        public void setRawTimestamp(LocalDateTime rawTimestamp) { 
+            this.rawTimestamp = rawTimestamp; }
 
         public Long getBookingId() { 
             return bookingId; }

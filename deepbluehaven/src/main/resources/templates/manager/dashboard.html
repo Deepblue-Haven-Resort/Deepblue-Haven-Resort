@@ -134,14 +134,14 @@
             </article>
 
             <!-- BOOKING STATUS -->
-            <article class="chart-card">
+            <article class="chart-card full-width">
                 <div class="card-header">
                     <div>
                         <h2>Booking Flow</h2>
                     </div>
                 </div>
 
-                <div class="health-list">
+                <div class="health-list horizontal-grid">
                     <div>
                         <span>Pending</span>
                         <strong class="warning-text" th:text="${dashboardData.bookingFlow.pendingCount}">6</strong>
@@ -261,79 +261,11 @@
 
         </section>
 
-        <!-- TABLE / LIVE ACTIVITY -->
-        <section class="manager-panel" th:if="${dashboardData != null}">
-
-            <div class="panel-header">
-                <div>
-                    <h2>Live Resort Activity</h2>
-                </div>
-
-                <button type="button" id="refreshActivityBtn" class="btn btn-cta btn-medium">
-                    <i class="fa-solid fa-rotate"></i>
-                    Refresh
-                </button>
-            </div>
-
-            <div class="table-wrapper">
-                <table class="activity-table">
-                    <thead>
-                    <tr>
-                        <th>Timestamp</th>
-                        <th>Activity Type</th>
-                        <th>Target / Subject</th>
-                        <th>Performed By</th>
-                        <th>Status</th>
-                        <th>Notes</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr th:each="act : ${dashboardData.liveActivities}">
-                        <td th:text="${act.timeStr}">10:25</td>
-                        <td>
-                            <span class="activity-badge" th:classappend="${act.category}">
-                                <i th:class="${act.iconClass}"></i>
-                                <span th:text="${act.categoryLabel}">Booking</span>
-                            </span>
-                        </td>
-                        <td th:text="${act.subject}">Booking #BK1024</td>
-                        <td th:text="${act.performer}">Receptionist Sarah</td>
-                        <td><span class="status" th:classappend="${act.statusClass}" th:text="${act.status}">CONFIRMED</span></td>
-                        <td th:text="${act.note}">Guest booked Ocean Suite</td>
-                        <td>
-                            <form th:if="${act.status == 'PENDING' && act.bookingId != null}" th:action="@{'/manager/confirm-booking/' + ${act.bookingId}}" method="post">
-                                <button type="submit" class="btn btn-small btn-confirm-action">
-                                    <i class="fa-solid fa-check"></i> Confirm
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="table-footer">
-                <p>Hiển thị <strong>1-8</strong> trong số <strong th:text="${dashboardData.liveActivities != null ? #lists.size(dashboardData.liveActivities) : 0}">10</strong> kết quả</p>
-                <div class="pagination">
-                    <button type="button" class="page-btn disabled">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-                    <button type="button" class="page-btn active">1</button>
-                    <button type="button" class="page-btn">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-
-        </section>
-
     </main>
 </div>
 
-<script th:src="@{/js/admin-sidebar.js}"></script>
+<script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
 <script th:src="@{/assets/js/manager/dashboard.js}"></script>
-<script th:src="@{/js/table-pagination.js}"></script>
+<script th:src="@{/assets/js/shared/table-pagination.js}"></script>
 </body>
 </html>

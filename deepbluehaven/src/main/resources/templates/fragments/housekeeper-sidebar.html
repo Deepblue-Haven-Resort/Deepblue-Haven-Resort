@@ -46,7 +46,8 @@
 
     <div class="sidebar-footer">
 
-        <a th:href="@{/settings}" class="sidebar-item">
+        <a th:href="@{/housekeeper/settings}"
+           th:class="${activePage == 'settings'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-gear"></i>
             <span>Settings</span>
         </a>

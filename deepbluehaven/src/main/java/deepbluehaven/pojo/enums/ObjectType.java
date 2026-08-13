@@ -6,5 +6,12 @@ public enum ObjectType {
     TASK, 
     INVENTORY, 
     PAYMENT, 
-    USER;
+    USER,
+    WORKER,
+    SERVICE,
+    PRICING,
+    DISCOUNT,
+    SYSTEM,
+    INVOICE;
 }
+

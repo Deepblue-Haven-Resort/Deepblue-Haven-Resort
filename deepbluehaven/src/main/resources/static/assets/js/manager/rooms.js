@@ -1,4 +1,3 @@
-// rooms.js
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('roomModal');
     const addBtn = document.getElementById('addRoomBtn');
@@ -7,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('roomForm');
     const title = document.getElementById('roomModalTitle');
 
-    // Open Modal for Add
     if (addBtn) {
         addBtn.addEventListener('click', () => {
             title.textContent = 'Add New Room';
@@ -21,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Close Modal
     const closeModal = () => {
         modal.classList.remove('active');
     };
@@ -29,14 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
 
-    // Close on outside click
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeModal();
         }
     });
 
-    // Handle Edit Buttons
     const editBtns = document.querySelectorAll('.edit-btn');
     editBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -71,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Modal Logic (Assign Task) ---
     const assignModal = document.getElementById('assignTaskModal');
     const closeAssignModalBtn = document.getElementById('closeAssignModalBtn');
     const cancelAssignModalBtn = document.getElementById('cancelAssignModalBtn');
@@ -106,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Custom Dropdown Logic ---
     const filterDropdowns = document.querySelectorAll('.filter-dropdown');
     
     filterDropdowns.forEach(dropdown => {
@@ -119,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn) {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                // close all others
                 filterDropdowns.forEach(other => {
                     if (other !== dropdown) other.classList.remove('active');
                 });
@@ -149,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Helper to set dropdown value programmatically
     window.setDropdownValue = function(inputId, value) {
         const hiddenInput = document.getElementById(inputId);
         const dropdown = document.querySelector(`.filter-dropdown[data-input="${inputId}"]`);
@@ -162,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Cloudinary Room Image Upload
     const uploadRoomImageBtn = document.getElementById('uploadRoomImageBtn');
     const roomImageFileInput = document.getElementById('roomImageFileInput');
     const roomImageUrlInput = document.getElementById('roomImageUrl');
@@ -201,12 +191,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (roomImageUrlInput) roomImageUrlInput.value = data.url;
                     if (roomImagePreview) roomImagePreview.src = data.url;
                     if (roomImagePreviewBox) roomImagePreviewBox.style.display = 'block';
-                    alert('Room image uploaded to Cloudinary successfully!');
+                    showToast('success', 'Success', 'Room image uploaded to Cloudinary successfully!');
                 } else {
-                    alert(data.message || 'Upload failed');
+                    showToast('error', 'Upload Failed', data.message || 'Upload failed');
                 }
             } catch (err) {
-                alert('Upload request failed.');
+                showToast('error', 'Upload Error', 'Upload request failed.');
             }
         });
     }
