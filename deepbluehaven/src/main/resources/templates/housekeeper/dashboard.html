@@ -87,8 +87,8 @@
                     <h2><strong>Today's Assigned Tasks</strong></h2>
                     <p>List of rooms requiring cleaning or maintenance support</p>
                 </div>
-                <div class="pagination">
-                    <button class="btn btn-small btn-cta" onclick="window.location.reload();">
+                <div class="filter-options">
+                    <button type="button" class="btn btn-small btn-cta" onclick="window.location.reload();">
                         Refresh
                     </button>
                     <a th:href="@{/housekeeper/tasks}" class="btn btn-small btn-cta">
@@ -105,7 +105,7 @@
             </div>
 
             <div class="table-wrapper">
-                <table class="account-table">
+                <table class="account-table" data-page-size="5">
                     <thead>
                     <tr>
                         <th>Room</th>
@@ -178,6 +178,7 @@
 </div>
 
 <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+<script th:src="@{/assets/js/shared/table-pagination.js}"></script>
 <script th:src="@{/assets/js/housekeeper/dashboard.js}"></script>
 </body>
 </html>

@@ -19,6 +19,15 @@ import deepbluehaven.services.RoomService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+import deepbluehaven.pojo.Comment;
+import deepbluehaven.pojo.Customer;
+import deepbluehaven.pojo.Room;
+import deepbluehaven.repositories.CommentRepository;
+import deepbluehaven.repositories.CustomerRepository;
+import deepbluehaven.repositories.RoomRepository;
+import deepbluehaven.services.LogService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 @Controller
 public class HomeController {
 
@@ -26,12 +35,27 @@ public class HomeController {
     private final RoomService roomService;
     private final BookingService bookingService;
     private final DiscountService discountService;
+    private final CommentRepository commentRepository;
+    private final CustomerRepository customerRepository;
+    private final RoomRepository roomRepository;
+    private final LogService logService;
 
-    public HomeController(CustomerService customerService, RoomService roomService, BookingService bookingService, DiscountService discountService) {
+    public HomeController(CustomerService customerService,
+                          RoomService roomService,
+                          BookingService bookingService,
+                          DiscountService discountService,
+                          CommentRepository commentRepository,
+                          CustomerRepository customerRepository,
+                          RoomRepository roomRepository,
+                          LogService logService) {
         this.customerService = customerService;
         this.roomService = roomService;
         this.bookingService = bookingService;
         this.discountService = discountService;
+        this.commentRepository = commentRepository;
+        this.customerRepository = customerRepository;
+        this.roomRepository = roomRepository;
+        this.logService = logService;
     }
 
 
@@ -142,6 +166,46 @@ public class HomeController {
         List<BookingHistoryDTO.Response> bookings = bookingService.getBookingHistoryByCustomer(currentCustomerId);
         model.addAttribute("bookings", bookings);   
         return "customer/booking-history";
+    }
+
+    @PostMapping("/booking/comment/save")
+    public String saveBookingComment(@RequestParam(value = "roomId", required = false) Long roomId,
+                                     @RequestParam("rating") Integer rating,
+                                     @RequestParam("content") String content,
+                                     @RequestParam(value = "isComplaint", required = false, defaultValue = "false") Boolean isComplaint,
+                                     HttpServletRequest request,
+                                     RedirectAttributes redirectAttrs) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loggedInCustomerId") == null) {
+            return "redirect:/login";
+        }
+
+        Long customerId = (Long) session.getAttribute("loggedInCustomerId");
+
+        try {
+            Customer customer = customerRepository.findById(customerId).orElse(null);
+            if (customer != null) {
+                Comment comment = new Comment();
+                comment.setCustomer(customer);
+                comment.setContent(content);
+                comment.setRating(rating != null ? Math.min(Math.max(rating, 1), 5) : 5);
+                comment.setIsComplaint(Boolean.TRUE.equals(isComplaint));
+                if (roomId != null) {
+                    Room room = roomRepository.findById(roomId).orElse(null);
+                    comment.setRoom(room);
+                }
+                commentRepository.save(comment);
+
+                logService.log(deepbluehaven.pojo.enums.ObjectType.SYSTEM, deepbluehaven.pojo.enums.ActionCode.CREATE, comment.getId(),
+                        "Customer #" + customerId + " submitted review rating " + rating + " stars", session);
+
+                redirectAttrs.addFlashAttribute("successMessage", "Thank you! Your review has been submitted successfully.");
+            }
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to submit review: " + e.getMessage());
+        }
+
+        return "redirect:/booking/history";
     }
 
     @GetMapping("/offers")

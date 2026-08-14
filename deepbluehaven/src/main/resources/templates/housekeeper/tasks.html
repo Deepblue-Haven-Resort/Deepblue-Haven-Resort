@@ -48,17 +48,17 @@
                             <i class="fa-solid fa-chevron-down"></i>
                         </button>
                         <div class="filter-menu">
-                            <button type="button"><strong>All Tasks</strong></button>
-                            <button type="button"><strong>Pending</strong></button>
-                            <button type="button"><strong>Cleaning</strong></button>
-                            <button type="button"><strong>Maintenance</strong></button>
-                            <button type="button"><strong>Completed</strong></button>
+                            <button type="button" data-status="ALL"><strong>All Tasks</strong></button>
+                            <button type="button" data-status="PENDING"><strong>Pending</strong></button>
+                            <button type="button" data-status="CLEANING"><strong>Cleaning</strong></button>
+                            <button type="button" data-status="MAINTENANCE"><strong>Maintenance</strong></button>
+                            <button type="button" data-status="INSPECTED"><strong>Completed</strong></button>
                         </div>
                     </div>
                 </div>
 
                 <div class="table-wrapper">
-                    <table class="account-table">
+                    <table class="account-table" data-page-size="5">
                         <thead>
                             <tr>
                                 <th>Task ID</th>
@@ -72,7 +72,7 @@
                         </thead>
 
                         <tbody>
-                            <tr th:each="task : ${todayTasks}">
+                            <tr th:each="task : ${todayTasks}" th:data-status="${task.statusLabel}">
                                 <td><strong th:text="${'#HK-' + task.id}">#HK-201</strong></td>
                                 <td>
                                     <div class="task-room">
@@ -141,9 +141,6 @@
         </main>
     </div>
 
-    <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
-    <script th:src="@{/assets/js/housekeeper/tasks.js}"></script>
-
     <!-- ============================================================
      MODAL: Report Room Issue
      ============================================================ -->
@@ -202,50 +199,28 @@
                             <label>Description <span>*</span></label>
                             <textarea id="issueDescription"
                                 placeholder="Describe the issue in detail, e.g. loud noise from AC unit since 8 AM"
-                                rows="4" required style="resize:vertical;"></textarea>
+                                rows="4" required class="textarea-vertical"></textarea>
                         </div>
                     </div>
-                    <div
-                        style="background:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:12px 14px; margin-top:4px; font-size:0.85rem; color:#9a3412; display:flex; align-items:flex-start; gap:10px;">
-                        <i class="fa-solid fa-circle-info" style="margin-top:2px; flex-shrink:0;"></i>
+                    <div class="modal-notice-box">
+                        <i class="fa-solid fa-circle-info modal-notice-icon"></i>
                         <span>Submitting this report will automatically set the room status to
                             <strong>Maintenance</strong> and create a repair task.</span>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn outline-btn" id="cancelReportModal">Cancel</button>
-                    <button type="submit" class="btn btn-cta" style="background:#dc2626;"><i
+                    <button type="submit" class="btn btn-cta btn-danger-submit"><i
                             class="fa-solid fa-paper-plane"></i> Submit Report</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
-        (function () {
-            const dropdowns = document.querySelectorAll('#reportIssueModal .filter-dropdown[data-input]');
-            dropdowns.forEach(dd => {
-                const btn = dd.querySelector('.filter-btn, .form-filter-btn');
-                const menu = dd.querySelector('.filter-menu, .form-filter-menu');
-                const label = dd.querySelector('.filter-label strong');
-                const input = document.getElementById(dd.dataset.input);
-                if (btn) btn.addEventListener('click', e => { e.stopPropagation(); dropdowns.forEach(o => o !== dd && o.classList.remove('active')); dd.classList.toggle('active'); });
-                if (menu) menu.querySelectorAll('button').forEach(opt => opt.addEventListener('click', () => { if (label) label.textContent = opt.textContent.trim(); if (input) input.value = opt.dataset.value; dd.classList.remove('active'); }));
-            });
-            document.addEventListener('click', () => dropdowns.forEach(d => d.classList.remove('active')));
-
-            const modal = document.getElementById('reportIssueModal');
-            document.getElementById('reportIssueBtn').addEventListener('click', () => modal.classList.add('active'));
-            document.getElementById('closeReportModal').addEventListener('click', () => modal.classList.remove('active'));
-            document.getElementById('cancelReportModal').addEventListener('click', () => modal.classList.remove('active'));
-            modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
-            document.getElementById('reportIssueForm').addEventListener('submit', e => {
-                e.preventDefault();
-                alert('Issue reported! Room has been flagged for Maintenance.');
-                modal.classList.remove('active');
-            });
-        })();
-    </script>
+    <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+    <script th:src="@{/assets/js/shared/table-pagination.js}"></script>
+    <script th:src="@{/assets/js/housekeeper/tasks.js}"></script>
+    <script th:src="@{/assets/js/housekeeper/housekeeper-tasks.js}"></script>
 </body>
 
 </html>

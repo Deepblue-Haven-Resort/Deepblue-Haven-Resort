@@ -134,16 +134,16 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>HK-881029</td>
-                                <td>david.chen@example.com</td>
-                                <td>+852 9123 4567</td>
-                                <td>8 Stays</td>
-                                <td><span class="badge-vip-platinum">PLATINUM VIP</span></td>
+                                <td>HK-8810293</td>
+                                <td>david.c@example.com</td>
+                                <td>+852 9812 4455</td>
+                                <td>1 Stay</td>
+                                <td><span class="badge-vip-blue">MEMBER</span></td>
                                 <td>
-                                    <button class="btn btn-small btn-cta edit-guest-btn" style="opacity: 0.65;"
-                                        data-name="David Chen" data-passport="HK-881029"
-                                        data-email="david.chen@example.com" data-phone="+852 9123 4567"
-                                        data-vip="PLATINUM" data-note="VIP guest, suite only">Profile</button>
+                                    <button class="btn btn-small btn-cta edit-guest-btn opacity-65"
+                                        data-name="David Chen" data-passport="HK-8810293"
+                                        data-email="david.c@example.com" data-phone="+852 9812 4455" data-vip="NONE"
+                                        data-note="">Profile</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -285,62 +285,7 @@
         </div>
     </div>
 
-    <script>
-        (function () {
-            // --- Dropdown init ---
-            function initDropdowns(container) {
-                const dropdowns = container.querySelectorAll('.filter-dropdown[data-input]');
-                dropdowns.forEach(dd => {
-                    const btn = dd.querySelector('.filter-btn, .form-filter-btn');
-                    const menu = dd.querySelector('.filter-menu, .form-filter-menu');
-                    const label = dd.querySelector('.filter-label strong');
-                    const input = document.getElementById(dd.dataset.input);
-                    if (btn) btn.addEventListener('click', e => { e.stopPropagation(); dropdowns.forEach(o => o !== dd && o.classList.remove('active')); dd.classList.toggle('active'); });
-                    if (menu) menu.querySelectorAll('button').forEach(opt => opt.addEventListener('click', () => { if (label) label.textContent = opt.textContent.trim(); if (input) input.value = opt.dataset.value; dd.classList.remove('active'); }));
-                });
-                document.addEventListener('click', () => dropdowns.forEach(d => d.classList.remove('active')));
-            }
-
-            function setDd(inputId, value) {
-                const input = document.getElementById(inputId);
-                const dd = document.querySelector('.filter-dropdown[data-input="' + inputId + '"]');
-                if (!input || !dd) return;
-                input.value = value;
-                const opt = dd.querySelector('.filter-menu button[data-value="' + value + '"]');
-                const lbl = dd.querySelector('.filter-label strong');
-                if (opt && lbl) lbl.textContent = opt.textContent.trim();
-            }
-
-            function openModal(id) { document.getElementById(id).classList.add('active'); }
-            function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-            // --- Edit Guest Modal ---
-            initDropdowns(document.getElementById('editGuestModal'));
-
-            document.querySelectorAll('.edit-guest-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.getElementById('guestName').value = btn.dataset.name || '';
-                    document.getElementById('guestPassport').value = btn.dataset.passport || '';
-                    document.getElementById('guestPhone').value = btn.dataset.phone || '';
-                    document.getElementById('guestEmail').value = btn.dataset.email || '';
-                    document.getElementById('guestNote').value = btn.dataset.note || '';
-                    setDd('guestVip', btn.dataset.vip || 'NONE');
-                    openModal('editGuestModal');
-                });
-            });
-            document.getElementById('closeEditGuestModal').addEventListener('click', () => closeModal('editGuestModal'));
-            document.getElementById('cancelEditGuestModal').addEventListener('click', () => closeModal('editGuestModal'));
-            document.getElementById('editGuestModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('editGuestModal'); });
-            document.getElementById('editGuestForm').addEventListener('submit', e => { e.preventDefault(); alert('Guest profile saved!'); closeModal('editGuestModal'); });
-
-            // --- Register Guest Modal ---
-            document.getElementById('registerGuestBtn').addEventListener('click', () => openModal('registerGuestModal'));
-            document.getElementById('closeRegisterGuestModal').addEventListener('click', () => closeModal('registerGuestModal'));
-            document.getElementById('cancelRegisterGuestModal').addEventListener('click', () => closeModal('registerGuestModal'));
-            document.getElementById('registerGuestModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('registerGuestModal'); });
-            document.getElementById('registerGuestForm').addEventListener('submit', e => { e.preventDefault(); alert('Guest registered!'); closeModal('registerGuestModal'); });
-        })();
-    </script>
+    <script th:src="@{/assets/js/receptionist/guests.js}"></script>
 </body>
 
 </html>

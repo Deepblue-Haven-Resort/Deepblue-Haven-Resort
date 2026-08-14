@@ -35,7 +35,7 @@
         "
 >
     <div class="room-card__media">
-        <img th:src="@{${imageUrl}}" th:alt="${imageAlt}">
+        <img th:src="${imageUrl != null ? (imageUrl.startsWith('http') || imageUrl.startsWith('/deepbluehaven') ? imageUrl : '/deepbluehaven' + imageUrl) : ''}" th:alt="${imageAlt}">
 
         <span
                 class="room-card__badge"

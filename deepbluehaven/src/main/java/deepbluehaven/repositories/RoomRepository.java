@@ -18,6 +18,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     List<Room> findByStatus(RoomStatus status);
 
+    Optional<Room> findByRoomNumber(String roomNumber);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT r FROM Room r WHERE r.id = :id")
     Optional<Room> findByIdWithPessimisticLock(@Param("id") Long id);

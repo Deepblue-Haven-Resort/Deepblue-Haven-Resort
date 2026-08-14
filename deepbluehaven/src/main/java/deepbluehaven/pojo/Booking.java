@@ -102,6 +102,10 @@ public class Booking {
     public void setDetails(List<BookingDetail> details) { 
         this.details = details; }
 
+    public String getBookingCode() {
+        return id != null ? String.format("DBH-2026-%03d", id) : "N/A";
+    }
+
     public List<BookingLog> getLogs() { 
         return logs; }
     public void setLogs(List<BookingLog> logs) { 

@@ -27,17 +27,27 @@ public class HousekeeperController {
     private final HousekeeperService housekeeperService;
     private final WorkerService workerService;
     private final RoomRepository roomRepository;
+    private final deepbluehaven.repositories.WorkerRepository workerRepository;
 
-    public HousekeeperController(HousekeeperService housekeeperService, WorkerService workerService, RoomRepository roomRepository) {
+    public HousekeeperController(HousekeeperService housekeeperService, WorkerService workerService, RoomRepository roomRepository, deepbluehaven.repositories.WorkerRepository workerRepository) {
         this.housekeeperService = housekeeperService;
         this.workerService = workerService;
         this.roomRepository = roomRepository;
+        this.workerRepository = workerRepository;
     }
 
     private Long getLoggedInWorkerId(HttpSession session) {
         if (session != null && session.getAttribute("loggedInWorkerId") != null) {
             return (Long) session.getAttribute("loggedInWorkerId");
         }
+        try {
+            List<Worker> housekeepers = workerRepository.findAll().stream()
+                    .filter(w -> w.getProfile() != null && w.getProfile().getRole() == deepbluehaven.pojo.enums.Role.HOUSEKEEPER)
+                    .toList();
+            if (!housekeepers.isEmpty()) {
+                return housekeepers.get(0).getId();
+            }
+        } catch (Exception ignored) {}
         return 1L;
     }
 
@@ -110,6 +120,28 @@ public class HousekeeperController {
         Long workerId = getLoggedInWorkerId(session);
         housekeeperService.completeTask(id, workerId);
         return "redirect:/housekeeper/dashboard";
+    }
+
+    @PostMapping("/housekeeper/report-issue")
+    public ResponseEntity<Map<String, Object>> reportIssue(
+            @org.springframework.web.bind.annotation.RequestParam("roomNumber") String roomNumber,
+            @org.springframework.web.bind.annotation.RequestParam(value = "issueType", required = false) String issueType,
+            @org.springframework.web.bind.annotation.RequestParam(value = "priority", required = false) String priority,
+            @org.springframework.web.bind.annotation.RequestParam(value = "description", required = false) String description,
+            HttpSession session) {
+        Long workerId = getLoggedInWorkerId(session);
+        try {
+            housekeeperService.reportRoomIssue(roomNumber, issueType, priority, description, workerId);
+            Map<String, Object> resp = new java.util.HashMap<>();
+            resp.put("success", true);
+            resp.put("message", "Issue reported successfully. Room status set to MAINTENANCE.");
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            Map<String, Object> resp = new java.util.HashMap<>();
+            resp.put("success", false);
+            resp.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(resp);
+        }
     }
 
     @GetMapping("/housekeeper/history/export")

@@ -15,7 +15,8 @@ import io.lettuce.core.dynamic.annotation.Param;
 
 public interface WorkerRepository extends JpaRepository<Worker, Long> {
 
-        @Query("SELECT w FROM Worker w JOIN FETCH w.profile WHERE w.username = :username")
+        @Query("SELECT DISTINCT w FROM Worker w LEFT JOIN FETCH w.profile ORDER BY w.id ASC")
+        java.util.List<Worker> findAllWithProfile();
 
         boolean existsByUsername(String username);
 

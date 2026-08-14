@@ -12,4 +12,7 @@ function switchTab(tabId, btnElement) {
     if (btnElement) {
         btnElement.classList.add('active');
     }
+    if (typeof window.initTablePagination === 'function') {
+        window.initTablePagination();
+    }
 }

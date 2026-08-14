@@ -12,6 +12,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-table.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -93,8 +94,8 @@
                                 <th>Employee Name</th>
                                 <th>Department</th>
                                 <th>Phone Number</th>
-                                <th>Performance Score</th>
-                                <th>Status</th>
+                                <th class="text-center">Performance Score</th>
+                                <th class="text-center">Status</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -102,22 +103,22 @@
                             <tr th:each="w : ${staffList}">
                                 <td><strong th:text="${w.employeeCode != null ? w.employeeCode : 'EMP-' + w.id}">SEED-EMP-006</strong></td>
                                 <td>
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <img th:src="${w.profile != null && w.profile.avatarUrl != null ? w.profile.avatarUrl : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=250&q=80'}"
-                                             style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1;" alt="Avatar" />
+                                    <div class="table-user-info">
+                                        <img th:src="${w.profile != null && w.profile.avatarUrl != null ? w.profile.avatarUrl : 'https://res.cloudinary.com/xio0mgix/image/upload/v1786687242/d070bf12-83fd-4d5c-a16e-b4735f2d1d19.png'}"
+                                             class="table-user-avatar" alt="Avatar" />
                                         <span th:text="${w.profile != null ? w.profile.fullName : 'Staff #' + w.id}">Jessica Miller</span>
                                     </div>
                                 </td>
                                 <td th:text="${w.profile != null && w.profile.role != null ? w.profile.role : 'Staff'}">Reception</td>
-                                <td th:text="${w.profile != null ? w.profile.phone : 'N/A'}">+1-555-102-3045</td>
-                                <td><strong>100.0%</strong></td>
-                                <td>
+                                <td th:text="${w.profile != null ? w.profile.phoneNumber : 'N/A'}">+1-555-102-3045</td>
+                                <td class="text-center"><strong th:text="|${#numbers.formatDecimal(w.profile != null && w.profile.performanceScore != null ? w.profile.performanceScore : 90.0, 1, 1)}%|">90.0%</strong></td>
+                                <td class="text-center">
                                     <span th:class="|status ${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'status-success' : 'status-danger'}|"
                                           th:text="${w.status}">ACTIVE</span>
                                 </td>
-                                <td>
-                                    <div class="filter-options" style="display: flex; justify-content: center; gap: 8px;">
-                                        <form th:action="@{'/admin/accounts/' + ${w.id} + '/status'}" method="post" style="display: inline;">
+                                <td class="text-center">
+                                    <div class="table-actions">
+                                        <form th:action="@{'/admin/accounts/' + ${w.id} + '/status'}" method="post">
                                             <input type="hidden" name="status" th:value="${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'LOCKED' : 'ACTIVE'}" />
                                             <button type="submit" class="btn btn-small"
                                                     th:classappend="${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'delete-btn' : 'lock-btn'}"
@@ -127,7 +128,7 @@
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(staffList)}">
-                                <td colspan="7" class="text-center" style="padding: 24px; color: var(--gray-500);">No employees registered in database.</td>
+                                <td colspan="7" class="empty-table-cell">No employees registered in database.</td>
                             </tr>
                         </tbody>
                     </table>

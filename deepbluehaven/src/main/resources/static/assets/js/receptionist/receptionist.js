@@ -191,8 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const discountRow = document.getElementById('coModalDiscountRow');
             if (discountCode && discountCode !== 'None' && discountAmount !== '0 VND') {
                 discountRow.style.display = 'table-row';
-                document.getElementById('coModalDiscountCode').innerText = 'Code: ' + discountCode;
-                document.getElementById('coModalDiscountAmount').innerText = '-' + discountAmount;
+                document.getElementById('coModalDiscountCode').innerText = discountCode;
+                const formattedDiscount = discountAmount.startsWith('-') ? discountAmount : '-' + discountAmount;
+                document.getElementById('coModalDiscountAmount').innerText = formattedDiscount;
             } else {
                 discountRow.style.display = 'none';
             }

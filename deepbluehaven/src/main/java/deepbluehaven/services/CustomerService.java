@@ -88,7 +88,7 @@ public class CustomerService {
         dto.setFullName(profile.getFullName() != null ? profile.getFullName() : profile.getCustomer().getUsername());
         dto.setEmail(profile.getEmail() != null ? profile.getEmail() : "");
         dto.setPhoneNumber(profile.getPhoneNumber() != null ? profile.getPhoneNumber() : "");
-        dto.setAvatarUrl(profile.getAvatarUrl() != null ? profile.getAvatarUrl() : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80");
+        dto.setAvatarUrl(profile.getAvatarUrl() != null ? profile.getAvatarUrl() : "https://res.cloudinary.com/xio0mgix/image/upload/v1786687334/53cfbdcb-9c58-471c-96ab-cddf0c65f52e.png");
         dto.setBirthDay(profile.getBirthDay());
         dto.setTotalBookings(profile.getTotalBookings() != null ? profile.getTotalBookings() : 0);
         dto.setTotalSpent(profile.getTotalSpent() != null ? profile.getTotalSpent() : BigDecimal.ZERO);
@@ -126,6 +126,7 @@ public class CustomerService {
         dto.setCategory(entity.getCategory());
         dto.setBasePrice(entity.getBasePrice());
         dto.setUnit(entity.getUnit());
+        dto.setImages(entity.getImages() != null ? entity.getImages() : new ArrayList<>());
         dto.setStatus(entity.getStatus());
         boolean isAvailable = (entity.getStatus() != null && entity.getStatus().name().equals("ACTIVE"));
         dto.setStatusClass(isAvailable ? "service-card__status--available" : "service-card__status--out-of-stock");

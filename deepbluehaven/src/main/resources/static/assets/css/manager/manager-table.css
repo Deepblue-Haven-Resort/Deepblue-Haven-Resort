@@ -1,0 +1,102 @@
+/* =========================================================
+   MANAGER TABLE STYLES & ALIGNMENT SYSTEM
+   Dùng cho toàn bộ các bảng trong các trang Manager
+========================================================= */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid var(--neutral-200, #e2e8f0);
+}
+
+.activity-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    color: var(--neutral-700, #334155);
+}
+
+.activity-table thead {
+    background-color: var(--primary-50, #f0f9ff);
+    border-bottom: 2px solid var(--neutral-200, #e2e8f0);
+}
+
+.activity-table th {
+    padding: 14px 16px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--primary-900, #0f172a);
+    text-align: left;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.activity-table td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--neutral-200, #f1f5f9);
+}
+
+.activity-table tbody tr:hover {
+    background-color: var(--primary-50, #f8fafc);
+}
+
+/* Alignment utilities */
+.activity-table th.text-center,
+.activity-table td.text-center,
+.text-center {
+    text-align: center !important;
+}
+
+.activity-table th.text-right,
+.activity-table td.text-right,
+.text-right {
+    text-align: right !important;
+}
+
+.activity-table th.text-left,
+.activity-table td.text-left,
+.text-left {
+    text-align: left !important;
+}
+
+/* Action buttons container */
+.table-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.table-actions form {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+/* Empty data state cell */
+.empty-table-cell {
+    padding: 32px 16px !important;
+    text-align: center;
+    color: var(--neutral-400, #94a3b8);
+    font-weight: 500;
+}
+
+/* Avatar container inside table cell */
+.table-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.table-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--neutral-300, #cbd5e1);
+}
