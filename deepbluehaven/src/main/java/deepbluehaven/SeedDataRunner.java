@@ -174,8 +174,15 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private List<MembershipTier> seedMembershipTiers() {
         TierStatus[] statuses = TierStatus.values();
-        int[] minimumPoints = { 0, 1_000, 5_000, 15_000, 30_000 };
-        String[] multipliers = { "1.00", "1.10", "1.25", "1.50", "2.00" };
+        int[] minimumPoints = { 0, 1_000, 3_000, 7_000, 15_000 };
+        BigDecimal[] minSpents = { 
+            new BigDecimal("0"), 
+            new BigDecimal("10000000"), 
+            new BigDecimal("30000000"), 
+            new BigDecimal("70000000"), 
+            new BigDecimal("150000000") 
+        };
+        String[] multipliers = { "1.00", "1.20", "1.50", "2.00", "2.50" };
         String[] discountRates = { "0.00", "3.00", "5.00", "8.00", "12.00" };
         int[] priorityDurations = { 0, 15, 30, 45, 60 };
 
@@ -184,6 +191,7 @@ public class SeedDataRunner implements CommandLineRunner {
             MembershipTier tier = new MembershipTier();
             tier.setTierName(statuses[i]);
             tier.setMinPoints(minimumPoints[i]);
+            tier.setMinSpent(i < minSpents.length ? minSpents[i] : BigDecimal.ZERO);
             tier.setPointMultiplier(new BigDecimal(multipliers[i]));
             tier.setDiscountRate(new BigDecimal(discountRates[i]));
             tier.setPriorityDuration(priorityDurations[i]);
@@ -294,7 +302,11 @@ public class SeedDataRunner implements CommandLineRunner {
             profile.setDateOfBirth(LocalDate.of(1985 + (i % 15), (i % 12) + 1, (i % 25) + 1));
             profile.setAddress(100 + i * 12 + " Ocean Boulevard, Suite " + (i + 1));
             profile.setPerformanceScore(75.0 + (i % 24) * 0.9);
-            profile.setAvatarUrl("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=250&q=80");
+            if (profile.getGender() == Gender.FEMALE) {
+                profile.setAvatarUrl("https://res.cloudinary.com/xio0mgix/image/upload/v1786687237/c683ecce-3e41-423d-b8ee-f8dd0189ffdc.png");
+            } else {
+                profile.setAvatarUrl("https://res.cloudinary.com/xio0mgix/image/upload/v1786687242/d070bf12-83fd-4d5c-a16e-b4735f2d1d19.png");
+            }
             persist(profile);
         }
         entityManager.flush();
@@ -360,7 +372,7 @@ public class SeedDataRunner implements CommandLineRunner {
             profile.setTotalPoints(i * 450);
             profile.setSegment(i % 2 == 0 ? "LEISURE" : "BUSINESS");
             profile.setMembershipTier(tiers.get(i % tiers.size()));
-            profile.setAvatarUrl("https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80");
+            profile.setAvatarUrl("https://res.cloudinary.com/xio0mgix/image/upload/v1786687334/53cfbdcb-9c58-471c-96ab-cddf0c65f52e.png");
             persist(profile);
         }
         entityManager.flush();
@@ -369,6 +381,12 @@ public class SeedDataRunner implements CommandLineRunner {
     private List<Room> seedRooms(List<Resort> resorts) {
         List<Room> rooms = new ArrayList<>();
         RoomType[] roomTypes = RoomType.values();
+
+        String[] roomImageUrls = {
+            "https://res.cloudinary.com/xio0mgix/image/upload/v1786686618/1f196b65-2daa-49b5-9a6c-f1e5e1d50a6e.png",
+            "https://res.cloudinary.com/xio0mgix/image/upload/v1786686614/56d6bc0e-045d-4c53-8635-32d2ecc0b840.png",
+            "https://res.cloudinary.com/xio0mgix/image/upload/v1786686505/937e83ec-1217-4027-8c10-0b204c14631c.png"
+        };
 
         int roomCounter = 0;
         for (int floor = 1; floor <= 5; floor++) {
@@ -399,7 +417,7 @@ public class SeedDataRunner implements CommandLineRunner {
 
                 room.setStatus(status);
                 room.getTags().add(RoomTag.OCEAN_VIEW);
-                room.getImages().add("/assets/images/rooms/room-" + (roomCounter % 5 + 1) + ".jpg");
+                room.getImages().add(roomImageUrls[roomCounter % roomImageUrls.length]);
 
                 for (Amenity a : Amenity.values()) {
                     if (roomCounter % 2 == 0)
@@ -542,6 +560,12 @@ public class SeedDataRunner implements CommandLineRunner {
                         "Outdoor Tour", "Per Person" }
         };
 
+        String[] serviceImageUrls = {
+            "https://res.cloudinary.com/xio0mgix/image/upload/v1786686824/f9b9112d-047b-4756-a23d-95fd3d7dd478.png",
+            "https://res.cloudinary.com/xio0mgix/image/upload/v1786686829/9ce92d78-c98f-4a75-854a-50a54bc99a48.png",
+            "https://res.cloudinary.com/xio0mgix/image/upload/v1786686841/3078b34a-edce-4d08-8a33-7d89a439313d.png"
+        };
+
         List<Service> services = new ArrayList<>();
         for (int i = 0; i < servicesData.length; i++) {
             Service service = new Service();
@@ -553,7 +577,7 @@ public class SeedDataRunner implements CommandLineRunner {
             service.setType(servicesData[i][4]);
             service.setUnit(servicesData[i][5]);
             service.setStatus(ServiceStatus.ACTIVE);
-            service.getImages().add("/assets/images/services/service-" + (i + 1) + ".jpg");
+            service.getImages().add(serviceImageUrls[i % serviceImageUrls.length]);
             persist(service);
             services.add(service);
         }

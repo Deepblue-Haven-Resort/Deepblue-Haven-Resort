@@ -14,6 +14,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-table.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -87,6 +88,10 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="table-footer">
+                        <p>Hiển thị kết quả</p>
+                        <div class="pagination"></div>
+                    </div>
                 </div>
 
                 <!-- TAB 2: Room Status Logs -->
@@ -122,6 +127,10 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="table-footer">
+                        <p>Hiển thị kết quả</p>
+                        <div class="pagination"></div>
+                    </div>
                 </div>
 
                 <!-- TAB 3: Invoice Status Logs -->
@@ -156,6 +165,10 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="table-footer">
+                        <p>Hiển thị kết quả</p>
+                        <div class="pagination"></div>
                     </div>
                 </div>
 
@@ -194,6 +207,10 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="table-footer">
+                        <p>Hiển thị kết quả</p>
+                        <div class="pagination"></div>
+                    </div>
                 </div>
 
             </section>
@@ -201,6 +218,7 @@
     </div>
 
     <script th:src="@{/assets/js/manager/logs.js}"></script>
+    <script th:src="@{/assets/js/shared/table-pagination.js}"></script>
 </body>
 
 </html>

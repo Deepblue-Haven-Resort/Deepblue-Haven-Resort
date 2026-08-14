@@ -12,6 +12,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-table.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -95,7 +96,7 @@
                                 <th>Total Amount</th>
                                 <th>Paid Amount</th>
                                 <th>Payment Method</th>
-                                <th>Status</th>
+                                <th class="text-center">Status</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -103,22 +104,22 @@
                             <tr th:each="inv : ${invoices}">
                                 <td><strong th:text="|#INV-${inv.id}|">#INV-1025</strong></td>
                                 <td th:text="${inv.booking != null ? inv.booking.bookingCode : 'N/A'}">DBH-2026-001</td>
-                                <td th:text="${inv.customer != null && inv.customer.profile != null ? inv.customer.profile.fullName : 'Guest'}">John Smith</td>
+                                <td th:text="${inv.customer != null && inv.customer.profile != null ? inv.customer.profile.fullName : (inv.booking != null && inv.booking.customer != null && inv.booking.customer.profile != null ? inv.booking.customer.profile.fullName : 'Guest')}">John Smith</td>
                                 <td><strong th:text="|${#numbers.formatDecimal(inv.totalAmount != null ? inv.totalAmount : 0, 0, 'COMMA', 0, 'POINT')} VND|">4,125,000 VND</strong></td>
                                 <td th:text="|${#numbers.formatDecimal(inv.paidAmount != null ? inv.paidAmount : 0, 0, 'COMMA', 0, 'POINT')} VND|">4,125,000 VND</td>
                                 <td>Bank / Card</td>
-                                <td>
+                                <td class="text-center">
                                     <span th:class="|status ${inv.status == T(deepbluehaven.pojo.enums.InvoiceStatus).PAID ? 'status-success' : 'status-danger'}|"
                                           th:text="${inv.status}">PAID</span>
                                 </td>
-                                <td>
-                                    <div class="filter-options" style="display: flex; justify-content: center; gap: 8px;">
+                                <td class="text-center">
+                                    <div class="table-actions">
                                         <span th:text="${inv.status}">PAID</span>
                                     </div>
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(invoices)}">
-                                <td colspan="8" class="text-center" style="padding: 24px; color: var(--gray-500);">No invoices recorded in database.</td>
+                                <td colspan="8" class="empty-table-cell">No invoices recorded in database.</td>
                             </tr>
                         </tbody>
                     </table>

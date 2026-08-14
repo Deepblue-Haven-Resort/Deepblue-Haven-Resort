@@ -418,7 +418,7 @@ public class WorkerService {
             dto.setRole(worker.getProfile().getRole() != null ? worker.getProfile().getRole().name() : null);
             dto.setPhoneNumber(worker.getProfile().getPhoneNumber());
             dto.setEmail(worker.getProfile().getEmail());
-            dto.setAvatarUrl(worker.getProfile().getAvatarUrl() != null ? worker.getProfile().getAvatarUrl() : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=250&q=80");
+            dto.setAvatarUrl(worker.getProfile().getAvatarUrl() != null ? worker.getProfile().getAvatarUrl() : "https://res.cloudinary.com/xio0mgix/image/upload/v1786687242/d070bf12-83fd-4d5c-a16e-b4735f2d1d19.png");
             dto.setRoleLevel(worker.getProfile().getRoleLevel());
         }
         return dto;

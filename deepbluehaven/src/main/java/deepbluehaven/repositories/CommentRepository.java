@@ -18,4 +18,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Long countComplaints();
 
     List<Comment> findTop5ByOrderByCreatedAtDesc();
+
+    List<Comment> findByCustomerId(Long customerId);
 }

@@ -1,0 +1,80 @@
+.tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--neutral-200, #e2e8f0);
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--neutral-600, #475569);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-btn:hover {
+    color: var(--primary-700, #1d4ed8);
+    background-color: var(--primary-50, #eff6ff);
+}
+
+.tab-btn.active {
+    background-color: var(--primary-600, #2563eb) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.35);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.action-center {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.table-empty-msg {
+    padding: 20px;
+    color: var(--gray-500);
+}
+
+.readonly-bg {
+    background: var(--gray-100);
+}
+
+/* Guarantee Modal Popup Visibility */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: flex !important;
+}
+
+.modal-overlay.active .modal-container {
+    transform: translateY(0) scale(1) !important;
+    opacity: 1 !important;
+}

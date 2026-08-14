@@ -13,41 +13,9 @@
     <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
-
+    <link rel="stylesheet" th:href="@{/assets/css/manager/pricing-tabs.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-table.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <style>
-        .tabs {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .tab-btn {
-            padding: 12px 24px;
-            background: none;
-            border: none;
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--gray-500);
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-        }
-
-        .tab-btn.active {
-            color: var(--primary-600);
-            border-bottom-color: var(--primary-600);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-    </style>
 </head>
 
 <body>
@@ -67,6 +35,7 @@
                 <div class="tabs">
                     <button class="tab-btn active" data-target="pricingRulesTab">Pricing Rules</button>
                     <button class="tab-btn" data-target="discountsTab">Discount Codes</button>
+                    <button class="tab-btn" data-target="membershipTiersTab">Membership Tier Rules</button>
                 </div>
 
                 <!-- Pricing Rules Tab -->
@@ -88,27 +57,31 @@
                                     <th>Room Type</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
-                                    <th>Multiplier</th>
-                                    <th>Status</th>
+                                    <th class="text-center">Multiplier</th>
+                                    <th class="text-center">Status</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr th:each="r : ${pricingRules}">
-                                    <td><strong th:text="${r.roomType}">Summer Peak Season</strong></td>
+                                    <td><strong th:text="${r.roomType}">STANDARD</strong></td>
                                     <td th:text="${r.startDate}">01/06/2026</td>
                                     <td th:text="${r.endDate}">31/08/2026</td>
-                                    <td><strong th:text="|x ${r.multiplier}|">x 1.5</strong></td>
-                                    <td><span class="status status-success">ACTIVE</span></td>
-                                    <td>
-                                        <div style="display: flex; gap: 8px; justify-content: center;">
-                                            <button type="button"
-                                                class="btn outline-btn edit-rule-btn btn-small">Edit</button>
+                                    <td class="text-center"><strong th:text="|x ${r.multiplier}|">x 1.5</strong></td>
+                                    <td class="text-center"><span class="status status-success">ACTIVE</span></td>
+                                    <td class="text-center">
+                                        <div class="table-actions">
+                                            <button type="button" class="btn outline-btn edit-rule-btn btn-small"
+                                                th:data-id="${r.id}"
+                                                th:data-room-type="${r.roomType}"
+                                                th:data-start-date="${r.startDate}"
+                                                th:data-end-date="${r.endDate}"
+                                                th:data-multiplier="${r.multiplier}">Edit</button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(pricingRules)}">
-                                    <td colspan="6" class="text-center" style="padding: 20px; color: var(--gray-500);">
+                                    <td colspan="6" class="empty-table-cell">
                                         No seasonal pricing rules configured.</td>
                                 </tr>
                             </tbody>
@@ -136,7 +109,7 @@
                                     <th>Type</th>
                                     <th>Value</th>
                                     <th>Valid Until</th>
-                                    <th>Status</th>
+                                    <th class="text-center">Status</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -146,18 +119,68 @@
                                     <td th:text="${d.type}">Percentage</td>
                                     <td><strong th:text="${d.discountValue}">10%</strong></td>
                                     <td th:text="${d.endDate != null ? d.endDate : 'No expiry'}">31/08/2026</td>
-                                    <td><span th:class="|status ${d.isActive ? 'status-success' : 'status-error'}|"
+                                    <td class="text-center"><span th:class="|status ${d.isActive ? 'status-success' : 'status-error'}|"
                                             th:text="${d.isActive ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span></td>
-                                    <td>
-                                        <div style="display: flex; gap: 8px; justify-content: center;">
+                                    <td class="text-center">
+                                        <div class="table-actions">
                                             <button type="button"
                                                 class="btn outline-btn edit-discount-btn btn-small">Edit</button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(discounts)}">
-                                    <td colspan="6" class="text-center" style="padding: 20px; color: var(--gray-500);">
+                                    <td colspan="6" class="empty-table-cell">
                                         No discount codes found.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Membership Tiers Tab -->
+                <div id="membershipTiersTab" class="tab-content">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Membership Tier Rules & Progression Thresholds</h2>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>Tier Name</th>
+                                    <th>Min Spent (VND)</th>
+                                    <th class="text-center">Min Points</th>
+                                    <th class="text-center">Point Multiplier</th>
+                                    <th class="text-center">Member Discount Rate</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="tier : ${membershipTiers}">
+                                    <td><strong th:text="${tier.tierName}">GOLD</strong></td>
+                                    <td><strong
+                                            th:text="|${#numbers.formatDecimal(tier.minSpent != null ? tier.minSpent : 0, 0, 'COMMA', 0, 'POINT')} VND|">30,000,000
+                                            VND</strong></td>
+                                    <td class="text-center" th:text="|${tier.minPoints} pts|">3,000 pts</td>
+                                    <td class="text-center"><strong th:text="|x ${tier.pointMultiplier}|">x 1.50</strong></td>
+                                    <td class="text-center" th:text="|${tier.discountRate}%|">5.00%</td>
+                                    <td class="text-center">
+                                        <div class="table-actions">
+                                            <button type="button" class="btn outline-btn edit-tier-btn btn-small"
+                                                th:data-id="${tier.id}" th:data-name="${tier.tierName}"
+                                                th:data-min-spent="${tier.minSpent}"
+                                                th:data-min-points="${tier.minPoints}"
+                                                th:data-multiplier="${tier.pointMultiplier}"
+                                                th:data-discount-rate="${tier.discountRate}"
+                                                th:data-description="${tier.description}">Edit Rules</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(membershipTiers)}">
+                                    <td colspan="6" class="empty-table-cell">
+                                        No membership tiers configured in database.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -177,12 +200,14 @@
                 </button>
             </div>
             <form id="ruleForm" th:action="@{/manager/pricing/rules/save}" method="post">
-                <input type="hidden" name="roomType" value="STANDARD">
+                <input type="hidden" id="ruleId" name="id">
                 <div class="modal-body">
                     <div class="modal-form-grid">
                         <div class="form-group">
-                            <label>Rule Name <span>*</span></label>
-                            <input type="text" id="ruleName" required placeholder="e.g. Summer Peak Season">
+                            <label>Room Type <span>*</span></label>
+                            <select id="ruleRoomType" name="roomType" required style="width: 100%; height: 46px; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0 14px; font-weight: 500; outline: none; background: #fff; color: #1e293b;">
+                                <option th:each="rt : ${roomTypes}" th:value="${rt}" th:text="${rt == T(deepbluehaven.pojo.enums.RoomType).PRESIDENT ? 'President Suite' : (rt == T(deepbluehaven.pojo.enums.RoomType).SUITE ? 'Deluxe Suite' : (rt == T(deepbluehaven.pojo.enums.RoomType).PREMIUM ? 'Premium Room' : 'Standard Room'))}">Standard Room</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Start Date <span>*</span></label>
@@ -286,8 +311,60 @@
         </div>
     </div>
 
-    <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
-    <script th:src="@{/assets/js/manager/pricing.js}"></script>
+    <!-- Edit Membership Tier Modal -->
+    <div class="modal-overlay" id="tierModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-crown"></i> Edit Membership Tier Rule</h3>
+                <button type="button" class="close-btn" id="closeTierModalBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="tierForm" th:action="@{/manager/pricing/membership-tiers/save}" method="post">
+                <input type="hidden" id="tierId" name="id">
+                <div class="modal-body">
+                    <div class="modal-form-grid">
+                        <div class="form-group">
+                            <label>Tier Name</label>
+                            <input type="text" id="tierNameInput" readonly style="background: var(--gray-100);">
+                        </div>
+                        <div class="form-group">
+                            <label>Min Spent Threshold (VND) <span>*</span></label>
+                            <input type="number" id="tierMinSpent" name="minSpent" required min="0" step="100000"
+                                placeholder="e.g. 10000000">
+                        </div>
+                        <div class="form-group">
+                            <label>Min Points Threshold <span>*</span></label>
+                            <input type="number" id="tierMinPoints" name="minPoints" required min="0"
+                                placeholder="e.g. 1000">
+                        </div>
+                        <div class="form-group">
+                            <label>Point Multiplier <span>*</span></label>
+                            <input type="number" id="tierPointMultiplier" name="pointMultiplier" required min="1.00"
+                                step="0.05" placeholder="e.g. 1.20">
+                        </div>
+                        <div class="form-group">
+                            <label>Member Discount Rate (%) <span>*</span></label>
+                            <input type="number" id="tierDiscountRate" name="discountRate" required min="0" step="0.50"
+                                placeholder="e.g. 5.0">
+                        </div>
+                        <div class="form-group full-width" style="grid-column: 1 / -1;">
+                            <label>Description</label>
+                            <input type="text" id="tierDescription" name="description"
+                                placeholder="e.g. Silver Tier Benefits">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-btn" id="cancelTierModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-cta">Save Tier Rule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/assets/js/manager/manager-sidebar.js}"></script>
+    <script th:src="@{/assets/js/manager/pricing.js(v=2)}"></script>
 </body>
 
 </html>

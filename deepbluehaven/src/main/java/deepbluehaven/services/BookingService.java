@@ -281,7 +281,12 @@ public class BookingService {
         BookingDetail firstDetail = (booking.getDetails() != null && !booking.getDetails().isEmpty()) ? booking.getDetails().get(0) : null;
 
         if (firstDetail != null) {
-            dto.setRoomNumber(firstDetail.getRoom() != null ? firstDetail.getRoom().getRoomNumber() : "—");
+            if (firstDetail.getRoom() != null) {
+                dto.setRoomId(firstDetail.getRoom().getId());
+                dto.setRoomNumber(firstDetail.getRoom().getRoomNumber());
+            } else {
+                dto.setRoomNumber("—");
+            }
             dto.setRoomType(firstDetail.getRoomType() != null ? firstDetail.getRoomType().name() : "—");
             dto.setCheckIn(firstDetail.getCheckIn());
             dto.setCheckOut(firstDetail.getCheckOut());
@@ -304,8 +309,40 @@ public class BookingService {
         BigDecimal amountUsd = amountVnd.divide(EXCHANGE_RATE_USD, 2, RoundingMode.HALF_UP);
         dto.setTotalAmountUsd(amountUsd);
 
-        dto.setRawStatus(booking.getStatus() != null ? booking.getStatus() : BookingStatus.PENDING);
-        dto.setStatusText(getStatusLabel(booking.getStatus()));
+        BookingStatus status = booking.getStatus() != null ? booking.getStatus() : BookingStatus.PENDING;
+        dto.setRawStatus(status);
+        dto.setStatusText(getStatusLabel(status));
+
+        String timeGroup;
+        String statusClass;
+        switch (status) {
+            case PENDING:
+                timeGroup = "upcoming";
+                statusClass = "booking-status--pending";
+                break;
+            case CONFIRMED:
+                timeGroup = "upcoming";
+                statusClass = "booking-status--confirmed";
+                break;
+            case CHECKED_IN:
+                timeGroup = "current";
+                statusClass = "booking-status--current";
+                break;
+            case CHECKED_OUT:
+                timeGroup = "completed";
+                statusClass = "booking-status--completed";
+                break;
+            case CANCELLED:
+                timeGroup = "cancelled";
+                statusClass = "booking-status--cancelled";
+                break;
+            default:
+                timeGroup = "all";
+                statusClass = "booking-status--pending";
+                break;
+        }
+        dto.setTimeGroup(timeGroup);
+        dto.setStatusClass(statusClass);
 
         List<BookingHistoryDTO.ServiceItem> serviceItems = new ArrayList<>();
         if (booking.getDetails() != null) {

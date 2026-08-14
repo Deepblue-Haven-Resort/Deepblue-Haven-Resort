@@ -59,6 +59,7 @@ public class ManagerController {
     private final InvoiceRepository invoiceRepository;
     private final ResortRepository resortRepository;
     private final LogService logService;
+    private final deepbluehaven.repositories.MembershipTierRepository membershipTierRepository;
 
     public ManagerController(ManagerDashboardService managerDashboardService,
                              BookingService bookingService,
@@ -71,7 +72,8 @@ public class ManagerController {
                              TaskTypeRepository taskTypeRepository,
                              InvoiceRepository invoiceRepository,
                              ResortRepository resortRepository,
-                             LogService logService) {
+                             LogService logService,
+                             deepbluehaven.repositories.MembershipTierRepository membershipTierRepository) {
         this.managerDashboardService = managerDashboardService;
         this.bookingService = bookingService;
         this.pricingRuleRepository = pricingRuleRepository;
@@ -84,6 +86,7 @@ public class ManagerController {
         this.invoiceRepository = invoiceRepository;
         this.resortRepository = resortRepository;
         this.logService = logService;
+        this.membershipTierRepository = membershipTierRepository;
     }
 
     @GetMapping("/manager/dashboard")
@@ -126,7 +129,7 @@ public class ManagerController {
 
     @GetMapping("/manager/staff")
     public String managerStaff(Model model) {
-        model.addAttribute("staffList", workerRepository.findAll());
+        model.addAttribute("staffList", workerRepository.findAllWithProfile());
         model.addAttribute("activePage", "staff");
         return "manager/staff";
     }
@@ -148,8 +151,39 @@ public class ManagerController {
     public String managerPricing(Model model) {
         model.addAttribute("pricingRules", pricingRuleRepository.findAll());
         model.addAttribute("discounts", discountRepository.findAll());
+        model.addAttribute("membershipTiers", membershipTierRepository.findAllOrderedForProgression());
+        model.addAttribute("roomTypes", RoomType.values());
         model.addAttribute("activePage", "pricing");
         return "manager/pricing";
+    }
+
+    @PostMapping("/manager/pricing/membership-tiers/save")
+    public String saveMembershipTier(@RequestParam("id") Long id,
+                                    @RequestParam("minSpent") BigDecimal minSpent,
+                                    @RequestParam("minPoints") Integer minPoints,
+                                    @RequestParam("pointMultiplier") BigDecimal pointMultiplier,
+                                    @RequestParam("discountRate") BigDecimal discountRate,
+                                    @RequestParam(value = "description", required = false) String description,
+                                    RedirectAttributes redirectAttrs) {
+        System.out.println("[ManagerController] Received saveMembershipTier POST request for id: " + id + ", minSpent: " + minSpent + ", minPoints: " + minPoints);
+        try {
+            deepbluehaven.pojo.MembershipTier tier = membershipTierRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Membership Tier not found: " + id));
+            tier.setMinSpent(minSpent);
+            tier.setMinPoints(minPoints);
+            tier.setPointMultiplier(pointMultiplier);
+            tier.setDiscountRate(discountRate);
+            if (description != null) {
+                tier.setDescription(description);
+            }
+            membershipTierRepository.save(tier);
+            System.out.println("[ManagerController] Successfully saved Membership Tier: " + tier.getTierName());
+            redirectAttrs.addFlashAttribute("successMessage", "Membership Tier rules for " + tier.getTierName() + " updated successfully!");
+        } catch (Exception e) {
+            System.err.println("[ManagerController] Error saving Membership Tier: " + e.getMessage());
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to save Membership Tier rule: " + e.getMessage());
+        }
+        return "redirect:/manager/pricing";
     }
 
     private Long getLoggedInWorkerId(jakarta.servlet.http.HttpSession session) {
@@ -159,12 +193,14 @@ public class ManagerController {
     }
 
     @PostMapping("/manager/pricing/rules/save")
-    public String savePricingRule(@RequestParam String roomType,
+    public String savePricingRule(@RequestParam(value = "id", required = false) Long id,
+                                  @RequestParam String roomType,
                                   @RequestParam BigDecimal multiplier,
                                   @RequestParam String startDate,
                                   @RequestParam String endDate,
                                   RedirectAttributes redirectAttrs,
                                   jakarta.servlet.http.HttpSession session) {
+        System.out.println("[ManagerController] Received savePricingRule POST request for id: " + id + ", roomType: " + roomType);
         try {
             RoomType rt;
             try {
@@ -175,7 +211,12 @@ public class ManagerController {
                 rt = RoomType.STANDARD;
             }
 
-            PricingRule rule = new PricingRule();
+            PricingRule rule;
+            if (id != null) {
+                rule = pricingRuleRepository.findById(id).orElse(new PricingRule());
+            } else {
+                rule = new PricingRule();
+            }
             rule.setRoomType(rt);
             rule.setMultiplier(multiplier);
             rule.setStartDate(LocalDate.parse(startDate));
@@ -183,10 +224,12 @@ public class ManagerController {
             pricingRuleRepository.save(rule);
 
             logService.log(ObjectType.SYSTEM, ActionCode.UPDATE, rule.getId(),
-                    "Manager created pricing rule for " + rt + " (multiplier: " + multiplier + ")", session);
+                    "Manager saved pricing rule for " + rt + " (multiplier: " + multiplier + ")", session);
 
+            System.out.println("[ManagerController] Successfully saved pricing rule #" + rule.getId() + " for " + rt);
             redirectAttrs.addFlashAttribute("successMessage", "Pricing rule saved successfully!");
         } catch (Exception e) {
+            System.err.println("[ManagerController] Error saving pricing rule: " + e.getMessage());
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to save pricing rule: " + e.getMessage());
         }
         return "redirect:/manager/pricing";

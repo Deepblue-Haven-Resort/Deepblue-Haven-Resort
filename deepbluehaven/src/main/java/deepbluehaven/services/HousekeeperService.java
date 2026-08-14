@@ -29,16 +29,19 @@ public class HousekeeperService {
     private final RoomRepository roomRepository;
     private final WorkerRepository workerRepository;
     private final LogService logService;
+    private final WorkerPerformanceService workerPerformanceService;
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm a");
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy hh:mm a");
 
     public HousekeeperService(TaskRepository taskRepository, RoomRepository roomRepository,
-                              WorkerRepository workerRepository, LogService logService) {
+                              WorkerRepository workerRepository, LogService logService,
+                              WorkerPerformanceService workerPerformanceService) {
         this.taskRepository = taskRepository;
         this.roomRepository = roomRepository;
         this.workerRepository = workerRepository;
         this.logService = logService;
+        this.workerPerformanceService = workerPerformanceService;
     }
 
     @Transactional(readOnly = true)
@@ -107,6 +110,10 @@ public class HousekeeperService {
             logService.logRoomStatusChange(room, oldStatus, RoomStatus.AVAILABLE, worker);
         }
 
+        if (worker != null) {
+            workerPerformanceService.adjustWorkerPerformanceScore(worker, 1.5);
+        }
+
         logService.log(ObjectType.WORKER, ActionCode.UPDATE, taskId,
                 "Housekeeper completed cleaning task #" + taskId + " for Room #" + (task.getRoom() != null ? task.getRoom().getRoomNumber() : "N/A"), workerId);
     }
@@ -128,6 +135,38 @@ public class HousekeeperService {
             ));
         }
         return csv.toString();
+    }
+
+    @Transactional
+    public void reportRoomIssue(String roomNumber, String issueType, String priority, String description, Long workerId) {
+        if (roomNumber == null || roomNumber.trim().isEmpty()) {
+            throw new IllegalArgumentException("Room number is required");
+        }
+        String cleanRoomNumber = roomNumber.trim().replaceAll("(?i)^room\\s*", "");
+        Room room = roomRepository.findByRoomNumber(cleanRoomNumber)
+                .orElseGet(() -> roomRepository.findAll().stream()
+                        .filter(r -> r.getRoomNumber().equalsIgnoreCase(cleanRoomNumber))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("Room #" + roomNumber + " not found")));
+
+        RoomStatus oldStatus = room.getStatus();
+        room.setStatus(RoomStatus.MAINTENANCE);
+        roomRepository.save(room);
+
+        Worker worker = workerId != null ? workerRepository.findById(workerId).orElse(null) : null;
+        logService.logRoomStatusChange(room, oldStatus, RoomStatus.MAINTENANCE, worker);
+
+        Task task = new Task();
+        task.setRoom(room);
+        task.setAssignedTo(worker);
+        task.setAssignedBy(worker);
+        task.setAction("Report Issue: " + (issueType != null ? issueType : "Problem") + " - " + (description != null ? description : "Room maintenance needed"));
+        task.setStatus(TaskStatus.ASSIGNED);
+        task.setTimestamp(java.time.LocalDateTime.now());
+        taskRepository.save(task);
+
+        logService.log(ObjectType.ROOM, ActionCode.UPDATE, room.getId(),
+                "Housekeeper reported issue for Room #" + room.getRoomNumber() + ": " + description, workerId);
     }
 
     private TaskDTO.Response mapToTaskDTO(Task task) {

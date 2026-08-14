@@ -99,9 +99,13 @@
                                         <div style="color: #2563eb; font-size: 0.775rem;"
                                             th:text="${item.pricingRuleNote}">Standard Rate</div>
                                         <div th:if="${item.discountCode != null}"
-                                            style="color: #16a34a; font-size: 0.775rem;">
-                                            Discount (<span th:text="${item.discountCode}">SUMMER</span>): <strong
+                                            style="color: #16a34a; font-size: 0.775rem; margin-top: 2px;">
+                                            <i class="fa-solid fa-tags"></i> Offer: <span th:text="${item.discountCode}" style="font-weight: 600;">SUMMER26</span>: <strong
                                                 th:text="${'-' + item.discountAmountStr + ' VND'}">-200,000 VND</strong>
+                                        </div>
+                                        <div th:if="${item.discountCode == null}"
+                                            style="color: #94a3b8; font-size: 0.775rem; margin-top: 2px;">
+                                            No Discount Applied
                                         </div>
                                     </div>
                                 </td>
@@ -185,8 +189,8 @@
                                 </tr>
                                 <tr id="coModalDiscountRow" class="folio-row-discount">
                                     <td class="folio-td-discount-name">
-                                        <strong>Applied Customer Discount</strong><br>
-                                        <small id="coModalDiscountCode" class="folio-discount-code">SUMMER2026</small>
+                                        <strong>Applied Discount / Member Tier Offer</strong><br>
+                                        <small id="coModalDiscountCode" class="folio-discount-code" style="color: #16a34a; font-weight: 600;">SUMMER2026</small>
                                     </td>
                                     <td class="folio-td-discount-val" id="coModalDiscountAmount">-200,000 VND</td>
                                 </tr>
@@ -253,108 +257,7 @@
     <!-- ĐỔI ĐƯỜNG DẪN JS SANG ADMIN-SIDEBAR -->
     <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
     <script th:src="@{/assets/js/receptionist/receptionist.js}"></script>
-    <script>
-        function updateCheckoutPaymentBtn(val) {
-            const submitBtn = document.getElementById('coModalSubmitBtn');
-            if (!submitBtn) return;
-            if (val === 'CREDIT_CARD') {
-                submitBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay via VNPAY Sandbox Gateway';
-                submitBtn.style.backgroundColor = '#0284c7';
-            } else if (val === 'BANK_TRANSFER') {
-                submitBtn.innerHTML = '<i class="fa-solid fa-qrcode"></i> Display VietQR Bank Transfer Code';
-                submitBtn.style.backgroundColor = '#0284c7';
-            } else if (val === 'E_WALLET') {
-                submitBtn.innerHTML = '<i class="fa-solid fa-mobile-screen-button"></i> Display E-Wallet QR Code';
-                submitBtn.style.backgroundColor = '#0d9488';
-            } else {
-                submitBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Confirm Payment & Execute Check-Out';
-                submitBtn.style.backgroundColor = '';
-            }
-        }
-
-        function triggerPaymentAction(e) {
-            const selectElem = document.querySelector('select[name="paymentMethodStr"]');
-            if (!selectElem) return true;
-
-            const method = selectElem.value;
-            const bookingIdInput = document.getElementById('coModalBookingId');
-            const bookingId = bookingIdInput ? bookingIdInput.value : '';
-            const totalFolioElem = document.getElementById('coModalTotalFolio');
-            const amountText = totalFolioElem ? totalFolioElem.innerText.replace(/[^0-9]/g, '') : '';
-            const submitBtn = document.getElementById('coModalSubmitBtn');
-
-            if (method === 'CREDIT_CARD') {
-                if (e) { e.preventDefault(); e.stopPropagation(); }
-                if (bookingId) {
-                    if (submitBtn) {
-                        submitBtn.disabled = true;
-                        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting to VNPAY...';
-                    }
-                    fetch('/deepbluehaven/api/vnpay/create-checkout-payment?bookingId=' + bookingId + (amountText ? '&amount=' + amountText : ''))
-                        .then(res => res.json())
-                        .then(resData => {
-                            if (resData.success && resData.data) {
-                                window.location.href = resData.data;
-                            } else {
-                                alert('Could not generate VNPAY payment link: ' + (resData.message || 'Error'));
-                                if (submitBtn) {
-                                    submitBtn.disabled = false;
-                                    submitBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay via VNPAY Sandbox Gateway';
-                                }
-                            }
-                        })
-                        .catch(err => {
-                            alert('Error generating VNPAY link: ' + err);
-                            if (submitBtn) {
-                                submitBtn.disabled = false;
-                                submitBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay via VNPAY Sandbox Gateway';
-                            }
-                        });
-                }
-                return false;
-            } else if (method === 'BANK_TRANSFER' || method === 'E_WALLET') {
-                if (e) { e.preventDefault(); e.stopPropagation(); }
-
-                const checkoutModal = document.getElementById('checkoutConfirmModal');
-                if (checkoutModal) {
-                    checkoutModal.classList.remove('active');
-                    checkoutModal.style.display = 'none';
-                }
-
-                const amountTextVal = amountText || '500000';
-                const qrUrl = 'https://img.vietqr.io/image/970419-9704198526191432-compact.png?amount=' + amountTextVal + '&addInfo=Booking%20' + bookingId;
-
-                const qrImg = document.getElementById('eWalletQrImage');
-                if (qrImg) qrImg.src = qrUrl;
-
-                const refText = document.getElementById('eWalletBookingRefText');
-                if (refText) {
-                    refText.innerText = 'Booking #' + bookingId + (method === 'BANK_TRANSFER' ? ' VietQR Settlement' : ' E-Wallet QR');
-                }
-
-                const modal = document.getElementById('eWalletQrModal');
-                if (modal) {
-                    modal.style.display = 'flex';
-                    modal.classList.add('active');
-                }
-                return false;
-            }
-            return true;
-        }
-
-        function closeEWalletQrModal() {
-            const modal = document.getElementById('eWalletQrModal');
-            if (modal) {
-                modal.style.display = 'none';
-                modal.classList.remove('active');
-            }
-            const checkoutModal = document.getElementById('checkoutConfirmModal');
-            if (checkoutModal) {
-                checkoutModal.classList.remove('active');
-                checkoutModal.style.display = '';
-            }
-        }
-    </script>
+    <script th:src="@{/assets/js/receptionist/checkout-payment.js}"></script>
 </body>
 
 </html>

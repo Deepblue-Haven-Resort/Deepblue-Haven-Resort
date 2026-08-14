@@ -30,7 +30,10 @@ public class MembershipTier {
     private TierStatus tierName;
 
     @Column(name = "min_points", nullable = false)
-    private Integer minPoints;
+    private Integer minPoints = 0;
+
+    @Column(name = "min_spent", nullable = false, precision = 15, scale = 2)
+    private BigDecimal minSpent = BigDecimal.ZERO;
 
     @Column(name = "point_multiplier", nullable = false, precision = 5, scale = 2)
     private BigDecimal pointMultiplier;
@@ -64,6 +67,11 @@ public class MembershipTier {
         return minPoints; }
     public void setMinPoints(Integer minPoints) { 
         this.minPoints = minPoints; }
+
+    public BigDecimal getMinSpent() { 
+        return minSpent; }
+    public void setMinSpent(BigDecimal minSpent) { 
+        this.minSpent = minSpent; }
 
     public BigDecimal getPointMultiplier() { 
         return pointMultiplier; }

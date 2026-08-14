@@ -57,27 +57,27 @@
             <!-- ROOM GRID -->
             <div class="stats-grid rooms-status-grid">
 
-                <article class="chart-card" th:each="r : ${rooms}">
+                <article class="chart-card" th:each="r : ${rooms}" th:data-status="${r.status}">
                     <div class="card-header">
                         <div>
                             <h2><strong th:text="|Room ${r.roomNumber}|">Room 101</strong></h2>
-                            <small class="body-4" th:text="|${r.roomType} · Floor ${r.floor != null ? r.floor : 1}|">Superior King · Floor 1</small>
+                            <small class="body-4" th:text="|${r.roomType} · Floor ${r.roomNumber != null && r.roomNumber.length() > 0 ? r.roomNumber.substring(0,1) : 1}|">Superior King · Floor 1</small>
                         </div>
                         <span th:class="|status ${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'status-success' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING ? 'status-info' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).OCCUPIED ? 'status-warning' : 'status-error'))}|"
                               th:text="${r.status}">AVAILABLE</span>
                     </div>
                     <div class="user-info">
                         <div>
-                            <strong class="body-3" th:text="|Max ${r.maxCapacity} Guests|">2 Guests</strong>
+                            <strong class="body-3" th:text="|Max ${r.capacity != null ? r.capacity : 2} Guests|">2 Guests</strong>
                             <span th:text="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'Ready for guests' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING ? 'Cleaning needed' : 'Occupied / In Use')}">Status note</span>
                         </div>
                     </div>
-                    <div class="text-center" style="margin-top: 12px;">
+                    <div class="text-center">
                         <a th:href="@{/housekeeper/tasks}" class="btn btn-small btn-cta">View Tasks</a>
                     </div>
                 </article>
 
-                <div th:if="${#lists.isEmpty(rooms)}" style="grid-column: 1 / -1; text-align: center; padding: 32px; color: var(--gray-500);">
+                <div th:if="${#lists.isEmpty(rooms)}" class="empty-table-cell">
                     No rooms currently in inventory.
                 </div>
 
@@ -89,5 +89,6 @@
 </div>
 
 <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+<script th:src="@{/assets/js/housekeeper/rooms.js}"></script>
 </body>
 </html>

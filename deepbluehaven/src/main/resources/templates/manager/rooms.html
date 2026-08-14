@@ -14,6 +14,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-table.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -94,9 +95,9 @@
                             <tr>
                                 <th>Room Number</th>
                                 <th>Room Type</th>
-                                <th>Max Capacity</th>
+                                <th class="text-center">Max Capacity</th>
                                 <th>Base Nightly Price</th>
-                                <th>Current Status</th>
+                                <th class="text-center">Current Status</th>
                                 <th>Housekeeper Assigned</th>
                                 <th class="text-center">Action</th>
                             </tr>
@@ -113,18 +114,18 @@
                                 th:data-image="${r.images != null && !r.images.isEmpty() ? r.images[0] : ''}">
                                 <td><strong th:text="|Room ${r.roomNumber}|">Room 101</strong></td>
                                 <td th:text="${r.roomType}">Premium Room</td>
-                                <td th:text="|${r.capacity != null ? r.capacity : 2} Guests|">3 Guests</td>
+                                <td class="text-center" th:text="|${r.capacity != null ? r.capacity : 2} Guests|">3 Guests</td>
                                 <td><strong th:text="|${#numbers.formatDecimal(r.basePrice, 0, 'COMMA', 0, 'POINT')} VND|">2,100,000 VND</strong></td>
-                                <td>
+                                <td class="text-center">
                                     <span th:class="|status ${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'status-success' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'status-danger' : '')}|"
                                           th:text="${r.status}">AVAILABLE</span>
                                 </td>
                                 <td>Unassigned</td>
-                                <td>
-                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                <td class="text-center">
+                                    <div class="table-actions">
                                         <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
                                         <button type="button" class="btn outline-btn assign-btn btn-small" th:data-room-id="${r.id}" th:data-room-number="${r.roomNumber}">Assign Task</button>
-                                        <form th:action="@{'/manager/rooms/' + ${r.id} + '/status'}" method="post" style="display: inline;">
+                                        <form th:action="@{'/manager/rooms/' + ${r.id} + '/status'}" method="post">
                                             <input type="hidden" name="status" th:value="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'AVAILABLE' : 'MAINTENANCE'}" />
                                             <button type="submit" class="btn warning-btn btn-small" th:text="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'Available' : 'Maintenance'}">Maintenance</button>
                                         </form>
@@ -132,7 +133,7 @@
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(rooms)}">
-                                <td colspan="7" class="text-center" style="padding: 24px; color: var(--gray-500);">No rooms registered in database.</td>
+                                <td colspan="7" class="empty-table-cell">No rooms registered in database.</td>
                             </tr>
                         </tbody>
                     </table>

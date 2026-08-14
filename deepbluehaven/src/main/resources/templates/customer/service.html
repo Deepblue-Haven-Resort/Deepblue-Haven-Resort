@@ -316,7 +316,7 @@
                         <div class="services-grid" id="servicesGrid">
                             <th:block th:each="svc : ${services}">
                                 <div th:replace="~{fragments/service-card :: serviceCard(
-                                '/assets/pic/default-service.png', 
+                                ${svc.images != null && !svc.images.empty ? svc.images[0] : 'https://res.cloudinary.com/xio0mgix/image/upload/v1786686824/f9b9112d-047b-4756-a23d-95fd3d7dd478.png'}, 
                                 ${svc.name}, 
                                 ${svc.category}, 
                                 ${svc.name}, 
@@ -328,8 +328,8 @@
                                 ${svc.unit}, 
                                 |${#numbers.formatDecimal(svc.basePrice, 0, 'COMMA', 0, 'POINT')} VND|, 
                                 ${svc.basePrice}, 
-                                ${#strings.toLowerCase(svc.category)}, 
-                                ${#strings.toLowerCase(svc.type)}, 
+                                ${svc.category != null ? #strings.toLowerCase(svc.category) : 'all'}, 
+                                ${svc.type != null ? #strings.toLowerCase(svc.type) : 'all'}, 
                                 ${svc.statusValue}, 
                                 ${svc.id}
                             )}"></div>

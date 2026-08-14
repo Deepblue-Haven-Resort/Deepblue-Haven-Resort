@@ -27,6 +27,7 @@ import deepbluehaven.pojo.Discount;
 import deepbluehaven.pojo.Invoice;
 import deepbluehaven.pojo.InvoiceStatusLog;
 import deepbluehaven.pojo.Log;
+import deepbluehaven.pojo.MembershipTier;
 import deepbluehaven.pojo.PaymentTransaction;
 import deepbluehaven.pojo.PricingRule;
 import deepbluehaven.pojo.Room;
@@ -69,6 +70,8 @@ public class ReceptionistService {
     private final CustomerRepository customerRepository;
     private final NotificationService notificationService;
     private final LogRepository logRepository;
+    private final CustomerRewardService customerRewardService;
+    private final WorkerPerformanceService workerPerformanceService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -80,7 +83,9 @@ public class ReceptionistService {
                                TaskRepository taskRepository,
                                CustomerRepository customerRepository,
                                NotificationService notificationService,
-                               LogRepository logRepository) {
+                               LogRepository logRepository,
+                               CustomerRewardService customerRewardService,
+                               WorkerPerformanceService workerPerformanceService) {
         this.bookingRepository = bookingRepository;
         this.roomRepository = roomRepository;
         this.invoiceRepository = invoiceRepository;
@@ -89,6 +94,8 @@ public class ReceptionistService {
         this.customerRepository = customerRepository;
         this.notificationService = notificationService;
         this.logRepository = logRepository;
+        this.customerRewardService = customerRewardService;
+        this.workerPerformanceService = workerPerformanceService;
     }
 
     @Transactional(readOnly = true)
@@ -360,39 +367,62 @@ public class ReceptionistService {
 
                 BigDecimal grossSubtotal = roomCharge.add(serviceTotal);
 
-                BigDecimal discountAmount = BigDecimal.ZERO;
+                BigDecimal totalDiscountAmount = BigDecimal.ZERO;
+                BigDecimal tierDiscountAmount = BigDecimal.ZERO;
+                BigDecimal voucherDiscountAmount = BigDecimal.ZERO;
                 String discountCode = null;
                 Long appliedCdId = null;
                 if (b.getCustomer() != null && b.getCustomer().getId() != null) {
+                    Long custId = b.getCustomer().getId();
+
+                    // 1. Membership Tier Discount Rate
+                    try {
+                        CustomerProfile profile = entityManager.find(CustomerProfile.class, custId);
+                        if (profile != null && profile.getMembershipTier() != null) {
+                            MembershipTier tier = profile.getMembershipTier();
+                            if (tier.getDiscountRate() != null && tier.getDiscountRate().compareTo(BigDecimal.ZERO) > 0) {
+                                tierDiscountAmount = grossSubtotal.multiply(tier.getDiscountRate()).divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
+                                discountCode = tier.getTierName() + " (" + tier.getDiscountRate() + "%)";
+                            }
+                        }
+                    } catch (Exception ignored) {}
+
+                    // 2. Promotional Discount Code Voucher
                     try {
                         List<CustomerDiscount> custDiscounts = entityManager.createQuery(
                             "select cd from CustomerDiscount cd join fetch cd.discount d where cd.customer.id = :cId and cd.status = :st", CustomerDiscount.class)
-                            .setParameter("cId", b.getCustomer().getId())
+                            .setParameter("cId", custId)
                             .setParameter("st", CustomerDiscountStatus.AVAILABLE)
                             .getResultList();
                         if (!custDiscounts.isEmpty()) {
                             CustomerDiscount cd = custDiscounts.get(0);
                             Discount d = cd.getDiscount();
                             appliedCdId = cd.getId();
-                            discountCode = d.getCode();
-                            if (d.getType() == DiscountType.PERCENTAGE) {
-                                discountAmount = grossSubtotal.multiply(d.getDiscountValue()).divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
+                            if (discountCode != null) {
+                                discountCode = d.getCode() + " + " + discountCode;
                             } else {
-                                discountAmount = d.getDiscountValue();
+                                discountCode = d.getCode();
                             }
-                            if (discountAmount.compareTo(grossSubtotal) > 0) {
-                                discountAmount = grossSubtotal;
+                            if (d.getType() == DiscountType.PERCENTAGE) {
+                                voucherDiscountAmount = grossSubtotal.multiply(d.getDiscountValue()).divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
+                            } else {
+                                voucherDiscountAmount = d.getDiscountValue();
                             }
                         }
                     } catch (Exception ignored) {}
                 }
 
-                item.setDiscountAmount(discountAmount);
+                totalDiscountAmount = tierDiscountAmount.add(voucherDiscountAmount);
+                if (totalDiscountAmount.compareTo(grossSubtotal) > 0) {
+                    totalDiscountAmount = grossSubtotal;
+                }
+
+                item.setDiscountAmount(totalDiscountAmount);
                 item.setDiscountCode(discountCode);
                 item.setAppliedCustomerDiscountId(appliedCdId);
-                item.setDiscountAmountStr(formatVnd(discountAmount));
+                item.setDiscountAmountStr(formatVnd(totalDiscountAmount));
 
-                BigDecimal netSubtotal = grossSubtotal.subtract(discountAmount);
+                BigDecimal netSubtotal = grossSubtotal.subtract(totalDiscountAmount);
                 BigDecimal tax = netSubtotal.multiply(new BigDecimal("0.10")).setScale(0, RoundingMode.HALF_UP);
                 BigDecimal totalFolio = netSubtotal.add(tax);
 
@@ -448,31 +478,49 @@ public class ReceptionistService {
         }
         BigDecimal grossSubtotal = roomCharge.add(serviceTotal);
 
-        BigDecimal discountAmount = BigDecimal.ZERO;
+        BigDecimal totalDiscountAmount = BigDecimal.ZERO;
+        BigDecimal tierDiscountAmount = BigDecimal.ZERO;
+        BigDecimal voucherDiscountAmount = BigDecimal.ZERO;
         CustomerDiscount activeCustDiscount = null;
         if (booking.getCustomer() != null && booking.getCustomer().getId() != null) {
+            Long custId = booking.getCustomer().getId();
+
+            // 1. Membership Tier Discount Rate
+            try {
+                CustomerProfile profile = entityManager.find(CustomerProfile.class, custId);
+                if (profile != null && profile.getMembershipTier() != null) {
+                    MembershipTier tier = profile.getMembershipTier();
+                    if (tier.getDiscountRate() != null && tier.getDiscountRate().compareTo(BigDecimal.ZERO) > 0) {
+                        tierDiscountAmount = grossSubtotal.multiply(tier.getDiscountRate()).divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
+                    }
+                }
+            } catch (Exception ignored) {}
+
+            // 2. Promotional Discount Code Voucher
             try {
                 List<CustomerDiscount> custDiscounts = entityManager.createQuery(
                     "select cd from CustomerDiscount cd join fetch cd.discount d where cd.customer.id = :cId and cd.status = :st", CustomerDiscount.class)
-                    .setParameter("cId", booking.getCustomer().getId())
+                    .setParameter("cId", custId)
                     .setParameter("st", CustomerDiscountStatus.AVAILABLE)
                     .getResultList();
                 if (!custDiscounts.isEmpty()) {
                     activeCustDiscount = custDiscounts.get(0);
                     Discount d = activeCustDiscount.getDiscount();
                     if (d.getType() == DiscountType.PERCENTAGE) {
-                        discountAmount = grossSubtotal.multiply(d.getDiscountValue()).divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
+                        voucherDiscountAmount = grossSubtotal.multiply(d.getDiscountValue()).divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
                     } else {
-                        discountAmount = d.getDiscountValue();
-                    }
-                    if (discountAmount.compareTo(grossSubtotal) > 0) {
-                        discountAmount = grossSubtotal;
+                        voucherDiscountAmount = d.getDiscountValue();
                     }
                 }
             } catch (Exception ignored) {}
         }
 
-        BigDecimal netSubtotal = grossSubtotal.subtract(discountAmount);
+        totalDiscountAmount = tierDiscountAmount.add(voucherDiscountAmount);
+        if (totalDiscountAmount.compareTo(grossSubtotal) > 0) {
+            totalDiscountAmount = grossSubtotal;
+        }
+
+        BigDecimal netSubtotal = grossSubtotal.subtract(totalDiscountAmount);
         BigDecimal tax = netSubtotal.multiply(new BigDecimal("0.10")).setScale(0, RoundingMode.HALF_UP);
         BigDecimal totalFolio = netSubtotal.add(tax);
 
@@ -530,6 +578,14 @@ public class ReceptionistService {
         tx.setAction("Checkout Folio Paid (" + pMethod.name() + ")");
         tx.setTimestamp(LocalDateTime.now());
         entityManager.persist(tx);
+
+        // Process Customer Reward Points & Worker Performance Score
+        if (booking.getCustomer() != null) {
+            customerRewardService.processInvoicePayment(booking.getCustomer(), totalFolio, invoice.getId(), "Checkout Invoice Settlement");
+        }
+        if (receptionist != null) {
+            workerPerformanceService.adjustWorkerPerformanceScore(receptionist, 1.0);
+        }
 
         BookingStatus oldBStatus = booking.getStatus();
         booking.setStatus(BookingStatus.CHECKED_OUT);
