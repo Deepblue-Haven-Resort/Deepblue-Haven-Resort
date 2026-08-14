@@ -11,6 +11,8 @@
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/housekeeper/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/toast.css}">
 
 
 
@@ -132,17 +134,19 @@
                         <td><span class="status" th:classappend="${task.statusClass}" th:text="${task.statusLabel}">PENDING</span></td>
                         <td th:text="${task.timeText}">10:30 AM</td>
                         <td>
-                            <form th:if="${task.statusLabel == 'PENDING'}" th:action="@{/housekeeper/tasks/{id}/start(id=${task.id})}" method="post" class="inline-action-form">
+                            <form th:if="${task.statusLabel == 'PENDING' or task.statusLabel == 'ASSIGNED'}" th:action="@{/housekeeper/tasks/{id}/start(id=${task.id})}" method="post" class="inline-action-form">
                                 <button type="submit" class="btn btn-small btn-cta badge">Start Task</button>
                             </form>
 
-                            <form th:if="${task.statusLabel == 'CLEANING'}" th:action="@{/housekeeper/tasks/{id}/complete(id=${task.id})}" method="post" class="inline-action-form">
-                                <button type="submit" class="btn btn-small btn-success badge">Complete</button>
-                            </form>
+                            <th:block th:if="${task.statusLabel == 'CLEANING'}">
+                                <button type="button" class="btn btn-small btn-success badge open-complete-modal-btn" th:data-task-id="${task.id}" th:data-room-number="${task.roomNumber}">
+                                    <i class="fa-solid fa-camera"></i> Complete
+                                </button>
+                            </th:block>
 
-                            <button th:if="${task.statusLabel == 'INSPECTED'}" class="btn btn-small btn-luxury badge" disabled>Approved</button>
+                            <span th:if="${task.statusLabel == 'WAITING_INSPECTION'}" class="badge status-warning"><i class="fa-solid fa-clock-rotate-left"></i> Waiting Inspection</span>
 
-                            <button th:if="${task.statusLabel != 'PENDING' and task.statusLabel != 'CLEANING' and task.statusLabel != 'INSPECTED'}" class="btn btn-small btn-warning badge">Track</button>
+                            <span th:if="${task.statusLabel == 'INSPECTED'}" class="badge status-success"><i class="fa-solid fa-circle-check"></i> Approved</span>
                         </td>
                     </tr>
 
@@ -178,7 +182,48 @@
 </div>
 
 <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+<script th:src="@{/assets/js/shared/toast.js}"></script>
 <script th:src="@{/assets/js/shared/table-pagination.js}"></script>
 <script th:src="@{/assets/js/housekeeper/dashboard.js}"></script>
+
+<!-- MODAL: Complete Task Upload Proof Image -->
+<div class="modal-overlay" id="completeTaskModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-camera"></i> Complete Task - Proof Upload</h3>
+            <button type="button" class="modal-close" id="closeCompleteModalBtn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="completeTaskForm" action="" method="post">
+            <input type="hidden" name="proofImageUrl" id="proofImageUrlInput" required>
+            <div class="modal-body">
+                <div class="modal-form-grid">
+                    <p class="modal-instruction-text">
+                        Please upload an evidence image of cleaned <strong id="modalRoomNumberDisplay">Room 101</strong> to send for Manager inspection.
+                    </p>
+                    <div class="form-group">
+                        <label>Cleaning Evidence Photo(s) (Max 5) <span>*</span></label>
+                        <div class="file-upload-row">
+                            <input type="file" id="proofFileInput" accept="image/*" multiple class="file-input-hidden">
+                            <button type="button" class="btn outline-btn" id="triggerProofUploadBtn">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Choose Photo(s)
+                            </button>
+                            <span id="proofFileName" class="file-name-label">No file chosen</span>
+                        </div>
+                        <div id="proofUploadProgress" class="upload-progress-notice">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Uploading to Cloudinary...
+                        </div>
+                        <div id="proofImagePreviewContainer" class="upload-preview-container"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn outline-btn" id="cancelCompleteModalBtn">Cancel</button>
+                <button type="submit" class="btn btn-cta btn-success" id="submitCompleteTaskBtn" disabled>
+                    <i class="fa-solid fa-paper-plane"></i> Submit Inspection
+                </button>
+            </div>
+        </form>
+    </div>
 </body>
+
 </html>

@@ -385,12 +385,12 @@
 
     .admin-sidebar .sidebar-item.active {
         background: var(--primary-700);
-        color: #ffffff;
+        color: var(--white);
     }
 
     .admin-sidebar .sidebar-item.active i,
     .admin-sidebar .sidebar-item.active span {
-        color: #ffffff;
+        color: var(--white);
     }
 
     .admin-sidebar .sidebar-item i {
@@ -467,12 +467,12 @@
 
     .admin-sidebar.is-collapsed .sidebar-item.active {
         background: var(--primary-700);
-        color: #ffffff;
+        color: var(--white);
     }
 
     .admin-sidebar.is-collapsed .sidebar-item.active i,
     .admin-sidebar.is-collapsed .sidebar-item.active span {
-        color: #ffffff;
+        color: var(--white);
     }
 
     .admin-sidebar.is-collapsed .sidebar-item i {
@@ -705,11 +705,11 @@
 
     .admin-sidebar .sidebar-item.active {
         background: var(--primary-700);
-        color: #ffffff;
+        color: var(--white);
     }
 
     .admin-sidebar .sidebar-item.active i {
-        color: #ffffff;
+        color: var(--white);
     }
 
     .admin-sidebar .sidebar-item i {

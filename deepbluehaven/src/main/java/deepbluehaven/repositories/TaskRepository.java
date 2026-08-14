@@ -18,9 +18,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByAssignedToId(Long workerId);
 
-    //@Query("SELECT COUNT(t) FROM Task t WHERE t.assignedTo.id = :workerId AND t.status = :status")
-    //Long countByAssignedToIdAndStatus(@Param("workerId") Long workerId, @Param("status") TaskStatus status);
-
     @Query("SELECT t FROM Task t WHERE t.status != 'COMPLETED' AND t.dueTime IS NOT NULL AND t.dueTime < :now ORDER BY t.dueTime ASC")
     List<Task> findDelayedTasks(@Param("now") LocalDateTime now);
 
@@ -28,4 +25,5 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByAssignedToIdOrderByTimestampDesc(Long workerId);
     List<Task> findByAssignedToIdAndStatusOrderByTimestampDesc(Long workerId, TaskStatus status);
     long countByAssignedToIdAndStatus(Long workerId, TaskStatus status);
+    List<Task> findByStatusNotOrderByTimestampDesc(TaskStatus status);
 }

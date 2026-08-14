@@ -1172,7 +1172,7 @@
 
 /* Worker Notifications Component */
 .worker-notify-panel {
-    background: #ffffff;
+    background: var(--white);
     border-radius: 16px;
     padding: 24px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
@@ -1191,28 +1191,28 @@
     gap: 16px;
     padding: 16px;
     border-radius: 12px;
-    border: 1px solid #eee;
+    border: 1px solid var(--gray-200);
     margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .worker-notify-item:hover {
-    background: #f8fbff;
+    background: var(--primary-50);
     transform: translateX(2px);
 }
 
 .worker-notify-item.unread {
-    background: #f0f7ff;
-    border-left: 4px solid var(--primary-700, #0d3b66);
+    background: var(--primary-50);
+    border-left: 4px solid var(--primary-700);
 }
 
 .worker-notify-icon {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #e1f0ff;
-    color: #0d3b66;
+    background: var(--primary-100);
+    color: var(--primary-800);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1227,25 +1227,25 @@
 .worker-notify-title {
     font-size: 0.95rem;
     font-weight: 700;
-    color: #111111;
+    color: var(--gray-900);
     margin-bottom: 4px;
 }
 
 .worker-notify-msg {
     font-size: 0.88rem;
-    color: #555555;
+    color: var(--gray-700);
 }
 
 .worker-notify-time {
     font-size: 0.78rem;
-    color: #888888;
+    color: var(--gray-500);
     margin-top: 6px;
 }
 
 .worker-notify-empty {
     text-align: center;
     padding: 40px 20px;
-    color: #888888;
+    color: var(--gray-500);
 }
 
 /* Housekeeper Profile Component */

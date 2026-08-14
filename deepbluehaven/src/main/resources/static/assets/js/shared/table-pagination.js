@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         formatAllTableCells();
 
-        const tableWrappers = document.querySelectorAll(".manager-panel, .reception-panel, .account-panel, .tab-content");
+        const tableWrappers = document.querySelectorAll(".manager-panel, .reception-panel, .account-panel, .tab-content, .tab-content-panel");
 
         tableWrappers.forEach(panel => {
             const table = panel.querySelector("table.activity-table, table.account-table");

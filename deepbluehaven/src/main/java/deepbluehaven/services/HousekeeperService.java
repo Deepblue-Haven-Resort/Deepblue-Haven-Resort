@@ -47,9 +47,11 @@ public class HousekeeperService {
     @Transactional(readOnly = true)
     public Map<String, Long> getDashboardStats(Long workerId) {
         Map<String, Long> stats = new HashMap<>();
-        stats.put("pendingCount", taskRepository.countByAssignedToIdAndStatus(workerId, TaskStatus.PENDING));
+        long pending = taskRepository.countByAssignedToIdAndStatus(workerId, TaskStatus.PENDING) 
+                     + taskRepository.countByAssignedToIdAndStatus(workerId, TaskStatus.ASSIGNED);
+        stats.put("pendingCount", pending);
         stats.put("cleaningCount", taskRepository.countByAssignedToIdAndStatus(workerId, TaskStatus.CLEANING));
-        stats.put("maintenanceCount", taskRepository.countByAssignedToIdAndStatus(workerId, TaskStatus.ASSIGNED));
+        stats.put("maintenanceCount", taskRepository.countByAssignedToIdAndStatus(workerId, TaskStatus.WAITING_INSPECTION));
         stats.put("completedCount", taskRepository.countByAssignedToIdAndStatus(workerId, TaskStatus.INSPECTED));
         return stats;
     }
@@ -96,8 +98,16 @@ public class HousekeeperService {
 
     @Transactional
     public void completeTask(Long taskId, Long workerId) {
+        completeTask(taskId, workerId, null);
+    }
+
+    @Transactional
+    public void completeTask(Long taskId, Long workerId, String proofImageUrl) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Task not found"));
-        task.setStatus(TaskStatus.INSPECTED);
+        task.setStatus(TaskStatus.WAITING_INSPECTION);
+        if (proofImageUrl != null && !proofImageUrl.isBlank()) {
+            task.setProofImageUrl(proofImageUrl.trim());
+        }
         taskRepository.save(task);
 
         Worker worker = workerId != null ? workerRepository.findById(workerId).orElse(null) : null;
@@ -105,9 +115,9 @@ public class HousekeeperService {
         if (task.getRoom() != null) {
             Room room = task.getRoom();
             RoomStatus oldStatus = room.getStatus();
-            room.setStatus(RoomStatus.AVAILABLE);
+            room.setStatus(RoomStatus.CLEANING);
             roomRepository.save(room);
-            logService.logRoomStatusChange(room, oldStatus, RoomStatus.AVAILABLE, worker);
+            logService.logRoomStatusChange(room, oldStatus, RoomStatus.CLEANING, worker);
         }
 
         if (worker != null) {
@@ -115,7 +125,7 @@ public class HousekeeperService {
         }
 
         logService.log(ObjectType.WORKER, ActionCode.UPDATE, taskId,
-                "Housekeeper completed cleaning task #" + taskId + " for Room #" + (task.getRoom() != null ? task.getRoom().getRoomNumber() : "N/A"), workerId);
+                "Housekeeper completed cleaning task #" + taskId + " (Waiting Inspection) for Room #" + (task.getRoom() != null ? task.getRoom().getRoomNumber() : "N/A"), workerId);
     }
 
     @Transactional(readOnly = true)
@@ -217,6 +227,7 @@ public class HousekeeperService {
         }
 
         dto.setResultText("Passed");
+        dto.setProofImageUrl(task.getProofImageUrl());
         return dto;
     }
 
@@ -225,10 +236,12 @@ public class HousekeeperService {
         switch (status) {
             case CLEANING: 
                 return "status-info";
+            case WAITING_INSPECTION:
+                return "status-warning";
             case INSPECTED: 
                 return "status-success";
             case ASSIGNED: 
-                return "status-error";
+                return "status-info";
             case PENDING:
             default: return "status-warning";
         }

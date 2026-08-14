@@ -50,14 +50,14 @@
             });
             const data = await resp.json();
             if (data.success) {
-                alert(data.message || 'Issue reported! Room has been set to MAINTENANCE.');
+                showToast('success', 'Issue Reported', data.message || 'Issue reported! Room has been set to MAINTENANCE.');
                 modal?.classList.remove('active');
-                window.location.reload();
+                setTimeout(() => window.location.reload(), 1200);
             } else {
-                alert(data.message || 'Failed to report issue: ' + data.message);
+                showToast('error', 'Report Failed', data.message || 'Failed to report issue.');
             }
         } catch (err) {
-            alert('Error connecting to server.');
+            showToast('error', 'Network Error', 'Error connecting to server.');
         }
     });
 })();

@@ -56,6 +56,9 @@ public class Task {
     @Column(name = "due_time", nullable = true)
     private LocalDateTime dueTime;
 
+    @Column(name = "proof_image_url", length = 500)
+    private String proofImageUrl;
+
     @CreationTimestamp
     @Column(name = "timestamp", nullable = false, updatable = false)
     private LocalDateTime timestamp;
@@ -95,6 +98,11 @@ public class Task {
         return action; }
     public void setAction(String action) { 
         this.action = action; }
+
+    public String getProofImageUrl() {
+        return proofImageUrl; }
+    public void setProofImageUrl(String proofImageUrl) {
+        this.proofImageUrl = proofImageUrl; }
 
     public LocalDateTime getDueTime() {
         return dueTime; }

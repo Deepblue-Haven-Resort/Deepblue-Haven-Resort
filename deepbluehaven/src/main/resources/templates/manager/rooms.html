@@ -15,6 +15,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/manager-table.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/toast.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -73,86 +74,185 @@
             <section class="manager-panel">
                 <div class="panel-header">
                     <div>
-                        <h2>Resort Rooms Inventory</h2>
+                        <h2>Resort Rooms Management</h2>
                     </div>
                     <div class="filter-options">
                         <button type="button" class="btn btn-cta btn-medium" id="addRoomBtn">Add New Room</button>
                     </div>
                 </div>
 
-                
-                <div class="filter-bar">
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search rooms by number, floor, type...">
+                <!-- TAB NAVIGATION BAR -->
+                <div class="panel-tabs-bar">
+                    <button type="button" class="panel-tab-btn active" data-tab="tab-inventory">
+                        <i class="fa-solid fa-hotel"></i> Room Inventory
+                    </button>
+                    <button type="button" class="panel-tab-btn" data-tab="tab-housekeeping">
+                        <i class="fa-solid fa-broom"></i> Housekeeping & Inspection Queue
+                        <span class="tab-badge-count" th:if="${inspectionPendingCount != null and inspectionPendingCount > 0}" th:text="${inspectionPendingCount}">0</span>
+                    </button>
+                </div>
+
+                <!-- TAB 1: ROOM INVENTORY -->
+                <div class="tab-content-panel active" id="tab-inventory">
+                    <div class="filter-bar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search rooms by number, floor, type...">
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>Room Number</th>
+                                    <th>Room Type</th>
+                                    <th class="text-center">Max Capacity</th>
+                                    <th>Base Nightly Price</th>
+                                    <th class="text-center">Current Status</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="r : ${rooms}"
+                                    th:data-id="${r.id}"
+                                    th:data-number="${r.roomNumber}"
+                                    th:data-type="${r.roomType}"
+                                    th:data-capacity="${r.capacity}"
+                                    th:data-price="${r.basePrice}"
+                                    th:data-area="${r.area}"
+                                    th:data-status="${r.status}"
+                                    th:data-image="${r.images != null && !r.images.isEmpty() ? r.images[0] : ''}">
+                                    <td><strong th:text="|Room ${r.roomNumber}|">Room 101</strong></td>
+                                    <td th:text="${r.roomType}">Premium Room</td>
+                                    <td class="text-center" th:text="|${r.capacity != null ? r.capacity : 2} Guests|">3 Guests</td>
+                                    <td><strong th:text="|${#numbers.formatDecimal(r.basePrice, 0, 'COMMA', 0, 'POINT')} VND|">2,100,000 VND</strong></td>
+                                    <td class="text-center">
+                                        <span th:if="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE}" class="status status-success">AVAILABLE</span>
+                                        <span th:if="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).OCCUPIED}" class="status status-info">OCCUPIED</span>
+                                        <span th:if="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING}" class="status status-warning">CLEANING</span>
+                                        <span th:if="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE}" class="status status-error">MAINTENANCE</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="table-actions">
+                                            <button type="button" class="btn outline-btn edit-btn btn-small" title="Edit Room">
+                                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                                            </button>
+                                            <form th:action="@{'/manager/rooms/' + ${r.id} + '/status'}" method="post">
+                                                <input type="hidden" name="status" th:value="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'AVAILABLE' : 'MAINTENANCE'}" />
+                                                <button type="submit" class="btn warning-btn btn-small" th:title="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'Set Available' : 'Set Maintenance'}">
+                                                    <i class="fa-solid" th:classappend="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'fa-circle-check' : 'fa-wrench'}"></i>
+                                                    <span th:text="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'Available' : 'Maintenance'}">Maintenance</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(rooms)}">
+                                    <td colspan="6" class="empty-table-cell">No rooms registered in database.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                        <p>Hiển thị <strong th:text="${#lists.size(rooms)}">0</strong> phòng</p>
+                        <div class="pagination"></div>
                     </div>
                 </div>
 
-               
-                <div class="table-wrapper">
-                    <table class="activity-table">
-                        <thead>
-                            <tr>
-                                <th>Room Number</th>
-                                <th>Room Type</th>
-                                <th class="text-center">Max Capacity</th>
-                                <th>Base Nightly Price</th>
-                                <th class="text-center">Current Status</th>
-                                <th>Housekeeper Assigned</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="r : ${rooms}"
-                                th:data-id="${r.id}"
-                                th:data-number="${r.roomNumber}"
-                                th:data-type="${r.roomType}"
-                                th:data-capacity="${r.capacity}"
-                                th:data-price="${r.basePrice}"
-                                th:data-area="${r.area}"
-                                th:data-status="${r.status}"
-                                th:data-image="${r.images != null && !r.images.isEmpty() ? r.images[0] : ''}">
-                                <td><strong th:text="|Room ${r.roomNumber}|">Room 101</strong></td>
-                                <td th:text="${r.roomType}">Premium Room</td>
-                                <td class="text-center" th:text="|${r.capacity != null ? r.capacity : 2} Guests|">3 Guests</td>
-                                <td><strong th:text="|${#numbers.formatDecimal(r.basePrice, 0, 'COMMA', 0, 'POINT')} VND|">2,100,000 VND</strong></td>
-                                <td class="text-center">
-                                    <span th:class="|status ${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'status-success' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'status-danger' : '')}|"
-                                          th:text="${r.status}">AVAILABLE</span>
-                                </td>
-                                <td>Unassigned</td>
-                                <td class="text-center">
-                                    <div class="table-actions">
-                                        <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
-                                        <button type="button" class="btn outline-btn assign-btn btn-small" th:data-room-id="${r.id}" th:data-room-number="${r.roomNumber}">Assign Task</button>
-                                        <form th:action="@{'/manager/rooms/' + ${r.id} + '/status'}" method="post">
-                                            <input type="hidden" name="status" th:value="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'AVAILABLE' : 'MAINTENANCE'}" />
-                                            <button type="submit" class="btn warning-btn btn-small" th:text="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE ? 'Available' : 'Maintenance'}">Maintenance</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(rooms)}">
-                                <td colspan="7" class="empty-table-cell">No rooms registered in database.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <!-- TAB 2: HOUSEKEEPING & INSPECTION QUEUE -->
+                <div class="tab-content-panel" id="tab-housekeeping">
+                    <div class="filter-bar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search tasks by room, housekeeper, status...">
+                        </div>
+                    </div>
 
-                
-                <div class="table-footer">
-                    <p>Hiển thị <strong>1-2</strong> trong số <strong>62</strong> phòng</p>
-                    <div class="pagination">
-                        <button type="button" class="page-btn disabled">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button type="button" class="page-btn active">1</button>
-                        <button type="button" class="page-btn">2</button>
-                        <span class="page-dots">...</span>
-                        <button type="button" class="page-btn">3</button>
-                        <button type="button" class="page-btn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
+                    <div class="table-wrapper">
+                        <table class="activity-table" data-page-size="8">
+                            <thead>
+                                <tr>
+                                    <th>Room Number</th>
+                                    <th>Room Type</th>
+                                    <th class="text-center">Room Status</th>
+                                    <th>Assigned Housekeeper</th>
+                                    <th>Task Status</th>
+                                    <th class="text-center">Management Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="r : ${rooms}"
+                                    th:with="activeTask=${activeTasksMap != null ? activeTasksMap[r.id] : null}"
+                                    th:if="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING or r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE or activeTask != null}">
+                                    <td><strong th:text="|Room ${r.roomNumber}|">Room 101</strong></td>
+                                    <td th:text="${r.roomType}">Premium Room</td>
+                                    <td class="text-center">
+                                        <span th:if="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE}" class="status status-success">AVAILABLE</span>
+                                        <span th:if="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).OCCUPIED}" class="status status-info">OCCUPIED</span>
+                                        <span th:if="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING}" class="status status-warning">CLEANING</span>
+                                        <span th:if="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).MAINTENANCE}" class="status status-error">MAINTENANCE</span>
+                                    </td>
+                                    <td>
+                                        <div th:if="${activeTask != null and activeTask.assignedTo != null}" class="task-assignee-info">
+                                            <i class="fa-solid fa-user-gear"></i>
+                                            <span th:text="${activeTask.assignedTo.profile != null ? activeTask.assignedTo.profile.fullName : activeTask.assignedTo.username}">Housekeeper Name</span>
+                                        </div>
+                                        <div th:if="${activeTask == null or activeTask.assignedTo == null}" class="task-unassigned-info">
+                                            <i class="fa-solid fa-user-slash"></i> Unassigned
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div th:if="${activeTask != null}">
+                                            <span th:if="${activeTask.status == T(deepbluehaven.pojo.enums.TaskStatus).PENDING or activeTask.status == T(deepbluehaven.pojo.enums.TaskStatus).ASSIGNED}"
+                                                  class="task-badge task-badge-assigned">Assigned / Pending</span>
+                                            <span th:if="${activeTask.status == T(deepbluehaven.pojo.enums.TaskStatus).CLEANING}"
+                                                  class="task-badge task-badge-cleaning">Cleaning In Progress</span>
+                                            <span th:if="${activeTask.status == T(deepbluehaven.pojo.enums.TaskStatus).WAITING_INSPECTION}"
+                                                  class="task-badge task-badge-inspection">Waiting Inspection</span>
+                                        </div>
+                                        <div th:if="${activeTask == null}">
+                                            <span class="task-badge-empty">No Active Task</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="table-actions">
+                                            <th:block th:if="${activeTask != null and activeTask.status == T(deepbluehaven.pojo.enums.TaskStatus).WAITING_INSPECTION}">
+                                                <button type="button" th:if="${activeTask.proofImageUrl != null and !activeTask.proofImageUrl.isBlank()}"
+                                                        class="btn outline-btn btn-small view-proof-btn"
+                                                        th:data-proof-url="${activeTask.proofImageUrl}"
+                                                        th:data-room-number="${r.roomNumber}"
+                                                        title="View Cleaning Evidence Photo">
+                                                    <i class="fa-solid fa-image"></i> Proof
+                                                </button>
+                                                <form th:action="@{'/manager/tasks/' + ${activeTask.id} + '/approve'}" method="post">
+                                                    <button type="submit" class="btn btn-small btn-success" title="Approve Room Cleaning">
+                                                        <i class="fa-solid fa-circle-check"></i> Approve
+                                                    </button>
+                                                </form>
+                                                <form th:action="@{'/manager/tasks/' + ${activeTask.id} + '/reject'}" method="post">
+                                                    <button type="submit" class="btn btn-small btn-danger" title="Request Re-clean">
+                                                        <i class="fa-solid fa-rotate-left"></i> Re-clean
+                                                    </button>
+                                                </form>
+                                            </th:block>
+
+                                            <th:block th:if="${activeTask == null or activeTask.status != T(deepbluehaven.pojo.enums.TaskStatus).WAITING_INSPECTION}">
+                                                <button type="button" class="btn outline-btn assign-btn btn-small" th:data-room-id="${r.id}" th:data-room-number="${r.roomNumber}" title="Assign Housekeeping Task">
+                                                    <i class="fa-solid fa-clipboard-check"></i> Assign Task
+                                                </button>
+                                            </th:block>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                        <p>Hiển thị <strong th:text="${#lists.size(rooms)}">0</strong> phòng</p>
+                        <div class="pagination"></div>
                     </div>
                 </div>
             </section>
@@ -221,17 +321,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group full-width" style="grid-column: 1 / -1;">
+                        <div class="form-group full-width">
                             <label>Room Image (Cloudinary)</label>
-                            <div style="display: flex; gap: 8px; align-items: center;">
+                            <div class="file-upload-row">
                                 <input type="text" id="roomImageUrl" name="imageUrl" placeholder="https://res.cloudinary.com/...">
-                                <input type="file" id="roomImageFileInput" accept="image/*" style="display:none">
+                                <input type="file" id="roomImageFileInput" accept="image/*" class="file-input-hidden">
                                 <button type="button" class="btn outline-btn" id="uploadRoomImageBtn">
                                     <i class="fa-solid fa-cloud-arrow-up"></i> Upload
                                 </button>
                             </div>
-                            <div id="roomImagePreviewBox" style="margin-top: 8px; display: none;">
-                                <img id="roomImagePreview" src="" style="max-height: 100px; border-radius: 6px; border: 1px solid #cbd5e1; object-fit: cover;" />
+                            <div id="roomImagePreviewBox" class="upload-preview-box">
+                                <img id="roomImagePreview" src="" class="upload-preview-img" alt="Room preview" />
                             </div>
                         </div>
                     </div>
@@ -261,7 +361,7 @@
                     <div class="modal-form-grid single-col">
                         <div class="form-group">
                             <label>Room</label>
-                            <input type="text" id="taskRoomNumber" readonly style="background: var(--gray-100);">
+                            <input type="text" id="taskRoomNumber" readonly class="form-control">
                         </div>
                         <div class="form-group">
                             <label>Task Type <span>*</span></label>
@@ -287,10 +387,13 @@
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </button>
                                 <div class="filter-menu form-filter-menu">
-                                    <button th:each="h : ${housekeepers}" type="button" th:data-value="${h.id}">
-                                        <strong th:text="${h.profile != null ? h.profile.fullName : 'Housekeeper #' + h.id}">Housekeeper Name</strong>
+                                    <button th:each="h : ${housekeepers}"
+                                            th:if="${h.profile != null and (h.profile.role == T(deepbluehaven.pojo.enums.Role).HOUSEKEEPER or h.profile.department == T(deepbluehaven.pojo.enums.Department).HOUSEKEEPING) and h.profile.role != T(deepbluehaven.pojo.enums.Role).MANAGER and h.profile.role != T(deepbluehaven.pojo.enums.Role).RECEPTIONIST and h.profile.role != T(deepbluehaven.pojo.enums.Role).ADMIN}"
+                                            type="button"
+                                            th:data-value="${h.id}">
+                                        <strong th:text="${h.profile.fullName}">Housekeeper Name</strong>
                                     </button>
-                                    <button th:if="${#lists.isEmpty(housekeepers)}" type="button" data-value=""><strong>No Housekeepers</strong></button>
+                                    <button th:if="${#lists.isEmpty(housekeepers)}" type="button" data-value=""><strong>No Housekeepers Available</strong></button>
                                 </div>
                             </div>
                         </div>
@@ -321,8 +424,41 @@
     </div>
 
     <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+    <script th:src="@{/assets/js/shared/toast.js}"></script>
     <script th:src="@{/assets/js/manager/rooms.js}"></script>
     <script th:src="@{/assets/js/shared/table-pagination.js}"></script>
+
+    <div class="modal-overlay" id="viewProofModal">
+        <div class="modal-container proof-modal-container">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-images"></i> Cleaning Evidence - <span id="proofRoomNumberHeader">Room 101</span></h3>
+                <div class="proof-modal-header-actions">
+                    <a id="openOriginalImageBtn" href="#" target="_blank" class="btn outline-btn" title="Open full high-resolution image in new tab">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Original
+                    </a>
+                    <button type="button" class="modal-close" id="closeProofModalBtn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            <div class="modal-body proof-modal-body">
+                <div class="zoom-toolbar">
+                    <button type="button" id="zoomOutBtn" class="zoom-btn" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                    <span id="zoomLevelDisplay" class="zoom-level">100%</span>
+                    <button type="button" id="zoomInBtn" class="zoom-btn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                    <button type="button" id="resetZoomBtn" class="reset-btn" title="Reset Zoom"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+
+                <div class="darkroom-canvas">
+                    <img id="modalProofMainImage" src="" title="Click image to toggle zoom, drag to pan when zoomed, or scroll mouse wheel" />
+                </div>
+
+                <div id="proofThumbnailsGallery" class="proof-thumbnails-gallery"></div>
+            </div>
+            <div class="modal-footer proof-modal-footer">
+                <span id="proofImageCounter" class="proof-image-counter">Image 1 of 1</span>
+                <button type="button" class="btn outline-btn" id="closeProofModalFooterBtn">Close</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

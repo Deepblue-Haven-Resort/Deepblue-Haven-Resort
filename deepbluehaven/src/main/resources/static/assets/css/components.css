@@ -456,8 +456,8 @@
 }
 
 .tab-btn.active {
-    color: #ffffff !important;
-    background-color: var(--primary-600, #2563eb) !important;
+    color: var(--white) !important;
+    background-color: var(--primary-600) !important;
     box-shadow: 0 4px 6px -1px rgba(var(--shadow-color), 0.18);
 }
 
@@ -518,17 +518,17 @@
 
 .avatar-primary {
     background: var(--primary-600);
-    color: white;
+    color: var(--white);
 }
 
 .avatar-neutral {
     background: var(--neutral-400);
-    color: white;
+    color: var(--white);
 }
 
 .avatar-gradient-blue {
-    background: linear-gradient(135deg, #c8e6f0, #90c8dc);
-    color: #0a4864;
+    background: linear-gradient(135deg, var(--primary-100), var(--primary-300));
+    color: var(--primary-900);
 }
 
 .opacity-65 { opacity: 0.65; }
@@ -541,18 +541,18 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    background: #ffffff;
-    border-top: 1px solid var(--gray-200, #e2e8f0);
+    background: var(--white);
+    border-top: 1px solid var(--gray-200);
 }
 
 .table-footer p {
     font-size: 0.88rem;
-    color: var(--gray-600, #475569);
+    color: var(--gray-600);
     margin: 0;
 }
 
 .table-footer p strong {
-    color: var(--gray-900, #0f172a);
+    color: var(--gray-900);
     font-weight: 700;
 }
 
@@ -569,10 +569,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--gray-300, #cbd5e1);
+    border: 1px solid var(--gray-300);
     border-radius: 8px;
-    background: #ffffff;
-    color: var(--gray-700, #334155);
+    background: var(--white);
+    color: var(--gray-700);
     font-size: 0.88rem;
     font-weight: 600;
     cursor: pointer;
@@ -580,16 +580,16 @@
 }
 
 .page-btn:hover:not(.disabled):not(:disabled) {
-    background: var(--primary-50, #eff6ff);
-    border-color: var(--primary-300, #93c5fd);
-    color: var(--primary-700, #1d4ed8);
+    background: var(--primary-50);
+    border-color: var(--primary-300);
+    color: var(--primary-700);
 }
 
 .page-btn.active {
-    background: var(--primary-600, #2563eb) !important;
-    color: #ffffff !important;
-    border-color: var(--primary-600, #2563eb) !important;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    background: var(--primary-600) !important;
+    color: var(--white) !important;
+    border-color: var(--primary-600) !important;
+    box-shadow: 0 2px 6px rgba(30, 116, 198, 0.3);
 }
 
 .page-btn.disabled,
@@ -597,6 +597,6 @@
     opacity: 0.4;
     cursor: not-allowed;
     pointer-events: none;
-    background: #f8fafc;
-    border-color: #e2e8f0;
+    background: var(--gray-50);
+    border-color: var(--gray-200);
 }

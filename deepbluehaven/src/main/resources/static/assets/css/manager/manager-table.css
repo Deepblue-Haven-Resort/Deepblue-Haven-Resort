@@ -6,21 +6,21 @@
 .table-wrapper {
     width: 100%;
     overflow-x: auto;
-    background: #ffffff;
+    background: var(--white);
     border-radius: 12px;
-    border: 1px solid var(--neutral-200, #e2e8f0);
+    border: 1px solid var(--gray-200);
 }
 
 .activity-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
-    color: var(--neutral-700, #334155);
+    color: var(--gray-700);
 }
 
 .activity-table thead {
-    background-color: var(--primary-50, #f0f9ff);
-    border-bottom: 2px solid var(--neutral-200, #e2e8f0);
+    background-color: var(--primary-50);
+    border-bottom: 2px solid var(--gray-200);
 }
 
 .activity-table th {
@@ -29,7 +29,7 @@
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    color: var(--primary-900, #0f172a);
+    color: var(--gray-900);
     text-align: left;
     white-space: nowrap;
     vertical-align: middle;
@@ -38,11 +38,11 @@
 .activity-table td {
     padding: 14px 16px;
     vertical-align: middle;
-    border-bottom: 1px solid var(--neutral-200, #f1f5f9);
+    border-bottom: 1px solid var(--gray-100);
 }
 
 .activity-table tbody tr:hover {
-    background-color: var(--primary-50, #f8fafc);
+    background-color: var(--gray-50);
 }
 
 /* Alignment utilities */
@@ -69,20 +69,82 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
 .table-actions form {
-    display: inline-block;
+    display: inline-flex;
     margin: 0;
     padding: 0;
+}
+
+.table-actions .btn {
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1.2;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.table-actions .btn-small {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+}
+
+.table-actions .btn-danger {
+    background: var(--error-500);
+    color: var(--white);
+    border: none;
+}
+
+.table-actions .btn-danger:hover {
+    background: var(--error-600);
+}
+
+.table-actions .btn-success {
+    background: var(--success-500);
+    color: var(--white);
+    border: none;
+}
+
+.table-actions .btn-success:hover {
+    background: var(--success-600);
+}
+
+.table-actions .outline-btn {
+    background: var(--gray-50);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+}
+
+.table-actions .outline-btn:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-400);
+}
+
+.table-actions .warning-btn {
+    background: var(--warning-100);
+    color: var(--warning-700);
+    border: 1px solid var(--warning-200);
+}
+
+.table-actions .warning-btn:hover {
+    background: var(--warning-200);
 }
 
 /* Empty data state cell */
 .empty-table-cell {
     padding: 32px 16px !important;
     text-align: center;
-    color: var(--neutral-400, #94a3b8);
+    color: var(--gray-400);
     font-weight: 500;
 }
 
@@ -98,5 +160,118 @@
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid var(--neutral-300, #cbd5e1);
+    border: 1px solid var(--gray-300);
+}
+
+/* Tab Navigation Bar System */
+.panel-tabs-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2px solid var(--gray-200);
+    margin-bottom: 20px;
+    padding-bottom: 0;
+}
+
+.panel-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.panel-tab-btn:hover {
+    color: var(--gray-900);
+    background: var(--gray-50);
+}
+
+.panel-tab-btn.active {
+    color: var(--primary-600);
+    border-bottom-color: var(--primary-600);
+    background: var(--primary-50);
+}
+
+.tab-badge-count {
+    background: var(--warning-500);
+    color: var(--white);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    line-height: 1;
+}
+
+.tab-content-panel {
+    display: none;
+}
+
+.tab-content-panel.active {
+    display: block;
+}
+
+/* Task Assignment & Status Badge Utilities */
+.task-assignee-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.task-assignee-info i {
+    color: var(--gray-600);
+    font-size: 0.85rem;
+}
+
+.task-unassigned-info {
+    color: var(--gray-400);
+    font-style: italic;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.task-unassigned-info i {
+    font-size: 0.78rem;
+}
+
+.task-badge {
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.task-badge-assigned {
+    background: var(--primary-100);
+    color: var(--primary-700);
+}
+
+.task-badge-cleaning {
+    background: var(--primary-100);
+    color: var(--primary-700);
+}
+
+.task-badge-inspection {
+    background: var(--warning-100);
+    color: var(--warning-700);
+}
+
+.task-badge-empty {
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--gray-400);
 }

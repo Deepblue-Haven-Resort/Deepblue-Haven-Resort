@@ -11,15 +11,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import deepbluehaven.dto.TaskDTO;
+import deepbluehaven.pojo.Room;
 import deepbluehaven.pojo.Worker;
+import deepbluehaven.repositories.RoomRepository;
 import deepbluehaven.services.HousekeeperService;
 import deepbluehaven.services.WorkerService;
 import jakarta.servlet.http.HttpSession;
-
-import deepbluehaven.pojo.Room;
-import deepbluehaven.repositories.RoomRepository;
 
 @Controller
 public class HousekeeperController {
@@ -116,19 +116,18 @@ public class HousekeeperController {
     }
 
     @PostMapping("/housekeeper/tasks/{id}/complete")
-    public String completeTask(@PathVariable Long id, HttpSession session) {
+    public String completeTask(@PathVariable Long id, @RequestParam(value = "proofImageUrl", required = false) String proofImageUrl, HttpSession session) {
         Long workerId = getLoggedInWorkerId(session);
-        housekeeperService.completeTask(id, workerId);
+        housekeeperService.completeTask(id, workerId, proofImageUrl);
         return "redirect:/housekeeper/dashboard";
     }
 
     @PostMapping("/housekeeper/report-issue")
     public ResponseEntity<Map<String, Object>> reportIssue(
-            @org.springframework.web.bind.annotation.RequestParam("roomNumber") String roomNumber,
-            @org.springframework.web.bind.annotation.RequestParam(value = "issueType", required = false) String issueType,
-            @org.springframework.web.bind.annotation.RequestParam(value = "priority", required = false) String priority,
-            @org.springframework.web.bind.annotation.RequestParam(value = "description", required = false) String description,
-            HttpSession session) {
+            @RequestParam("roomNumber") String roomNumber,
+            @RequestParam(value = "issueType", required = false) String issueType,
+            @RequestParam(value = "priority", required = false) String priority,
+            @RequestParam(value = "description", required = false) String description, HttpSession session) {
         Long workerId = getLoggedInWorkerId(session);
         try {
             housekeeperService.reportRoomIssue(roomNumber, issueType, priority, description, workerId);
