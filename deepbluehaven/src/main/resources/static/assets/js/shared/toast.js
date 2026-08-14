@@ -1,7 +1,11 @@
 function showToast(type = "info", title = "Information", message = "", options = {}) {
-    const container = document.getElementById("toast-container");
+    let container = document.getElementById("toast-container");
 
-    if (!container) return;
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "toast-container";
+        document.body.appendChild(container);
+    }
 
     const toast = document.createElement("div");
     const theme = options.theme === "dark" ? "toast-dark" : "";

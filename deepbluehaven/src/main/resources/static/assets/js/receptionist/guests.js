@@ -55,7 +55,7 @@
     document.getElementById('closeEditGuestModal')?.addEventListener('click', () => closeModal('editGuestModal'));
     document.getElementById('cancelEditGuestModal')?.addEventListener('click', () => closeModal('editGuestModal'));
     document.getElementById('editGuestModal')?.addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('editGuestModal'); });
-    document.getElementById('editGuestForm')?.addEventListener('submit', e => { e.preventDefault(); alert('Guest profile saved!'); closeModal('editGuestModal'); });
+    document.getElementById('editGuestForm')?.addEventListener('submit', e => { e.preventDefault(); showToast('success', 'Profile Saved', 'Guest profile saved!'); closeModal('editGuestModal'); });
 
     document.getElementById('registerGuestBtn')?.addEventListener('click', () => openModal('registerGuestModal'));
     document.getElementById('closeRegisterGuestModal')?.addEventListener('click', () => closeModal('registerGuestModal'));

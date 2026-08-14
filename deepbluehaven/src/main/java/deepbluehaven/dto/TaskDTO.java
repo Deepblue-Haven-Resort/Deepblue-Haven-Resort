@@ -19,6 +19,7 @@ public class TaskDTO {
         private String timeText;
         private String assignedByName;
         private String resultText;
+        private String proofImageUrl;
 
         public Response() {}
 
@@ -91,5 +92,10 @@ public class TaskDTO {
             return resultText; }
         public void setResultText(String resultText) { 
             this.resultText = resultText; }
+
+        public String getProofImageUrl() {
+            return proofImageUrl; }
+        public void setProofImageUrl(String proofImageUrl) {
+            this.proofImageUrl = proofImageUrl; }
     }
 }

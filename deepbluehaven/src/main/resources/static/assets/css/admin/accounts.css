@@ -42,7 +42,7 @@
 
 .panel-header p {
     margin-top: 6px;
-    color: #6f8190;
+    color: var(--gray-600);
 }
 
 /* ==========================================

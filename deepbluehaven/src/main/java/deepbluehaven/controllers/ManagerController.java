@@ -15,8 +15,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import deepbluehaven.dto.ManagerDashboardDTO;
 import deepbluehaven.pojo.Discount;
 import deepbluehaven.pojo.PricingRule;
+import deepbluehaven.pojo.Resort;
 import deepbluehaven.pojo.Room;
+import deepbluehaven.pojo.Service;
 import deepbluehaven.pojo.Task;
+import deepbluehaven.pojo.TaskType;
 import deepbluehaven.pojo.Worker;
 import deepbluehaven.pojo.enums.ActionCode;
 import deepbluehaven.pojo.enums.DiscountType;
@@ -24,12 +27,14 @@ import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.pojo.enums.Role;
 import deepbluehaven.pojo.enums.RoomStatus;
 import deepbluehaven.pojo.enums.RoomType;
+import deepbluehaven.pojo.enums.ServiceCategory;
+import deepbluehaven.pojo.enums.ServiceStatus;
 import deepbluehaven.pojo.enums.TaskStatus;
 import deepbluehaven.repositories.DiscountRepository;
-import deepbluehaven.repositories.PricingRuleRepository;
-import deepbluehaven.repositories.RoomRepository;
-import deepbluehaven.pojo.TaskType;
 import deepbluehaven.repositories.InvoiceRepository;
+import deepbluehaven.repositories.PricingRuleRepository;
+import deepbluehaven.repositories.ResortRepository;
+import deepbluehaven.repositories.RoomRepository;
 import deepbluehaven.repositories.ServiceRepository;
 import deepbluehaven.repositories.TaskRepository;
 import deepbluehaven.repositories.TaskTypeRepository;
@@ -37,12 +42,7 @@ import deepbluehaven.repositories.WorkerRepository;
 import deepbluehaven.services.BookingService;
 import deepbluehaven.services.LogService;
 import deepbluehaven.services.ManagerDashboardService;
-
-import deepbluehaven.pojo.Resort;
-import deepbluehaven.pojo.Service;
-import deepbluehaven.pojo.enums.ServiceCategory;
-import deepbluehaven.pojo.enums.ServiceStatus;
-import deepbluehaven.repositories.ResortRepository;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ManagerController {
@@ -110,14 +110,78 @@ public class ManagerController {
     @GetMapping("/manager/rooms")
     public String managerRooms(Model model) {
         List<Room> rooms = roomRepository.findAll();
-        List<Worker> housekeepers = workerRepository.findAll().stream()
-                .filter(w -> w.getProfile() != null && w.getProfile().getRole() == Role.HOUSEKEEPER)
+        List<Worker> housekeepers = workerRepository.findAllWithProfile().stream()
+                .filter(w -> w.getProfile() != null &&
+                       (w.getProfile().getRole() == Role.HOUSEKEEPER || w.getProfile().getDepartment() == deepbluehaven.pojo.enums.Department.HOUSEKEEPING))
+                .filter(w -> w.getProfile().getRole() != Role.MANAGER &&
+                       w.getProfile().getRole() != Role.ADMIN &&
+                       w.getProfile().getRole() != Role.RECEPTIONIST)
                 .toList();
+
+        List<Task> activeTasks = taskRepository.findByStatusNotOrderByTimestampDesc(TaskStatus.INSPECTED);
+        java.util.Map<Long, Task> activeTasksMap = new java.util.HashMap<>();
+        for (Task t : activeTasks) {
+            if (t.getRoom() != null && !activeTasksMap.containsKey(t.getRoom().getId())) {
+                activeTasksMap.put(t.getRoom().getId(), t);
+            }
+        }
+
+        long inspectionPendingCount = activeTasks.stream()
+                .filter(t -> t.getStatus() == TaskStatus.WAITING_INSPECTION)
+                .count();
 
         model.addAttribute("rooms", rooms);
         model.addAttribute("housekeepers", housekeepers);
+        model.addAttribute("activeTasksMap", activeTasksMap);
+        model.addAttribute("inspectionPendingCount", inspectionPendingCount);
         model.addAttribute("activePage", "rooms");
         return "manager/rooms";
+    }
+
+    @PostMapping("/manager/tasks/{id}/approve")
+    public String approveTaskInspection(@PathVariable Long id, RedirectAttributes redirectAttrs, HttpSession session) {
+        try {
+            Task task = taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+            task.setStatus(TaskStatus.INSPECTED);
+            taskRepository.save(task);
+
+            if (task.getRoom() != null) {
+                Room room = task.getRoom();
+                RoomStatus oldStatus = room.getStatus();
+                room.setStatus(RoomStatus.AVAILABLE);
+                roomRepository.save(room);
+
+                Worker worker = null;
+                Long wId = getLoggedInWorkerId(session);
+                if (wId != null) worker = workerRepository.findById(wId).orElse(null);
+                logService.logRoomStatusChange(room, oldStatus, RoomStatus.AVAILABLE, worker);
+            }
+
+            logService.log(ObjectType.ROOM, ActionCode.UPDATE, task.getId(),
+                    "Manager approved inspection for Task #" + id + ", Room #" + (task.getRoom() != null ? task.getRoom().getRoomNumber() : "N/A"), session);
+
+            redirectAttrs.addFlashAttribute("successMessage", "Room #" + (task.getRoom() != null ? task.getRoom().getRoomNumber() : "N/A") + " inspection APPROVED! Room is now AVAILABLE.");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to approve inspection: " + e.getMessage());
+        }
+        return "redirect:/manager/rooms?tab=housekeeping";
+    }
+
+    @PostMapping("/manager/tasks/{id}/reject")
+    public String rejectTaskInspection(@PathVariable Long id, RedirectAttributes redirectAttrs, jakarta.servlet.http.HttpSession session) {
+        try {
+            Task task = taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+            task.setStatus(TaskStatus.CLEANING);
+            taskRepository.save(task);
+
+            logService.log(ObjectType.ROOM, ActionCode.UPDATE, task.getId(),
+                    "Manager rejected inspection for Task #" + id + ", sent back to housekeeper", session);
+
+            redirectAttrs.addFlashAttribute("successMessage", "Room #" + (task.getRoom() != null ? task.getRoom().getRoomNumber() : "N/A") + " inspection rejected. Sent back for re-cleaning.");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to reject inspection: " + e.getMessage());
+        }
+        return "redirect:/manager/rooms?tab=housekeeping";
     }
 
     @GetMapping("/manager/services")
@@ -335,7 +399,7 @@ public class ManagerController {
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to assign task: " + e.getMessage());
         }
-        return "redirect:/manager/rooms";
+        return "redirect:/manager/rooms?tab=housekeeping";
     }
 
     @PostMapping("/manager/confirm-booking/{id}")

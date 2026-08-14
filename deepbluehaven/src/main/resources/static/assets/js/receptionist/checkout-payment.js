@@ -40,7 +40,7 @@ function triggerPaymentAction(e) {
                     if (resData.success && resData.data) {
                         window.location.href = resData.data;
                     } else {
-                        alert('Could not generate VNPAY payment link: ' + (resData.message || 'Error'));
+                        showToast('error', 'Payment Link Failed', 'Could not generate VNPAY payment link: ' + (resData.message || 'Error'));
                         if (submitBtn) {
                             submitBtn.disabled = false;
                             submitBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay via VNPAY Sandbox Gateway';
@@ -48,7 +48,7 @@ function triggerPaymentAction(e) {
                     }
                 })
                 .catch(err => {
-                    alert('Error generating VNPAY link: ' + err);
+                    showToast('error', 'VNPAY Error', 'Error generating VNPAY link: ' + err);
                     if (submitBtn) {
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pay via VNPAY Sandbox Gateway';
