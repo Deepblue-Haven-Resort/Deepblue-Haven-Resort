@@ -1,21 +1,151 @@
 /* ==========================================================================
-   HOUSEKEEPER ROOM STATUS MAP RESPONSIVE LAYOUT
+   HOUSEKEEPER ROOM STATUS MAP (Reusing Native Design System CSS Variables)
    ========================================================================== */
 
 .rooms-status-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-24);
+    grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+    gap: var(--space-16, 16px);
 }
+
+.room-card {
+    background: var(--surface-0);
+    border-radius: var(--radius-lg, 16px);
+    padding: var(--space-16, 16px);
+    box-shadow: 0 4px 16px var(--primary-100);
+    border: 2px solid var(--gray-200);
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.room-card.available { border-color: var(--success-300); background: var(--success-100); }
+.room-card.occupied { border-color: var(--primary-300); background: var(--primary-50); }
+.room-card.cleaning { border-color: var(--gold-300); background: var(--warning-100); }
+.room-card.maintenance { border-color: var(--error-300); background: var(--error-100); }
+
+.room-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px var(--primary-200);
+}
+
+.room-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: var(--space-8, 8px);
+    white-space: nowrap;
+}
+
+.room-number {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--gray-900);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.room-type {
+    font-size: 0.775rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--gray-500);
+    margin-bottom: var(--space-12, 12px);
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.room-guest-info {
+    font-size: 0.8125rem;
+    color: var(--gray-700);
+    background: var(--surface-0);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm, 10px);
+    margin-bottom: var(--space-14, 14px);
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 1px 3px var(--gray-100);
+}
+
+.room-guest-info strong {
+    display: block;
+    color: var(--gray-900);
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.room-guest-info span {
+    display: block;
+    color: var(--gray-500);
+    font-size: 0.8rem;
+    margin-top: 2px;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.room-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.room-cap {
+    font-size: 0.775rem;
+    font-weight: 700;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.room-action-btn {
+    padding: 5px 10px !important;
+    font-size: 0.75rem !important;
+    border-radius: 8px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* BADGES & STATUS (Reusing theme.css color variables) */
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 0.675rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.badge-status.available { background: var(--success-100); color: var(--success-700); }
+.badge-status.occupied { background: var(--primary-100); color: var(--primary-700); }
+.badge-status.cleaning { background: var(--warning-100); color: var(--warning-700); }
+.badge-status.maintenance { background: var(--error-100); color: var(--error-700); }
 
 .status, .role, .badge {
     white-space: nowrap;
 }
 
-@media (max-width: 1199px) {
+@media (max-width: 1400px) {
     .rooms-status-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-16);
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1100px) {
+    .rooms-status-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
