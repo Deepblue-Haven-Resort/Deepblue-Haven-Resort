@@ -292,22 +292,25 @@
 
 .filter-menu {
     position: absolute;
-    top: calc(100% + 10px);
-    left: 0;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 100;
 
     min-width: 220px;
-    padding: 10px;
+    width: max-content;
+    max-width: 260px;
+    padding: 8px;
 
     display: none;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
 
     background: var(--surface-0);
     border: var(--border-1) solid var(--primary-200);
-    border-radius: 18px;
+    border-radius: 14px;
 
-    box-shadow: 0 14px 34px rgba(var(--shadow-color), 0.14);
+    box-shadow: 0 10px 30px var(--primary-200);
 }
 
 .filter-dropdown.active .filter-menu {
@@ -315,27 +318,33 @@
 }
 
 .filter-menu button {
-    min-height: 46px;
+    min-height: 40px;
 
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: var(--space-8);
 
-    padding: 0 var(--space-12);
+    padding: 8px 14px;
 
     border: none;
     border-radius: var(--radius-sm);
 
     background: transparent;
-    color: var(--primary-800);
+    color: var(--neutral-800);
 
     font-size: 0.875rem;
-    font-weight: 700;
-    text-align: center;
+    font-weight: 600;
+    text-align: left;
 
     cursor: pointer;
-    transition: 0.22s ease;
+    transition: 0.2s ease;
+    width: 100%;
+}
+
+.filter-menu button:hover {
+    background: var(--primary-100);
+    color: var(--primary-800);
 }
 
 .filter-menu button:hover {

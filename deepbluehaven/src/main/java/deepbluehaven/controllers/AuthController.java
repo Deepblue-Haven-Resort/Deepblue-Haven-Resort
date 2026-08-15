@@ -17,9 +17,13 @@ import deepbluehaven.pojo.Customer;
 import deepbluehaven.pojo.Worker;
 import deepbluehaven.pojo.enums.ActionCode;
 import deepbluehaven.pojo.enums.ObjectType;
+import deepbluehaven.repositories.CustomerRepository;
+import deepbluehaven.repositories.WorkerRepository;
 import deepbluehaven.services.AuthService;
 import deepbluehaven.services.LogService;
+import deepbluehaven.services.RememberMeService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -30,10 +34,20 @@ public class AuthController {
 
     private final AuthService authService;
     private final LogService logService;
+    private final CustomerRepository customerRepository;
+    private final WorkerRepository workerRepository;
+    private final RememberMeService rememberMeService;
 
-    public AuthController(AuthService authService, LogService logService) {
+    public AuthController(AuthService authService,
+                          LogService logService,
+                          CustomerRepository customerRepository,
+                          WorkerRepository workerRepository,
+                          RememberMeService rememberMeService) {
         this.authService = authService;
         this.logService = logService;
+        this.customerRepository = customerRepository;
+        this.workerRepository = workerRepository;
+        this.rememberMeService = rememberMeService;
     }
 
     @GetMapping("/login")
@@ -49,10 +63,12 @@ public class AuthController {
         HttpSession session = request.getSession(false);
 
         if (session != null) {
-            Object customerId = session.getAttribute("loggedInCustomerId");
-
-            if (customerId != null) {
+            if (session.getAttribute("loggedInCustomerId") != null) {
                 return "redirect:/";
+            }
+
+            if (session.getAttribute("loggedInWorkerId") != null) {
+                return redirectWorkerByRole((String) session.getAttribute("workerRole"));
             }
         }
 
@@ -70,14 +86,17 @@ public class AuthController {
     @PostMapping("/login")
     public String loginCustomer(@RequestParam("username") String username,
             @RequestParam("password") String password,
-            HttpServletRequest request) {
+            @RequestParam(value = "remember-me", required = false) String rememberMe,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         String ip = getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
         Customer customer = authService.loginCustomer(username, password);
 
         if (customer == null) {
-            logService.logAuthAccess(null, "CUSTOMER", "LOGIN_FAILED", ip, userAgent);
+            Long existingAccountId = customerRepository.findByUsername(username).map(c -> c.getId()).orElse(null);
+            logService.logAuthAccess(existingAccountId, "CUSTOMER", "LOGIN_FAILED", ip, userAgent);
             return "redirect:/login?error=true";
         }
 
@@ -92,6 +111,10 @@ public class AuthController {
         session.setAttribute("loggedInCustomerId", customer.getId());
         session.setAttribute("customerName", customer.getProfile().getFullName());
         session.setMaxInactiveInterval(SESSION_TIMEOUT_SECONDS);
+
+        if (rememberMe != null) {
+            rememberMeService.createRememberCustomerCookie(response, request.getContextPath(), customer.getId());
+        }
 
         logService.logAuthAccess(customer.getId(), "CUSTOMER", "LOGIN_SUCCESS", ip, userAgent);
         logService.log(ObjectType.USER, ActionCode.CHECK_IN, customer.getId(), "Customer logged in: " + username, session);
@@ -141,14 +164,17 @@ public class AuthController {
     @PostMapping("/staff-login")
     public String loginStaff(@RequestParam("username") String username,
             @RequestParam("password") String password,
-            HttpServletRequest request) {
+            @RequestParam(value = "remember-me", required = false) String rememberMe,
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
         String ip = getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
         Worker worker = authService.loginWorker(username, password);
 
         if (worker == null) {
-            logService.logAuthAccess(null, "WORKER", "LOGIN_FAILED", ip, userAgent);
+            Long existingAccountId = workerRepository.findByUsername(username).map(w -> w.getId()).orElse(null);
+            logService.logAuthAccess(existingAccountId, "WORKER", "LOGIN_FAILED", ip, userAgent);
             return "redirect:/staff-login?error=true";
         }
 
@@ -165,6 +191,10 @@ public class AuthController {
         session.setAttribute("workerName", worker.getProfile().getFullName());
         session.setMaxInactiveInterval(SESSION_TIMEOUT_SECONDS);
 
+        if (rememberMe != null) {
+            rememberMeService.createRememberWorkerCookie(response, request.getContextPath(), worker.getId());
+        }
+
         logService.logAuthAccess(worker.getId(), worker.getProfile().getRole().name(), "LOGIN_SUCCESS", ip, userAgent);
         logService.log(ObjectType.WORKER, ActionCode.CHECK_IN, worker.getId(), 
                 "Staff logged in: " + username + " (" + worker.getProfile().getRole() + ")", session);
@@ -173,30 +203,30 @@ public class AuthController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        invalidateSession(request);
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        invalidateSession(request, response);
         return "redirect:/login?logout=true";
     }
 
     @PostMapping("/logout")
-    public String logoutPost(HttpServletRequest request) {
-        invalidateSession(request);
+    public String logoutPost(HttpServletRequest request, HttpServletResponse response) {
+        invalidateSession(request, response);
         return "redirect:/login?logout=true";
     }
 
     @GetMapping("/staff-logout")
-    public String logoutStaff(HttpServletRequest request) {
-        invalidateSession(request);
+    public String logoutStaff(HttpServletRequest request, HttpServletResponse response) {
+        invalidateSession(request, response);
         return "redirect:/staff-login?logout=true";
     }
 
     @PostMapping("/staff-logout")
-    public String logoutStaffPost(HttpServletRequest request) {
-        invalidateSession(request);
+    public String logoutStaffPost(HttpServletRequest request, HttpServletResponse response) {
+        invalidateSession(request, response);
         return "redirect:/staff-login?logout=true";
     }
 
-    private void invalidateSession(HttpServletRequest request) {
+    private void invalidateSession(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
 
         if (session != null) {
@@ -206,6 +236,7 @@ public class AuthController {
             }
             session.invalidate();
         }
+        rememberMeService.clearRememberMeCookies(response, request.getContextPath());
     }
 
     @GetMapping("/register")

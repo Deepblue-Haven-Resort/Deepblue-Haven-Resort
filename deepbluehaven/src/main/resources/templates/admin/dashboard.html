@@ -201,45 +201,65 @@
                     </div>
                 </article>
 
-                <article class="chart-card">
-                    <div class="card-header">
-                        <div>
-                            <h2><strong>System Health</strong></h2>
-                        </div>
-                    </div>
+            </section>
 
-                    <div class="health-list">
-                        <div>
-                            <span>Server</span>
-                            <strong class="online">Online</strong>
-                        </div>
-                        <div>
-                            <span>Database</span>
-                            <strong class="online">Connected</strong>
-                        </div>
-                        <div>
-                            <span>Login Failed</span>
-                            <strong class="warning-text" th:text="${failedLoginCount != null ? failedLoginCount : 0}">0</strong>
-                        </div>
-                        <div>
-                            <span>Active Sessions</span>
-                            <strong th:text="${activeSessionCount != null ? activeSessionCount : 0}">0</strong>
-                        </div>
+            <!-- System Health Status Section (Reusing native .stats-grid & .stat-card) -->
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <div>
+                        <span>Server Status</span>
+                        <strong class="online">Online</strong>
                     </div>
                 </article>
 
+                <article class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <div>
+                        <span>Database Engine</span>
+                        <strong class="online">Connected</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon gold">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <span>Login Failed</span>
+                        <strong class="warning-text" th:text="${failedLoginCount != null ? failedLoginCount : 0}">0</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon red">
+                        <i class="fa-solid fa-network-wired"></i>
+                    </div>
+                    <div>
+                        <span>Active Sessions</span>
+                        <strong th:text="${activeSessionCount != null ? activeSessionCount : 0}">0</strong>
+                    </div>
+                </article>
+            </section>
+
+            <!-- 2-Column Side-by-Side Activity Logs Section (Reusing native .chart-card & .activity-list, Max 7 events each) -->
+            <section style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-24); margin-bottom: var(--space-24);">
                 <article class="chart-card">
                     <div class="card-header">
                         <div>
-                            <h2><strong>Recent Activities</strong></h2>
+                            <h2><strong>Authentication Security Logs</strong></h2>
                         </div>
                         <a th:href="@{/admin/logs}" class="chip primary">View All</a>
                     </div>
 
                     <div class="activity-list">
-                        <div th:if="${#lists.isEmpty(authLogs) and #lists.isEmpty(recentLogs)}" class="activity-item">
+                        <div th:if="${#lists.isEmpty(authLogs)}" class="activity-item">
                             <i class="fa-solid fa-info-circle"></i>
-                            <p>No security or system activity recorded yet.</p>
+                            <p>No authentication security activity recorded yet.</p>
                         </div>
                         <div th:each="authRecord : ${authLogs}" class="activity-item">
                             <i class="fa-solid fa-user-shield"></i>
@@ -249,6 +269,22 @@
                                 (ID: <span th:text="${authRecord.accountId}">1</span>) 
                                 - <small th:text="${#temporals.format(authRecord.timestamp, 'yyyy-MM-dd HH:mm')}">2026-08-12 12:00</small>
                             </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="chart-card">
+                    <div class="card-header">
+                        <div>
+                            <h2><strong>System Audit Logs</strong></h2>
+                        </div>
+                        <a th:href="@{/admin/logs}" class="chip primary">View All</a>
+                    </div>
+
+                    <div class="activity-list">
+                        <div th:if="${#lists.isEmpty(recentLogs)}" class="activity-item">
+                            <i class="fa-solid fa-info-circle"></i>
+                            <p>No system operations recorded yet.</p>
                         </div>
                         <div th:each="logRecord : ${recentLogs}" class="activity-item">
                             <i class="fa-solid fa-shield-halved"></i>
@@ -261,7 +297,6 @@
                         </div>
                     </div>
                 </article>
-
             </section>
 
             <section class="account-panel">

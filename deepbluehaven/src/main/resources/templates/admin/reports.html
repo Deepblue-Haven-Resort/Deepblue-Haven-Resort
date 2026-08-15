@@ -29,9 +29,9 @@
                         <i class="fa-solid fa-chart-line"></i>
                     </div>
                     <div>
-                        <span>RevPAR</span>
-                        <strong>1,845,000 VND</strong>
-                        <small>Revenue per available room</small>
+                        <span>RevPAR / Total Revenue</span>
+                        <strong th:text="${totalRevenue != null ? #numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT') + ' VND' : '1,845,000 VND'}">1,845,000 VND</strong>
+                        <small>Revenue calculated from processed invoices</small>
                     </div>
                 </article>
 
@@ -52,7 +52,7 @@
                     </div>
                     <div>
                         <span>System Total Users</span>
-                        <strong>128 Accounts</strong>
+                        <strong th:text="${totalUsers != null ? totalUsers + ' Accounts' : '128 Accounts'}">128 Accounts</strong>
                         <small>Active user database</small>
                     </div>
                 </article>
@@ -63,7 +63,7 @@
                     </div>
                     <div>
                         <span>Audit Security Logs</span>
-                        <strong>Active Logged</strong>
+                        <strong th:text="${totalSecurityLogs != null ? totalSecurityLogs + ' Logs' : 'Active Logged'}">Active Logged</strong>
                         <small>Security monitoring status</small>
                     </div>
                 </article>
@@ -98,11 +98,13 @@
                             <tr>
                                 <td><strong>Financial Revenue Summary</strong></td>
                                 <td>Calculates room charges, extra service orders, and tax logs.</td>
-                                <td>PDF Ledger / Excel</td>
+                                <td>PDF Ledger / Excel (CSV)</td>
                                 <td>Invoices & Payments</td>
                                 <td>
                                     <div class="table-action-center">
-                                        <button type="button" class="btn edit-btn btn-small">Download</button>
+                                        <a th:href="@{/admin/reports/financial/export}" class="btn edit-btn btn-small" title="Export Financial Revenue Summary CSV">
+                                            <i class="fa-solid fa-file-csv"></i> Download CSV
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -113,7 +115,9 @@
                                 <td>Audit Logs & System Events</td>
                                 <td>
                                     <div class="table-action-center">
-                                        <button type="button" class="btn edit-btn btn-small">Download</button>
+                                        <a th:href="@{/admin/reports/security/export}" class="btn edit-btn btn-small" title="Export System Security Audit Report CSV">
+                                            <i class="fa-solid fa-file-csv"></i> Download CSV
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

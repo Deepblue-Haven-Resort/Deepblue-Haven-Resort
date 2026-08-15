@@ -54,26 +54,35 @@
                 </div>
             </div>
 
-            <!-- ROOM GRID -->
-            <div class="stats-grid rooms-status-grid">
+            <!-- ROOM GRID (Preserving ALL Original Housekeeper Fields with Mockup UI Styling) -->
+            <div class="rooms-status-grid">
 
-                <article class="chart-card" th:each="r : ${rooms}" th:data-status="${r.status}">
-                    <div class="card-header">
-                        <div>
-                            <h2><strong th:text="|Room ${r.roomNumber}|">Room 101</strong></h2>
-                            <small class="body-4" th:text="|${r.roomType} · Floor ${r.roomNumber != null && r.roomNumber.length() > 0 ? r.roomNumber.substring(0,1) : 1}|">Superior King · Floor 1</small>
+                <article class="chart-card room-card"
+                         th:each="r : ${rooms}"
+                         th:classappend="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'available' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING ? 'cleaning' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).OCCUPIED ? 'occupied' : 'maintenance'))}"
+                         th:data-status="${r.status}">
+                    <div>
+                        <div class="room-header">
+                            <span class="room-number" th:text="|Room ${r.roomNumber}|">Room 101</span>
+                            <span class="badge-status"
+                                  th:classappend="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'available' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING ? 'cleaning' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).OCCUPIED ? 'occupied' : 'maintenance'))}"
+                                  th:text="${r.status}">AVAILABLE</span>
                         </div>
-                        <span th:class="|status ${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'status-success' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING ? 'status-info' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).OCCUPIED ? 'status-warning' : 'status-error'))}|"
-                              th:text="${r.status}">AVAILABLE</span>
-                    </div>
-                    <div class="user-info">
-                        <div>
-                            <strong class="body-3" th:text="|Max ${r.capacity != null ? r.capacity : 2} Guests|">2 Guests</strong>
-                            <span th:text="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'Ready for guests' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING ? 'Cleaning needed' : 'Occupied / In Use')}">Status note</span>
+
+                        <div class="room-type" th:text="|${r.roomType} · Floor ${r.roomNumber != null && r.roomNumber.length() > 0 ? r.roomNumber.substring(0,1) : 1}|">
+                            Superior King · Floor 1
                         </div>
-                    </div>
-                    <div class="text-center">
-                        <a th:href="@{/housekeeper/tasks}" class="btn btn-small btn-cta">View Tasks</a>
+
+                        <div class="room-guest-info">
+                            <div>
+                                <strong class="body-3" th:text="|Max ${r.capacity != null ? r.capacity : 2} Guests|">2 Guests</strong>
+                                <span th:text="${r.status == T(deepbluehaven.pojo.enums.RoomStatus).AVAILABLE ? 'Ready for guests' : (r.status == T(deepbluehaven.pojo.enums.RoomStatus).CLEANING ? 'Cleaning needed' : 'Occupied / In Use')}">Status note</span>
+                            </div>
+                        </div>
+
+                        <div class="room-footer-row text-center">
+                            <a th:href="@{/housekeeper/tasks}" class="btn btn-small btn-cta w-100">View Tasks</a>
+                        </div>
                     </div>
                 </article>
 
