@@ -88,11 +88,12 @@ function normalizeFilterValue(value) {
 }
 
 function toVnd(millionValue) {
-    return Number(millionValue || 0) * 1000000;
+    return Math.round(Number(millionValue || 0) * 1000000);
 }
 
 function formatMillion(millionValue) {
-    return `${Number(millionValue || 0)} million`;
+    const num = Number(millionValue || 0);
+    return Number.isInteger(num) ? `${num} million` : `${parseFloat(num.toFixed(2))} million`;
 }
 
 function formatVnd(value) {
@@ -219,8 +220,8 @@ function initServicePriceFilter() {
 
     const getConfig = () => ({
         min: Number(priceMin.min || 0),
-        max: Number(priceMin.max || 10),
-        step: Number(priceMin.step || 1)
+        max: Number(priceMin.max || 3),
+        step: Number(priceMin.step || 0.1)
     });
 
     const clamp = (value, min, max) => {

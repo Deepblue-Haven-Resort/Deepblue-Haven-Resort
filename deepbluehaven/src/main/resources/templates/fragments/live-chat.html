@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="customerLiveChat">
+    <!-- Live Chat Styles -->
+    <link rel="stylesheet" th:href="@{/assets/css/customer/live-chat.css}">
+
+    <!-- Floating Chat Trigger Button -->
+    <div class="dbh-chat-widget" id="dbhChatWidget">
+        <button class="dbh-chat-trigger" id="dbhChatTrigger" type="button" aria-label="Open 24/7 Resort Concierge Live Chat">
+            <div class="dbh-chat-trigger__icon-wrap">
+                <i class="fa-solid fa-comments dbh-chat-trigger__icon dbh-chat-trigger__icon--chat"></i>
+                <i class="fa-solid fa-xmark dbh-chat-trigger__icon dbh-chat-trigger__icon--close"></i>
+            </div>
+            <span class="dbh-chat-trigger__badge" id="dbhChatBadge" style="display: none;">0</span>
+            <span class="dbh-chat-trigger__pulse"></span>
+        </button>
+
+        <!-- Live Chat Floating Window -->
+        <div class="dbh-chat-window" id="dbhChatWindow">
+            <!-- Chat Window Header -->
+            <div class="dbh-chat-header">
+                <div class="dbh-chat-header__info">
+                    <div class="dbh-chat-header__avatar">
+                        <i class="fa-solid fa-anchor"></i>
+                        <span class="dbh-chat-header__status-dot"></span>
+                    </div>
+                    <div class="dbh-chat-header__text">
+                        <h4 class="dbh-chat-header__title">Deep Blue Concierge</h4>
+                        <p class="dbh-chat-header__status">
+                            <span class="dbh-chat-status-indicator"></span> 24/7 Guest Assistance
+                        </p>
+                    </div>
+                </div>
+                <div class="dbh-chat-header__actions">
+                    <button type="button" class="dbh-chat-header__btn" id="dbhChatMinimize" title="Minimize">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <button type="button" class="dbh-chat-header__btn" id="dbhChatClose" title="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Window Body / Timeline -->
+            <div class="dbh-chat-body" id="dbhChatBody">
+                <div class="dbh-chat-welcome" id="dbhChatWelcome">
+                    <div class="dbh-chat-welcome__icon">
+                        <i class="fa-solid fa-umbrella-beach"></i>
+                    </div>
+                    <h5>Welcome to Deep Blue Haven</h5>
+                    <p>How may our resort concierge assist your sanctuary experience today?</p>
+                    <div class="dbh-chat-quick-replies" id="dbhQuickReplies">
+                        <button type="button" class="dbh-quick-btn" data-text="I would like to inquire about room reservations.">🏨 Room Inquiries</button>
+                        <button type="button" class="dbh-quick-btn" data-text="What dining and spa services are available?">🍽️ Dining & Spa</button>
+                        <button type="button" class="dbh-quick-btn" data-text="I have a question regarding my existing booking.">📋 My Booking</button>
+                        <button type="button" class="dbh-quick-btn" data-text="Do you offer private airport shuttle transfer?">🚗 Airport Transfer</button>
+                    </div>
+                </div>
+
+                <!-- Messages container -->
+                <div class="dbh-chat-messages" id="dbhChatMessages"></div>
+
+                <!-- Typing indicator -->
+                <div class="dbh-chat-typing" id="dbhChatTyping" style="display: none;">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+
+            <!-- Chat Window Footer / Input -->
+            <form class="dbh-chat-footer" id="dbhChatForm">
+                <div class="dbh-chat-input-wrap">
+                    <input type="text" id="dbhChatMessageInput" class="dbh-chat-input" placeholder="Type your message here..." autocomplete="off" maxlength="1000">
+                    <button type="submit" class="dbh-chat-send-btn" id="dbhChatSendBtn" title="Send message">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Live Chat Script -->
+    <script th:src="@{/assets/js/customer/live-chat.js}" defer></script>
+</div>
+</body>
+</html>

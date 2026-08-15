@@ -47,7 +47,7 @@ public class Comment {
     @JoinColumn(name = "worker_id")
     private Worker worker;
 
-    @Column(name = "content", length = 500, columnDefinition = "NVARCHAR(500)", nullable = false)
+    @Column(name = "content", length = 1000, columnDefinition = "NVARCHAR(1000)", nullable = false)
     private String content;
 
     @Column(name = "rating", nullable = false)
@@ -55,6 +55,19 @@ public class Comment {
 
     @Column(name = "is_complaint", nullable = false)
     private Boolean isComplaint = false;
+
+    @Column(name = "is_resolved", nullable = false)
+    private Boolean isResolved = false;
+
+    @Column(name = "response", length = 1000, columnDefinition = "NVARCHAR(1000)")
+    private String response;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "responded_by_id")
+    private Worker respondedBy;
+
+    @Column(name = "responded_at")
+    private LocalDateTime respondedAt;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "comment_images", joinColumns = @JoinColumn(name = "comment_id"))
@@ -68,58 +81,107 @@ public class Comment {
     public Comment() {}
 
     public Boolean getIsComplaint() {
-        return isComplaint; }
+        return isComplaint; 
+    }
     public void setIsComplaint(Boolean isComplaint) {
-        this.isComplaint = isComplaint; }
+        this.isComplaint = isComplaint; 
+    }
 
+    public Boolean getIsResolved() {
+        return isResolved;
+    }
+    public void setIsResolved(Boolean isResolved) {
+        this.isResolved = isResolved;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+    public void setResponse(String response) {
+        this.response = response;
+    }
+
+    public Worker getRespondedBy() {
+        return respondedBy;
+    }
+    public void setRespondedBy(Worker respondedBy) {
+        this.respondedBy = respondedBy;
+    }
+
+    public LocalDateTime getRespondedAt() {
+        return respondedAt;
+    }
+    public void setRespondedAt(LocalDateTime respondedAt) {
+        this.respondedAt = respondedAt;
+    }
 
     public Long getId() { 
-        return id; }
+        return id; 
+    }
     public void setId(Long id) { 
-        this.id = id; }
+        this.id = id; 
+    }
 
     public Customer getCustomer() { 
-        return customer; }
+        return customer; 
+    }
     public void setCustomer(Customer customer) { 
-        this.customer = customer; }
+        this.customer = customer; 
+    }
 
     public Resort getResort() { 
-        return resort; }
+        return resort; 
+    }
     public void setResort(Resort resort) { 
-        this.resort = resort; }
+        this.resort = resort; 
+    }
 
     public Room getRoom() { 
-        return room; }
+        return room; 
+    }
     public void setRoom(Room room) { 
-        this.room = room; }
+        this.room = room; 
+    }
 
     public Service getService() { 
-        return service; }
+        return service; 
+    }
     public void setService(Service service) { 
-        this.service = service; }
+        this.service = service; 
+    }
 
     public Worker getWorker() { 
-        return worker; }
+        return worker; 
+    }
     public void setWorker(Worker worker) { 
-        this.worker = worker; }
+        this.worker = worker; 
+    }
 
     public String getContent() { 
-        return content; }
+        return content; 
+    }
     public void setContent(String content) { 
-        this.content = content; }
+        this.content = content; 
+    }
 
     public Integer getRating() { 
-        return rating; }
+        return rating; 
+    }
     public void setRating(Integer rating) { 
-        this.rating = rating; }
+        this.rating = rating; 
+    }
 
     public List<String> getImages() { 
-        return images; }
+        return images; 
+    }
     public void setImages(List<String> images) { 
-        this.images = images; }
+        this.images = images; 
+    }
 
     public LocalDateTime getCreatedAt() { 
-        return createdAt; }
+        return createdAt; 
+    }
     public void setCreatedAt(LocalDateTime createdAt) { 
-        this.createdAt = createdAt; }
+        this.createdAt = createdAt; 
+    }
 }

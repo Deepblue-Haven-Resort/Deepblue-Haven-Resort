@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import deepbluehaven.dto.ReceptionistDTO;
-import deepbluehaven.pojo.CustomerProfile;
 import deepbluehaven.pojo.Worker;
 import deepbluehaven.repositories.WorkerRepository;
 import deepbluehaven.services.BookingService;
@@ -29,11 +29,19 @@ public class ReceptionistController {
     private final ReceptionistService receptionistService;
     private final BookingService bookingService;
     private final WorkerRepository workerRepository;
+    private final deepbluehaven.services.CommentAndInquiryService commentAndInquiryService;
+    private final deepbluehaven.services.ChatService chatService;
 
-    public ReceptionistController(ReceptionistService receptionistService, BookingService bookingService, WorkerRepository workerRepository) {
+    public ReceptionistController(ReceptionistService receptionistService,
+                                  BookingService bookingService,
+                                  WorkerRepository workerRepository,
+                                  deepbluehaven.services.CommentAndInquiryService commentAndInquiryService,
+                                  deepbluehaven.services.ChatService chatService) {
         this.receptionistService = receptionistService;
         this.bookingService = bookingService;
         this.workerRepository = workerRepository;
+        this.commentAndInquiryService = commentAndInquiryService;
+        this.chatService = chatService;
     }
 
     @GetMapping("")
@@ -78,9 +86,9 @@ public class ReceptionistController {
     }
 
     @PostMapping("/confirm-booking/{id}")
-    public String confirmBooking(@PathVariable("id") Long id, RedirectAttributes redirectAttrs) {
+    public String confirmBooking(@PathVariable("id") Long id, RedirectAttributes redirectAttrs, HttpServletRequest req) {
         try {
-            Worker receptionist = getActiveReceptionist();
+            Worker receptionist = getActiveReceptionist(req);
             boolean success = bookingService.confirmBookingByStaff(id, receptionist != null ? receptionist.getId() : 1L);
             if (success) {
                 redirectAttrs.addFlashAttribute("successMessage", "Booking #" + id + " has been successfully CONFIRMED!");
@@ -90,7 +98,7 @@ public class ReceptionistController {
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/receptionist/check-in";
+        return "redirect:/receptionist/bookings";
     }
 
     @GetMapping("/check-out")
@@ -136,18 +144,6 @@ public class ReceptionistController {
         return "redirect:/receptionist/dashboard";
     }
 
-    @GetMapping("/guests")
-    public String guestDirectoryPage(Model model, HttpServletRequest req) {
-        Worker receptionist = getActiveReceptionist(req);
-        if (receptionist == null) {
-            return "redirect:/staff-login";
-        }
-        List<CustomerProfile> customerProfiles = receptionistService.getAllCustomerProfiles();
-        model.addAttribute("guests", customerProfiles);
-        model.addAttribute("activePage", "guests");
-        return "receptionist/guests";
-    }
-
     @GetMapping("/profile")
     public String profilePage(Model model, HttpServletRequest req) {
         Worker receptionist = getActiveReceptionist(req);
@@ -165,16 +161,94 @@ public class ReceptionistController {
         return "receptionist/settings";
     }
 
+    @GetMapping("/comments")
+    public String receptionistComments(@RequestParam(value = "filter", required = false, defaultValue = "all") String filter,
+                                       @RequestParam(value = "inquiryStatus", required = false, defaultValue = "ALL") String inquiryStatus,
+                                       Model model) {
+        model.addAttribute("activePage", "comments");
+        model.addAttribute("currentFilter", filter);
+        model.addAttribute("currentInquiryStatus", inquiryStatus);
+        model.addAttribute("comments", commentAndInquiryService.getComments(filter));
+        model.addAttribute("inquiries", commentAndInquiryService.getInquiries(inquiryStatus));
+        model.addAttribute("statistics", commentAndInquiryService.getStatistics());
+        return "receptionist/comments";
+    }
+
+    @PostMapping("/comments/{id}/reply")
+    public String receptionistReplyComment(@PathVariable("id") Long id,
+                                           @RequestParam("response") String response,
+                                           RedirectAttributes redirectAttrs,
+                                           HttpServletRequest req) {
+        try {
+            Worker worker = getActiveReceptionist(req);
+            Long workerId = worker != null ? worker.getId() : null;
+            boolean success = commentAndInquiryService.replyToComment(id, response, workerId);
+            if (success) {
+                redirectAttrs.addFlashAttribute("successMessage", "Replied to customer feedback successfully!");
+            } else {
+                redirectAttrs.addFlashAttribute("errorMessage", "Comment not found.");
+            }
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/receptionist/comments";
+    }
+
+    @PostMapping("/comments/{id}/resolve")
+    public String receptionistResolveComment(@PathVariable("id") Long id,
+                                             @RequestParam(value = "isResolved", required = false, defaultValue = "true") Boolean isResolved,
+                                             RedirectAttributes redirectAttrs) {
+        try {
+            commentAndInquiryService.toggleResolveComplaint(id, isResolved);
+            redirectAttrs.addFlashAttribute("successMessage", "Feedback status updated.");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/receptionist/comments";
+    }
+
+    @PostMapping("/inquiries/{id}/update")
+    public String receptionistUpdateInquiry(@PathVariable("id") Long id,
+                                            @RequestParam("status") deepbluehaven.pojo.enums.InquiryStatus status,
+                                            @RequestParam(value = "replyNotes", required = false) String replyNotes,
+                                            RedirectAttributes redirectAttrs,
+                                            HttpServletRequest req) {
+        try {
+            Worker worker = getActiveReceptionist(req);
+            Long workerId = worker != null ? worker.getId() : null;
+            boolean success = commentAndInquiryService.updateInquiry(id, status, replyNotes, workerId);
+            if (success) {
+                redirectAttrs.addFlashAttribute("successMessage", "Contact inquiry #" + id + " updated to " + status);
+            } else {
+                redirectAttrs.addFlashAttribute("errorMessage", "Inquiry not found.");
+            }
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/receptionist/comments";
+    }
+
+    @GetMapping("/chat")
+    public String receptionistChat(Model model) {
+        model.addAttribute("activePage", "chat");
+        model.addAttribute("sessions", chatService.getStaffSessions("ALL"));
+        return "receptionist/chat";
+    }
+
     private Worker getActiveReceptionist(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session != null && session.getAttribute("loggedInWorkerId") != null) {
             Long workerId = (Long) session.getAttribute("loggedInWorkerId");
-            return workerRepository.findById(workerId).orElse(null);
+            return workerRepository.findWithProfileAndPermissionsById(workerId)
+                    .orElseGet(() -> workerRepository.findById(workerId).orElse(null));
         }
         return getActiveReceptionist();
     }
 
     private Worker getActiveReceptionist() {
-        return workerRepository.findAll().stream().findFirst().orElse(null);
+        return workerRepository.findAllWithProfile().stream()
+                .filter(w -> w.getProfile() != null && w.getProfile().getRole() == deepbluehaven.pojo.enums.Role.RECEPTIONIST)
+                .findFirst()
+                .orElseGet(() -> workerRepository.findAllWithProfile().stream().findFirst().orElse(null));
     }
 }

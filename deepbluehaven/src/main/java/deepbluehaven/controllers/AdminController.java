@@ -41,11 +41,13 @@ import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.pojo.enums.PermissionTag;
 import deepbluehaven.pojo.enums.Role;
 import deepbluehaven.pojo.enums.WorkerStatus;
+import deepbluehaven.pojo.WorkerRoomAssignmentLog;
 import deepbluehaven.repositories.AuthAccessLogRepository;
 import deepbluehaven.repositories.CustomerRepository;
 import deepbluehaven.repositories.InvoiceRepository;
 import deepbluehaven.repositories.LogRepository;
 import deepbluehaven.repositories.WorkerRepository;
+import deepbluehaven.repositories.WorkerRoomAssignmentLogRepository;
 import deepbluehaven.services.LogService;
 import deepbluehaven.services.WorkerFormExceptionService;
 import deepbluehaven.services.WorkerService;
@@ -62,10 +64,12 @@ public class AdminController {
     private final LogRepository logRepository;
     private final WorkerRepository workerRepository;
     private final CustomerRepository customerRepository;
+    private final WorkerRoomAssignmentLogRepository workerRoomAssignmentLogRepository;
 
     public AdminController(WorkerService workerService, LogService logService, InvoiceRepository invoiceRepository,
                            AuthAccessLogRepository authAccessLogRepository, LogRepository logRepository,
-                           WorkerRepository workerRepository, CustomerRepository customerRepository) {
+                           WorkerRepository workerRepository, CustomerRepository customerRepository,
+                           WorkerRoomAssignmentLogRepository workerRoomAssignmentLogRepository) {
         this.workerService = workerService;
         this.logService = logService;
         this.invoiceRepository = invoiceRepository;
@@ -73,6 +77,7 @@ public class AdminController {
         this.logRepository = logRepository;
         this.workerRepository = workerRepository;
         this.customerRepository = customerRepository;
+        this.workerRoomAssignmentLogRepository = workerRoomAssignmentLogRepository;
     }
 
     @GetMapping("/admin/dashboard")
@@ -209,9 +214,31 @@ public class AdminController {
         return "admin/accounts";
     }
 
-    @GetMapping("/admin/profile-employee")
-    public String profileEmployee(Model model) {
-        model.addAttribute("activePage", "profile-employee");
+    @GetMapping({"/admin/profile-employee", "/admin/profile-employee/{id}"})
+    public String profileEmployee(@PathVariable(value = "id", required = false) Long id,
+                                  @RequestParam(value = "id", required = false) Long paramId,
+                                  Model model) {
+        Long targetId = id != null ? id : paramId;
+        Worker worker = null;
+        if (targetId != null) {
+            worker = workerRepository.findWithPermissionsById(targetId)
+                    .orElseGet(() -> workerRepository.findById(targetId).orElse(null));
+        }
+        if (worker == null) {
+            worker = workerRepository.findAllWithProfile().stream().findFirst().orElse(null);
+            if (worker != null) {
+                worker = workerRepository.findWithPermissionsById(worker.getId()).orElse(worker);
+            }
+        }
+
+        List<WorkerRoomAssignmentLog> assignments = java.util.Collections.emptyList();
+        if (worker != null) {
+            assignments = workerRoomAssignmentLogRepository.findByWorkerIdOrderByTimestampDesc(worker.getId());
+        }
+
+        model.addAttribute("worker", worker);
+        model.addAttribute("assignments", assignments);
+        model.addAttribute("activePage", "accounts");
         return "admin/profile-employee";
     }
 

@@ -1,0 +1,511 @@
+/* ==========================================================================
+   CONTACT PAGE - DEEP BLUE HAVEN RESORT
+   Styled to match the luxurious, vibrant ocean vibe of deepbluehaven/home
+   ========================================================================== */
+
+.contact-page {
+    overflow-x: hidden;
+    background:
+        radial-gradient(circle at 12% 8%, rgba(124, 193, 255, 0.36), transparent 32%),
+        radial-gradient(circle at 90% 4%, rgba(110, 224, 191, 0.24), transparent 28%),
+        linear-gradient(180deg, var(--surface-100) 0%, var(--primary-100) 42%, var(--neutral-50) 100%);
+    color: var(--color-text);
+}
+
+.contact-page main {
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-page main::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(77, 168, 255, 0.12), transparent 28%),
+        radial-gradient(circle at 85% 45%, rgba(45, 154, 131, 0.1), transparent 26%);
+}
+
+/* =========================================
+   HERO SECTION
+   ========================================= */
+
+.contact-hero {
+    position: relative;
+    min-height: 55vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 24px 70px;
+    background: linear-gradient(180deg, rgba(8, 28, 44, 0.88) 0%, rgba(15, 61, 94, 0.78) 100%),
+                url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1600&q=80') center/cover no-repeat;
+    color: var(--white);
+    text-align: center;
+    overflow: hidden;
+}
+
+.contact-hero__glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.contact-hero__glow--one {
+    top: 10%;
+    left: 20%;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(77, 168, 255, 0.35) 0%, transparent 70%);
+}
+
+.contact-hero__glow--two {
+    bottom: 10%;
+    right: 15%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(110, 224, 191, 0.28) 0%, transparent 70%);
+}
+
+.contact-hero__inner {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.contact-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    color: var(--gold-300);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.contact-kicker::before,
+.contact-kicker::after {
+    content: "";
+    width: 32px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-300));
+}
+
+.contact-kicker::after {
+    background: linear-gradient(90deg, var(--gold-300), transparent);
+}
+
+.contact-hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(2.4rem, 4.5vw, 4.2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+    color: #ffffff !important;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.contact-hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, #a5f3fc 0%, #38bdf8 45%, #fef08a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.contact-hero p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #f1f5f9 !important;
+    max-width: 700px;
+    margin: 0 auto;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================================
+   QUICK CONTACT CHANNELS (3 CARDS)
+   ========================================= */
+
+.contact-channels {
+    margin-top: -45px;
+    position: relative;
+    z-index: 5;
+    margin-bottom: 80px;
+}
+
+.contact-channels__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.contact-channel-card {
+    background: var(--surface-0);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--radius-lg);
+    padding: 32px 28px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.contact-channel-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-400);
+}
+
+.contact-channel-card__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--primary-100), var(--surface-0));
+    border: 1px solid var(--primary-200);
+    color: var(--primary-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.contact-channel-card:hover .contact-channel-card__icon {
+    background: linear-gradient(135deg, var(--primary-700), var(--primary-500));
+    color: var(--white);
+    transform: scale(1.08);
+}
+
+.contact-channel-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-900);
+    margin-bottom: 8px;
+}
+
+.contact-channel-card p {
+    font-size: 0.9rem;
+    color: var(--neutral-600);
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+.contact-channel-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: auto;
+    width: 100%;
+    padding-top: 16px;
+    border-top: 1px solid var(--neutral-100);
+}
+
+.contact-channel-card__info a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-700);
+    font-weight: 700;
+    font-size: 0.92rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.contact-channel-card__info a:hover {
+    color: var(--primary-900);
+    text-decoration: underline;
+}
+
+.contact-channel-card__info span {
+    font-size: 0.8rem;
+    color: var(--neutral-500);
+}
+
+/* =========================================
+   MAIN CONTACT SECTION (FORM + RESORT INFO)
+   ========================================= */
+
+.contact-main-section {
+    padding-bottom: 90px;
+}
+
+.contact-main__grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 48px;
+    align-items: start;
+}
+
+/* --- Contact Form --- */
+.contact-form-container {
+    background: var(--surface-0);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    box-shadow: var(--shadow-md);
+}
+
+.contact-form-container h2 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-900);
+    margin-bottom: 8px;
+}
+
+.contact-form-container > p {
+    color: var(--neutral-600);
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contact-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.contact-form__group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.contact-form__group label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--neutral-800);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.contact-form__group input,
+.contact-form__group select,
+.contact-form__group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--primary-200);
+    border-radius: var(--radius-sm);
+    background: var(--surface-100);
+    color: var(--neutral-900);
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    transition: all 0.2s ease;
+}
+
+.contact-form__group input:focus,
+.contact-form__group select:focus,
+.contact-form__group textarea:focus {
+    background: var(--surface-0);
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px var(--primary-100);
+    outline: none;
+}
+
+.contact-form__group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.contact-form__btn {
+    margin-top: 10px;
+    width: 100%;
+    min-height: 48px;
+    font-size: 1rem;
+}
+
+/* --- Resort Info Sidebar --- */
+.contact-resorts-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.contact-resort-card {
+    background: var(--surface-0);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.contact-resort-card:hover {
+    border-color: var(--primary-400);
+    box-shadow: var(--shadow-md);
+}
+
+.contact-resort-card__badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--primary-100);
+    color: var(--primary-700);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.contact-resort-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-900);
+    margin-bottom: 12px;
+}
+
+.contact-resort-card__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: var(--neutral-600);
+}
+
+.contact-resort-card__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    list-style: none;
+}
+
+.contact-resort-card__list i {
+    color: var(--primary-600);
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+/* =========================================
+   FAQ ACCORDION SECTION
+   ========================================= */
+
+.contact-faq {
+    padding: 90px 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(212, 235, 255, 0.4) 100%);
+}
+
+.contact-faq__header {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 48px;
+}
+
+.contact-faq__list {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.faq-item {
+    background: var(--surface-0);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s ease;
+}
+
+.faq-item:hover {
+    border-color: var(--primary-400);
+}
+
+.faq-item.is-open {
+    border-color: var(--primary-500);
+    box-shadow: var(--shadow-md);
+}
+
+.faq-question {
+    width: 100%;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--primary-900);
+    cursor: pointer;
+}
+
+.faq-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--primary-100);
+    color: var(--primary-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.faq-item.is-open .faq-icon {
+    transform: rotate(180deg);
+    background: var(--primary-700);
+    color: var(--white);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s ease;
+    padding: 0 24px;
+    color: var(--neutral-600);
+    font-size: 0.92rem;
+    line-height: 1.7;
+}
+
+.faq-item.is-open .faq-answer {
+    max-height: 300px;
+    padding: 0 24px 20px;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 1024px) {
+    .contact-channels__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-main__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-form__row {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-form-container {
+        padding: 24px;
+    }
+}

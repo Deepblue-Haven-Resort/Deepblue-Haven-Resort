@@ -73,24 +73,107 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (totalPages <= 1) return;
 
-        for (let page = 1; page <= totalPages; page++) {
-            const pageButton = document.createElement("button");
-            pageButton.type = "button";
-            pageButton.className = "booking-pagination__number";
-            pageButton.textContent = page;
-            pageButton.setAttribute("aria-label", `Go to page ${page}`);
-
-            if (page === currentPage) {
-                pageButton.classList.add("is-active");
-                pageButton.setAttribute("aria-current", "page");
+        function getPageItems(total, current) {
+            if (total <= 7) {
+                const arr = [];
+                for (let i = 1; i <= total; i++) arr.push(i);
+                return arr;
             }
+            const pages = new Set();
+            pages.add(1);
+            pages.add(2);
+            pages.add(3);
+            for (let i = current - 1; i <= current + 1; i++) {
+                if (i >= 1 && i <= total) {
+                    pages.add(i);
+                }
+            }
+            pages.add(total - 2);
+            pages.add(total - 1);
+            pages.add(total);
 
-            pageButton.addEventListener("click", function () {
-                currentPage = page;
-                updateBookingList();
+            const sorted = Array.from(pages).sort((a, b) => a - b);
+            const result = [];
+            let prev = 0;
+            for (const p of sorted) {
+                if (prev > 0) {
+                    if (p - prev === 2) {
+                        result.push(prev + 1);
+                    } else if (p - prev > 2) {
+                        result.push('...');
+                    }
+                }
+                result.push(p);
+                prev = p;
+            }
+            return result;
+        }
+
+        const items = getPageItems(totalPages, currentPage);
+        items.forEach(item => {
+            if (item === '...') {
+                const dots = document.createElement("span");
+                dots.className = "booking-pagination__dots";
+                dots.style.cssText = "display: inline-flex; align-items: center; justify-content: center; min-width: 28px; padding: 0 4px; color: #94a3b8; font-weight: bold;";
+                dots.textContent = "...";
+                paginationNumbers.appendChild(dots);
+            } else {
+                const pageButton = document.createElement("button");
+                pageButton.type = "button";
+                pageButton.className = "booking-pagination__number";
+                pageButton.textContent = item;
+                pageButton.setAttribute("aria-label", `Go to page ${item}`);
+
+                if (item === currentPage) {
+                    pageButton.classList.add("is-active");
+                    pageButton.setAttribute("aria-current", "page");
+                }
+
+                pageButton.addEventListener("click", function () {
+                    currentPage = item;
+                    updateBookingList();
+                });
+
+                paginationNumbers.appendChild(pageButton);
+            }
+        });
+
+        // Jump to page input if totalPages > 7
+        const existingJump = pagination.querySelector('.pagination-jump');
+        if (existingJump) existingJump.remove();
+
+        if (totalPages > 7) {
+            const jumpWrap = document.createElement("div");
+            jumpWrap.className = "pagination-jump";
+            jumpWrap.style.cssText = "display: inline-flex; align-items: center; gap: 6px; margin-left: 12px;";
+            jumpWrap.innerHTML = `
+                <span style="font-size: 0.8125rem; color: #64748b; white-space: nowrap;">Go to:</span>
+                <input type="number" min="1" max="${totalPages}" class="form-input page-jump-input" style="width: 52px; height: 32px; text-align: center; font-size: 0.8125rem; border-radius: 6px; padding: 2px 4px; border: 1px solid #cbd5e1;" placeholder="${currentPage}" />
+                <button type="button" class="btn btn-outline btn-small page-jump-btn" style="height: 32px; padding: 0 10px; font-size: 0.8125rem;">Go</button>
+            `;
+
+            const jumpInput = jumpWrap.querySelector(".page-jump-input");
+            const jumpBtn = jumpWrap.querySelector(".page-jump-btn");
+
+            const doJump = () => {
+                const val = parseInt(jumpInput.value, 10);
+                if (!isNaN(val) && val >= 1 && val <= totalPages) {
+                    currentPage = val;
+                    updateBookingList();
+                } else {
+                    jumpInput.value = "";
+                }
+            };
+
+            jumpBtn.addEventListener("click", doJump);
+            jumpInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    doJump();
+                }
             });
 
-            paginationNumbers.appendChild(pageButton);
+            pagination.appendChild(jumpWrap);
         }
 
         if (previousButton) previousButton.disabled = currentPage === 1;
@@ -466,25 +549,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 let html = `
-                    <tr style="border-bottom: 1px solid #f1f5f9;">
-                        <td style="padding: 12px 8px;">
+                    <tr>
+                        <td>
                             <strong>${escapeHtml(roomName)}</strong><br>
-                            <small style="color: #64748b;">${escapeHtml(checkIn)} — ${escapeHtml(checkOut)}</small>
+                            <small>${escapeHtml(checkIn)} — ${escapeHtml(checkOut)}</small>
                         </td>
-                        <td style="padding: 12px 8px; text-align: center;">${escapeHtml(nights)}</td>
-                        <td style="padding: 12px 8px; text-align: right; font-weight: 700;">${escapeHtml(roomCharge)}</td>
+                        <td class="text-center">${escapeHtml(nights)}</td>
+                        <td class="text-right"><strong>${escapeHtml(roomCharge)}</strong></td>
                     </tr>
                 `;
 
                 serviceItems.forEach(item => {
                     html += `
-                        <tr style="border-bottom: 1px solid #f1f5f9;">
-                            <td style="padding: 12px 8px;">
+                        <tr>
+                            <td>
                                 <strong>${escapeHtml(item.serviceName)}</strong><br>
-                                <small style="color: #64748b;">Add-on Service</small>
+                                <small>Add-on Service</small>
                             </td>
-                            <td style="padding: 12px 8px; text-align: center;">x${item.quantity}</td>
-                            <td style="padding: 12px 8px; text-align: right; font-weight: 700;">${escapeHtml(item.totalAmountVnd)}</td>
+                            <td class="text-center">x${item.quantity}</td>
+                            <td class="text-right"><strong>${escapeHtml(item.totalAmountVnd)}</strong></td>
                         </tr>
                     `;
                 });
@@ -505,6 +588,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+
+    const printInvoiceBtn = document.getElementById("printInvoiceBtn") || document.querySelector("[data-print-invoice]");
+    if (printInvoiceBtn) {
+        printInvoiceBtn.addEventListener("click", function () {
+            window.print();
+        });
+    }
 
     updateFilterBadges();
     updateBookingList();

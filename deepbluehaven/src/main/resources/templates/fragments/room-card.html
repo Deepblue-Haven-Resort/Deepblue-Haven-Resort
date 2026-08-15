@@ -22,10 +22,13 @@
             guestsValue,
             viewValue,
             ratingValue,
-            detailUrl
+            detailUrl,
+            roomId,
+            isFavorite
         )"
         class="room-card"
         th:attr="
+            data-id=${roomId},
             data-price=${priceValue},
             data-resort=${resortValue},
             data-type=${typeValue},
@@ -36,6 +39,15 @@
 >
     <div class="room-card__media">
         <img th:src="${imageUrl != null ? (imageUrl.startsWith('http') || imageUrl.startsWith('/deepbluehaven') ? imageUrl : '/deepbluehaven' + imageUrl) : ''}" th:alt="${imageAlt}">
+
+        <button type="button"
+                class="room-card__favorite-btn favorite-toggle-btn"
+                th:classappend="${isFavorite ? 'is-active' : ''}"
+                th:attr="data-id=${roomId}, data-type='room'"
+                aria-label="Toggle Favorite Room"
+                title="Save to favorites">
+            <i th:class="${isFavorite ? 'fa-solid fa-heart' : 'fa-regular fa-heart'}"></i>
+        </button>
 
         <span
                 class="room-card__badge"

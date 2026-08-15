@@ -2,16 +2,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1. Dynamic Table Pagination Engine
     function setupTablePagination() {
-        const tables = document.querySelectorAll('.activity-table');
+        const tables = document.querySelectorAll('.activity-table, .account-table');
         tables.forEach((table, index) => {
             const tbody = table.querySelector('tbody');
             if (!tbody) return;
 
-            const allRows = Array.from(tbody.querySelectorAll('tr'));
+            const allRows = Array.from(tbody.querySelectorAll('tr')).filter(r => !r.querySelector('td[colspan]'));
             if (allRows.length === 0) return;
 
-            const rowsPerPage = 6;
+            const pageSizeAttr = table.getAttribute('data-page-size');
+            const rowsPerPage = pageSizeAttr ? parseInt(pageSizeAttr, 10) : 6;
             let currentPage = 1;
+            let currentKeyword = '';
+            let currentStatus = 'ALL';
 
             // Create Pagination Control Bar
             const tableWrapper = table.closest('.table-wrapper') || table.parentElement;
@@ -21,6 +24,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 paginationBar.className = 'pagination-bar';
                 paginationBar.style.cssText = 'display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid #f1f5f9; font-size: 0.875rem; color: #64748b;';
                 tableWrapper.parentElement.appendChild(paginationBar);
+            }
+
+            function applyFilters() {
+                allRows.forEach(row => {
+                    const text = row.innerText.toLowerCase();
+                    const matchesSearch = !currentKeyword || text.includes(currentKeyword);
+                    const rowStatus = (row.getAttribute('data-status') || '').toUpperCase();
+                    const statusText = (row.querySelector('.status, .badge, .status-badge, .badge-status')?.textContent || '').toUpperCase();
+
+                    let matchesStatus = true;
+                    if (currentStatus !== 'ALL') {
+                        matchesStatus = rowStatus.includes(currentStatus) || statusText.includes(currentStatus);
+                    }
+
+                    if (matchesSearch && matchesStatus) {
+                        delete row.dataset.filteredOut;
+                    } else {
+                        row.dataset.filteredOut = 'true';
+                    }
+                });
+                renderPage(1);
             }
 
             function renderPage(page) {
@@ -35,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const startIdx = (currentPage - 1) * rowsPerPage;
                 const endIdx = startIdx + rowsPerPage;
 
+                allRows.forEach(r => r.style.display = 'none');
                 visibleRows.forEach((row, i) => {
                     if (i >= startIdx && i < endIdx) {
                         row.style.display = '';
@@ -43,27 +68,73 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // Hide rows that were filtered out by search
-                allRows.forEach(row => {
-                    if (row.dataset.filteredOut === 'true') {
-                        row.style.display = 'none';
-                    }
-                });
-
                 const startNum = totalRows === 0 ? 0 : startIdx + 1;
                 const endNum = Math.min(endIdx, totalRows);
 
+                function getPageItems(total, current) {
+                    if (total <= 7) {
+                        const arr = [];
+                        for (let i = 1; i <= total; i++) arr.push(i);
+                        return arr;
+                    }
+                    const pages = new Set();
+                    pages.add(1);
+                    pages.add(2);
+                    pages.add(3);
+                    for (let i = current - 1; i <= current + 1; i++) {
+                        if (i >= 1 && i <= total) {
+                            pages.add(i);
+                        }
+                    }
+                    pages.add(total - 2);
+                    pages.add(total - 1);
+                    pages.add(total);
+
+                    const sorted = Array.from(pages).sort((a, b) => a - b);
+                    const result = [];
+                    let prev = 0;
+                    for (const p of sorted) {
+                        if (prev > 0) {
+                            if (p - prev === 2) {
+                                result.push(prev + 1);
+                            } else if (p - prev > 2) {
+                                result.push('...');
+                            }
+                        }
+                        result.push(p);
+                        prev = p;
+                    }
+                    return result;
+                }
+
                 let buttonsHtml = '';
-                for (let p = 1; p <= totalPages; p++) {
-                    buttonsHtml += `<button type="button" class="btn ${p === currentPage ? 'btn-cta' : 'btn-outline'} btn-small page-num-btn" data-page="${p}">${p}</button>`;
+                const pageItems = getPageItems(totalPages, currentPage);
+                pageItems.forEach(item => {
+                    if (item === '...') {
+                        buttonsHtml += `<span class="page-dots" style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; padding: 0 4px; color: #94a3b8; font-weight: bold;">...</span>`;
+                    } else {
+                        buttonsHtml += `<button type="button" class="btn ${item === currentPage ? 'btn-cta' : 'btn-outline'} btn-small page-num-btn" data-page="${item}">${item}</button>`;
+                    }
+                });
+
+                let jumpHtml = '';
+                if (totalPages > 7) {
+                    jumpHtml = `
+                        <div class="pagination-jump" style="display: flex; align-items: center; gap: 6px; margin-left: 10px;">
+                            <span style="font-size: 0.8125rem; color: #64748b; white-space: nowrap;">Go to:</span>
+                            <input type="number" min="1" max="${totalPages}" class="form-input page-jump-input" style="width: 52px; height: 32px; text-align: center; font-size: 0.8125rem; border-radius: 6px; padding: 2px 4px; border: 1px solid #cbd5e1;" placeholder="${currentPage}" />
+                            <button type="button" class="btn btn-outline btn-small page-jump-btn" style="height: 32px; padding: 0 10px; font-size: 0.8125rem;">Go</button>
+                        </div>
+                    `;
                 }
 
                 paginationBar.innerHTML = `
                     <div>Showing <strong>${startNum}-${endNum}</strong> of <strong>${totalRows}</strong> entries</div>
-                    <div style="display: flex; gap: 8px; align-items: center;">
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                         <button type="button" class="btn btn-outline btn-small page-prev-btn" ${currentPage === 1 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}><i class="fa-solid fa-chevron-left"></i> Prev</button>
-                        <div style="display: flex; gap: 4px;">${buttonsHtml}</div>
+                        <div style="display: flex; gap: 4px; align-items: center;">${buttonsHtml}</div>
                         <button type="button" class="btn btn-outline btn-small page-next-btn" ${currentPage === totalPages || totalPages === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>Next <i class="fa-solid fa-chevron-right"></i></button>
+                        ${jumpHtml}
                     </div>
                 `;
 
@@ -84,24 +155,71 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderPage(targetPage);
                     });
                 });
+
+                const jumpInput = paginationBar.querySelector('.page-jump-input');
+                const jumpBtn = paginationBar.querySelector('.page-jump-btn');
+                if (jumpInput && jumpBtn) {
+                    const doJump = () => {
+                        const val = parseInt(jumpInput.value, 10);
+                        if (!isNaN(val) && val >= 1 && val <= totalPages) {
+                            renderPage(val);
+                        } else {
+                            jumpInput.value = '';
+                        }
+                    };
+                    jumpBtn.addEventListener('click', doJump);
+                    jumpInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            doJump();
+                        }
+                    });
+                }
             }
 
             renderPage(1);
 
-            // Integrate with Search Filter Input
-            const searchInput = document.getElementById('tableSearchInput');
-            if (searchInput) {
+            // Search input integration
+            const panel = tableWrapper.closest('.reception-panel, .account-panel') || tableWrapper.parentElement;
+            const searchInput = panel ? panel.querySelector('#tableSearchInput, .search-box input') : document.getElementById('tableSearchInput');
+            if (searchInput && !searchInput.dataset.listening) {
+                searchInput.dataset.listening = 'true';
                 searchInput.addEventListener('input', (e) => {
-                    const query = e.target.value.toLowerCase().trim();
-                    allRows.forEach(row => {
-                        const text = row.innerText.toLowerCase();
-                        if (query === '' || text.includes(query)) {
-                            delete row.dataset.filteredOut;
-                        } else {
-                            row.dataset.filteredOut = 'true';
-                        }
+                    currentKeyword = e.target.value.toLowerCase().trim();
+                    applyFilters();
+                });
+            }
+
+            // Dropdown status filter integration
+            const dropdown = panel ? panel.querySelector('.filter-dropdown') : null;
+            if (dropdown && !dropdown.dataset.listening) {
+                dropdown.dataset.listening = 'true';
+                const filterBtn = dropdown.querySelector('.filter-btn');
+                const menu = dropdown.querySelector('.filter-menu');
+                const label = dropdown.querySelector('.filter-label strong');
+
+                if (filterBtn) {
+                    filterBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        dropdown.classList.toggle('active');
                     });
-                    renderPage(1);
+                }
+
+                if (menu) {
+                    menu.querySelectorAll('button').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const text = btn.textContent.trim();
+                            const statusVal = btn.getAttribute('data-status') || text.toUpperCase();
+                            if (label) label.textContent = text;
+                            dropdown.classList.remove('active');
+                            currentStatus = statusVal;
+                            applyFilters();
+                        });
+                    });
+                }
+
+                document.addEventListener('click', () => {
+                    dropdown.classList.remove('active');
                 });
             }
         });

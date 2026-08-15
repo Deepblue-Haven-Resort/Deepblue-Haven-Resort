@@ -109,7 +109,7 @@
                                 th:data-status="${s.status}"
                                 th:data-image="${s.images != null && !s.images.isEmpty() ? s.images[0] : ''}">
                                 <td><strong th:text="${s.name}">Club Sandwich & Orange Juice</strong></td>
-                                <td th:text="${s.category}">Food & Beverage</td>
+                                <td th:text="${s.category != null ? s.category.displayName : s.category}">Food Beverage</td>
                                 <td><strong th:text="|${#numbers.formatDecimal(s.basePrice, 0, 'COMMA', 0, 'POINT')} VND|">350,000 VND</strong></td>
                                 <td class="text-center">
                                     <span th:class="|status ${s.status == T(deepbluehaven.pojo.enums.ServiceStatus).ACTIVE ? 'status-success' : 'status-danger'}|"
@@ -134,7 +134,7 @@
 
                 
                 <div class="table-footer">
-                    <p>Hiển thị <strong>1-2</strong> trong số <strong>65</strong> đơn dịch vụ</p>
+                    <p>Showing <strong>1-2</strong> of <strong>65</strong> service orders</p>
                     <div class="pagination">
                         <button type="button" class="page-btn disabled">
                             <i class="fa-solid fa-chevron-left"></i>

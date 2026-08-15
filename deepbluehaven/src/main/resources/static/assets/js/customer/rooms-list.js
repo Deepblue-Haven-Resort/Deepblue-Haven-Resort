@@ -19,11 +19,12 @@ function getRoomCards() {
 }
 
 function toVnd(millionValue) {
-    return Number(millionValue || 0) * 1000000;
+    return Math.round(Number(millionValue || 0) * 1000000);
 }
 
 function formatMillion(millionValue) {
-    return `${Number(millionValue || 0)} million`;
+    const num = Number(millionValue || 0);
+    return Number.isInteger(num) ? `${num} million` : `${parseFloat(num.toFixed(2))} million`;
 }
 
 function initRoomsDropdowns() {
@@ -96,8 +97,8 @@ function initRoomsPriceFilter() {
 
     const getConfig = () => ({
         min: Number(priceMin.min || 0),
-        max: Number(priceMin.max || 100),
-        step: Number(priceMin.step || 5)
+        max: Number(priceMin.max || 10),
+        step: Number(priceMin.step || 0.5)
     });
 
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);

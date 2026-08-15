@@ -144,7 +144,7 @@ function renderTable(items) {
             <td>
                 <div class="user-info">
                     <div>
-                        <a href="${getApiUrl(`admin/profile-employee`)}" class="user-name-link">
+                        <a href="${getApiUrl(`admin/profile-employee/${worker.id}`)}" class="user-name-link">
                             <strong>${escapeHtml(worker.fullName || "")}</strong>
                         </a>
                         <span>${roleLabel} Account</span>
@@ -157,12 +157,13 @@ function renderTable(items) {
             <td>${createdDateStr}</td>
             <td>
                 <div class="action-group">
-                    <button class="edit-btn" data-id="${worker.id}"><i class="fa-solid fa-pen"></i></button>
+                    <a href="${getApiUrl(`admin/profile-employee/${worker.id}`)}" class="action-btn view-btn" title="Xem chi tiết"><i class="fa-solid fa-eye"></i></a>
+                    <button class="edit-btn" data-id="${worker.id}" title="Chỉnh sửa"><i class="fa-solid fa-pen"></i></button>
                     ${isActive
-                        ? `<button class="lock-btn" data-id="${worker.id}"><i class="fa-solid fa-lock"></i></button>`
-                        : `<button class="unlock-btn" data-id="${worker.id}"><i class="fa-solid fa-unlock"></i></button>`
+                        ? `<button class="lock-btn" data-id="${worker.id}" title="Khóa"><i class="fa-solid fa-lock"></i></button>`
+                        : `<button class="unlock-btn" data-id="${worker.id}" title="Mở khóa"><i class="fa-solid fa-unlock"></i></button>`
                     }
-                    <button class="delete-btn" data-id="${worker.id}"><i class="fa-solid fa-trash"></i></button>
+                    <button class="delete-btn" data-id="${worker.id}" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                 </div>
             </td>
         `;
@@ -176,16 +177,20 @@ function renderSummary(data) {
     const from = data.totalItems === 0 ? 0 : data.currentPage * 5 + 1;
     const to = Math.min((data.currentPage + 1) * 5, data.totalItems);
 
-    accountTableSummary.innerHTML = `Hiển thị <strong>${from}-${to}</strong> trong <strong>${data.totalItems}</strong> tài khoản`;
+    accountTableSummary.innerHTML = `Showing <strong>${from}-${to}</strong> of <strong>${data.totalItems}</strong> accounts`;
 }
 
 function renderPagination(data) {
     if (!accountPagination) return;
 
     accountPagination.innerHTML = "";
+    const totalPages = data.totalPages;
+    const currentPage = data.currentPage; // 0-indexed
+
+    if (totalPages <= 1) return;
 
     const prevBtn = document.createElement("button");
-    prevBtn.className = `page-btn${data.currentPage === 0 ? " disabled" : ""}`;
+    prevBtn.className = `page-btn${currentPage === 0 ? " disabled" : ""}`;
     prevBtn.innerHTML = `<i class="fa-solid fa-chevron-left"></i>`;
     prevBtn.addEventListener("click", () => {
         if (state.page > 0) {
@@ -195,27 +200,108 @@ function renderPagination(data) {
     });
     accountPagination.appendChild(prevBtn);
 
-    for (let i = 0; i < data.totalPages; i++) {
-        const pageBtn = document.createElement("button");
-        pageBtn.className = `page-btn${i === data.currentPage ? " active" : ""}`;
-        pageBtn.textContent = i + 1;
-        pageBtn.addEventListener("click", () => {
-            state.page = i;
-            loadAccounts();
-        });
-        accountPagination.appendChild(pageBtn);
+    function getPageItems(total, current) {
+        const cur1 = current + 1;
+        if (total <= 7) {
+            const arr = [];
+            for (let i = 1; i <= total; i++) arr.push(i);
+            return arr;
+        }
+        const pages = new Set();
+        pages.add(1);
+        pages.add(2);
+        pages.add(3);
+        for (let i = cur1 - 1; i <= cur1 + 1; i++) {
+            if (i >= 1 && i <= total) {
+                pages.add(i);
+            }
+        }
+        pages.add(total - 2);
+        pages.add(total - 1);
+        pages.add(total);
+
+        const sorted = Array.from(pages).sort((a, b) => a - b);
+        const result = [];
+        let prev = 0;
+        for (const p of sorted) {
+            if (prev > 0) {
+                if (p - prev === 2) {
+                    result.push(prev + 1);
+                } else if (p - prev > 2) {
+                    result.push('...');
+                }
+            }
+            result.push(p);
+            prev = p;
+        }
+        return result;
     }
 
+    const items = getPageItems(totalPages, currentPage);
+    items.forEach(item => {
+        if (item === '...') {
+            const dots = document.createElement("span");
+            dots.className = "page-dots";
+            dots.style.cssText = "display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 36px; color: var(--neutral-400, #94a3b8); font-weight: bold;";
+            dots.textContent = "...";
+            accountPagination.appendChild(dots);
+        } else {
+            const pageIndex = item - 1;
+            const pageBtn = document.createElement("button");
+            pageBtn.className = `page-btn${pageIndex === currentPage ? " active" : ""}`;
+            pageBtn.textContent = item;
+            pageBtn.addEventListener("click", () => {
+                state.page = pageIndex;
+                loadAccounts();
+            });
+            accountPagination.appendChild(pageBtn);
+        }
+    });
+
     const nextBtn = document.createElement("button");
-    nextBtn.className = `page-btn${data.currentPage >= data.totalPages - 1 ? " disabled" : ""}`;
+    nextBtn.className = `page-btn${currentPage >= totalPages - 1 ? " disabled" : ""}`;
     nextBtn.innerHTML = `<i class="fa-solid fa-chevron-right"></i>`;
     nextBtn.addEventListener("click", () => {
-        if (state.page < data.totalPages - 1) {
+        if (state.page < totalPages - 1) {
             state.page += 1;
             loadAccounts();
         }
     });
     accountPagination.appendChild(nextBtn);
+
+    if (totalPages > 7) {
+        const jumpWrap = document.createElement("div");
+        jumpWrap.className = "pagination-jump";
+        jumpWrap.style.cssText = "display: inline-flex; align-items: center; gap: 6px; margin-left: 12px;";
+        jumpWrap.innerHTML = `
+            <span style="font-size: 0.8125rem; color: #64748b; white-space: nowrap;">Go to:</span>
+            <input type="number" min="1" max="${totalPages}" class="page-jump-input" style="width: 52px; height: 34px; text-align: center; font-size: 0.8125rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none;" placeholder="${currentPage + 1}" />
+            <button type="button" class="page-btn page-jump-btn" style="height: 34px; padding: 0 10px; font-size: 0.8125rem; min-width: auto;">Go</button>
+        `;
+
+        const jumpInput = jumpWrap.querySelector(".page-jump-input");
+        const jumpBtn = jumpWrap.querySelector(".page-jump-btn");
+
+        const doJump = () => {
+            const val = parseInt(jumpInput.value, 10);
+            if (!isNaN(val) && val >= 1 && val <= totalPages) {
+                state.page = val - 1;
+                loadAccounts();
+            } else {
+                jumpInput.value = "";
+            }
+        };
+
+        jumpBtn.addEventListener("click", doJump);
+        jumpInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                doJump();
+            }
+        });
+
+        accountPagination.appendChild(jumpWrap);
+    }
 }
 
 function escapeHtml(str) {

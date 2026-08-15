@@ -74,16 +74,18 @@
                                 <td><strong th:text="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|">4,125,000 VND</strong></td>
                                 <td class="text-center">
                                     <span th:class="|badge-status ${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CONFIRMED || b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CHECKED_IN ? 'inhouse' : 'checkout'}|"
-                                          th:text="${b.rawStatus}">CONFIRMED</span>
+                                          th:text="${b.rawStatus != null ? b.rawStatus.displayName : 'Pending'}">CONFIRMED</span>
                                 </td>
                                 <td class="text-center">
                                     <div class="table-actions">
                                         <form th:if="${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
                                               th:action="@{'/manager/confirm-booking/' + ${b.id}}" method="post">
-                                            <button type="submit" class="btn btn-cta btn-small">Confirm</button>
+                                            <button type="submit" class="btn btn-cta btn-small">
+                                                <i class="fa-solid fa-check"></i> Confirm
+                                            </button>
                                         </form>
                                         <span th:if="${b.rawStatus != T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
-                                              th:text="${b.rawStatus}">Active</span>
+                                              class="action-empty-dash">—</span>
                                     </div>
                                 </td>
                             </tr>
@@ -96,7 +98,7 @@
 
                 
                 <div class="table-footer">
-                    <p>Hiển thị <strong>1-2</strong> trong số <strong>120</strong> lượt đặt phòng</p>
+                    <p>Showing <strong>1-2</strong> of <strong>120</strong> reservations</p>
                     <div class="pagination">
                         <button type="button" class="page-btn disabled">
                             <i class="fa-solid fa-chevron-left"></i>

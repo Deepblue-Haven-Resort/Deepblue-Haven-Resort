@@ -11,6 +11,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/profile-employee.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/housekeeper/profile.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -26,20 +27,19 @@
 
                 <aside class="profile-sidebar-card">
                     <div class="profile-avatar">
-                        <img th:src="@{/assets/images/avatar-employee.jpg}"
-                            src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80"
-                            alt="Employee avatar">
+                        <img th:src="${worker?.profile?.avatarUrl ?: 'https://res.cloudinary.com/xio0mgix/image/upload/v1786687237/c683ecce-3e41-423d-b8ee-f8dd0189ffdc.png'}"
+                             alt="Employee avatar">
                     </div>
 
-                    <h2>Trần Hoàng Nam</h2>
-                    <p>Housekeeper Account</p>
+                    <h2 th:text="${worker?.profile?.fullName ?: worker?.username ?: 'Employee Name'}">Trần Hoàng Nam</h2>
+                    <p th:text="${worker?.profile?.role != null ? worker.profile.role.name() + ' Account' : 'Staff Account'}">Housekeeper Account</p>
 
                     <div class="profile-experience-box">
                         <div class="experience-item">
-                            <i class="fa-solid fa-calendar-check"></i>
+                            <i class="fa-solid fa-star"></i>
                             <div>
-                                <span>Years of Experience</span>
-                                <strong>2 years</strong>
+                                <span>Performance Score</span>
+                                <strong th:text="|${#numbers.formatDecimal(worker?.profile?.performanceScore ?: 90.0, 1, 1)}%|">90.0%</strong>
                             </div>
                         </div>
 
@@ -47,14 +47,25 @@
                             <i class="fa-solid fa-user-plus"></i>
                             <div>
                                 <span>Account Created</span>
-                                <strong>21/05/2024</strong>
+                                <strong th:text="${worker?.createdAt != null ? #temporals.format(worker.createdAt, 'dd/MM/yyyy') : 'N/A'}">21/05/2024</strong>
                             </div>
                         </div>
                     </div>
 
                     <div class="profile-badges">
-                        <span class="status status-success">Active</span>
-                        <span class=" role housekeeper">Housekeeper</span>
+                        <span class="status status-success" th:if="${worker?.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE}">Active</span>
+                        <span class="status status-error" th:unless="${worker?.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE}" th:text="${worker?.status?.name() ?: 'Locked'}">Locked</span>
+                        <span class="role" th:classappend="${worker?.profile?.role != null ? worker.profile.role.name().toLowerCase() : 'housekeeper'}"
+                              th:text="${worker?.profile?.role != null ? worker.profile.role.name() : 'STAFF'}">Housekeeper</span>
+                    </div>
+
+                    <div class="profile-actions-bar">
+                        <a th:href="@{/admin/accounts/{id}/edit(id=${worker?.id})}" class="btn btn-cta btn-small">
+                            <i class="fa-solid fa-pen"></i> Chỉnh sửa
+                        </a>
+                        <a th:href="@{/admin/accounts}" class="profile-btn-outline">
+                            <i class="fa-solid fa-arrow-left"></i> Quay lại
+                        </a>
                     </div>
                 </aside>
 
@@ -69,27 +80,27 @@
                         <div class="profile-info-grid">
                             <div class="profile-info-item">
                                 <span>Full Name</span>
-                                <strong>Trần Hoàng Nam</strong>
+                                <strong th:text="${worker?.profile?.fullName ?: 'N/A'}">Trần Hoàng Nam</strong>
                             </div>
                             <div class="profile-info-item">
                                 <span>Gender</span>
-                                <strong>Male</strong>
+                                <strong th:text="${worker?.profile?.gender != null ? (worker.profile.gender.name() == 'FEMALE' ? 'Female' : (worker.profile.gender.name() == 'MALE' ? 'Male' : 'Other')) : 'N/A'}">Male</strong>
                             </div>
                             <div class="profile-info-item">
                                 <span>Date of Birth</span>
-                                <strong>23/02/1998</strong>
+                                <strong th:text="${worker?.profile?.dateOfBirth != null ? #temporals.format(worker.profile.dateOfBirth, 'dd/MM/yyyy') : 'N/A'}">23/02/1998</strong>
                             </div>
                             <div class="profile-info-item">
                                 <span>Phone Number</span>
-                                <strong>090 281 480</strong>
+                                <strong th:text="${worker?.profile?.phoneNumber ?: 'N/A'}">090 281 480</strong>
                             </div>
                             <div class="profile-info-item">
                                 <span>Email</span>
-                                <strong>nam.housekeeping@deepblue.com</strong>
+                                <strong th:text="${worker?.profile?.email ?: 'N/A'}">nam.housekeeping@deepblue.com</strong>
                             </div>
                             <div class="profile-info-item">
                                 <span>Address</span>
-                                <strong>Da Nang, Viet Nam</strong>
+                                <strong th:text="${worker?.profile?.address ?: 'Da Nang, Viet Nam'}">Da Nang, Viet Nam</strong>
                             </div>
                         </div>
                     </div>
@@ -102,28 +113,28 @@
 
                         <div class="profile-info-grid">
                             <div class="profile-info-item">
-                                <span>Employee ID</span>
-                                <strong>EMP-HK-001</strong>
+                                <span>Employee Code</span>
+                                <strong th:text="${worker?.employeeCode ?: worker?.username ?: 'N/A'}">EMP-HK-001</strong>
                             </div>
                             <div class="profile-info-item">
                                 <span>Department</span>
-                                <strong>Housekeeping</strong>
+                                <strong th:text="${worker?.profile?.department != null ? (worker.profile.department.name() == 'HOUSEKEEPING' ? 'Housekeeping' : (worker.profile.department.name() == 'RECEPTION' ? 'Front Desk & Guest Services' : worker.profile.department.name())) : 'N/A'}">Housekeeping</strong>
                             </div>
                             <div class="profile-info-item">
                                 <span>Role</span>
-                                <strong>Housekeeper</strong>
+                                <strong th:text="${worker?.profile?.role != null ? worker.profile.role.name() : 'N/A'}">Housekeeper</strong>
+                            </div>
+                            <div class="profile-info-item">
+                                <span>Role Level</span>
+                                <strong th:text="${worker?.profile?.roleLevel != null ? 'Level ' + worker.profile.roleLevel : 'Level 1'}">Level 1</strong>
                             </div>
                             <div class="profile-info-item">
                                 <span>Created Date</span>
-                                <strong>21/05/2026</strong>
-                            </div>
-                            <div class="profile-info-item">
-                                <span>Last Login</span>
-                                <strong>27/05/2026, 08:30</strong>
+                                <strong th:text="${worker?.createdAt != null ? #temporals.format(worker.createdAt, 'dd/MM/yyyy') : 'N/A'}">21/05/2026</strong>
                             </div>
                             <div class="profile-info-item">
                                 <span>Account Status</span>
-                                <strong>Active</strong>
+                                <strong th:text="${worker?.status?.name() ?: 'ACTIVE'}">Active</strong>
                             </div>
                         </div>
                     </div>
@@ -138,186 +149,78 @@
                             <div class="permission-row">
                                 <div>
                                     <span>Login Access</span>
-                                    <strong>Allowed</strong>
+                                    <strong th:text="${worker?.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'Allowed' : 'Denied'}">Allowed</strong>
                                 </div>
-                                <label class="switch-control">
-                                    <input type="checkbox" checked>
-                                    <span></span>
-                                </label>
+                                <span class="status" th:classappend="${worker?.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'status-success' : 'status-error'}"
+                                      th:text="${worker?.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span>
                             </div>
 
                             <div class="permission-row">
                                 <div>
                                     <span>Account Locked</span>
-                                    <strong>No</strong>
+                                    <strong th:text="${worker?.locked ? 'Yes (Locked)' : 'No (Unlocked)'}">No</strong>
                                 </div>
-                                <label class="switch-control">
-                                    <input type="checkbox">
-                                    <span></span>
-                                </label>
+                                <span class="status" th:classappend="${worker?.locked ? 'status-error' : 'status-success'}"
+                                      th:text="${worker?.locked ? 'LOCKED' : 'UNLOCKED'}">UNLOCKED</span>
+                            </div>
+
+                            <div class="permission-row" th:if="${worker?.roleTags != null and not #lists.isEmpty(worker.roleTags)}">
+                                <div>
+                                    <span>Assigned Permissions</span>
+                                    <div class="permission-tag-group">
+                                        <span th:each="tag : ${worker.roleTags}"
+                                              class="role"
+                                              th:text="${tag.permissionTag.name()}">
+                                            PERMISSION
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                 </div>
             </section>
+
             <section class="account-profile-panel">
 
                 <div class="profile-tabs">
-                    <button class="active" type="button" data-target="activityPanel">Activity Log</button>
-                    <button type="button" data-target="tasksPanel">Tasks</button>
+                    <button class="active" type="button" data-target="tasksPanel">Room Assignment History</button>
                 </div>
 
-                <!-- BẢNG 1: ACTIVITY LOG -->
-                <div id="activityPanel">
-                    <div class="table-wrapper">
-                        <table class="account-table profile-log-table">
-                            <thead>
-                                <tr>
-                                    <th>Activity Type</th>
-                                    <th>Time</th>
-                                    <th>Status</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                <tr>
-                                    <td>Login</td>
-                                    <td>27/05/2026, 08:30</td>
-                                    <td><span class="status status-success">Success</span></td>
-                                    <td>Employee logged into the housekeeping dashboard.</td>
-                                </tr>
-
-                                <tr>
-                                    <td>Room Update</td>
-                                    <td>26/05/2026, 17:20</td>
-                                    <td><span class="status status-success">Done</span></td>
-                                    <td>Updated room 204 status from Cleaning to Available.</td>
-                                </tr>
-
-                                <tr>
-                                    <td>Password</td>
-                                    <td>25/05/2026, 10:12</td>
-                                    <td><span class="status status-warning">Changed</span></td>
-                                    <td>Password was changed by the employee.</td>
-                                </tr>
-
-                                <tr>
-                                    <td>Permission</td>
-                                    <td>21/05/2026, 09:00</td>
-                                    <td><span class="status status-info">Assigned</span></td>
-                                    <td>Admin assigned Housekeeper role to this account.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="table-footer">
-                        <p>Showing <strong>1-5</strong> of <strong>128</strong> activities</p>
-
-                        <div class="pagination">
-                            <button class="page-btn disabled">
-                                <i class="fa-solid fa-chevron-left"></i>
-                            </button>
-
-                            <button class="page-btn active">1</button>
-                            <button class="page-btn">2</button>
-
-                            <span class="page-dots">...</span>
-                            <button class="page-btn">13</button>
-
-                            <button class="page-btn">
-                                <i class="fa-solid fa-chevron-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- BẢNG 2: TASKS -->
-                <div id="tasksPanel" hidden>
+                <!-- BẢNG: ROOM ASSIGNMENTS -->
+                <div id="tasksPanel">
                     <div class="table-wrapper">
                         <table class="account-table">
                             <thead>
                                 <tr>
                                     <th>Room</th>
-                                    <th>Type</th>
                                     <th>Action</th>
-                                    <th>Status</th>
-                                    <th>Created Time</th>
+                                    <th>Updated By</th>
+                                    <th>Timestamp</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                <tr>
-                                    <td>101</td>
-                                    <td>Cleaning</td>
-                                    <td>Clean room after guest checkout</td>
+                                <tr th:each="a : ${assignments}">
                                     <td>
-                                        <span class="status status-warning">PENDING</span>
+                                        <strong th:text="${a.room != null ? a.room.roomNumber : 'N/A'}">101</strong>
                                     </td>
-                                    <td>27/05/2026, 08:15</td>
+                                    <td>
+                                        <span class="status status-info" th:text="${a.action}">Cleaning</span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${a.updatedBy != null && a.updatedBy.profile != null ? a.updatedBy.profile.fullName : (a.updatedBy != null ? a.updatedBy.username : 'System')}">Admin</span>
+                                    </td>
+                                    <td th:text="${a.timestamp != null ? #temporals.format(a.timestamp, 'dd/MM/yyyy, HH:mm') : 'N/A'}">27/05/2026, 08:15</td>
                                 </tr>
-
-                                <tr>
-                                    <td>204</td>
-                                    <td>Housekeeping</td>
-                                    <td>Change bedsheet and refill amenities</td>
-                                    <td>
-                                        <span class="status status-info">ASSIGNED</span>
+                                <tr th:if="${assignments == null or #lists.isEmpty(assignments)}">
+                                    <td colspan="4" class="profile-empty-message">
+                                        Chưa có lịch sử phân công phòng cho nhân viên này.
                                     </td>
-                                    <td>27/05/2026, 09:00</td>
-                                </tr>
-
-                                <tr>
-                                    <td>305</td>
-                                    <td>Cleaning</td>
-                                    <td>Deep clean bathroom and balcony</td>
-                                    <td>
-                                        <span class="status status-info">CLEANING</span>
-                                    </td>
-                                    <td>27/05/2026, 10:30</td>
-                                </tr>
-
-                                <tr>
-                                    <td>412</td>
-                                    <td>Inspection</td>
-                                    <td>Inspect room before guest check-in</td>
-                                    <td>
-                                        <span class="status status-success">INSPECTED</span>
-                                    </td>
-                                    <td>27/05/2026, 11:45</td>
-                                </tr>
-
-                                <tr>
-                                    <td>508</td>
-                                    <td>Maintenance</td>
-                                    <td>Check air conditioner issue</td>
-                                    <td>
-                                        <span class="status status-warning">PENDING</span>
-                                    </td>
-                                    <td>27/05/2026, 13:20</td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="table-footer">
-                        <p>Showing <strong>1-5</strong> of <strong>128</strong> tasks</p>
-
-                        <div class="pagination">
-                            <button class="page-btn disabled">
-                                <i class="fa-solid fa-chevron-left"></i>
-                            </button>
-
-                            <button class="page-btn active">1</button>
-                            <button class="page-btn">2</button>
-
-                            <span class="page-dots">...</span>
-                            <button class="page-btn">13</button>
-
-                            <button class="page-btn">
-                                <i class="fa-solid fa-chevron-right"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
 
@@ -326,7 +229,6 @@
         </main>
     </div>
     <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
-    <script th:src="@{/assets/js/admin/profile-employee.js}"></script>
 
 </body>
 

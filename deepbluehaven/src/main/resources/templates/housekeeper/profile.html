@@ -120,8 +120,8 @@
                                     th:text="${worker?.profile?.department?.name() ?: 'HOUSEKEEPING'}">Housekeeping</strong>
                             </div>
                             <div class="profile-info-item">
-                                <span>Assigned Area</span>
-                                <strong>Resort Rooms &amp; Villas</strong>
+                                <span>Role Level</span>
+                                <strong th:text="${worker?.profile?.roleLevel != null ? 'Level ' + worker.profile.roleLevel : 'Level 1'}">Level 1</strong>
                             </div>
                             <div class="profile-info-item">
                                 <span>Start Date</span>

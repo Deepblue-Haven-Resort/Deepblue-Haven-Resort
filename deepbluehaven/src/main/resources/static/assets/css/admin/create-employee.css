@@ -413,10 +413,13 @@
 }
 
 .create-employee-page .form-filter-menu {
-    width: 100%;
-    min-width: 100%;
-    left: 0;
-    right: 0;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    transform: none !important;
+    box-sizing: border-box !important;
     z-index: 999;
     padding: 8px;
 }

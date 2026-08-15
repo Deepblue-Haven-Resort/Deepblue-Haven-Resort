@@ -136,7 +136,7 @@
                         <thead>
                             <tr>
                                 <th>Người dùng</th>
-                                <th class="text-left">Email</th>
+                                <th>Email</th>
                                 <th>Vai trò</th>
                                 <th>Trạng thái</th>
                                 <th>Ngày tạo</th>
@@ -162,9 +162,10 @@
                                 <td>21/05/2026</td>
                                 <td>
                                     <div class="action-group">
-                                        <a th:href="@{/admin/accounts/1/edit}" class="edit-btn"><i class="fa-solid fa-pen"></i></a>
-                                        <button class="lock-btn"><i class="fa-solid fa-lock"></i></button>
-                                        <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                                        <a th:href="@{/admin/profile-employee}" class="action-btn view-btn" title="Xem chi tiết"><i class="fa-solid fa-eye"></i></a>
+                                        <a th:href="@{/admin/accounts/1/edit}" class="edit-btn" title="Chỉnh sửa"><i class="fa-solid fa-pen"></i></a>
+                                        <button class="lock-btn" title="Khóa"><i class="fa-solid fa-lock"></i></button>
+                                        <button class="delete-btn" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -186,9 +187,10 @@
                                 <td>18/05/2026</td>
                                 <td>
                                     <div class="action-group">
-                                        <a th:href="@{/admin/accounts/1/edit}" class="edit-btn"><i class="fa-solid fa-pen"></i></a>
-                                        <button class="unlock-btn"><i class="fa-solid fa-unlock"></i></button>
-                                        <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                                        <a th:href="@{/admin/profile-employee}" class="action-btn view-btn" title="Xem chi tiết"><i class="fa-solid fa-eye"></i></a>
+                                        <a th:href="@{/admin/accounts/1/edit}" class="edit-btn" title="Chỉnh sửa"><i class="fa-solid fa-pen"></i></a>
+                                        <button class="unlock-btn" title="Mở khóa"><i class="fa-solid fa-unlock"></i></button>
+                                        <button class="delete-btn" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -268,7 +270,7 @@
                     </table>
                 </div>
                 <div class="table-footer">
-                    <p id="accountTableSummary">Hiển thị <strong>1-5</strong> trong <strong>128</strong> tài khoản</p>
+                    <p id="accountTableSummary">Showing <strong>1-5</strong> of <strong>128</strong> accounts</p>
 
                     <div class="pagination" id="accountPagination">
                         <button class="page-btn disabled">

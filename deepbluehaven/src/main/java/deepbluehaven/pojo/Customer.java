@@ -2,7 +2,9 @@ package deepbluehaven.pojo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,6 +13,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
@@ -42,6 +47,22 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Notification> notifications = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "customer_favorite_rooms",
+        joinColumns = @JoinColumn(name = "customer_id"),
+        inverseJoinColumns = @JoinColumn(name = "room_id")
+    )
+    private Set<Room> favoriteRooms = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "customer_favorite_services",
+        joinColumns = @JoinColumn(name = "customer_id"),
+        inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private Set<Service> favoriteServices = new HashSet<>();
 
     public Customer() {
     }
@@ -100,6 +121,22 @@ public class Customer {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Set<Room> getFavoriteRooms() {
+        return favoriteRooms;
+    }
+
+    public void setFavoriteRooms(Set<Room> favoriteRooms) {
+        this.favoriteRooms = favoriteRooms;
+    }
+
+    public Set<Service> getFavoriteServices() {
+        return favoriteServices;
+    }
+
+    public void setFavoriteServices(Set<Service> favoriteServices) {
+        this.favoriteServices = favoriteServices;
     }
 
     @PrePersist

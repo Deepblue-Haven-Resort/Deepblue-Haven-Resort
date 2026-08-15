@@ -60,6 +60,7 @@ public class BookingHistoryDTO {
         private String roomName;
         private String roomType;
         private String roomNumber;
+        private String roomImageUrl;
         private LocalDate checkIn;
         private LocalDate checkOut;
         private long nights;
@@ -103,6 +104,9 @@ public class BookingHistoryDTO {
 
         public String getRoomNumber() { return roomNumber; }
         public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
+
+        public String getRoomImageUrl() { return roomImageUrl; }
+        public void setRoomImageUrl(String roomImageUrl) { this.roomImageUrl = roomImageUrl; }
 
         public LocalDate getCheckIn() { return checkIn; }
         public void setCheckIn(LocalDate checkIn) { this.checkIn = checkIn; }

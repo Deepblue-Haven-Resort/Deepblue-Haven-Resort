@@ -35,6 +35,10 @@ public class ChatSession {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "worker_id")
+    private Worker assignee;
+
     @Column(name = "current_assignee_id")
     private Long currentAssigneeId;
 
@@ -43,7 +47,7 @@ public class ChatSession {
     private ChatStatus status = ChatStatus.WAITING;
 
     @Column(name = "is_read", nullable = false)
-    private boolean isread = false;
+    private boolean isRead = false;
 
     @CreationTimestamp
     @Column(name = "start_time", nullable = false, updatable = false)
@@ -59,42 +63,85 @@ public class ChatSession {
     public ChatSession() {}
 
     public Long getId() { 
-        return id; }
+        return id; 
+    }
     public void setId(Long id) { 
-        this.id = id; }
+        this.id = id; 
+    }
 
     public Customer getCustomer() { 
-        return customer; }
+        return customer; 
+    }
     public void setCustomer(Customer customer) { 
-        this.customer = customer; }
+        this.customer = customer; 
+    }
+
+    public Worker getAssignee() {
+        return assignee;
+    }
+    public void setAssignee(Worker assignee) {
+        this.assignee = assignee;
+        if (assignee != null) {
+            this.currentAssigneeId = assignee.getId();
+        }
+    }
 
     public Long getCurrentAssigneeId() { 
-        return currentAssigneeId; }
+        return currentAssigneeId; 
+    }
     public void setCurrentAssigneeId(Long currentAssigneeId) { 
-        this.currentAssigneeId = currentAssigneeId; }
+        this.currentAssigneeId = currentAssigneeId; 
+    }
 
     public LocalDateTime getStartTime() { 
-        return startTime; }
+        return startTime; 
+    }
     public void setStartTime(LocalDateTime startTime) { 
-        this.startTime = startTime; }
+        this.startTime = startTime; 
+    }
 
     public ChatStatus getStatus() { 
-        return status; }
+        return status; 
+    }
     public void setStatus(ChatStatus status) { 
-        this.status = status; }
+        this.status = status; 
+    }
 
     public LocalDateTime getUpdatedAt() { 
-        return updatedAt; }
+        return updatedAt; 
+    }
     public void setUpdatedAt(LocalDateTime updatedAt) { 
-        this.updatedAt = updatedAt; }
+        this.updatedAt = updatedAt; 
+    }
 
-    public boolean isIsread() { 
-        return isread; }
-    public void setIsread(boolean isread) { 
-        this.isread = isread; }
+    public boolean isRead() { 
+        return isRead; 
+    }
+    public boolean isIsread() {
+        return isRead;
+    }
+    public boolean getIsRead() {
+        return isRead;
+    }
+    public void setRead(boolean isRead) { 
+        this.isRead = isRead; 
+    }
+    public void setIsread(boolean isRead) { 
+        this.isRead = isRead; 
+    }
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
 
     public List<ChatMessage> getMessages() { 
-        return messages; }
+        return messages; 
+    }
     public void setMessages(List<ChatMessage> messages) { 
-        this.messages = messages; }
+        this.messages = messages; 
+    }
+
+    public void addMessage(ChatMessage message) {
+        this.messages.add(message);
+        message.setChatSession(this);
+    }
 }

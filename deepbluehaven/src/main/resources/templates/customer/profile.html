@@ -77,6 +77,15 @@
 
                     </a>
 
+                    <a th:href="@{/favorites}"
+                       class="profile-navigation__item"
+                       style="text-decoration: none;">
+
+                        <i class="fa-regular fa-heart"></i>
+                        <span>My Favorites</span>
+
+                    </a>
+
                 </nav>
 
                 <div class="profile-sidebar__footer">
@@ -210,27 +219,10 @@
 
                             </div>
 
-                            <div class="profile-field" style="grid-column: 1 / -1;">
-
-                                <label for="avatarUrl">
-                                    Avatar Picture URL
-                                </label>
-
-                                <div class="profile-input">
-
-                                    <i class="fa-solid fa-image"></i>
-
-                                    <input type="url"
-                                           id="avatarUrl"
-                                           name="avatarUrl"
-                                           placeholder="https://example.com/avatar.jpg"
-                                           th:value="${profile != null ? profile.avatarUrl : ''}"
-                                           readonly>
-
-                                </div>
-
-                            </div>
-
+                            <input type="hidden"
+                                   id="avatarUrl"
+                                   name="avatarUrl"
+                                   th:value="${profile != null ? profile.avatarUrl : ''}">
                         </div>
 
                         <div class="profile-form__actions" id="profileFormActions">

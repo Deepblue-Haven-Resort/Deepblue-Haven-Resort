@@ -54,7 +54,7 @@
 
                 <div class="offers-hero__visual">
                     <div class="offers-hero__image">
-                        <img th:src="@{/assets/pic/room-1.jpg}" alt="Deep Blue Haven resort offer">
+                        <img th:src="@{/assets/pic/room-1.png}" alt="Deep Blue Haven resort offer">
                     </div>
                     <div class="offers-discount">
                         <span>Save up to</span>
@@ -137,13 +137,13 @@
 
                 <!-- Offer grid -->
                 <section class="offers-grid" id="offersGrid">
-                    <article class="offer-card" th:each="offer : ${offers}"
-                        th:data-category="${offer.category}"
+                    <article class="offer-card" th:each="offer : ${offers}" th:data-category="${offer.category}"
                         th:data-search="${offer.searchContent}">
-                        
+
                         <div class="offer-card__image">
                             <img th:src="@{${offer.imageUrl}}" th:alt="${offer.code}">
-                            <span class="offer-card__badge" th:classappend="${offer.badgeClass}" th:text="${offer.badgeText}">
+                            <span class="offer-card__badge" th:classappend="${offer.badgeClass}"
+                                th:text="${offer.badgeText}">
                                 25% OFF
                             </span>
 
@@ -175,13 +175,10 @@
                                 </div>
 
                                 <button type="button" class="offer-card__detail btn-view-offer-detail"
-                                        th:data-code="${offer.code}"
-                                        th:data-description="${offer.description}"
-                                        th:data-badge="${offer.badgeText}"
-                                        th:data-category="${offer.categoryLabel}"
-                                        th:data-validity="${offer.validityText}"
-                                        th:data-price="${offer.priceText}"
-                                        th:data-roomtype="${offer.roomType}">
+                                    th:data-code="${offer.code}" th:data-description="${offer.description}"
+                                    th:data-badge="${offer.badgeText}" th:data-category="${offer.categoryLabel}"
+                                    th:data-validity="${offer.validityText}" th:data-price="${offer.priceText}"
+                                    th:data-roomtype="${offer.roomType}">
                                     View Details
                                     <i class="fa-solid fa-arrow-right"></i>
                                 </button>

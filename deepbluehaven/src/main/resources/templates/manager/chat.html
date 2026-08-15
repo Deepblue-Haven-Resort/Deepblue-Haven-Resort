@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Concierge Chat | Manager Portal - Deep Blue Haven</title>
+    <!-- Core & Vendor CSS -->
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/staff/staff-chat.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+    <!-- Manager Sidebar Fragment -->
+    <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+
+    <main class="admin-main">
+        <!-- Hero Header -->
+        <section class="dashboard-hero manager-hero" style="padding: 18px 32px 14px;">
+            <div>
+                <span class="page-label"><i class="fa-solid fa-headset"></i> Executive Guest Concierge</span>
+                <h1 style="font-size: 1.5rem;">Live Concierge Guest Chat</h1>
+            </div>
+        </section>
+
+        <div class="admin-content" style="padding: 0 32px 24px; height: calc(100vh - 140px); display: flex; flex-direction: column;">
+            <!-- Live Chat Workspace Container -->
+            <div class="staff-chat-container" id="staffChatWorkspace">
+                
+                <!-- COLUMN 1: SESSIONS QUEUE & LIST -->
+                <aside class="chat-sessions-sidebar">
+                    <div class="sessions-sidebar-header">
+                        <h2><i class="fa-solid fa-headset"></i> Guest Chats</h2>
+                        <span class="online-pulse-tag"><i class="fa-solid fa-circle"></i> Live Desk</span>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div class="session-filters">
+                        <button type="button" class="session-filter-btn active" data-filter="ALL">All</button>
+                        <button type="button" class="session-filter-btn" data-filter="WAITING">Waiting</button>
+                        <button type="button" class="session-filter-btn" data-filter="IN_PROGRESS">Active</button>
+                        <button type="button" class="session-filter-btn" data-filter="RESOLVED">Resolved</button>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="session-search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="sessionSearchInput" placeholder="Search guests...">
+                    </div>
+
+                    <!-- Sessions List -->
+                    <div class="sessions-list" id="sessionsList">
+                        <div class="sessions-loading">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Loading chat sessions...
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- COLUMN 2: ACTIVE CONVERSATION WINDOW -->
+                <section class="chat-main-window" id="chatMainWindow">
+                    <!-- Default Empty State (when no session selected) -->
+                    <div class="chat-no-selection" id="chatNoSelection">
+                        <div class="empty-icon-wrap">
+                            <i class="fa-solid fa-comments"></i>
+                        </div>
+                        <h3>Select a conversation</h3>
+                        <p>Choose a guest chat from the left panel to start messaging in real-time.</p>
+                    </div>
+
+                    <!-- Active Chat View (shown when session is loaded) -->
+                    <div class="chat-active-view" id="chatActiveView" style="display: none;">
+                        <!-- Chat Conversation Header -->
+                        <div class="chat-active-header">
+                            <div class="guest-header-info">
+                                <div class="guest-avatar" id="headerGuestAvatar">G</div>
+                                <div>
+                                    <h3 id="headerGuestName">Guest Name</h3>
+                                    <div class="guest-header-meta">
+                                        <span class="badge-tier" id="headerGuestTier">VIP Tier</span>
+                                        <span class="status-indicator-badge" id="headerSessionStatus">WAITING</span>
+                                        <span class="assignee-tag" id="headerAssignee">Unassigned</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-header-actions">
+                                <button type="button" class="btn-chat-action btn-join-chat" id="btnJoinChat" title="Take over this conversation">
+                                    <i class="fa-solid fa-user-plus"></i> Join Chat
+                                </button>
+                                <button type="button" class="btn-chat-action btn-resolve-chat" id="btnResolveChat" title="Mark conversation as resolved">
+                                    <i class="fa-solid fa-circle-check"></i> Resolve
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Chat Messages Feed -->
+                        <div class="chat-messages-feed" id="chatMessagesFeed"></div>
+
+                        <!-- Canned Quick Responses Bar -->
+                        <div class="canned-responses-bar">
+                            <span class="canned-label"><i class="fa-solid fa-bolt"></i> Quick:</span>
+                            <div class="canned-chips-scroll">
+                                <button type="button" class="canned-chip" data-reply="Good day! How may I assist you today at Deep Blue Haven?">Greeting</button>
+                                <button type="button" class="canned-chip" data-reply="Let me check our room availability and best rates for you right away.">Check Rooms</button>
+                                <button type="button" class="canned-chip" data-reply="Your request has been forwarded to our concierge team.">Concierge Dispatch</button>
+                                <button type="button" class="canned-chip" data-reply="Is there anything else I may assist you with for your sanctuary stay?">Follow-up</button>
+                            </div>
+                        </div>
+
+                        <!-- Chat Input Bar -->
+                        <form class="chat-input-bar" id="staffChatInputForm">
+                            <textarea id="staffMessageInput" placeholder="Type response to guest (Enter to send, Shift+Enter for new line)..." rows="1" maxlength="1000"></textarea>
+                            <button type="submit" class="btn-send-message" id="btnStaffSend">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- COLUMN 3: GUEST DOSSIER SIDEBAR -->
+                <aside class="chat-guest-sidebar" id="chatGuestSidebar" style="display: none;">
+                    <div class="guest-dossier-card">
+                        <div class="dossier-avatar-wrap">
+                            <div class="dossier-avatar" id="dossierAvatar">G</div>
+                            <h4 id="dossierName">Guest Full Name</h4>
+                            <span class="dossier-tier" id="dossierTier">Standard Guest</span>
+                        </div>
+
+                        <div class="dossier-info-list">
+                            <div class="dossier-info-item">
+                                <span class="dossier-label"><i class="fa-solid fa-envelope"></i> Email</span>
+                                <span class="dossier-val" id="dossierEmail">-</span>
+                            </div>
+                            <div class="dossier-info-item">
+                                <span class="dossier-label"><i class="fa-solid fa-phone"></i> Phone</span>
+                                <span class="dossier-val" id="dossierPhone">-</span>
+                            </div>
+                            <div class="dossier-info-item">
+                                <span class="dossier-label"><i class="fa-solid fa-clock"></i> Session Started</span>
+                                <span class="dossier-val" id="dossierStartTime">-</span>
+                            </div>
+                        </div>
+
+                        <div class="dossier-quick-links">
+                            <a th:href="@{/manager/bookings}" class="dossier-link">
+                                <i class="fa-solid fa-calendar-check"></i> View Bookings
+                            </a>
+                            <a th:href="@{/manager/comments}" class="dossier-link">
+                                <i class="fa-solid fa-comments"></i> Guest Feedback
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/assets/js/staff/staff-chat.js}"></script>
+</body>
+</html>

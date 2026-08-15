@@ -1,6 +1,8 @@
 package deepbluehaven.dto;
 
 public class RoomCardViewDTO {
+    private Long id;
+    private boolean isFavorite;
     private String imageUrl;
     private String imageAlt;
     private String badge;
@@ -20,7 +22,35 @@ public class RoomCardViewDTO {
     private String viewValue;
     private double ratingValue;
     private String detailUrl;
- 
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public boolean getFavorite() {
+        return isFavorite;
+    }
+
+    public boolean getIsFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    public void setIsFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
     public String getImageUrl() { 
         return imageUrl; 
     }

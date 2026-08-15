@@ -19,7 +19,8 @@
         categoryValue,
         typeValue,
         statusValue,
-        serviceId
+        serviceId,
+        isFavorite
     )"
     class="service-card"
     th:attr="
@@ -32,6 +33,15 @@
 >
     <div class="service-card__media">
         <img th:src="${imageUrl != null ? (imageUrl.startsWith('http') || imageUrl.startsWith('/deepbluehaven') ? imageUrl : '/deepbluehaven' + imageUrl) : ''}" th:alt="${imageAlt}">
+
+        <button type="button"
+                class="service-card__favorite-btn favorite-toggle-btn"
+                th:classappend="${isFavorite ? 'is-active' : ''}"
+                th:attr="data-id=${serviceId}, data-type='service'"
+                aria-label="Toggle Favorite Service"
+                title="Save to favorites">
+            <i th:class="${isFavorite ? 'fa-solid fa-heart' : 'fa-regular fa-heart'}"></i>
+        </button>
 
         <span class="service-card__badge" th:text="${badge}">
             Food & Beverage

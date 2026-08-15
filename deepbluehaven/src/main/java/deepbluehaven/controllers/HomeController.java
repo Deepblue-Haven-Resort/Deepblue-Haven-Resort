@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import deepbluehaven.dto.BookingHistoryDTO;
 import deepbluehaven.dto.CustomerProfileDTO;
+import deepbluehaven.dto.RoomCardViewDTO;
 import deepbluehaven.dto.ServiceDTO;
 import deepbluehaven.services.BookingService;
 import deepbluehaven.services.CustomerService;
@@ -39,6 +40,7 @@ public class HomeController {
     private final CustomerRepository customerRepository;
     private final RoomRepository roomRepository;
     private final LogService logService;
+    private final deepbluehaven.services.CommentAndInquiryService commentAndInquiryService;
 
     public HomeController(CustomerService customerService,
                           RoomService roomService,
@@ -47,7 +49,8 @@ public class HomeController {
                           CommentRepository commentRepository,
                           CustomerRepository customerRepository,
                           RoomRepository roomRepository,
-                          LogService logService) {
+                          LogService logService,
+                          deepbluehaven.services.CommentAndInquiryService commentAndInquiryService) {
         this.customerService = customerService;
         this.roomService = roomService;
         this.bookingService = bookingService;
@@ -56,6 +59,7 @@ public class HomeController {
         this.customerRepository = customerRepository;
         this.roomRepository = roomRepository;
         this.logService = logService;
+        this.commentAndInquiryService = commentAndInquiryService;
     }
 
 
@@ -75,18 +79,32 @@ public class HomeController {
     }
 
     @GetMapping("/rooms")
-    public String roomsList(Model model) {
-        model.addAttribute("rooms", roomService.getAvailableRoomCards());
+    public String roomsList(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        java.util.Set<Long> favoriteRoomIds = java.util.Collections.emptySet();
+        if (session != null && session.getAttribute("loggedInCustomerId") != null) {
+            Long customerId = (Long) session.getAttribute("loggedInCustomerId");
+            favoriteRoomIds = customerService.getFavoriteRoomIds(customerId);
+        }
+        model.addAttribute("rooms", roomService.getAvailableRoomCards(favoriteRoomIds));
         model.addAttribute("resortOptions", roomService.getResortFilterOptions());
         return "customer/rooms-list";
     }
 
     @GetMapping("/rooms/{id}")
-    public String roomDetail(@PathVariable Long id, Model model) {
+    public String roomDetail(@PathVariable Long id, Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        boolean isFavorite = false;
+        if (session != null && session.getAttribute("loggedInCustomerId") != null) {
+            Long customerId = (Long) session.getAttribute("loggedInCustomerId");
+            isFavorite = customerService.getFavoriteRoomIds(customerId).contains(id);
+        }
+        final boolean finalIsFavorite = isFavorite;
         return roomService.getRoomById(id)
                 .map(room -> {
                     model.addAttribute("room", room);
                     model.addAttribute("roomAmenities", roomService.getAmenityViews(room));
+                    model.addAttribute("isFavorite", finalIsFavorite);
                     return "customer/room-detail";
                 })
                 .orElse("redirect:/404");
@@ -94,14 +112,13 @@ public class HomeController {
 
     @GetMapping("/services")
     public String showServices(@RequestParam(value = "bookingCode", required = false) String bookingCode, Model model, HttpServletRequest request) {
-        List<ServiceDTO.Response> services = customerService.getVisibleServices();
-        model.addAttribute("services", services);
-
         HttpSession session = request.getSession(false);
+        java.util.Set<Long> favoriteServiceIds = java.util.Collections.emptySet();
         boolean hasValidBooking = false;
 
         if (session != null && session.getAttribute("loggedInCustomerId") != null) {
             Long customerId = (Long) session.getAttribute("loggedInCustomerId");
+            favoriteServiceIds = customerService.getFavoriteServiceIds(customerId);
             List<BookingHistoryDTO.Response> validBookings = bookingService.getValidBookingsByCustomer(customerId);
 
             if (validBookings != null && !validBookings.isEmpty()) {
@@ -126,8 +143,28 @@ public class HomeController {
             }
         }
 
+        List<ServiceDTO.Response> services = customerService.getVisibleServices(favoriteServiceIds);
+        model.addAttribute("services", services);
         model.addAttribute("hasValidBooking", hasValidBooking);
         return "customer/service";
+    }
+
+    @GetMapping("/favorites")
+    public String favorites(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loggedInCustomerId") == null) {
+            return "redirect:/login";
+        }
+        Long customerId = (Long) session.getAttribute("loggedInCustomerId");
+        List<RoomCardViewDTO> favoriteRooms = customerService.getFavoriteRooms(customerId);
+        List<ServiceDTO.Response> favoriteServices = customerService.getFavoriteServices(customerId);
+
+        model.addAttribute("favoriteRooms", favoriteRooms);
+        model.addAttribute("favoriteServices", favoriteServices);
+        model.addAttribute("roomsCount", favoriteRooms.size());
+        model.addAttribute("servicesCount", favoriteServices.size());
+        model.addAttribute("totalCount", favoriteRooms.size() + favoriteServices.size());
+        return "customer/favorites";
     }
 
     @PostMapping("/services/confirm")
@@ -222,5 +259,37 @@ public class HomeController {
                     return "fragments/offer-detail :: offerDetail";
                 })
                 .orElse("redirect:/404");
+    }
+
+    @GetMapping("/about")
+    public String showAbout(Model model) {
+        return "customer/about";
+    }
+
+    @GetMapping("/contact")
+    public String showContact(Model model) {
+        model.addAttribute("resorts", roomService.getResortFilterOptions());
+        return "customer/contact";
+    }
+
+    @PostMapping("/contact/send")
+    public String sendContactInquiry(@RequestParam("fullName") String fullName,
+                                     @RequestParam("email") String email,
+                                     @RequestParam(value = "phone", required = false) String phone,
+                                     @RequestParam(value = "resortLocation", required = false) String resortLocation,
+                                     @RequestParam(value = "inquiryType", required = false) String inquiryType,
+                                     @RequestParam("message") String message,
+                                     HttpServletRequest request,
+                                     RedirectAttributes redirectAttrs) {
+        HttpSession session = request.getSession(false);
+        try {
+            commentAndInquiryService.saveNewInquiry(fullName, email, phone, resortLocation, inquiryType, message);
+            logService.log(deepbluehaven.pojo.enums.ObjectType.SYSTEM, deepbluehaven.pojo.enums.ActionCode.CREATE, null,
+                    "Inquiry received from " + fullName + " (" + email + (phone != null ? ", " + phone : "") + ") regarding " + inquiryType + " at " + resortLocation + ": " + message, session);
+            redirectAttrs.addFlashAttribute("successMessage", "Thank you, " + fullName + "! Your inquiry has been sent to our concierge team. We will get back to you shortly.");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Could not send message. Please contact our 24/7 hotline directly.");
+        }
+        return "redirect:/contact";
     }
 }

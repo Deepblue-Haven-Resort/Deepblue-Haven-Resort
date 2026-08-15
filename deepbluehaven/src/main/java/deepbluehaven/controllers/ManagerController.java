@@ -60,6 +60,8 @@ public class ManagerController {
     private final ResortRepository resortRepository;
     private final LogService logService;
     private final deepbluehaven.repositories.MembershipTierRepository membershipTierRepository;
+    private final deepbluehaven.services.CommentAndInquiryService commentAndInquiryService;
+    private final deepbluehaven.services.ChatService chatService;
 
     public ManagerController(ManagerDashboardService managerDashboardService,
                              BookingService bookingService,
@@ -73,7 +75,9 @@ public class ManagerController {
                              InvoiceRepository invoiceRepository,
                              ResortRepository resortRepository,
                              LogService logService,
-                             deepbluehaven.repositories.MembershipTierRepository membershipTierRepository) {
+                             deepbluehaven.repositories.MembershipTierRepository membershipTierRepository,
+                             deepbluehaven.services.CommentAndInquiryService commentAndInquiryService,
+                             deepbluehaven.services.ChatService chatService) {
         this.managerDashboardService = managerDashboardService;
         this.bookingService = bookingService;
         this.pricingRuleRepository = pricingRuleRepository;
@@ -87,6 +91,8 @@ public class ManagerController {
         this.resortRepository = resortRepository;
         this.logService = logService;
         this.membershipTierRepository = membershipTierRepository;
+        this.commentAndInquiryService = commentAndInquiryService;
+        this.chatService = chatService;
     }
 
     @GetMapping("/manager/dashboard")
@@ -571,5 +577,77 @@ public class ManagerController {
         model.addAttribute("roomStatusLogs", logService.getManagerRoomStatusLogs());
         model.addAttribute("invoiceStatusLogs", logService.getManagerInvoiceStatusLogs());
         return "manager/logs";
+    }
+
+    @GetMapping("/manager/comments")
+    public String managerComments(@RequestParam(value = "filter", required = false, defaultValue = "all") String filter,
+                                  @RequestParam(value = "inquiryStatus", required = false, defaultValue = "ALL") String inquiryStatus,
+                                  Model model) {
+        model.addAttribute("activePage", "comments");
+        model.addAttribute("currentFilter", filter);
+        model.addAttribute("currentInquiryStatus", inquiryStatus);
+        model.addAttribute("comments", commentAndInquiryService.getComments(filter));
+        model.addAttribute("inquiries", commentAndInquiryService.getInquiries(inquiryStatus));
+        model.addAttribute("statistics", commentAndInquiryService.getStatistics());
+        return "manager/comments";
+    }
+
+    @PostMapping("/manager/comments/{id}/reply")
+    public String managerReplyComment(@PathVariable("id") Long id,
+                                      @RequestParam("response") String response,
+                                      RedirectAttributes redirectAttrs,
+                                      jakarta.servlet.http.HttpServletRequest req) {
+        try {
+            Long workerId = (Long) req.getSession().getAttribute("loggedInWorkerId");
+            boolean success = commentAndInquiryService.replyToComment(id, response, workerId);
+            if (success) {
+                redirectAttrs.addFlashAttribute("successMessage", "Replied to customer feedback successfully!");
+            } else {
+                redirectAttrs.addFlashAttribute("errorMessage", "Comment not found.");
+            }
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/manager/comments";
+    }
+
+    @PostMapping("/manager/comments/{id}/resolve")
+    public String managerResolveComment(@PathVariable("id") Long id,
+                                        @RequestParam(value = "isResolved", required = false, defaultValue = "true") Boolean isResolved,
+                                        RedirectAttributes redirectAttrs) {
+        try {
+            commentAndInquiryService.toggleResolveComplaint(id, isResolved);
+            redirectAttrs.addFlashAttribute("successMessage", "Feedback status updated.");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/manager/comments";
+    }
+
+    @PostMapping("/manager/inquiries/{id}/update")
+    public String managerUpdateInquiry(@PathVariable("id") Long id,
+                                       @RequestParam("status") deepbluehaven.pojo.enums.InquiryStatus status,
+                                       @RequestParam(value = "replyNotes", required = false) String replyNotes,
+                                       RedirectAttributes redirectAttrs,
+                                       jakarta.servlet.http.HttpServletRequest req) {
+        try {
+            Long workerId = (Long) req.getSession().getAttribute("loggedInWorkerId");
+            boolean success = commentAndInquiryService.updateInquiry(id, status, replyNotes, workerId);
+            if (success) {
+                redirectAttrs.addFlashAttribute("successMessage", "Contact inquiry #" + id + " updated to " + status);
+            } else {
+                redirectAttrs.addFlashAttribute("errorMessage", "Inquiry not found.");
+            }
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/manager/comments";
+    }
+
+    @GetMapping("/manager/chat")
+    public String managerChat(Model model) {
+        model.addAttribute("activePage", "chat");
+        model.addAttribute("sessions", chatService.getStaffSessions("ALL"));
+        return "manager/chat";
     }
 }

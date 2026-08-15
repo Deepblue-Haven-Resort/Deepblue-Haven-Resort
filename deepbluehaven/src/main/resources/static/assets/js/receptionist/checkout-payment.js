@@ -86,15 +86,25 @@ function triggerPaymentAction(e) {
     return true;
 }
 
-function closeEWalletQrModal() {
-    const modal = document.getElementById('eWalletQrModal');
-    if (modal) {
-        modal.style.display = 'none';
-        modal.classList.remove('active');
+document.addEventListener('DOMContentLoaded', () => {
+    const paymentSelect = document.querySelector('select[name="paymentMethodStr"]');
+    if (paymentSelect) {
+        paymentSelect.addEventListener('change', (e) => {
+            updateCheckoutPaymentBtn(e.target.value);
+        });
     }
-    const checkoutModal = document.getElementById('checkoutConfirmModal');
-    if (checkoutModal) {
-        checkoutModal.classList.remove('active');
-        checkoutModal.style.display = '';
+
+    const submitBtn = document.getElementById('coModalSubmitBtn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', (e) => {
+            triggerPaymentAction(e);
+        });
     }
-}
+
+    const closeQrBtn = document.querySelector('#eWalletQrModal .ewallet-qr-actions button, [data-close-qr-modal]');
+    if (closeQrBtn) {
+        closeQrBtn.addEventListener('click', () => {
+            closeEWalletQrModal();
+        });
+    }
+});

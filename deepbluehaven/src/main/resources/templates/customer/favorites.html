@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_context_path" th:content="@{/}" />
+    <title>My Favorites | Deep Blue Haven</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" href="/assets/css/base.css">
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css">
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css">
+    <link rel="stylesheet" th:href="@{/assets/css/toast.css}" href="/assets/css/toast.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/home.css}" href="/assets/css/customer/home.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/rooms-list.css}" href="/assets/css/customer/rooms-list.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/service.css}" href="/assets/css/customer/service.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/booking-history.css}" href="/assets/css/customer/booking-history.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/favorites.css}" href="/assets/css/customer/favorites.css">
+</head>
+
+<body class="home-page favorites-page">
+
+    <div th:replace="~{fragments/header :: header(activePage='favorites')}"></div>
+
+    <main class="booking-history-page favorites-page-wrapper">
+        <div class="container">
+
+            <!-- FILTER TOOLBAR (Matches Booking History Vibe) -->
+            <section class="booking-history-toolbar favorites-toolbar">
+                <div class="booking-filter-tabs favorites-filter-tabs" role="tablist" aria-label="Favorites filters">
+                    <button type="button"
+                            class="booking-filter-tab favorites-tab is-active"
+                            data-filter="all"
+                            data-tab="all"
+                            role="tab"
+                            aria-selected="true">
+                        <i class="fa-solid fa-layer-group"></i>
+                        All Favorites
+                        <span id="badgeAll" th:text="${totalCount}">0</span>
+                    </button>
+
+                    <button type="button"
+                            class="booking-filter-tab favorites-tab"
+                            data-filter="rooms"
+                            data-tab="rooms"
+                            role="tab"
+                            aria-selected="false">
+                        <i class="fa-solid fa-bed"></i>
+                        Rooms
+                        <span id="badgeRooms" th:text="${roomsCount}">0</span>
+                    </button>
+
+                    <button type="button"
+                            class="booking-filter-tab favorites-tab"
+                            data-filter="services"
+                            data-tab="services"
+                            role="tab"
+                            aria-selected="false">
+                        <i class="fa-solid fa-bell-concierge"></i>
+                        Services
+                        <span id="badgeServices" th:text="${servicesCount}">0</span>
+                    </button>
+                </div>
+
+                <div class="booking-search favorites-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search"
+                           id="favoritesSearch"
+                           placeholder="Search saved rooms or services..."
+                           aria-label="Search favorites"
+                           autocomplete="off">
+                </div>
+            </section>
+
+            <!-- GRAND EMPTY STATE (When customer has 0 favorites) -->
+            <section class="booking-history-empty favorites-empty-state" id="grandEmptyState" th:classappend="${totalCount == 0 ? 'is-visible' : ''}">
+                <div class="booking-history-empty__icon favorites-empty-icon">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
+                <h2>No Favorites Saved Yet</h2>
+                <p>Start exploring our luxurious rooms and resort services, and tap the heart icon on any item to build your personal wishlist.</p>
+                <div class="favorites-empty-actions">
+                    <a th:href="@{/rooms}" class="btn btn-cta btn-medium">
+                        <i class="fa-solid fa-bed"></i>
+                        Explore Rooms
+                    </a>
+                    <a th:href="@{/services}" class="btn btn-outline btn-medium">
+                        <i class="fa-solid fa-bell-concierge"></i>
+                        Discover Services
+                    </a>
+                </div>
+            </section>
+
+            <!-- SEARCH NO-RESULTS STATE -->
+            <section class="booking-history-empty favorites-search-empty" id="searchEmptyState" style="display: none;">
+                <div class="booking-history-empty__icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <h2>No Matching Favorites Found</h2>
+                <p>Try searching with different keywords or clear the search query.</p>
+                <div class="favorites-empty-actions">
+                    <button type="button" id="clearSearchBtn" class="btn btn-cta btn-small">
+                        Clear Search
+                    </button>
+                </div>
+            </section>
+
+            <!-- ROOMS SECTION -->
+            <section class="favorites-section" id="roomsSection" th:classappend="${roomsCount == 0 ? 'is-hidden' : ''}">
+                <div class="favorites-section__header">
+                    <div class="favorites-section__title-group">
+                        <span class="favorites-section__badge">
+                            <i class="fa-solid fa-bed"></i>
+                        </span>
+                        <div>
+                            <h2 class="favorites-section__title">Saved Rooms</h2>
+                            <p class="favorites-section__subtitle">Luxury suites, oceanfront villas, and seaside retreats</p>
+                        </div>
+                    </div>
+                    <a th:href="@{/rooms}" class="favorites-section__link">
+                        Browse all rooms <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="rooms-grid favorites-rooms-grid" id="favoriteRoomsGrid">
+                    <th:block th:each="room : ${favoriteRooms}">
+                        <div th:replace="~{fragments/room-card :: roomCard(
+                            ${room.imageUrl}, ${room.imageAlt}, ${room.badge}, ${room.roomName}, ${room.location},
+                            ${room.icon}, ${room.statusText}, ${room.tagClass}, ${room.bedInfo}, ${room.bathInfo},
+                            ${room.sizeInfo}, ${room.priceText}, ${room.priceValue}, ${room.resortValue},
+                            ${room.typeValue}, ${room.guestsValue}, ${room.viewValue}, ${room.ratingValue},
+                            ${room.detailUrl}, ${room.id}, ${room.favorite}
+                        )}"></div>
+                    </th:block>
+                </div>
+
+                <div class="favorites-empty-panel" id="roomsEmptyPanel" th:classappend="${roomsCount == 0 && totalCount > 0 ? '' : 'is-hidden'}">
+                    <div class="favorites-empty-panel__icon">
+                        <i class="fa-solid fa-door-open"></i>
+                    </div>
+                    <p>You haven't saved any rooms yet.</p>
+                    <a th:href="@{/rooms}" class="btn btn-cta btn-small">Find a Room</a>
+                </div>
+            </section>
+
+            <!-- SERVICES SECTION -->
+            <section class="favorites-section" id="servicesSection" th:classappend="${servicesCount == 0 ? 'is-hidden' : ''}">
+                <div class="favorites-section__header">
+                    <div class="favorites-section__title-group">
+                        <span class="favorites-section__badge favorites-section__badge--services">
+                            <i class="fa-solid fa-bell-concierge"></i>
+                        </span>
+                        <div>
+                            <h2 class="favorites-section__title">Saved Services</h2>
+                            <p class="favorites-section__subtitle">Spa treatments, private dining, and island excursions</p>
+                        </div>
+                    </div>
+                    <a th:href="@{/services}" class="favorites-section__link">
+                        Browse all services <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="services-grid favorites-services-grid" id="favoriteServicesGrid">
+                    <th:block th:each="svc : ${favoriteServices}">
+                        <div th:replace="~{fragments/service-card :: serviceCard(
+                            ${svc.images != null && !svc.images.empty ? svc.images[0] : 'https://res.cloudinary.com/xio0mgix/image/upload/v1786686824/f9b9112d-047b-4756-a23d-95fd3d7dd478.png'}, 
+                            ${svc.name}, 
+                            ${svc.categoryDisplayName}, 
+                            ${svc.name}, 
+                            |Per ${svc.unit}|, 
+                            ${svc.status}, 
+                            ${svc.statusClass}, 
+                            ${svc.description}, 
+                            ${svc.categoryDisplayName}, 
+                            ${svc.unit}, 
+                            |${#numbers.formatDecimal(svc.basePrice, 0, 'COMMA', 0, 'POINT')} VND|, 
+                            ${svc.basePrice}, 
+                            ${svc.category != null ? #strings.toLowerCase(#strings.replace(svc.category, '_', '-')) : 'all'}, 
+                            ${svc.type != null ? #strings.toLowerCase(#strings.replace(svc.type, '_', '-')) : 'all'}, 
+                            ${svc.statusValue}, 
+                            ${svc.id},
+                            ${svc.favorite}
+                        )}"></div>
+                    </th:block>
+                </div>
+
+                <div class="favorites-empty-panel" id="servicesEmptyPanel" th:classappend="${servicesCount == 0 && totalCount > 0 ? '' : 'is-hidden'}">
+                    <div class="favorites-empty-panel__icon">
+                        <i class="fa-solid fa-spa"></i>
+                    </div>
+                    <p>You haven't saved any services yet.</p>
+                    <a th:href="@{/services}" class="btn btn-cta btn-small">Explore Services</a>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <div th:replace="~{fragments/toast :: toast}">
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+
+    <script th:src="@{/assets/js/shared/toast.js}" src="/assets/js/shared/toast.js"></script>
+    <script th:src="@{/assets/js/customer/favorite-toggle.js}" src="/assets/js/customer/favorite-toggle.js"></script>
+    <script th:src="@{/assets/js/customer/favorites.js}" src="/assets/js/customer/favorites.js"></script>
+</body>
+</html>

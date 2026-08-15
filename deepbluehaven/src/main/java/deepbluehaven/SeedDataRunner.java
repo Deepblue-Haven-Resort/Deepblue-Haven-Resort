@@ -20,7 +20,9 @@ import deepbluehaven.pojo.BookingLog;
 import deepbluehaven.pojo.ChatMessage;
 import deepbluehaven.pojo.ChatSession;
 import deepbluehaven.pojo.Comment;
+import deepbluehaven.pojo.ContactInquiry;
 import deepbluehaven.pojo.Customer;
+import deepbluehaven.pojo.enums.InquiryStatus;
 import deepbluehaven.pojo.CustomerDiscount;
 import deepbluehaven.pojo.CustomerLoyaltyLog;
 import deepbluehaven.pojo.CustomerProfile;
@@ -133,6 +135,8 @@ public class SeedDataRunner implements CommandLineRunner {
         List<Service> services = seedServices(resorts);
         seedServicePoints();
 
+        seedCustomerFavorites(customers, rooms, services);
+
         List<Discount> discounts = seedDiscounts(membershipTiers, workers);
         List<CustomerDiscount> customerDiscounts = seedCustomerDiscounts(customers, discounts);
 
@@ -148,6 +152,7 @@ public class SeedDataRunner implements CommandLineRunner {
         List<ServiceOrder> serviceOrders = seedServiceOrders(services, bookings, customers, workers);
 
         seedComments(customers, resorts, rooms, services, workers);
+        seedContactInquiries(workers);
 
         List<ChatSession> chatSessions = seedChatSessions(customers, workers);
         seedChatMessages(chatSessions, customers, workers);
@@ -374,6 +379,21 @@ public class SeedDataRunner implements CommandLineRunner {
             profile.setMembershipTier(tiers.get(i % tiers.size()));
             profile.setAvatarUrl("https://res.cloudinary.com/xio0mgix/image/upload/v1786687334/53cfbdcb-9c58-471c-96ab-cddf0c65f52e.png");
             persist(profile);
+        }
+        entityManager.flush();
+    }
+
+    private void seedCustomerFavorites(List<Customer> customers, List<Room> rooms, List<Service> services) {
+        if (customers == null || customers.isEmpty() || rooms == null || rooms.isEmpty() || services == null || services.isEmpty()) {
+            return;
+        }
+        for (int i = 0; i < Math.min(customers.size(), 10); i++) {
+            Customer customer = customers.get(i);
+            customer.getFavoriteRooms().add(rooms.get(i % rooms.size()));
+            customer.getFavoriteRooms().add(rooms.get((i + 2) % rooms.size()));
+            customer.getFavoriteServices().add(services.get(i % services.size()));
+            customer.getFavoriteServices().add(services.get((i + 1) % services.size()));
+            persist(customer);
         }
         entityManager.flush();
     }
@@ -853,11 +873,14 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private List<ChatSession> seedChatSessions(List<Customer> customers, List<Worker> workers) {
         List<ChatSession> list = new ArrayList<>();
+        ChatStatus[] statuses = { ChatStatus.WAITING, ChatStatus.IN_PROGRESS, ChatStatus.RESOLVED };
         for (int i = 0; i < 15; i++) {
             ChatSession cs = new ChatSession();
             cs.setCustomer(customers.get(i));
-            cs.setCurrentAssigneeId(workers.get(2 + (i % 5)).getId());
-            cs.setStatus(ChatStatus.RESOLVED);
+            Worker assignee = workers.get(2 + (i % 5));
+            cs.setAssignee(assignee);
+            cs.setStatus(statuses[i % statuses.length]);
+            cs.setRead(i % 3 != 0);
             persist(cs);
             list.add(cs);
         }
@@ -872,17 +895,51 @@ public class SeedDataRunner implements CommandLineRunner {
             m1.setChatSession(cs);
             m1.setSenderType(SenderType.CUSTOMER);
             m1.setSenderId(cs.getCustomer().getId());
+            m1.setSenderName(cs.getCustomer().getProfile() != null ? cs.getCustomer().getProfile().getFullName() : "Guest");
             m1.setMessageType(MessageType.TEXT);
-            m1.setContent("Hello, I would like to inquire about late check-out options for my booking.");
+            m1.setContent("Hello, I would like to inquire about late check-out options for my upcoming reservation.");
             persist(m1);
 
-            ChatMessage m2 = new ChatMessage();
-            m2.setChatSession(cs);
-            m2.setSenderType(SenderType.STAFF);
-            m2.setSenderId(cs.getCurrentAssigneeId());
-            m2.setMessageType(MessageType.TEXT);
-            m2.setContent("Good day! Late check-out until 2:00 PM is complimentary for VIP tier guests.");
-            persist(m2);
+            if (cs.getStatus() != ChatStatus.WAITING) {
+                ChatMessage m2 = new ChatMessage();
+                m2.setChatSession(cs);
+                m2.setSenderType(SenderType.STAFF);
+                m2.setSenderId(cs.getAssignee() != null ? cs.getAssignee().getId() : 1L);
+                m2.setSenderName(cs.getAssignee() != null && cs.getAssignee().getProfile() != null ? cs.getAssignee().getProfile().getFullName() : "Resort Concierge");
+                m2.setMessageType(MessageType.TEXT);
+                m2.setContent("Good day! Late check-out until 2:00 PM is complimentary for VIP tier guests.");
+                persist(m2);
+            }
+        }
+        entityManager.flush();
+    }
+
+    private void seedContactInquiries(List<Worker> workers) {
+        String[][] inquiriesData = {
+            { "Alexandre Dupont", "alexandre.dupont@paris-luxury.fr", "+33 612 345 678", "Nha Trang Bay", "Wedding & Private Banquet", "We are looking to host an intimate private beach wedding reception for 60 guests in late October.", "PENDING", null },
+            { "Tran Bao Ngoc", "baongoc.tran@vietcapital.vn", "+84 908 776 543", "Phu Quoc Island", "VIP Villa Reservation", "Can you arrange custom airport limousine pickup from Phu Quoc airport for our 5-night stay?", "CONTACTED", "Called customer, limousine transfer confirmed for 14:00 flight." },
+            { "David Miller", "david.miller@techglobal.com", "+1 415 555 0192", "Quy Nhon Cliff", "Corporate Executive Retreat", "Our board is interested in booking 10 ocean villas with conference facilities for a 3-day team summit.", "RESOLVED", "Proposal sent and deposit agreement finalized with customer." },
+            { "Elena Rostova", "elena.rostova@traveler.ru", "+7 916 123 4567", "Nha Trang Bay", "Spa & Wellness Packages", "Do you offer couples detox retreat packages including daily hydrotherapy and yoga sessions?", "PENDING", null },
+            { "Hoang Minh Tri", "tri.hoang@investcorp.com.vn", "+84 912 334 455", "Phu Quoc Island", "Fine Dining Private Chef", "We would like to book a private candlelight dinner on the cliffside for our wedding anniversary.", "CONTACTED", "Chef menu sent via email for wine pairing review." }
+        };
+
+        for (int i = 0; i < inquiriesData.length; i++) {
+            String[] data = inquiriesData[i];
+            ContactInquiry inq = new ContactInquiry();
+            inq.setFullName(data[0]);
+            inq.setEmail(data[1]);
+            inq.setPhone(data[2]);
+            inq.setResortLocation(data[3]);
+            inq.setInquiryType(data[4]);
+            inq.setMessage(data[5]);
+            inq.setStatus(InquiryStatus.valueOf(data[6]));
+            inq.setReplyNotes(data[7]);
+            if (inq.getStatus() != InquiryStatus.PENDING && !workers.isEmpty()) {
+                inq.setResolvedBy(workers.get(0));
+                inq.setResolvedAt(LocalDateTime.now().minusHours(i * 3 + 1));
+            }
+            inq.setCreatedAt(LocalDateTime.now().minusDays(i + 1));
+            persist(inq);
         }
         entityManager.flush();
     }
@@ -1033,9 +1090,10 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private void resetIndividualTables() {
         String[] tables = {
+            "customer_favorite_rooms", "customer_favorite_services",
             "room_tags", "room_images", "service_images",
             "AuthAccessLog", "BookingDetail", "BookingLog", "InvoiceStatusLog",
-            "PaymentTransaction", "Invoice", "ServiceOrder", "Comment",
+            "PaymentTransaction", "Invoice", "ServiceOrder", "Comment", "Contact_Inquiry",
             "ChatMessage", "ChatSession", "InventoryTransaction", "InventoryItem",
             "CustomerLoyaltyLog", "Notification", "Log", "Task", "RoomHighlight",
             "RoomStatusLog", "WorkerRoomAssignmentLog", "CustomerDiscount",

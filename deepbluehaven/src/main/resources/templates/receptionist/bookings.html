@@ -11,6 +11,7 @@
     <!-- ĐỔI ĐƯỜNG DẪN CSS SANG ADMIN-SIDEBAR -->
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -22,13 +23,21 @@
 
     <main class="admin-main">
 
-        <section class="account-panel">
+        <!-- FLASH MESSAGES -->
+        <div th:if="${successMessage}" class="alert-banner success" th:text="${successMessage}">
+            Operation completed successfully!
+        </div>
+        <div th:if="${errorMessage}" class="alert-banner error" th:text="${errorMessage}">
+            Operation failed.
+        </div>
+
+        <section class="reception-panel">
 
             <div class="panel-header">
                 <div>
                     <h2><strong>All Reservations</strong></h2>
                 </div>
-                <div style="display: flex; align-items: center; gap: var(--space-12);">
+                <div class="panel-header-actions">
                     <button class="btn btn-small btn-cta">
                         New Reservation
                     </button>
@@ -38,65 +47,66 @@
             <div class="filter-bar">
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search by guest name, phone, or reservation code...">
+                    <input type="text" id="tableSearchInput" class="form-input" placeholder="Search by guest name, phone, or reservation code...">
                 </div>
 
                 <div class="filter-dropdown">
-                    <button class="filter-btn" type="button">
+                    <button class="filter-btn form-input" type="button">
                         <span class="filter-label"><strong>All Statuses</strong></span>
                         <i class="fa-solid fa-chevron-down"></i>
                     </button>
                     <div class="filter-menu">
-                        <button type="button"><strong>All Statuses</strong></button>
-                        <button type="button"><strong>CONFIRMED</strong></button>
-                        <button type="button"><strong>CHECKED_IN</strong></button>
-                        <button type="button"><strong>CHECKED_OUT</strong></button>
-                        <button type="button"><strong>CANCELLED</strong></button>
+                        <button type="button" data-status="ALL" class="dropdown-item"><strong>All Statuses</strong></button>
+                        <button type="button" data-status="PENDING" class="dropdown-item"><strong>Pending</strong></button>
+                        <button type="button" data-status="CONFIRMED" class="dropdown-item"><strong>Confirmed</strong></button>
+                        <button type="button" data-status="CHECKED_IN" class="dropdown-item"><strong>Checked In</strong></button>
+                        <button type="button" data-status="CHECKED_OUT" class="dropdown-item"><strong>Checked Out</strong></button>
+                        <button type="button" data-status="CANCELLED" class="dropdown-item"><strong>Cancelled</strong></button>
                     </div>
                 </div>
             </div>
 
             <div class="table-wrapper">
-                <table class="account-table">
+                <table class="activity-table" data-page-size="6">
                     <thead>
                     <tr>
-                        <th>Booking Ref</th>
-                        <th>Guest Name</th>
-                        <th>Room Type</th>
-                        <th>Check-in</th>
-                        <th>Check-out</th>
-                        <th>Total Amount</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th class="text-center">Booking Ref</th>
+                        <th class="text-center">Guest Name</th>
+                        <th class="text-center">Room Type</th>
+                        <th class="text-center">Check-in</th>
+                        <th class="text-center">Check-out</th>
+                        <th class="text-center">Total Amount</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                     </thead>
 
                     <tbody>
-                    <tr th:each="b : ${bookings}">
-                        <td><strong th:text="${b.bookingCode}">#BK-9021</strong></td>
-                        <td>
-                            <div class="user-info">
-                                <div>
-                                    <strong th:text="${b.guestName}">Alexander Wright</strong>
-                                    <span th:text="${b.guestEmail}">alex.wright@example.com</span>
-                                </div>
+                    <tr th:each="b : ${bookings}" th:attr="data-status=${b.rawStatus}">
+                        <td class="text-center"><strong th:text="${b.bookingCode}">#BK-9021</strong></td>
+                        <td class="text-center">
+                            <div class="user-info-stack">
+                                <strong th:text="${b.guestName}">Alexander Wright</strong>
+                                <span th:text="${b.guestEmail}">alex.wright@example.com</span>
                             </div>
                         </td>
-                        <td th:text="|${b.roomType} (${b.roomNumber})|">Ocean Villa (304)</td>
-                        <td th:text="${b.checkIn != null ? #temporals.format(b.checkIn, 'dd MMM yyyy') : 'N/A'}">03 Aug 2026</td>
-                        <td th:text="${b.checkOut != null ? #temporals.format(b.checkOut, 'dd MMM yyyy') : 'N/A'}">06 Aug 2026</td>
-                        <td th:text="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|">1,450,000 VND</td>
-                        <td>
-                            <span th:class="|status ${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CONFIRMED ? 'status-success' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CHECKED_IN ? 'status-info' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CANCELLED ? 'status-error' : 'status-warning'))}|"
-                                  th:text="${b.rawStatus}">CONFIRMED</span>
+                        <td class="text-center" th:text="|${b.roomType} (${b.roomNumber})|">Ocean Villa (304)</td>
+                        <td class="text-center" th:text="${b.checkIn != null ? #temporals.format(b.checkIn, 'dd MMM yyyy') : 'N/A'}">03 Aug 2026</td>
+                        <td class="text-center" th:text="${b.checkOut != null ? #temporals.format(b.checkOut, 'dd MMM yyyy') : 'N/A'}">06 Aug 2026</td>
+                        <td class="text-center"><strong th:text="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|">1,450,000 VND</strong></td>
+                        <td class="text-center">
+                            <span th:class="|status ${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CONFIRMED ? 'status-success' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CHECKED_IN ? 'status-info' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CHECKED_OUT ? 'status-info' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CANCELLED ? 'status-error' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).COMPLETED ? 'status-success' : 'status-warning'))))}|"
+                                  th:text="${b.rawStatus != null ? b.rawStatus.displayName : 'Pending'}">Confirmed</span>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <form th:if="${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
-                                  th:action="@{'/receptionist/confirm-booking/' + ${b.id}}" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-small btn-cta">Confirm</button>
+                                  th:action="@{'/receptionist/confirm-booking/' + ${b.id}}" method="post" class="inline-form">
+                                <button type="submit" class="btn btn-small btn-cta">
+                                    <i class="fa-solid fa-check"></i> Confirm
+                                </button>
                             </form>
                             <span th:if="${b.rawStatus != T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
-                                  th:text="${b.rawStatus}">Active</span>
+                                  class="action-empty-dash">—</span>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(bookings)}">
@@ -106,24 +116,6 @@
                 </table>
             </div>
 
-            <div class="table-footer">
-                <p>Showing <strong>1-4</strong> of <strong>45</strong> entries</p>
-
-                <div class="pagination">
-                    <button type="button" class="page-btn disabled">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-
-                    <button type="button" class="page-btn active">1</button>
-                    <button type="button" class="page-btn">2</button>
-                    <button type="button" class="page-btn">3</button>
-
-                    <button type="button" class="page-btn">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-
         </section>
 
     </main>
@@ -131,5 +123,6 @@
 
 <!-- ĐỔI ĐƯỜNG DẪN JS SANG ADMIN-SIDEBAR -->
 <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+<script th:src="@{/assets/js/receptionist/receptionist.js}"></script>
 </body>
 </html>

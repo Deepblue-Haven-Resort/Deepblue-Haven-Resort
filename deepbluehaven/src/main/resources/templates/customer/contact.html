@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_context_path" th:content="@{/}" />
+    <title>Contact Us | Deep Blue Haven Resort</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" href="/assets/css/base.css">
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css">
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/home.css}" href="/assets/css/customer/home.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/contact.css}" href="/assets/css/customer/contact.css">
+</head>
+
+<body class="home-page contact-page">
+
+    <div th:replace="~{fragments/header :: header(activePage='contact')}"></div>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section class="contact-hero">
+            <div class="contact-hero__glow contact-hero__glow--one"></div>
+            <div class="contact-hero__glow contact-hero__glow--two"></div>
+
+            <div class="container contact-hero__inner">
+                <span class="contact-kicker">We Are Here For You</span>
+                <h1>
+                    Connect With <em>Deep Blue Haven</em>
+                </h1>
+                <p>
+                    Whether you are planning a romantic seaside getaway, reserving a private beachfront villa, or coordinating a private event, our 24/7 concierge is at your service.
+                </p>
+            </div>
+        </section>
+
+        <!-- 3 QUICK CONTACT CHANNEL CARDS -->
+        <section class="container contact-channels">
+            <div class="contact-channels__grid">
+                <!-- Channel 1 -->
+                <article class="contact-channel-card">
+                    <div class="contact-channel-card__icon">
+                        <i class="fa-solid fa-hotel"></i>
+                    </div>
+                    <h3>Reservations & Bookings</h3>
+                    <p>Inquire about villa availability, custom holiday packages, and flexible group stays.</p>
+                    <div class="contact-channel-card__info">
+                        <a href="tel:+842583889999">
+                            <i class="fa-solid fa-phone"></i>
+                            +84 258 388 9999
+                        </a>
+                        <a href="mailto:reservations@deepbluehaven.com">
+                            <i class="fa-solid fa-envelope"></i>
+                            reservations@deepbluehaven.com
+                        </a>
+                        <span>Available 24 hours daily</span>
+                    </div>
+                </article>
+
+                <!-- Channel 2 -->
+                <article class="contact-channel-card">
+                    <div class="contact-channel-card__icon">
+                        <i class="fa-solid fa-bell-concierge"></i>
+                    </div>
+                    <h3>Concierge & Experience</h3>
+                    <p>Airport luxury transfers, private yacht tours, ocean spa bookings, and bespoke dining.</p>
+                    <div class="contact-channel-card__info">
+                        <a href="tel:+842583888888">
+                            <i class="fa-solid fa-phone"></i>
+                            +84 258 388 8888
+                        </a>
+                        <a href="mailto:concierge@deepbluehaven.com">
+                            <i class="fa-solid fa-envelope"></i>
+                            concierge@deepbluehaven.com
+                        </a>
+                        <span>Instant WhatsApp & Hotline</span>
+                    </div>
+                </article>
+
+                <!-- Channel 3 -->
+                <article class="contact-channel-card">
+                    <div class="contact-channel-card__icon">
+                        <i class="fa-solid fa-champagne-glasses"></i>
+                    </div>
+                    <h3>Private Events & Weddings</h3>
+                    <p>Exclusive beachfront weddings, corporate retreats, and private sunset banquets.</p>
+                    <div class="contact-channel-card__info">
+                        <a href="tel:+842583887777">
+                            <i class="fa-solid fa-phone"></i>
+                            +84 258 388 7777
+                        </a>
+                        <a href="mailto:events@deepbluehaven.com">
+                            <i class="fa-solid fa-envelope"></i>
+                            events@deepbluehaven.com
+                        </a>
+                        <span>Dedicated Event Planners</span>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- MAIN SECTION: INQUIRY FORM + RESORT LOCATIONS -->
+        <section class="container contact-main-section">
+            <div class="contact-main__grid">
+
+                <!-- LEFT: INQUIRY FORM -->
+                <div class="contact-form-container">
+                    <span class="about-tag">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        Send An Inquiry
+                    </span>
+                    <h2>Send Us a Message</h2>
+                    <p>Fill out the form below and our guest experience manager will contact you promptly.</p>
+
+                    <!-- Alert message banners -->
+                    <div th:if="${successMessage}" class="alert alert-success" style="padding: 16px; border-radius: var(--radius-md); background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; margin-bottom: 20px; font-size: 0.95rem; font-weight: 600;">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span th:text="${successMessage}"></span>
+                    </div>
+
+                    <div th:if="${errorMessage}" class="alert alert-danger" style="padding: 16px; border-radius: var(--radius-md); background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; margin-bottom: 20px; font-size: 0.95rem; font-weight: 600;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+
+                    <form th:action="@{/contact/send}" method="POST" class="contact-form" id="contactInquiryForm">
+                        <div class="contact-form__row">
+                            <div class="contact-form__group">
+                                <label for="fullName">Full Name *</label>
+                                <input type="text" id="fullName" name="fullName" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="contact-form__group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" placeholder="e.g. john@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="contact-form__row">
+                            <div class="contact-form__group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" placeholder="e.g. +84 912 345 678">
+                            </div>
+                            <div class="contact-form__group">
+                                <label for="resortLocation">Preferred Resort</label>
+                                <select id="resortLocation" name="resortLocation">
+                                    <option value="All Resorts / General">All Destinations / General Inquiry</option>
+                                    <option th:each="r : ${resorts}" th:value="${r.label}" th:text="${r.label}">Nha Trang Bay Resort</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="contact-form__group">
+                            <label for="inquiryType">Inquiry Type</label>
+                            <select id="inquiryType" name="inquiryType">
+                                <option value="Villa & Room Reservation">Villa & Room Reservation</option>
+                                <option value="Special Dietary / Dining Request">Special Dietary / Dining Request</option>
+                                <option value="Spa & Wellness Packages">Spa & Wellness Packages</option>
+                                <option value="Beach Wedding & Celebrations">Beach Wedding & Celebrations</option>
+                                <option value="Airport Transfer & Excursions">Airport Transfer & Excursions</option>
+                                <option value="General Question">General Question</option>
+                            </select>
+                        </div>
+
+                        <div class="contact-form__group">
+                            <label for="message">Your Message *</label>
+                            <textarea id="message" name="message" placeholder="Please share details about your travel dates, preferred room type, or any special requests..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-luxury contact-form__btn">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Send Message</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- RIGHT: RESORT BRANCH LOCATIONS -->
+                <aside class="contact-resorts-sidebar">
+                    <span class="about-tag">
+                        <i class="fa-solid fa-map-pin"></i>
+                        Our Locations
+                    </span>
+
+                    <!-- Resort 1 -->
+                    <div class="contact-resort-card">
+                        <span class="contact-resort-card__badge">Nha Trang Bay</span>
+                        <h3>Deep Blue Haven Nha Trang Bay</h3>
+                        <ul class="contact-resort-card__list">
+                            <li>
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>Tran Phu Ocean Boulevard, Nha Trang City, Khanh Hoa</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-phone"></i>
+                                <span>+84 258 388 9901</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-envelope"></i>
+                                <span>nhatrang@deepbluehaven.com</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-clock"></i>
+                                <span>Check-in: 14:00 | Check-out: 12:00</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Resort 2 -->
+                    <div class="contact-resort-card">
+                        <span class="contact-resort-card__badge">Phu Quoc Island</span>
+                        <h3>Deep Blue Haven Phu Quoc Island</h3>
+                        <ul class="contact-resort-card__list">
+                            <li>
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>Bai Truong Sunset Coast, Duong To, Phu Quoc Island</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-phone"></i>
+                                <span>+84 297 388 9902</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-envelope"></i>
+                                <span>phuquoc@deepbluehaven.com</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-clock"></i>
+                                <span>Check-in: 14:00 | Check-out: 12:00</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Resort 3 -->
+                    <div class="contact-resort-card">
+                        <span class="contact-resort-card__badge">Quy Nhon Cliff</span>
+                        <h3>Deep Blue Haven Quy Nhon Cliff</h3>
+                        <ul class="contact-resort-card__list">
+                            <li>
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>Ghenh Rang Seaside, Quy Nhon City, Binh Dinh</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-phone"></i>
+                                <span>+84 256 388 9903</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-envelope"></i>
+                                <span>quynhon@deepbluehaven.com</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-clock"></i>
+                                <span>Check-in: 14:00 | Check-out: 12:00</span>
+                            </li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- FAQ ACCORDION SECTION -->
+        <section class="contact-faq">
+            <div class="container">
+                <div class="contact-faq__header">
+                    <span class="about-tag">
+                        <i class="fa-solid fa-circle-question"></i>
+                        Frequently Asked Questions
+                    </span>
+                    <h2 class="about-title">Helpful Information for Your Stay</h2>
+                </div>
+
+                <div class="contact-faq__list">
+                    <!-- FAQ 1 -->
+                    <div class="faq-item is-open">
+                        <button type="button" class="faq-question">
+                            <span>What are the standard check-in and check-out times?</span>
+                            <div class="faq-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Standard check-in time is from 14:00 (2:00 PM) and check-out is until 12:00 (12:00 PM noon). Early check-in and late check-out requests are subject to room availability upon arrival and may be requested through your personal concierge.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 2 -->
+                    <div class="faq-item">
+                        <button type="button" class="faq-question">
+                            <span>Does Deep Blue Haven provide airport transfers?</span>
+                            <div class="faq-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes, we offer complimentary luxury limousine airport transfers for all suite and villa bookings. For other room types, private chauffeur services can be arranged upon reservation with our concierge team.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 3 -->
+                    <div class="faq-item">
+                        <button type="button" class="faq-question">
+                            <span>What is the resort's cancellation and amendment policy?</span>
+                            <div class="faq-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Cancellations made up to 72 hours prior to arrival are fully refundable without fee for standard flexible rates. Special promotional rates and seasonal peak packages may have specific policies detailed in your reservation confirmation.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 4 -->
+                    <div class="faq-item">
+                        <button type="button" class="faq-question">
+                            <span>Can I book private dining experiences or beachfront celebrations?</span>
+                            <div class="faq-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Absolutely. We specialize in bespoke private candlelit dinners on the sand, cliffside champagne tastings, and personalized wedding ceremonies. Please contact our events team at events@deepbluehaven.com for tailored arrangements.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script th:src="@{/assets/js/customer/contact.js}" src="/assets/js/customer/contact.js"></script>
+</body>
+</html>

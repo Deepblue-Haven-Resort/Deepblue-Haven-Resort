@@ -34,4 +34,14 @@ public interface CustomerRepository
             @Param("identity") String identity);
 
     boolean existsByUsername(String username);
+
+    @Query("""
+        SELECT DISTINCT c FROM Customer c LEFT JOIN FETCH c.favoriteRooms r LEFT JOIN FETCH r.resort WHERE c.id = :id
+    """)
+    Optional<Customer> findByIdWithFavoriteRooms(@Param("id") Long id);
+
+    @Query("""
+        SELECT DISTINCT c FROM Customer c LEFT JOIN FETCH c.favoriteServices s LEFT JOIN FETCH s.resort WHERE c.id = :id
+    """)
+    Optional<Customer> findByIdWithFavoriteServices(@Param("id") Long id);
 }

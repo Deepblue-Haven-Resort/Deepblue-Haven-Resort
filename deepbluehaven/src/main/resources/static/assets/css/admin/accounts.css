@@ -242,86 +242,195 @@
 /* ==========================================
    4. TABLE & USER ACTIONS
 ========================================== */
-.table-wrapper { overflow-x: auto; }
+.table-wrapper { 
+    overflow-x: auto; 
+    border-radius: var(--radius-lg, 12px);
+}
 
-.account-table { width: 100%; border-collapse: collapse; }
-.account-table thead { background: var(--primary-100); }
+.account-table { 
+    width: 100%; 
+    border-collapse: separate; 
+    border-spacing: 0; 
+}
+
+.account-table thead { 
+    background: var(--primary-100, #f0f9ff); 
+}
 
 .account-table th {
-    padding: var(--space-16);
-    text-align: center;
-    color: var(--primary-800);
-    font-size: 0.875rem;
+    padding: 14px 16px;
+    color: var(--primary-800, #075985);
+    font-size: 0.84rem;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--primary-200, #bae6fd);
+    vertical-align: middle;
 }
 
 .account-table td {
-    padding: var(--space-16);
-    border-bottom: var(--border-1) solid var(--neutral-200);
-    color: var(--neutral-700);
+    padding: 16px 16px;
+    border-bottom: var(--border-1) solid var(--neutral-200, #e2e8f0);
+    color: var(--neutral-700, #334155);
+    vertical-align: middle;
+    font-size: 0.9rem;
 }
 
-.account-table tbody tr { transition: 0.25s ease; }
-.account-table tbody tr:hover { background: var(--primary-100); }
+.account-table thead th:first-child,
+.account-table tbody td:first-child {
+    text-align: left;
+    padding-left: 24px;
+}
+
+.account-table thead th:nth-child(2),
+.account-table tbody td:nth-child(2) {
+    text-align: left;
+}
+
+.account-table thead th:nth-child(3),
+.account-table tbody td:nth-child(3),
+.account-table thead th:nth-child(4),
+.account-table tbody td:nth-child(4),
+.account-table thead th:nth-child(5),
+.account-table tbody td:nth-child(5) {
+    text-align: center;
+}
+
+.account-table thead th:last-child,
+.account-table tbody td:last-child {
+    text-align: center;
+    padding-right: 24px;
+}
+
+.account-table tbody tr { 
+    transition: background-color 0.2s ease; 
+}
+
+.account-table tbody tr:hover { 
+    background: #f8fafc; 
+}
 
 /* USER INFO */
 .user-info { display: flex; align-items: center; gap: var(--space-12); }
-.user-info strong { display: block; color: var(--neutral-900); }
-.user-info span { color: var(--neutral-700); font-size: 0.875rem; }
+.user-info strong { display: block; color: var(--neutral-900); font-weight: 700; }
+.user-info span { color: var(--neutral-600, #64748b); font-size: 0.82rem; }
 
 .user-name-link { text-decoration: none; }
 .user-name-link strong {
     color: var(--neutral-900);
-    transition: 0.25s ease;
+    transition: 0.2s ease;
 }
 .user-name-link:hover strong {
     color: var(--primary-700);
     text-decoration: underline;
 }
 
-/* ROLE BADGE */
+/* ROLE & STATUS BADGES */
 .role,
 .status {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 32px;
-    padding: 0 var(--space-12);
+    min-height: 28px;
+    padding: 4px 14px;
     border-radius: 999px;
     font-size: 0.82rem;
-    font-weight: 800;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: capitalize;
 }
 
-.role.admin { background: var(--primary-100); color: var(--primary-800); }
-.role.manager { background: var(--secondary-100); color: var(--secondary-800); }
-.role.receptionist { background: var(--success-100); color: var(--success-700); }
-.role.housekeeping { background: var(--warning-400); color: var(--neutral-900); }
-.status-success { background: var(--success-100); color: var(--success-700); }
-.status-error { background: var(--error-100); color: var(--error-700); }
+.role.admin { background: #e0f2fe; color: #0369a1; }
+.role.manager { background: #f0fdf4; color: #15803d; }
+.role.receptionist { background: #fdf4ff; color: #a21caf; }
+.role.housekeeping,
+.role.housekeeper { background: #fff7ed; color: #c2410c; }
+
+.status-success { background: #dcfce7; color: #166534; }
+.status-error { background: #fee2e2; color: #991b1b; }
 
 /* ACTION BUTTONS */
-.action-group { display: flex; gap: var(--space-8); }
+.action-group { 
+    display: inline-flex; 
+    gap: 8px; 
+    justify-content: center; 
+    align-items: center; 
+}
 
+.action-group a,
 .action-group button {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: none;
-    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    border-radius: 8px;
     cursor: pointer;
-    transition: 0.25s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    font-size: 0.88rem;
 }
 
-.edit-btn { background: var(--primary-100); color: var(--primary-700); }
-.lock-btn,
-.unlock-btn { background: var(--warning-400); color: var(--neutral-900); }
-.delete-btn { background: var(--error-100); color: var(--error-700); }
+.view-btn { 
+    background: #f0f9ff; 
+    color: #0284c7; 
+    border-color: #bae6fd; 
+}
+.view-btn:hover { 
+    background: #e0f2fe; 
+    color: #0369a1; 
+    border-color: #7dd3fc; 
+}
 
+.edit-btn { 
+    background: #f8fafc; 
+    color: #3b82f6; 
+    border-color: #e2e8f0; 
+}
+.edit-btn:hover { 
+    background: #eff6ff; 
+    color: #1d4ed8; 
+    border-color: #bfdbfe; 
+}
+
+.lock-btn { 
+    background: #fffbeb; 
+    color: #d97706; 
+    border-color: #fde68a; 
+}
+.lock-btn:hover { 
+    background: #fef3c7; 
+    color: #b45309; 
+    border-color: #fcd34d; 
+}
+
+.unlock-btn { 
+    background: #f0fdf4; 
+    color: #16a34a; 
+    border-color: #bbf7d0; 
+}
+.unlock-btn:hover { 
+    background: #dcfce7; 
+    color: #15803d; 
+    border-color: #86efac; 
+}
+
+.delete-btn { 
+    background: #fef2f2; 
+    color: #dc2626; 
+    border-color: #fecaca; 
+}
+.delete-btn:hover { 
+    background: #fee2e2; 
+    color: #b91c1c; 
+    border-color: #fca5a5; 
+}
+
+.action-group a:hover,
 .action-group button:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
 /* ==========================================

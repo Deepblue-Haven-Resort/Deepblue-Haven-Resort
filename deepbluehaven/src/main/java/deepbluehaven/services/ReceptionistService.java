@@ -860,12 +860,6 @@ public class ReceptionistService {
         return list;
     }
 
-    @Transactional(readOnly = true)
-    public List<deepbluehaven.pojo.CustomerProfile> getAllCustomerProfiles() {
-        return entityManager.createQuery("SELECT cp FROM CustomerProfile cp JOIN FETCH cp.customer", deepbluehaven.pojo.CustomerProfile.class)
-                            .getResultList();
-    }
-
     private String formatVnd(BigDecimal amount) {
         if (amount == null) return "0";
         NumberFormat fmt = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
