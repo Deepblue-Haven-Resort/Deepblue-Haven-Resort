@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (summaryText) {
                     const currentShowingEnd = Math.min(end, totalItems);
                     const currentShowingStart = totalItems > 0 ? start + 1 : 0;
-                    summaryText.innerHTML = `Hiển thị <strong>${currentShowingStart}-${currentShowingEnd}</strong> trong số <strong>${totalItems}</strong> kết quả`;
+                    summaryText.innerHTML = `Showing <strong>${currentShowingStart}-${currentShowingEnd}</strong> of <strong>${totalItems}</strong> items`;
                 }
 
                 // Render pagination buttons
@@ -153,15 +153,59 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                     paginationContainer.appendChild(prevBtn);
 
-                    // Number buttons
-                    for (let i = 1; i <= totalPages; i++) {
-                        const numBtn = document.createElement("button");
-                        numBtn.type = "button";
-                        numBtn.className = `page-btn ${i === currentPage ? "active" : ""}`;
-                        numBtn.textContent = i;
-                        numBtn.addEventListener("click", () => renderTablePage(i));
-                        paginationContainer.appendChild(numBtn);
+                    function getPageItems(total, current) {
+                        if (total <= 7) {
+                            const arr = [];
+                            for (let i = 1; i <= total; i++) arr.push(i);
+                            return arr;
+                        }
+                        const pages = new Set();
+                        pages.add(1);
+                        pages.add(2);
+                        pages.add(3);
+                        for (let i = current - 1; i <= current + 1; i++) {
+                            if (i >= 1 && i <= total) {
+                                pages.add(i);
+                            }
+                        }
+                        pages.add(total - 2);
+                        pages.add(total - 1);
+                        pages.add(total);
+
+                        const sorted = Array.from(pages).sort((a, b) => a - b);
+                        const result = [];
+                        let prev = 0;
+                        for (const p of sorted) {
+                            if (prev > 0) {
+                                if (p - prev === 2) {
+                                    result.push(prev + 1);
+                                } else if (p - prev > 2) {
+                                    result.push('...');
+                                }
+                            }
+                            result.push(p);
+                            prev = p;
+                        }
+                        return result;
                     }
+
+                    const pageItems = getPageItems(totalPages, currentPage);
+                    pageItems.forEach(item => {
+                        if (item === '...') {
+                            const dots = document.createElement("span");
+                            dots.className = "page-dots";
+                            dots.style.cssText = "display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 36px; color: var(--neutral-400, #94a3b8); font-weight: bold;";
+                            dots.textContent = "...";
+                            paginationContainer.appendChild(dots);
+                        } else {
+                            const numBtn = document.createElement("button");
+                            numBtn.type = "button";
+                            numBtn.className = `page-btn ${item === currentPage ? "active" : ""}`;
+                            numBtn.textContent = item;
+                            numBtn.addEventListener("click", () => renderTablePage(item));
+                            paginationContainer.appendChild(numBtn);
+                        }
+                    });
 
                     // Next button
                     const nextBtn = document.createElement("button");
@@ -173,6 +217,40 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (currentPage < totalPages) renderTablePage(currentPage + 1);
                     });
                     paginationContainer.appendChild(nextBtn);
+
+                    // Jump to page input if totalPages > 7
+                    if (totalPages > 7) {
+                        const jumpWrap = document.createElement("div");
+                        jumpWrap.className = "pagination-jump";
+                        jumpWrap.style.cssText = "display: inline-flex; align-items: center; gap: 6px; margin-left: 12px;";
+                        jumpWrap.innerHTML = `
+                            <span style="font-size: 0.8125rem; color: #64748b; white-space: nowrap;">Go to:</span>
+                            <input type="number" min="1" max="${totalPages}" class="page-jump-input" style="width: 52px; height: 34px; text-align: center; font-size: 0.8125rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none;" placeholder="${currentPage}" />
+                            <button type="button" class="page-btn page-jump-btn" style="height: 34px; padding: 0 10px; font-size: 0.8125rem; min-width: auto;">Go</button>
+                        `;
+
+                        const jumpInput = jumpWrap.querySelector(".page-jump-input");
+                        const jumpBtn = jumpWrap.querySelector(".page-jump-btn");
+
+                        const doJump = () => {
+                            const val = parseInt(jumpInput.value, 10);
+                            if (!isNaN(val) && val >= 1 && val <= totalPages) {
+                                renderTablePage(val);
+                            } else {
+                                jumpInput.value = "";
+                            }
+                        };
+
+                        jumpBtn.addEventListener("click", doJump);
+                        jumpInput.addEventListener("keydown", (e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                doJump();
+                            }
+                        });
+
+                        paginationContainer.appendChild(jumpWrap);
+                    }
                 }
             }
 

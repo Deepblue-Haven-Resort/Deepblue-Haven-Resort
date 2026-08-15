@@ -282,10 +282,18 @@ public class BookingService {
 
         if (firstDetail != null) {
             if (firstDetail.getRoom() != null) {
-                dto.setRoomId(firstDetail.getRoom().getId());
-                dto.setRoomNumber(firstDetail.getRoom().getRoomNumber());
+                Room r = firstDetail.getRoom();
+                dto.setRoomId(r.getId());
+                dto.setRoomNumber(r.getRoomNumber());
+                String typeName = (r.getRoomType() != null) ? r.getRoomType().name() : (firstDetail.getRoomType() != null ? firstDetail.getRoomType().name() : "Standard");
+                dto.setRoomName("Room " + r.getRoomNumber() + " (" + typeName + ")");
+                if (r.getImages() != null && !r.getImages().isEmpty()) {
+                    dto.setRoomImageUrl(r.getImages().get(0));
+                }
             } else {
                 dto.setRoomNumber("—");
+                String typeName = (firstDetail.getRoomType() != null) ? firstDetail.getRoomType().name() : "Standard";
+                dto.setRoomName("Room (" + typeName + ")");
             }
             dto.setRoomType(firstDetail.getRoomType() != null ? firstDetail.getRoomType().name() : "—");
             dto.setCheckIn(firstDetail.getCheckIn());
@@ -300,6 +308,7 @@ public class BookingService {
         } else {
             dto.setRoomNumber("—");
             dto.setRoomType("—");
+            dto.setRoomName("Resort Booking");
             dto.setCheckIn(today);
             dto.setCheckOut(today.plusDays(1));
             dto.setNights(1);

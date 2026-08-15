@@ -2,18 +2,24 @@ package deepbluehaven.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import deepbluehaven.dto.CustomerProfileDTO;
+import deepbluehaven.dto.RoomCardViewDTO;
 import deepbluehaven.dto.ServiceDTO;
 import deepbluehaven.pojo.Customer;
 import deepbluehaven.pojo.CustomerProfile;
+import deepbluehaven.pojo.Room;
 import deepbluehaven.pojo.enums.ServiceStatus;
 import deepbluehaven.repositories.CustomerProfileRepository;
 import deepbluehaven.repositories.CustomerRepository;
+import deepbluehaven.repositories.RoomRepository;
 import deepbluehaven.repositories.ServiceRepository;
 
 @Service
@@ -22,13 +28,19 @@ public class CustomerService {
     private final ServiceRepository serviceRepository;
     private final CustomerRepository customerRepository;
     private final CustomerProfileRepository customerProfileRepository;
+    private final RoomRepository roomRepository;
+    private final RoomService roomService;
 
     public CustomerService(ServiceRepository serviceRepository,
                            CustomerRepository customerRepository,
-                           CustomerProfileRepository customerProfileRepository) {
+                           CustomerProfileRepository customerProfileRepository,
+                           RoomRepository roomRepository,
+                           RoomService roomService) {
         this.serviceRepository = serviceRepository;
         this.customerRepository = customerRepository;
         this.customerProfileRepository = customerProfileRepository;
+        this.roomRepository = roomRepository;
+        this.roomService = roomService;
     }
 
     @Transactional(readOnly = true)
@@ -100,30 +112,111 @@ public class CustomerService {
         return dto;
     }
 
+    @Transactional(readOnly = true)
+    public Set<Long> getFavoriteRoomIds(Long customerId) {
+        if (customerId == null) return Collections.emptySet();
+        return customerRepository.findByIdWithFavoriteRooms(customerId)
+                .map(c -> c.getFavoriteRooms().stream().map(Room::getId).collect(Collectors.toSet()))
+                .orElse(Collections.emptySet());
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Long> getFavoriteServiceIds(Long customerId) {
+        if (customerId == null) return Collections.emptySet();
+        return customerRepository.findByIdWithFavoriteServices(customerId)
+                .map(c -> c.getFavoriteServices().stream().map(deepbluehaven.pojo.Service::getId).collect(Collectors.toSet()))
+                .orElse(Collections.emptySet());
+    }
+
+    @Transactional
+    public boolean toggleFavoriteRoom(Long customerId, Long roomId) {
+        Customer customer = customerRepository.findByIdWithFavoriteRooms(customerId)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("Room not found"));
+
+        boolean removed = customer.getFavoriteRooms().removeIf(r -> r.getId().equals(roomId));
+        if (!removed) {
+            customer.getFavoriteRooms().add(room);
+        }
+        customerRepository.save(customer);
+        return !removed;
+    }
+
+    @Transactional
+    public boolean toggleFavoriteService(Long customerId, Long serviceId) {
+        Customer customer = customerRepository.findByIdWithFavoriteServices(customerId)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+        deepbluehaven.pojo.Service service = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new IllegalArgumentException("Service not found"));
+
+        boolean removed = customer.getFavoriteServices().removeIf(s -> s.getId().equals(serviceId));
+        if (!removed) {
+            customer.getFavoriteServices().add(service);
+        }
+        customerRepository.save(customer);
+        return !removed;
+    }
+
+    @Transactional(readOnly = true)
+    public List<RoomCardViewDTO> getFavoriteRooms(Long customerId) {
+        if (customerId == null) return Collections.emptyList();
+        Set<Long> favRoomIds = getFavoriteRoomIds(customerId);
+        return customerRepository.findByIdWithFavoriteRooms(customerId)
+                .map(c -> roomService.convertToCardViews(c.getFavoriteRooms(), favRoomIds))
+                .orElse(Collections.emptyList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ServiceDTO.Response> getFavoriteServices(Long customerId) {
+        if (customerId == null) return Collections.emptyList();
+        Set<Long> favServiceIds = getFavoriteServiceIds(customerId);
+        return customerRepository.findByIdWithFavoriteServices(customerId)
+                .map(c -> c.getFavoriteServices().stream().map(s -> toResponse(s, favServiceIds)).toList())
+                .orElse(Collections.emptyList());
+    }
+
     public List<ServiceDTO.Response> getAllActiveServices() {
+        return getAllActiveServices(Collections.emptySet());
+    }
+
+    public List<ServiceDTO.Response> getAllActiveServices(Set<Long> favoriteServiceIds) {
         List<deepbluehaven.pojo.Service> entities = serviceRepository.findByStatus(ServiceStatus.ACTIVE);
-        return entities.stream().map(this::toResponse).toList();
+        return entities.stream().map(s -> toResponse(s, favoriteServiceIds)).toList();
     }
 
     public List<ServiceDTO.Response> getAllOutOfStockServices() {
+        return getAllOutOfStockServices(Collections.emptySet());
+    }
+
+    public List<ServiceDTO.Response> getAllOutOfStockServices(Set<Long> favoriteServiceIds) {
         List<deepbluehaven.pojo.Service> entities = serviceRepository.findByStatus(ServiceStatus.OUT_OF_STOCK);
-        return entities.stream().map(this::toResponse).toList();
+        return entities.stream().map(s -> toResponse(s, favoriteServiceIds)).toList();
     }
 
     public List<ServiceDTO.Response> getVisibleServices() {
+        return getVisibleServices(Collections.emptySet());
+    }
+
+    public List<ServiceDTO.Response> getVisibleServices(Set<Long> favoriteServiceIds) {
         List<ServiceDTO.Response> result = new ArrayList<>();
-        result.addAll(getAllActiveServices());
-        result.addAll(getAllOutOfStockServices());
+        result.addAll(getAllActiveServices(favoriteServiceIds));
+        result.addAll(getAllOutOfStockServices(favoriteServiceIds));
         return result;
     }
 
     private ServiceDTO.Response toResponse(deepbluehaven.pojo.Service entity) {
+        return toResponse(entity, Collections.emptySet());
+    }
+
+    private ServiceDTO.Response toResponse(deepbluehaven.pojo.Service entity, Set<Long> favoriteServiceIds) {
         ServiceDTO.Response dto = new ServiceDTO.Response();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setDescription(entity.getDescription());
         dto.setType(entity.getType());
         dto.setCategory(entity.getCategory());
+        dto.setCategoryDisplayName(entity.getCategory() != null ? entity.getCategory().getDisplayName() : "Other");
         dto.setBasePrice(entity.getBasePrice());
         dto.setUnit(entity.getUnit());
         dto.setImages(entity.getImages() != null ? entity.getImages() : new ArrayList<>());
@@ -131,6 +224,7 @@ public class CustomerService {
         boolean isAvailable = (entity.getStatus() != null && entity.getStatus().name().equals("ACTIVE"));
         dto.setStatusClass(isAvailable ? "service-card__status--available" : "service-card__status--out-of-stock");
         dto.setStatusValue(isAvailable ? "active" : "out-of-stock");
+        dto.setFavorite(favoriteServiceIds != null && favoriteServiceIds.contains(entity.getId()));
         return dto;
     }
 }

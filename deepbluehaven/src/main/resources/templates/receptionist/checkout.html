@@ -211,8 +211,7 @@
                 <div class="form-grid-2col">
                     <div class="form-group form-group-marginless">
                         <label>Payment Settlement Method *</label>
-                        <select name="paymentMethodStr" class="form-select"
-                            onchange="updateCheckoutPaymentBtn(this.value)" required>
+                        <select name="paymentMethodStr" class="form-select" required>
                             <option value="BANK_TRANSFER" selected>Bank Transfer</option>
                             <option value="CREDIT_CARD">Credit / Debit Card</option>
                             <option value="CASH">Cash Payment</option>
@@ -229,8 +228,7 @@
 
                 <div class="modal-actions-end">
                     <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
-                    <button type="submit" id="coModalSubmitBtn" class="btn btn-cta"
-                        onclick="return triggerPaymentAction(event)"><i class="fa-solid fa-qrcode"></i> Display VietQR
+                    <button type="submit" id="coModalSubmitBtn" class="btn btn-cta"><i class="fa-solid fa-qrcode"></i> Display VietQR
                         Bank Transfer Code</button>
                 </div>
             </form>
@@ -249,7 +247,7 @@
             </div>
 
             <div class="ewallet-qr-actions">
-                <button type="button" class="btn btn-outline w-full" onclick="closeEWalletQrModal()">Close</button>
+                <button type="button" class="btn btn-outline w-full" data-close-qr-modal>Close</button>
             </div>
         </div>
     </div>

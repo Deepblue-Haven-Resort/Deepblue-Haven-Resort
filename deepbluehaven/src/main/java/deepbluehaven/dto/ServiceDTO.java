@@ -106,8 +106,41 @@ public class ServiceDTO {
         private ServiceStatus status;
         private String statusClass;
         private String statusValue;
+        private boolean isFavorite;
+        private String categoryDisplayName;
 
         public Response() {}
+
+        public String getCategoryDisplayName() {
+            if (categoryDisplayName != null && !categoryDisplayName.isBlank()) {
+                return categoryDisplayName;
+            }
+            return category != null ? category.getDisplayName() : "Other";
+        }
+
+        public void setCategoryDisplayName(String categoryDisplayName) {
+            this.categoryDisplayName = categoryDisplayName;
+        }
+
+        public boolean isFavorite() {
+            return isFavorite;
+        }
+
+        public boolean getFavorite() {
+            return isFavorite;
+        }
+
+        public boolean getIsFavorite() {
+            return isFavorite;
+        }
+
+        public void setFavorite(boolean favorite) {
+            isFavorite = favorite;
+        }
+
+        public void setIsFavorite(boolean favorite) {
+            isFavorite = favorite;
+        }
 
         public Long getId() { 
             return id; }

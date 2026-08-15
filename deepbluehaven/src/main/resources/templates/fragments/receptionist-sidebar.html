@@ -37,10 +37,16 @@
             <span>Room Rack Grid</span>
         </a>
 
-        <a th:href="@{/receptionist/guests}"
-           th:class="${activePage == 'guests'} ? 'sidebar-item active' : 'sidebar-item'">
-            <i class="fa-solid fa-users"></i>
-            <span>Guest Directory</span>
+        <a th:href="@{/receptionist/comments}"
+           th:class="${activePage == 'comments'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-comments"></i>
+            <span>Guest Feedback</span>
+        </a>
+
+        <a th:href="@{/receptionist/chat}"
+           th:class="${activePage == 'chat'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-headset"></i>
+            <span>Live Chat</span>
         </a>
 
         <a th:href="@{/receptionist/profile}"

@@ -696,3 +696,56 @@
     pointer-events: none;
 }
 
+/* PROFILE ACTIONS & PERMISSIONS */
+.profile-actions-bar {
+    margin-top: 24px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.profile-actions-bar .btn {
+    text-decoration: none;
+    padding: 8px 16px;
+    font-size: 0.88rem;
+}
+
+.profile-actions-bar .profile-btn-outline {
+    text-decoration: none;
+    padding: 8px 16px;
+    font-size: 0.88rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--primary-300, #cbd5e1);
+    border-radius: 6px;
+    color: var(--primary-700, #0369a1);
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+.profile-actions-bar .profile-btn-outline:hover {
+    background: var(--primary-100, #f0f9ff);
+    border-color: var(--primary-400, #94a3b8);
+}
+
+.permission-tag-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.permission-tag-group .role {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+}
+
+.profile-empty-message {
+    text-align: center;
+    color: var(--neutral-500);
+    padding: var(--space-24);
+}
+
+

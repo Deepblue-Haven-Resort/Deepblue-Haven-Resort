@@ -97,7 +97,6 @@
                                 <th>Paid Amount</th>
                                 <th>Payment Method</th>
                                 <th class="text-center">Status</th>
-                                <th class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,14 +111,9 @@
                                     <span th:class="|status ${inv.status == T(deepbluehaven.pojo.enums.InvoiceStatus).PAID ? 'status-success' : 'status-danger'}|"
                                           th:text="${inv.status}">PAID</span>
                                 </td>
-                                <td class="text-center">
-                                    <div class="table-actions">
-                                        <span th:text="${inv.status}">PAID</span>
-                                    </div>
-                                </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(invoices)}">
-                                <td colspan="8" class="empty-table-cell">No invoices recorded in database.</td>
+                                <td colspan="7" class="empty-table-cell">No invoices recorded in database.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -127,7 +121,7 @@
 
                 
                 <div class="table-footer">
-                    <p>Hiển thị <strong>1-2</strong> trong số <strong>196</strong> hóa đơn</p>
+                    <p>Showing <strong>1-2</strong> of <strong>196</strong> invoices</p>
                     <div class="pagination">
                         <button type="button" class="page-btn disabled">
                             <i class="fa-solid fa-chevron-left"></i>

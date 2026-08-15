@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_context_path" th:content="@{/}" />
+    <title>About Us | Deep Blue Haven Resort</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}" href="/assets/css/base.css">
+    <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css">
+    <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/home.css}" href="/assets/css/customer/home.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/about.css}" href="/assets/css/customer/about.css">
+</head>
+
+<body class="home-page about-page">
+
+    <div th:replace="~{fragments/header :: header(activePage='about')}"></div>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section class="about-hero">
+            <div class="about-hero__glow about-hero__glow--one"></div>
+            <div class="about-hero__glow about-hero__glow--two"></div>
+
+            <div class="container about-hero__inner">
+                <span class="about-kicker">Deep Blue Haven Story</span>
+                <h1>
+                    Crafting Timeless <em>Coastal Sanctuaries</em>
+                </h1>
+                <p>
+                    Rooted in the pristine turquoise bays of Vietnam, Deep Blue Haven is an oasis where natural serenity blends harmoniously with bespoke hospitality and architectural excellence.
+                </p>
+                <div class="about-hero__actions">
+                    <a th:href="@{/rooms}" class="btn btn-luxury btn-large">
+                        Explore Our Retreats
+                    </a>
+                    <a th:href="@{/contact}" class="btn btn-large home-btn-outline">
+                        Get In Touch
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- THE HAVEN STORY SECTION -->
+        <section class="container about-story">
+            <div class="about-story__grid">
+                <div class="about-story__content">
+                    <span class="about-tag">
+                        <i class="fa-solid fa-water"></i>
+                        Our Heritage
+                    </span>
+                    <h2 class="about-title">
+                        Where Ocean Meets Exquisite Serenity
+                    </h2>
+                    <p class="about-lead">
+                        Founded with a passionate vision to showcase Vietnam's most scenic coastal frontiers, Deep Blue Haven began with a single oceanfront property in Nha Trang. Today, our collection spans across Nha Trang Bay, Phu Quoc Island, and Quy Nhon Cliff.
+                    </p>
+                    <p class="about-lead">
+                        Every villa, suite, and garden terrace is positioned to maximize ocean breezes, golden hour sunsets, and natural light. We curate every detail—from hand-selected linens to private infinity pools—ensuring our guests experience ultimate peace and rejuvenation.
+                    </p>
+
+                    <div class="about-stats-grid">
+                        <div class="about-stat-card">
+                            <span class="about-stat-number">3</span>
+                            <span class="about-stat-label">Destinations</span>
+                        </div>
+                        <div class="about-stat-card">
+                            <span class="about-stat-number">150+</span>
+                            <span class="about-stat-label">Villas & Suites</span>
+                        </div>
+                        <div class="about-stat-card">
+                            <span class="about-stat-number">99%</span>
+                            <span class="about-stat-label">Satisfaction</span>
+                        </div>
+                        <div class="about-stat-card">
+                            <span class="about-stat-number">4.9</span>
+                            <span class="about-stat-label">Guest Rating</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-story__media">
+                    <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1000&q=80" 
+                         alt="Deep Blue Haven Luxury Resort Villa" 
+                         class="about-story__main-img">
+                    <div class="about-story__float-card">
+                        <div class="about-story__float-icon">
+                            <i class="fa-solid fa-gem"></i>
+                        </div>
+                        <div class="about-story__float-text">
+                            <strong>5-Star Luxury</strong>
+                            <span>International Hospitality Standard</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- THE 4 PILLARS PHILOSOPHY -->
+        <section class="about-pillars">
+            <div class="container">
+                <div class="about-pillars__header">
+                    <span class="about-tag">
+                        <i class="fa-solid fa-compass"></i>
+                        Our Philosophy
+                    </span>
+                    <h2 class="about-title">The Four Pillars of Deep Blue Haven</h2>
+                    <p class="about-lead">
+                        Our resort experience is shaped by four uncompromising principles of mindful luxury, dedicated service, and environmental stewardship.
+                    </p>
+                </div>
+
+                <div class="about-pillars__grid">
+                    <article class="pillar-card">
+                        <div class="pillar-card__icon">
+                            <i class="fa-solid fa-leaf"></i>
+                        </div>
+                        <h3>Eco-Ocean Harmony</h3>
+                        <p>Sustainable, eco-conscious architecture designed to protect surrounding coral reefs, coastal flora, and natural marine biodiversity.</p>
+                    </article>
+
+                    <article class="pillar-card">
+                        <div class="pillar-card__icon">
+                            <i class="fa-solid fa-bell-concierge"></i>
+                        </div>
+                        <h3>Bespoke Hospitality</h3>
+                        <p>24/7 dedicated butler service and customized itineraries crafted to make every second of your stay effortlessly memorable.</p>
+                    </article>
+
+                    <article class="pillar-card">
+                        <div class="pillar-card__icon">
+                            <i class="fa-solid fa-utensils"></i>
+                        </div>
+                        <h3>Culinary Artistry</h3>
+                        <p>Ocean-to-table seafood and world-class fusion dining celebrating the rich flavors of Vietnamese coastlines and global gastronomy.</p>
+                    </article>
+
+                    <article class="pillar-card">
+                        <div class="pillar-card__icon">
+                            <i class="fa-solid fa-spa"></i>
+                        </div>
+                        <h3>Holistic Wellness</h3>
+                        <p>Deep-sea mineral treatments, warm volcanic stone therapies, and seaside sunrise yoga designed for profound mental and physical balance.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- DESTINATIONS COLLECTION -->
+        <section class="container about-destinations">
+            <div class="about-destinations__header">
+                <span class="about-tag">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    Our Collection
+                </span>
+                <h2 class="about-title">Explore Our Coastal Paradises</h2>
+                <p class="about-lead">
+                    Discover three distinctive coastal destinations, each offering a unique harmony of breathtaking landscapes and private sanctuary living.
+                </p>
+            </div>
+
+            <div class="about-destinations__grid">
+                <!-- Destination 1 -->
+                <article class="destination-card">
+                    <div class="destination-card__media">
+                        <img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?w=700&q=80" alt="Nha Trang Bay Resort">
+                        <span class="destination-card__badge">Nha Trang Bay</span>
+                    </div>
+                    <div class="destination-card__body">
+                        <h3 class="destination-card__title">Nha Trang Bay Resort</h3>
+                        <span class="destination-card__location">
+                            <i class="fa-solid fa-location-dot"></i>
+                            Tran Phu Boulevard, Nha Trang
+                        </span>
+                        <p class="destination-card__desc">
+                            Perched along the iconic bay with panoramic ocean views, private white-sand beach access, and vibrant sunset lounges.
+                        </p>
+                        <a th:href="@{/rooms}" class="destination-card__action">
+                            <span>View Accommodations</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Destination 2 -->
+                <article class="destination-card">
+                    <div class="destination-card__media">
+                        <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=700&q=80" alt="Phu Quoc Island Resort">
+                        <span class="destination-card__badge">Phu Quoc Island</span>
+                    </div>
+                    <div class="destination-card__body">
+                        <h3 class="destination-card__title">Phu Quoc Island Resort</h3>
+                        <span class="destination-card__location">
+                            <i class="fa-solid fa-location-dot"></i>
+                            Bai Truong Sunset Coast, Phu Quoc
+                        </span>
+                        <p class="destination-card__desc">
+                            Surrounded by tropical jungle and turquoise shallows, offering secluded ocean villas, lagoon pools, and private sunset yacht charters.
+                        </p>
+                        <a th:href="@{/rooms}" class="destination-card__action">
+                            <span>View Accommodations</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Destination 3 -->
+                <article class="destination-card">
+                    <div class="destination-card__media">
+                        <img src="https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=700&q=80" alt="Quy Nhon Cliff Resort">
+                        <span class="destination-card__badge">Quy Nhon Cliff</span>
+                    </div>
+                    <div class="destination-card__body">
+                        <h3 class="destination-card__title">Quy Nhon Cliff Resort</h3>
+                        <span class="destination-card__location">
+                            <i class="fa-solid fa-location-dot"></i>
+                            Ghenh Rang Seaside, Quy Nhon
+                        </span>
+                        <p class="destination-card__desc">
+                            Sculpted into dramatic seaside cliffs, featuring private plunge pool pavilions, cliffside dining, and unmatched tranquility.
+                        </p>
+                        <a th:href="@{/rooms}" class="destination-card__action">
+                            <span>View Accommodations</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- CURATORS / LEADERSHIP TEAM -->
+        <section class="about-curators">
+            <div class="container">
+                <div class="about-destinations__header">
+                    <span class="about-tag">
+                        <i class="fa-solid fa-users"></i>
+                        Our Team
+                    </span>
+                    <h2 class="about-title">The Curators of Your Stay</h2>
+                    <p class="about-lead">
+                        Meet the passionate hospitality leaders and artisans dedicated to delivering an extraordinary resort journey.
+                    </p>
+                </div>
+
+                <div class="about-curators__grid">
+                    <div class="curator-card">
+                        <div class="curator-card__avatar">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&q=80" alt="General Manager">
+                        </div>
+                        <h4>Elena Rostova</h4>
+                        <span>General Manager</span>
+                        <p>"Our mission is to create moments that linger in memory long after you return home."</p>
+                    </div>
+
+                    <div class="curator-card">
+                        <div class="curator-card__avatar">
+                            <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?w=300&q=80" alt="Executive Chef">
+                        </div>
+                        <h4>Marc Delacroix</h4>
+                        <span>Executive Chef</span>
+                        <p>"We celebrate the sea’s daily harvest with precision, creativity, and vibrant Vietnamese notes."</p>
+                    </div>
+
+                    <div class="curator-card">
+                        <div class="curator-card__avatar">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&q=80" alt="Wellness Director">
+                        </div>
+                        <h4>Minh Trang Nguyen</h4>
+                        <span>Director of Wellness</span>
+                        <p>"Connecting body and mind through restorative therapies inspired by ocean rhythms."</p>
+                    </div>
+
+                    <div class="curator-card">
+                        <div class="curator-card__avatar">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80" alt="Head Concierge">
+                        </div>
+                        <h4>David Tran</h4>
+                        <span>Chief Concierge</span>
+                        <p>"No request is too grand or too subtle for our dedicated hospitality team."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AWARDS & RECOGNITION -->
+        <section class="container about-awards">
+            <span class="about-tag">
+                <i class="fa-solid fa-trophy"></i>
+                Recognition
+            </span>
+            <h2 class="about-title">Honored by Global Excellence</h2>
+
+            <div class="about-awards__grid">
+                <div class="award-item">
+                    <i class="fa-solid fa-award"></i>
+                    <strong>World Luxury Hotel Awards 2025</strong>
+                </div>
+                <div class="award-item">
+                    <i class="fa-solid fa-star"></i>
+                    <strong>Forbes Travel Guide Recommended</strong>
+                </div>
+                <div class="award-item">
+                    <i class="fa-solid fa-earth-americas"></i>
+                    <strong>Condé Nast Readers' Choice Top 10</strong>
+                </div>
+                <div class="award-item">
+                    <i class="fa-solid fa-spa"></i>
+                    <strong>Best Coastal Spa Resort Asia</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA SECTION -->
+        <section class="container about-cta">
+            <div class="about-cta__card">
+                <h2>Ready for Your Coastal Escape?</h2>
+                <p>Immerse yourself in pure tranquility, world-class dining, and unforgettable ocean views.</p>
+                <div class="about-hero__actions">
+                    <a th:href="@{/rooms}" class="btn btn-luxury btn-large">Book Your Stay</a>
+                    <a th:href="@{/offers}" class="btn btn-large home-btn-outline">View Exclusive Offers</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script th:src="@{/assets/js/customer/about.js}" src="/assets/js/customer/about.js"></script>
+</body>
+</html>

@@ -15,6 +15,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css" />
     <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css" />
     <link rel="stylesheet" th:href="@{/assets/css/customer/room-detail.css}" href="/assets/css/customer/room-detail.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/favorites.css}" href="/assets/css/customer/favorites.css">
 
     <!-- Flatpickr Datepicker CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -43,6 +44,18 @@
                         th:text="${room != null ? room.roomType : 'Ocean Premium Suite'}">
                         Ocean Premium Suite
                     </h1>
+                </div>
+
+                <div class="room-hero__actions">
+                    <button type="button"
+                            class="room-hero__favorite-btn favorite-toggle-btn"
+                            th:classappend="${isFavorite ? 'is-active' : ''}"
+                            th:attr="data-id=${room != null ? room.id : 0}, data-type='room'"
+                            aria-label="Toggle Favorite Room"
+                            title="Save to favorites">
+                        <i th:class="${isFavorite ? 'fa-solid fa-heart' : 'fa-regular fa-heart'}"></i>
+                        <span class="favorite-label-text" th:text="${isFavorite ? 'Saved to Favorites' : 'Save to Favorites'}">Save to Favorites</span>
+                    </button>
                 </div>
             </div>
 
@@ -391,6 +404,7 @@
 <!-- Flatpickr Datepicker JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script th:src="@{/assets/js/customer/room-detail.js}" src="/assets/js/customer/room-detail.js"></script>
+<script th:src="@{/assets/js/customer/favorite-toggle.js}" src="/assets/js/customer/favorite-toggle.js"></script>
 </div>
 </body>
 </html>

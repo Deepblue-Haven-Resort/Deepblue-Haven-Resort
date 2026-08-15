@@ -90,7 +90,7 @@
                     <p>List of rooms requiring cleaning or maintenance support</p>
                 </div>
                 <div class="filter-options">
-                    <button type="button" class="btn btn-small btn-cta" onclick="window.location.reload();">
+                    <button type="button" class="btn btn-small btn-cta">
                         Refresh
                     </button>
                     <a th:href="@{/housekeeper/tasks}" class="btn btn-small btn-cta">
@@ -161,7 +161,7 @@
             </div>
 
             <div class="table-footer">
-                <p>Hiển thị <strong>1-5</strong> trong số <strong th:text="${#lists.size(todayTasks)}">15</strong> công việc</p>
+                <p>Showing <strong>1-5</strong> of <strong th:text="${#lists.size(todayTasks)}">15</strong> tasks</p>
                 <div class="pagination">
                     <button type="button" class="page-btn disabled">
                         <i class="fa-solid fa-chevron-left"></i>

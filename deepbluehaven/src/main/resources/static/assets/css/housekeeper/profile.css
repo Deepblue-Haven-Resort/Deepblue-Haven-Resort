@@ -22,16 +22,13 @@
     align-items: center !important;
     justify-content: left !important;
     gap: var(--space-12) !important;
-    margin-top: 20px !important;
+    margin-top: 10px !important;
     margin-bottom: 20px !important;
-    padding-left: 30px !important;
+    padding-left: 0 !important;
     padding-bottom: 0 !important;
     border-bottom: none !important;
     text-align: left !important;
     width: 100% !important;
-    max-width: 500px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
 }
 
 .section-heading i {
@@ -104,11 +101,11 @@
     }
 
     .profile-info-grid {
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         column-gap: var(--space-24);
         row-gap: var(--space-20);
-        padding-left: 36px;
-        padding-right: 16px;
+        padding-left: 0;
+        padding-right: 0;
     }
 
     .admin-sidebar.is-collapsed~.admin-main {
@@ -136,8 +133,8 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
         column-gap: 12px;
         row-gap: 16px;
-        padding-left: 16px;
-        padding-right: 8px;
+        padding-left: 0;
+        padding-right: 0;
     }
 
     .admin-sidebar.is-collapsed~.admin-main .profile-info-item strong {
@@ -164,13 +161,15 @@
 
     .account-profile-card {
         display: grid;
-        grid-template-columns: 280px minmax(0, 1fr);
+        grid-template-columns: 300px minmax(0, 1fr);
         min-height: 620px;
         border-radius: var(--radius-xl);
         background: var(--surface-0);
         box-shadow: var(--shadow-xl);
         border: var(--border-1) solid var(--primary-200);
         overflow: hidden;
+        max-width: 980px;
+        margin: 0 auto;
     }
 
     .profile-sidebar-card {
@@ -191,7 +190,7 @@
 
     .profile-content-card {
         background: transparent;
-        padding: var(--space-32) var(--space-28);
+        padding: var(--space-32) var(--space-32);
         box-shadow: none;
         border: none;
         border-radius: 0;
@@ -215,14 +214,21 @@
 
     .profile-info-grid {
         display: grid !important;
-        grid-template-columns: repeat(2, minmax(180px, 1fr)) !important;
-        column-gap: 150px !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        column-gap: 36px !important;
         row-gap: var(--space-20) !important;
-        max-width: 500px !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
         padding-left: 0 !important;
         padding-right: 0 !important;
+    }
+
+    .profile-info-item strong {
+        margin-bottom: 6px;
+        word-break: break-word !important;
+        white-space: normal !important;
+        line-height: 1.45;
     }
 }
 
@@ -241,15 +247,21 @@
     }
 
     .account-profile-card {
-        grid-template-columns: 340px minmax(0, 1fr);
-        max-width: 920px !important;
+        grid-template-columns: 310px minmax(0, 1fr);
+        max-width: 1000px !important;
         margin: 0 auto !important;
         width: 100%;
     }
 
+    .profile-info-grid {
+        column-gap: 48px !important;
+    }
+
     .profile-info-item strong {
-        margin-bottom: 12px;
-        white-space: nowrap !important;
+        margin-bottom: 8px;
+        word-break: break-word !important;
+        white-space: normal !important;
+        line-height: 1.45;
     }
 }
 

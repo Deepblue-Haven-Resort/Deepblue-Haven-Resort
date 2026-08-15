@@ -119,6 +119,11 @@
     background: var(--success-600);
 }
 
+.action-empty-dash {
+    color: var(--neutral-400, #94a3b8);
+    font-weight: 500;
+}
+
 .table-actions .outline-btn {
     background: var(--gray-50);
     color: var(--gray-700);

@@ -8,8 +8,6 @@
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
-    
-    <!-- Đồng bộ stylesheet: Sử dụng cả hai file css profile theo đúng thứ tự của Housekeeper -->
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/profile-employee.css}">
     <link rel="stylesheet" th:href="@{/assets/css/housekeeper/profile.css}">
@@ -29,18 +27,19 @@
             <!-- Cột bên trái (Sidebar Card) -->
             <aside class="profile-sidebar-card">
                 <div class="profile-avatar">
-                    <i class="fa-solid fa-headset"></i>
+                    <img th:src="${worker?.profile?.avatarUrl ?: 'https://res.cloudinary.com/xio0mgix/image/upload/v1786687237/c683ecce-3e41-423d-b8ee-f8dd0189ffdc.png'}"
+                         alt="Receptionist Avatar">
                 </div>
 
-                <h2 th:text="${worker?.profile?.fullName ?: 'Le Thanh Ha'}">Le Thanh Ha</h2>
+                <h2 th:text="${worker?.profile?.fullName ?: 'Jessica Garcia'}">Jessica Garcia</h2>
                 <p>Receptionist Staff</p>
 
                 <div class="profile-experience-box">
                     <div class="experience-item">
-                        <i class="fa-solid fa-calendar-check"></i>
+                        <i class="fa-solid fa-star"></i>
                         <div>
-                            <span>Years of Experience</span>
-                            <strong>2 years</strong>
+                            <span>Performance Score</span>
+                            <strong th:text="|${#numbers.formatDecimal(worker?.profile?.performanceScore ?: 90.0, 1, 1)}%|">90.0%</strong>
                         </div>
                     </div>
 
@@ -48,13 +47,13 @@
                         <i class="fa-solid fa-user-plus"></i>
                         <div>
                             <span>Account Created</span>
-                            <strong>10/05/2024</strong>
+                            <strong th:text="${worker?.createdAt != null ? #temporals.format(worker.createdAt, 'dd/MM/yyyy') : '10/05/2024'}">10/05/2024</strong>
                         </div>
                     </div>
                 </div>
 
                 <div class="profile-badges">
-                    <span class="status status-success" th:text="${worker?.status?.name() ?: 'Active'}">Active</span>
+                    <span class="status status-success" th:text="${worker?.status?.name() ?: 'ACTIVE'}">ACTIVE</span>
                     <span class="role receptionist">Receptionist</span>
                 </div>
             </aside>
@@ -71,33 +70,33 @@
                     <div class="profile-info-grid">
                         <div class="profile-info-item">
                             <span>Full Name</span>
-                            <strong th:text="${worker?.profile?.fullName ?: 'Le Thanh Ha'}">Le Thanh Ha</strong>
+                            <strong th:text="${worker?.profile?.fullName ?: 'Jessica Garcia'}">Jessica Garcia</strong>
                         </div>
                         <div class="profile-info-item">
                             <span>Gender</span>
-                            <strong>Female</strong>
+                            <strong th:text="${worker?.profile?.gender != null ? (worker.profile.gender.name() == 'FEMALE' ? 'Female' : 'Male') : 'Female'}">Female</strong>
                         </div>
                         <div class="profile-info-item">
                             <span>Date of Birth</span>
-                            <strong>15/09/1998</strong>
+                            <strong th:text="${worker?.profile?.dateOfBirth != null ? #temporals.format(worker.profile.dateOfBirth, 'dd/MM/yyyy') : '15/09/1998'}">15/09/1998</strong>
                         </div>
                         <div class="profile-info-item">
                             <span>Phone Number</span>
-                            <strong th:text="${worker?.profile?.phoneNumber ?: '+84 905 678 910'}">+84 905 678 910</strong>
+                            <strong th:text="${worker?.profile?.phoneNumber ?: '+1-555-185-1155'}">+1-555-185-1155</strong>
                         </div>
                         <div class="profile-info-item">
                             <span>Work Email</span>
-                            <strong th:text="${worker?.profile?.email ?: 'thanha.rec@deepbluehaven.com'}">thanha.rec@deepbluehaven.com</strong>
+                            <strong th:text="${worker?.profile?.email ?: 'jessica.garcia@deepbluehaven.com'}">jessica.garcia@deepbluehaven.com</strong>
                         </div>
                         <div class="profile-info-item">
                             <span>Address</span>
-                            <strong>Da Nang, Viet Nam</strong>
+                            <strong th:text="${worker?.profile?.address ?: 'Da Nang, Viet Nam'}">Da Nang, Viet Nam</strong>
                         </div>
                     </div>
                 </div>
 
                 <div class="profile-info-section">
-                    <div class="section-heading">
+                    <div class="section-heading employee-heading">
                         <i class="fa-solid fa-briefcase"></i>
                         <span>Employee Information</span>
                     </div>
@@ -105,23 +104,19 @@
                     <div class="profile-info-grid">
                         <div class="profile-info-item">
                             <span>Employee Code</span>
-                            <strong th:text="${worker?.username ?: 'EMP-REC-003'}">EMP-REC-003</strong>
+                            <strong th:text="${worker?.employeeCode ?: worker?.username ?: 'seed_worker_006'}">seed_worker_006</strong>
                         </div>
                         <div class="profile-info-item">
                             <span>Department</span>
-                            <strong>Front Desk & Guest Services</strong>
+                            <strong th:text="${worker?.profile?.department != null ? (worker.profile.department.name() == 'RECEPTION' ? 'Front Desk & Guest Services' : worker.profile.department.name()) : 'Front Desk & Guest Services'}">Front Desk & Guest Services</strong>
                         </div>
                         <div class="profile-info-item">
-                            <span>Duty Shift</span>
-                            <strong>Morning Shift (06:00 AM - 02:30 PM)</strong>
-                        </div>
-                        <div class="profile-info-item">
-                            <span>Assigned Desk</span>
-                            <strong>Main Lobby Desk #1</strong>
+                            <span>Role Level</span>
+                            <strong th:text="${worker?.profile?.roleLevel != null ? 'Level ' + worker.profile.roleLevel : 'Level 1'}">Level 1</strong>
                         </div>
                         <div class="profile-info-item">
                             <span>Start Date</span>
-                            <strong>10/05/2024</strong>
+                            <strong th:text="${worker?.createdAt != null ? #temporals.format(worker.createdAt, 'dd/MM/yyyy') : '10/05/2024'}">10/05/2024</strong>
                         </div>
                         <div class="profile-info-item">
                             <span>Role</span>

@@ -34,6 +34,9 @@ public class ChatMessage {
     @Column(name = "sender_id")
     private Long senderId;
 
+    @Column(name = "sender_name", length = 150, columnDefinition = "NVARCHAR(150)")
+    private String senderName;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "sender_type", nullable = false, length = 20)
     private SenderType senderType;
@@ -42,8 +45,11 @@ public class ChatMessage {
     @Column(name = "message_type", nullable = false, length = 20)
     private MessageType messageType = MessageType.TEXT;
 
-    @Column(name = "content", nullable = false, length = 500, columnDefinition = "NVARCHAR(500)")
+    @Column(name = "content", nullable = false, length = 1000, columnDefinition = "NVARCHAR(1000)")
     private String content;
+
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead = false;
 
     @CreationTimestamp
     @Column(name = "timestamp", nullable = false, updatable = false)
@@ -52,37 +58,71 @@ public class ChatMessage {
     public ChatMessage() {}
 
     public Long getId() { 
-        return id; }
+        return id; 
+    }
     public void setId(Long id) { 
-        this.id = id; }
+        this.id = id; 
+    }
 
     public ChatSession getChatSession() { 
-        return chatSession; }
+        return chatSession; 
+    }
     public void setChatSession(ChatSession chatSession) { 
-        this.chatSession = chatSession; }
+        this.chatSession = chatSession; 
+    }
 
     public Long getSenderId() { 
-        return senderId; }
+        return senderId; 
+    }
     public void setSenderId(Long senderId) { 
-        this.senderId = senderId; }
+        this.senderId = senderId; 
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
 
     public SenderType getSenderType() { 
-        return senderType; }
+        return senderType; 
+    }
     public void setSenderType(SenderType senderType) { 
-        this.senderType = senderType; }
+        this.senderType = senderType; 
+    }
 
     public MessageType getMessageType() { 
-        return messageType; }
+        return messageType; 
+    }
     public void setMessageType(MessageType messageType) { 
-        this.messageType = messageType; }
+        this.messageType = messageType; 
+    }
 
     public String getContent() { 
-        return content; }
+        return content; 
+    }
     public void setContent(String content) { 
-        this.content = content; }
+        this.content = content; 
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+    public boolean getIsRead() {
+        return isRead;
+    }
+    public void setRead(boolean isRead) {
+        this.isRead = isRead;
+    }
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
 
     public LocalDateTime getTimestamp() { 
-        return timestamp; }
+        return timestamp; 
+    }
     public void setTimestamp(LocalDateTime timestamp) { 
-        this.timestamp = timestamp; }
+        this.timestamp = timestamp; 
+    }
 }

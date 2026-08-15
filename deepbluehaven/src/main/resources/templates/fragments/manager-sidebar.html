@@ -49,6 +49,16 @@
             <span>Pricing & Offers</span>
         </a>
 
+        <a th:href="@{/manager/comments}" th:class="${activePage == 'comments'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-comments"></i>
+            <span>Guest Feedback</span>
+        </a>
+
+        <a th:href="@{/manager/chat}" th:class="${activePage == 'chat'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-headset"></i>
+            <span>Live Chat</span>
+        </a>
+
         <a th:href="@{/manager/logs}" th:class="${activePage == 'logs'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-list-check"></i>
             <span>Operational Logs</span>

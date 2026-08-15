@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_context_path" th:content="@{/}" />
     <title>Services | Deepblue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css">
@@ -14,6 +15,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css" />
     <link rel="stylesheet" th:href="@{/assets/css/customer/rooms-list.css}" href="/assets/css/customer/rooms-list.css">
     <link rel="stylesheet" th:href="@{/assets/css/customer/service.css}" href="/assets/css/customer/service.css">
+    <link rel="stylesheet" th:href="@{/assets/css/customer/favorites.css}" href="/assets/css/customer/favorites.css">
     <link rel="stylesheet" th:href="@{/assets/css/customer/service-confirmation.css}"
         href="/assets/css/customer/service-confirmation.css">
 
@@ -187,7 +189,7 @@
                                 <div class="rooms-price-filter__header">
                                     <div class="rooms-dropdown__copy">
                                         <strong>Service Price</strong>
-                                        <small class="rooms-price-filter__value">0 – 10 million</small>
+                                        <small class="rooms-price-filter__value">0 – 3 million</small>
                                     </div>
                                     <i class="fa-solid fa-tag rooms-price-filter__icon"></i>
                                 </div>
@@ -199,16 +201,16 @@
 
                                     <input type="range" id="servicePriceMin"
                                         class="rooms-price-slider__input rooms-price-slider__input--min" min="0"
-                                        max="10" step="1" value="0" aria-label="Minimum service price">
+                                        max="3" step="0.1" value="0" aria-label="Minimum service price">
 
                                     <input type="range" id="servicePriceMax"
                                         class="rooms-price-slider__input rooms-price-slider__input--max" min="0"
-                                        max="10" step="1" value="10" aria-label="Maximum service price">
+                                        max="3" step="0.1" value="3" aria-label="Maximum service price">
                                 </div>
 
                                 <div class="rooms-price-filter__labels">
                                     <span id="servicePriceMinLabel">0 million</span>
-                                    <span id="servicePriceMaxLabel">10 million</span>
+                                    <span id="servicePriceMaxLabel">3 million</span>
                                 </div>
                             </div>
 
@@ -318,138 +320,23 @@
                                 <div th:replace="~{fragments/service-card :: serviceCard(
                                 ${svc.images != null && !svc.images.empty ? svc.images[0] : 'https://res.cloudinary.com/xio0mgix/image/upload/v1786686824/f9b9112d-047b-4756-a23d-95fd3d7dd478.png'}, 
                                 ${svc.name}, 
-                                ${svc.category}, 
+                                ${svc.categoryDisplayName}, 
                                 ${svc.name}, 
                                 |Per ${svc.unit}|, 
                                 ${svc.status}, 
                                 ${svc.statusClass}, 
                                 ${svc.description}, 
-                                ${svc.category}, 
+                                ${svc.categoryDisplayName}, 
                                 ${svc.unit}, 
                                 |${#numbers.formatDecimal(svc.basePrice, 0, 'COMMA', 0, 'POINT')} VND|, 
                                 ${svc.basePrice}, 
-                                ${svc.category != null ? #strings.toLowerCase(svc.category) : 'all'}, 
-                                ${svc.type != null ? #strings.toLowerCase(svc.type) : 'all'}, 
+                                ${svc.category != null ? #strings.toLowerCase(#strings.replace(svc.category, '_', '-')) : 'all'}, 
+                                ${svc.type != null ? #strings.toLowerCase(#strings.replace(svc.type, '_', '-')) : 'all'}, 
                                 ${svc.statusValue}, 
-                                ${svc.id}
+                                ${svc.id},
+                                ${svc.favorite}
                             )}"></div>
                             </th:block>
-                            <th:block th:remove="all">
-                                <div th:replace="~{fragments/service-card :: serviceCard(
-                            '/images/services/ocean-breakfast.jpg',
-                            'Ocean Breakfast',
-                            'Food & Beverage',
-                            'Ocean Breakfast',
-                            'Per person',
-                            'ACTIVE',
-                            'service-card__status--available',
-                            'A fresh seaside breakfast set with tropical fruits, pastry and premium coffee.',
-                            'FOOD_BEVERAGE',
-                            'person',
-                            '450,000 VND',
-                            450000,
-                            'food-beverage',
-                            'per-person',
-                            'active',
-                            1
-                        )}"></div>
-
-                                <div th:replace="~{fragments/service-card :: serviceCard(
-                            '/images/services/spa-therapy.jpg',
-                            'Deep Sea Spa Therapy',
-                            'Spa',
-                            'Deep Sea Spa Therapy',
-                            'Per person',
-                            'ACTIVE',
-                            'service-card__status--available',
-                            'Relaxing ocean-inspired therapy with essential oils and warm stone treatment.',
-                            'SPA',
-                            'session',
-                            '1,200,000 VND',
-                            1200000,
-                            'spa',
-                            'per-person',
-                            'active',
-                            2
-                        )}"></div>
-
-                                <div th:replace="~{fragments/service-card :: serviceCard(
-                            '/images/services/airport-transfer.jpg',
-                            'Airport Transfer',
-                            'Transport',
-                            'Airport Transfer',
-                            'Per trip',
-                            'ACTIVE',
-                            'service-card__status--available',
-                            'Private transfer between the airport and Deepblue Haven with luggage support.',
-                            'TRANSPORT',
-                            'trip',
-                            '750,000 VND',
-                            750000,
-                            'transport',
-                            'per-trip',
-                            'active',
-                            3
-                        )}
-                        "></div>
-
-                                <div th:replace="~{fragments/service-card :: serviceCard(
-                            '/images/services/laundry-service.jpg',
-                            'Express Laundry',
-                            'Laundry',
-                            'Express Laundry',
-                            'Per order',
-                            'ACTIVE',
-                            'service-card__status--available',
-                            'Same-day laundry and ironing service for your resort stay.',
-                            'LAUNDRY',
-                            'order',
-                            '300,000 VND',
-                            300000,
-                            'laundry',
-                            'per-order',
-                            'active',
-                            4
-                        )}"></div>
-
-                                <div th:replace="~{fragments/service-card :: serviceCard(
-                            '/images/services/mini-bar.jpg',
-                            'Premium Mini Bar Set',
-                            'Mini Bar',
-                            'Premium Mini Bar Set',
-                            'Per room',
-                            'ACTIVE',
-                            'service-card__status--available',
-                            'A curated mini bar package with snacks, soft drinks and tropical refreshments.',
-                            'MINI_BAR',
-                            'room',
-                            '650,000 VND',
-                            650000,
-                            'mini-bar',
-                            'per-room',
-                            'active',
-                            5
-                        )}"></div>
-                            </th:block>
-                            <div th:replace="~{fragments/service-card :: serviceCard(
-                            '/images/services/kayak.jpg',
-                            'Sunset Kayak Experience',
-                            'Sport',
-                            'Sunset Kayak Experience',
-                            'Per person',
-                            'OUT_OF_STOCK',
-                            'service-card__status--out-of-stock',
-                            'Guided kayak experience during sunset near the resort bay.',
-                            'SPORT',
-                            'person',
-                            '900,000 VND',
-                            900000,
-                            'sport',
-                            'per-person',
-                            'out-of-stock',
-                            6
-                        )}"></div>
-
                         </div>
 
                         <p class="rooms-empty-message" id="servicesEmptyMessage" hidden>
@@ -470,6 +357,7 @@
     <script th:src="@{/assets/js/customer/service-confirmation.js}" src="/assets/js/customer/service-confirmation.js"></script>
 
     <script th:src="@{/assets/js/customer/service.js}" src="/assets/js/customer/service.js"></script>
+    <script th:src="@{/assets/js/customer/favorite-toggle.js}" src="/assets/js/customer/favorite-toggle.js"></script>
 
     <div th:replace="~{fragments/footer :: footer}"></div>
 

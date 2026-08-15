@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Feedback & Inquiries | Reception Desk - Deep Blue Haven</title>
+    <!-- Core & Vendor CSS -->
+    <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/components.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/staff/comments.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+    <!-- Receptionist Sidebar Fragment -->
+    <div th:replace="~{fragments/receptionist-sidebar :: receptionistSidebar}"></div>
+
+    <main class="admin-main">
+        <section class="dashboard-hero">
+            <div>
+                <span class="page-label"><i class="fa-solid fa-comments"></i> Guest Relations</span>
+                <h1>Guest Feedback & Contact Inquiries</h1>
+            </div>
+        </section>
+
+        <div class="admin-content" style="padding: 24px 32px;">
+            <!-- Toast Feedback Notifications -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fa-solid fa-circle-check"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <!-- KPI Statistics Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-card__icon kpi-card__icon--rating">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="kpi-card__content">
+                        <span class="kpi-card__label">Average Rating</span>
+                        <h3 class="kpi-card__val">
+                            <span th:text="${statistics.averageRating}">4.8</span> <small>/ 5.0</small>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-card__icon kpi-card__icon--total">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <div class="kpi-card__content">
+                        <span class="kpi-card__label">Total Reviews</span>
+                        <h3 class="kpi-card__val" th:text="${statistics.totalComments}">0</h3>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-card__icon kpi-card__icon--complaint">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="kpi-card__content">
+                        <span class="kpi-card__label">Guest Complaints</span>
+                        <h3 class="kpi-card__val" th:text="${statistics.complaintsCount}">0</h3>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-card__icon kpi-card__icon--inquiry">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <div class="kpi-card__content">
+                        <span class="kpi-card__label">Pending Inquiries</span>
+                        <h3 class="kpi-card__val" th:text="${statistics.pendingInquiries}">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Tabs -->
+            <div class="feedback-tabs-nav">
+                <button type="button" class="tab-nav-btn active" data-tab="tab-reviews">
+                    <i class="fa-solid fa-star-half-stroke"></i>
+                    <span>Customer Reviews & Complaints (<span th:text="${#lists.size(comments)}">0</span>)</span>
+                </button>
+                <button type="button" class="tab-nav-btn" data-tab="tab-inquiries">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Contact Inquiries (<span th:text="${#lists.size(inquiries)}">0</span>)</span>
+                </button>
+            </div>
+
+            <!-- TAB 1: CUSTOMER REVIEWS & COMPLAINTS -->
+            <div class="feedback-tab-pane active" id="tab-reviews">
+                <!-- Filter bar -->
+                <div class="feedback-filter-bar">
+                    <div class="filter-pills">
+                        <a th:href="@{/receptionist/comments(filter='all')}" th:class="${currentFilter == 'all' or currentFilter == null} ? 'filter-pill active' : 'filter-pill'">All Feedback</a>
+                        <a th:href="@{/receptionist/comments(filter='complaints')}" th:class="${currentFilter == 'complaints'} ? 'filter-pill active' : 'filter-pill'">🚨 Complaints Only</a>
+                        <a th:href="@{/receptionist/comments(filter='unanswered')}" th:class="${currentFilter == 'unanswered'} ? 'filter-pill active' : 'filter-pill'">⏳ Unanswered</a>
+                        <a th:href="@{/receptionist/comments(filter='positive')}" th:class="${currentFilter == 'positive'} ? 'filter-pill active' : 'filter-pill'">⭐ 4-5 Stars</a>
+                        <a th:href="@{/receptionist/comments(filter='negative')}" th:class="${currentFilter == 'negative'} ? 'filter-pill active' : 'filter-pill'">⚠️ 1-3 Stars</a>
+                    </div>
+                </div>
+
+                <!-- Reviews Grid -->
+                <div class="reviews-list-grid" th:if="${not #lists.isEmpty(comments)}">
+                    <div th:each="c : ${comments}" class="review-card" th:classappend="${c.isComplaint} ? 'review-card--complaint' : ''">
+                        <div class="review-card__header">
+                            <div class="review-card__author">
+                                <div class="review-card__avatar">
+                                    <span th:text="${#strings.substring(c.customerName != null ? c.customerName : 'G', 0, 1)}">G</span>
+                                </div>
+                                <div>
+                                    <h4 th:text="${c.customerName != null ? c.customerName : 'Guest'}">Guest Name</h4>
+                                    <span class="review-card__date" th:text="${c.formattedCreatedAt}">Date</span>
+                                </div>
+                            </div>
+
+                            <div class="review-card__badges">
+                                <span class="badge-target" th:text="${c.targetName}">Ocean Villa</span>
+                                <span th:if="${c.isComplaint}" class="badge-complaint">Complaint</span>
+                                <span th:if="${c.isResolved}" class="badge-resolved"><i class="fa-solid fa-check"></i> Resolved</span>
+                            </div>
+                        </div>
+
+                        <!-- Rating Stars -->
+                        <div class="review-card__rating">
+                            <span class="stars-gold">
+                                <i th:each="i : ${#numbers.sequence(1, c.rating != null ? c.rating : 5)}" class="fa-solid fa-star"></i>
+                            </span>
+                            <span class="rating-num" th:text="${c.rating} + '.0'">5.0</span>
+                        </div>
+
+                        <!-- Review Text -->
+                        <div class="review-card__content">
+                            <p th:text="${c.content}">Customer comment content goes here...</p>
+                        </div>
+
+                        <!-- Staff Response (if any) -->
+                        <div class="review-card__response" th:if="${c.response != null and not #strings.isEmpty(c.response)}">
+                            <div class="response-header">
+                                <i class="fa-solid fa-reply"></i>
+                                <span>Resort Response</span>
+                                <small th:if="${c.respondedByName != null}">by <b th:text="${c.respondedByName}">Staff</b> (<span th:text="${c.formattedRespondedAt}">time</span>)</small>
+                            </div>
+                            <p th:text="${c.response}"></p>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="review-card__footer">
+                            <button type="button" class="btn-reply-feedback" 
+                                    th:data-id="${c.id}"
+                                    th:data-name="${c.customerName}"
+                                    th:data-content="${c.content}"
+                                    th:data-response="${c.response}">
+                                <i class="fa-solid fa-reply"></i>
+                                <span th:text="${c.response != null and not #strings.isEmpty(c.response)} ? 'Edit Response' : 'Reply to Guest'">Reply</span>
+                            </button>
+
+                            <form th:if="${c.isComplaint and not c.isResolved}" th:action="@{/receptionist/comments/{id}/resolve(id=${c.id})}" method="POST" style="display:inline;">
+                                <input type="hidden" name="isResolved" value="true">
+                                <button type="submit" class="btn-resolve-feedback" title="Mark this complaint as resolved">
+                                    <i class="fa-solid fa-check-double"></i> Resolve
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="feedback-empty-state" th:if="${#lists.isEmpty(comments)}">
+                    <i class="fa-solid fa-comment-slash"></i>
+                    <h3>No customer feedback found</h3>
+                    <p>There are no reviews matching your current filter criteria.</p>
+                </div>
+            </div>
+
+            <!-- TAB 2: CONTACT FORM INQUIRIES -->
+            <div class="feedback-tab-pane" id="tab-inquiries">
+                <!-- Inquiries Filter Bar -->
+                <div class="feedback-filter-bar">
+                    <div class="filter-pills">
+                        <a th:href="@{/receptionist/comments(inquiryStatus='ALL')}" th:class="${currentInquiryStatus == 'ALL' or currentInquiryStatus == null} ? 'filter-pill active' : 'filter-pill'">All Inquiries</a>
+                        <a th:href="@{/receptionist/comments(inquiryStatus='PENDING')}" th:class="${currentInquiryStatus == 'PENDING'} ? 'filter-pill active' : 'filter-pill'">🔴 Pending</a>
+                        <a th:href="@{/receptionist/comments(inquiryStatus='CONTACTED')}" th:class="${currentInquiryStatus == 'CONTACTED'} ? 'filter-pill active' : 'filter-pill'">🟡 Contacted</a>
+                        <a th:href="@{/receptionist/comments(inquiryStatus='RESOLVED')}" th:class="${currentInquiryStatus == 'RESOLVED'} ? 'filter-pill active' : 'filter-pill'">🟢 Resolved</a>
+                    </div>
+                </div>
+
+                <!-- Inquiries Table -->
+                <div class="inquiries-table-card" th:if="${not #lists.isEmpty(inquiries)}">
+                    <table class="inquiries-table">
+                        <thead>
+                            <tr>
+                                <th>Inquirer</th>
+                                <th>Contact Info</th>
+                                <th>Resort Location</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Submitted</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="inq : ${inquiries}">
+                                <td>
+                                    <strong th:text="${inq.fullName}">Nguyen Van A</strong>
+                                </td>
+                                <td>
+                                    <div><i class="fa-solid fa-envelope"></i> <a th:href="'mailto:' + ${inq.email}" th:text="${inq.email}">email@mail.com</a></div>
+                                    <div th:if="${inq.phone != null}"><i class="fa-solid fa-phone"></i> <a th:href="'tel:' + ${inq.phone}" th:text="${inq.phone}">0909123456</a></div>
+                                </td>
+                                <td>
+                                    <span class="badge-location" th:text="${inq.resortLocation != null ? inq.resortLocation : 'General'}">Nha Trang</span>
+                                </td>
+                                <td>
+                                    <span class="badge-inquiry-type" th:text="${inq.inquiryType != null ? inq.inquiryType : 'General Inquiry'}">Booking</span>
+                                </td>
+                                <td class="message-preview-cell">
+                                    <div class="message-clamp" th:text="${inq.message}">Message preview...</div>
+                                </td>
+                                <td>
+                                    <span class="status-badge" th:classappend="'status-badge--' + ${#strings.toLowerCase(inq.status)}" th:text="${inq.status}">PENDING</span>
+                                </td>
+                                <td>
+                                    <small th:text="${inq.formattedCreatedAt}">time</small>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn-action-inquiry"
+                                            th:data-id="${inq.id}"
+                                            th:data-name="${inq.fullName}"
+                                            th:data-email="${inq.email}"
+                                            th:data-phone="${inq.phone}"
+                                            th:data-location="${inq.resortLocation}"
+                                            th:data-type="${inq.inquiryType}"
+                                            th:data-message="${inq.message}"
+                                            th:data-status="${inq.status}"
+                                            th:data-notes="${inq.replyNotes}">
+                                        <i class="fa-solid fa-pen-to-square"></i> Follow Up
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty Inquiries -->
+                <div class="feedback-empty-state" th:if="${#lists.isEmpty(inquiries)}">
+                    <i class="fa-solid fa-inbox"></i>
+                    <h3>No contact inquiries</h3>
+                    <p>There are no messages matching your status filter.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- MODAL: REPLY TO COMMENT -->
+<div class="modal-backdrop" id="replyCommentModal">
+    <div class="modal-dialog">
+        <form id="replyCommentForm" method="POST" th:action="@{/receptionist/comments/0/reply}">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-reply"></i> Reply to Customer Feedback</h3>
+                <button type="button" class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-quote-box">
+                    <strong id="modalCustomerName">Customer</strong> said:
+                    <p id="modalCustomerContent" class="modal-quote-text"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="commentReplyText">Official Resort Response</label>
+                    <textarea id="commentReplyText" name="response" rows="4" class="form-control" required placeholder="Write a courteous response addressing the customer's comments..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel">Cancel</button>
+                <button type="submit" class="btn-modal-submit">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Response
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL: FOLLOW UP INQUIRY -->
+<div class="modal-backdrop" id="followUpInquiryModal">
+    <div class="modal-dialog">
+        <form id="followUpInquiryForm" method="POST" th:action="@{/receptionist/inquiries/0/update}">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-envelope-open-text"></i> Contact Inquiry Follow-Up</h3>
+                <button type="button" class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="inquiry-modal-details">
+                    <div class="detail-row">
+                        <span>Customer Name:</span>
+                        <strong id="inqModalName">-</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>Email / Phone:</span>
+                        <strong id="inqModalContact">-</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>Resort / Subject:</span>
+                        <strong id="inqModalSubject">-</strong>
+                    </div>
+                    <div class="detail-message-box">
+                        <span>Guest Message:</span>
+                        <p id="inqModalMessage">-</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="inqModalStatus">Processing Status</label>
+                    <select id="inqModalStatus" name="status" class="form-control">
+                        <option value="PENDING">🔴 PENDING (Awaiting Follow-up)</option>
+                        <option value="CONTACTED">🟡 CONTACTED (Customer Contacted)</option>
+                        <option value="RESOLVED">🟢 RESOLVED (Inquiry Completed)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="inqModalNotes">Internal Notes / Response Summary</label>
+                    <textarea id="inqModalNotes" name="replyNotes" rows="3" class="form-control" placeholder="Add follow-up notes, phone call logs, or email details..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel">Cancel</button>
+                <button type="submit" class="btn-modal-submit">
+                    <i class="fa-solid fa-save"></i> Save Updates
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:src="@{/assets/js/staff/comments.js}"></script>
+</body>
+</html>

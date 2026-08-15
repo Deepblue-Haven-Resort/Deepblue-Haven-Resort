@@ -1,122 +1,123 @@
-<link rel="stylesheet" th:href="@{/assets/css/header.css}" />
-<meta name="_context_path" th:content="@{/}" />
+<th:block th:fragment="header">
+  <link rel="stylesheet" th:href="@{/assets/css/header.css}" />
+  <meta name="_context_path" th:content="@{/}" />
 
-<div th:fragment="header"
-     id="header"
-     class="site-header"
-     th:data-user-id="${session.loggedInCustomerId}">
-  <a th:href="@{/}" class="header-logo" aria-label="Deep Blue Haven">
-    <img th:src="@{/assets/pic/logo.png}" alt="Deep Blue Haven" />
-  </a>
-
-  <nav class="header-menu" id="menu" aria-label="Main menu">
-    <a class="header-link" th:classappend="${activePage == 'home' ? 'is-active' : ''}" th:href="@{/}">Home</a>
-    <a class="header-link" th:classappend="${activePage == 'rooms' ? 'is-active' : ''}" th:href="@{/rooms}">Rooms</a>
-    <a class="header-link" th:classappend="${activePage == 'services' ? 'is-active' : ''}" th:href="@{/services}">Services</a>
-    <a class="header-link" th:classappend="${activePage == 'offers' ? 'is-active' : ''}" th:href="@{/offers}">Offers</a>
-    <a class="header-link" th:classappend="${activePage == 'about' ? 'is-active' : ''}" th:href="@{/about}">About Us</a>
-    <a class="header-link" th:classappend="${activePage == 'contact' ? 'is-active' : ''}" th:href="@{/contact}">Contact</a>
-  </nav>
-
-  <nav class="header-actions" id="action" aria-label="User actions">
-    <button class="icon-btn notify" id="notifyBtn" type="button" title="Notifications" aria-label="Notifications"
-      aria-haspopup="dialog" aria-expanded="false">
-      <i class="fa-regular fa-bell"></i>
-      <span class="notify-badge" id="notifyBadge"></span>
-    </button>
-
-    <div class="notify-pop" id="notifyPop" role="dialog" aria-label="Notifications">
-      <div class="notify-head">
-        <div class="notify-title">Notifications</div>
-
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button class="notify-mark-all" id="notifyMarkAll" type="button" title="Đánh dấu tất cả là đã xem">
-            <i class="fa-solid fa-check-double"></i> Đã xem
-          </button>
-          <button class="notify-close" id="notifyClose" type="button" aria-label="Close notifications">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="notify-tabs" role="tablist" aria-label="Notification filters">
-        <button class="notify-tab is-active" type="button" data-filter="all" role="tab" aria-selected="true">
-          All
-        </button>
-
-        <button class="notify-tab" type="button" data-filter="unread" role="tab" aria-selected="false">
-          Unread
-        </button>
-      </div>
-
-      <div class="notify-list" id="notifyList"></div>
-
-      <a class="notify-footer" th:href="@{/customer/notifications}">
-        View all
-      </a>
-    </div>
-
-    <a class="btn btn-cta btn-small" th:href="@{/rooms}" aria-label="Booking">
-      Booking
+  <div id="header" class="site-header" th:data-user-id="${session.loggedInCustomerId}">
+    <a th:href="@{/}" class="header-logo" aria-label="Deep Blue Haven">
+      <img th:src="@{/assets/pic/logo.png}" alt="Deep Blue Haven" />
     </a>
 
-    <div class="user-menu" id="userMenu">
-      <button class="icon-btn user-btn" id="userBtn" type="button" aria-label="Tài khoản" aria-haspopup="menu"
-        aria-expanded="false" style="padding: 2px; overflow: hidden; display: inline-flex; align-items: center; justify-content: center;">
-        <img th:if="${customerProfile != null && customerProfile.avatarUrl != null}" th:src="${customerProfile.avatarUrl}" class="user-avatar-circle" alt="Avatar" />
-        <i th:if="${customerProfile == null || customerProfile.avatarUrl == null}" class="fa-regular fa-user"></i>
+    <nav class="header-menu" id="menu" aria-label="Main menu">
+      <a class="header-link" th:classappend="${activePage == 'home' ? 'is-active' : ''}" th:href="@{/}">Home</a>
+      <a class="header-link" th:classappend="${activePage == 'rooms' ? 'is-active' : ''}" th:href="@{/rooms}">Rooms</a>
+      <a class="header-link" th:classappend="${activePage == 'services' ? 'is-active' : ''}"
+        th:href="@{/services}">Services</a>
+      <a class="header-link" th:classappend="${activePage == 'offers' ? 'is-active' : ''}"
+        th:href="@{/offers}">Offers</a>
+      <a class="header-link" th:classappend="${activePage == 'about' ? 'is-active' : ''}" th:href="@{/about}">About
+        Us</a>
+      <a class="header-link" th:classappend="${activePage == 'contact' ? 'is-active' : ''}"
+        th:href="@{/contact}">Contact</a>
+    </nav>
+
+    <nav class="header-actions" id="action" aria-label="User actions">
+      <button class="icon-btn notify" id="notifyBtn" type="button" title="Notifications" aria-label="Notifications"
+        aria-haspopup="dialog" aria-expanded="false">
+        <i class="fa-regular fa-bell"></i>
+        <span class="notify-badge" id="notifyBadge"></span>
       </button>
 
-      <div class="user-dropdown" id="userDropdown" role="menu">
+      <div class="notify-pop" id="notifyPop" role="dialog" aria-label="Notifications">
+        <div class="notify-head">
+          <div class="notify-title">Notifications</div>
 
-        <!-- Chưa đăng nhập -->
-        <a th:if="${session.loggedInCustomerId == null}"
-          th:href="@{/login}"
-          role="menuitem">
-          Login
-        </a>
-
-        <!-- Đã đăng nhập -->
-        <th:block th:if="${session.loggedInCustomerId != null}">
-
-          <a th:classappend="${activePage == 'profile' ? 'is-active' : ''}" th:href="@{/profile}" role="menuitem">
-            Profile
-          </a>
-
-          <a th:classappend="${activePage == 'rooms' ? 'is-active' : ''}" th:href="@{/rooms}" role="menuitem">
-            Booking
-          </a>
-
-          <a th:classappend="${activePage == 'booking-history' ? 'is-active' : ''}" th:href="@{/booking/history}" role="menuitem">
-            Booking History
-          </a>
-
-          <a th:classappend="${activePage == 'favorites' ? 'is-active' : ''}" th:href="@{/favorites}" role="menuitem">
-            Favorites
-          </a>
-
-          <div class="divider"></div>
-
-          <form th:action="@{/logout}"
-                method="post"
-                class="logout-form">
-
-            <input type="hidden"
-                  th:if="${_csrf != null}"
-                  th:name="${_csrf.parameterName}"
-                  th:value="${_csrf.token}" />
-
-            <button type="submit"
-                    class="dropdown-logout"
-                    role="menuitem">
-              Logout
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="notify-mark-all" id="notifyMarkAll" type="button" title="Đánh dấu tất cả là đã xem">
+              <i class="fa-solid fa-check-double"></i> Đã xem
             </button>
-          </form>
-        </th:block>
+            <button class="notify-close" id="notifyClose" type="button" aria-label="Close notifications">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
 
+        <div class="notify-tabs" role="tablist" aria-label="Notification filters">
+          <button class="notify-tab is-active" type="button" data-filter="all" role="tab" aria-selected="true">
+            All
+          </button>
+
+          <button class="notify-tab" type="button" data-filter="unread" role="tab" aria-selected="false">
+            Unread
+          </button>
+        </div>
+
+        <div class="notify-list" id="notifyList"></div>
+
+        <a class="notify-footer" th:href="@{/customer/notifications}">
+          View all
+        </a>
       </div>
-    </div>
-  </nav>
 
-  <script th:src="@{/assets/js/shared/header.js}" src="/assets/js/shared/header.js"></script>
-</div>
+      <a class="btn btn-cta btn-small" th:href="@{/rooms}" aria-label="Booking">
+        Booking
+      </a>
+
+      <div class="user-menu" id="userMenu">
+        <button class="icon-btn user-btn" id="userBtn" type="button" aria-label="Tài khoản" aria-haspopup="menu"
+          aria-expanded="false"
+          style="padding: 2px; overflow: hidden; display: inline-flex; align-items: center; justify-content: center;">
+          <img th:if="${customerProfile != null && customerProfile.avatarUrl != null}"
+            th:src="${customerProfile.avatarUrl}" class="user-avatar-circle" alt="Avatar" />
+          <i th:if="${customerProfile == null || customerProfile.avatarUrl == null}" class="fa-regular fa-user"></i>
+        </button>
+
+        <div class="user-dropdown" id="userDropdown" role="menu">
+
+          <!-- Chưa đăng nhập -->
+          <a th:if="${session.loggedInCustomerId == null}" th:href="@{/login}" role="menuitem">
+            Login
+          </a>
+
+          <!-- Đã đăng nhập -->
+          <th:block th:if="${session.loggedInCustomerId != null}">
+
+            <a th:classappend="${activePage == 'profile' ? 'is-active' : ''}" th:href="@{/profile}" role="menuitem">
+              Profile
+            </a>
+
+            <a th:classappend="${activePage == 'rooms' ? 'is-active' : ''}" th:href="@{/rooms}" role="menuitem">
+              Booking
+            </a>
+
+            <a th:classappend="${activePage == 'booking-history' ? 'is-active' : ''}" th:href="@{/booking/history}"
+              role="menuitem">
+              Booking History
+            </a>
+
+            <a th:classappend="${activePage == 'favorites' ? 'is-active' : ''}" th:href="@{/favorites}" role="menuitem">
+              Favorites
+            </a>
+
+            <div class="divider"></div>
+
+            <form th:action="@{/logout}" method="post" class="logout-form">
+
+              <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}"
+                th:value="${_csrf.token}" />
+
+              <button type="submit" class="dropdown-logout" role="menuitem">
+                Logout
+              </button>
+            </form>
+          </th:block>
+
+        </div>
+      </div>
+    </nav>
+
+    <script th:src="@{/assets/js/shared/header.js}" src="/assets/js/shared/header.js"></script>
+  </div>
+
+  <!-- Universal 24/7 Concierge Live Chat Widget Floating at Bottom-Right of Viewport -->
+  <div th:replace="~{fragments/live-chat :: customerLiveChat}"></div>
+</th:block>

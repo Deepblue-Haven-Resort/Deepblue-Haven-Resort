@@ -313,7 +313,31 @@
     box-shadow: 0 10px 30px var(--primary-200);
 }
 
-.filter-dropdown.active .filter-menu {
+/* Modal and form dropdown menus must fit container width and NOT transform horizontally */
+.form-filter-dropdown {
+    position: relative !important;
+    width: 100% !important;
+}
+
+.form-filter-menu,
+.form-filter-dropdown .filter-menu,
+.modal-container .filter-menu,
+.modal-form-grid .filter-menu {
+    position: absolute !important;
+    top: calc(100% + 4px) !important;
+    left: 0 !important;
+    right: 0 !important;
+    transform: none !important;
+    min-width: 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    z-index: 500 !important;
+}
+
+.filter-dropdown.active .filter-menu,
+.form-filter-dropdown.active .form-filter-menu,
+.form-filter-dropdown.active .filter-menu {
     display: flex;
 }
 

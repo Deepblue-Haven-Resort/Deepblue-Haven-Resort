@@ -1,6 +1,7 @@
 package deepbluehaven.services;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,7 +40,19 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public List<RoomCardViewDTO> getAvailableRoomCards() {
-        return roomRepository.findByStatusesWithResort(ACTIVE_STATUSES).stream().map(this::toCardView).collect(Collectors.toList());
+        return getAvailableRoomCards(java.util.Collections.emptySet());
+    }
+
+    @Transactional(readOnly = true)
+    public List<RoomCardViewDTO> getAvailableRoomCards(java.util.Set<Long> favoriteRoomIds) {
+        return roomRepository.findByStatusesWithResort(ACTIVE_STATUSES).stream()
+                .map(room -> toCardView(room, favoriteRoomIds))
+                .collect(Collectors.toList());
+    }
+
+    public List<RoomCardViewDTO> convertToCardViews(java.util.Collection<Room> rooms, java.util.Set<Long> favoriteRoomIds) {
+        if (rooms == null) return new ArrayList<>();
+        return rooms.stream().map(room -> toCardView(room, favoriteRoomIds)).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -54,16 +67,22 @@ public class RoomService {
         return uniqueResorts.entrySet().stream().map(entry -> new ResortFilterOptionDTO(entry.getKey(), entry.getValue())).collect(Collectors.toList());
     }
 
-    private RoomCardViewDTO toCardView(Room room) {
+    public RoomCardViewDTO toCardView(Room room) {
+        return toCardView(room, java.util.Collections.emptySet());
+    }
+
+    public RoomCardViewDTO toCardView(Room room, java.util.Set<Long> favoriteRoomIds) {
         RoomCardViewDTO view = new RoomCardViewDTO();
         Resort resort = room.getResort();
 
+        view.setId(room.getId());
+        view.setFavorite(favoriteRoomIds != null && favoriteRoomIds.contains(room.getId()));
         view.setImageUrl(room.getImages().isEmpty() ? "/assets/pic/room-placeholder.jpg" : room.getImages().get(0));
         view.setImageAlt(room.getRoomType().name() + " " + room.getRoomNumber());
 
         view.setBadge(""); 
         view.setRoomName(formatRoomTypeLabel(room.getRoomType()) + " - " + room.getRoomNumber());
-        view.setLocation(resort.getLocation() + ", " + resort.getName());
+        view.setLocation(resort != null ? (resort.getLocation() + ", " + resort.getName()) : "DeepBlue Haven");
 
         mapStatusToView(room.getStatus(), view);
 
@@ -72,11 +91,11 @@ public class RoomService {
         view.setSizeInfo(room.getArea() != null ? room.getArea() + "m²" : "-");
 
         view.setPriceText(formatVnd(room.getBasePrice()) + " VND");
-        view.setPriceValue(room.getBasePrice().longValue());
+        view.setPriceValue(room.getBasePrice() != null ? room.getBasePrice().longValue() : 0);
 
-        view.setResortValue(slugify(resort.getName()));
+        view.setResortValue(resort != null ? slugify(resort.getName()) : "deepblue-haven");
         view.setTypeValue(room.getRoomType().name().toLowerCase());
-        view.setGuestsValue(room.getCapacity());
+        view.setGuestsValue(room.getCapacity() != null ? room.getCapacity() : 2);
         view.setViewValue(room.getTags().stream().map(this::tagToViewValue).collect(Collectors.joining(",")));
 
         view.setRatingValue(0); 
