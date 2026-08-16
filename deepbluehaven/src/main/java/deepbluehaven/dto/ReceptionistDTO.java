@@ -285,6 +285,10 @@ public class ReceptionistDTO {
         private String pricingRuleNote;
         private String discountCode;
         private Long appliedCustomerDiscountId;
+        private BigDecimal depositPaid = BigDecimal.ZERO;
+        private String depositPaidStr = "0 VND";
+        private BigDecimal netRemainingPayable = BigDecimal.ZERO;
+        private String netRemainingPayableStr = "0 VND";
         private List<ServiceOrderItem> serviceOrders = new ArrayList<>();
 
         public Long getBookingId() { 
@@ -406,6 +410,34 @@ public class ReceptionistDTO {
             return serviceOrders; }
         public void setServiceOrders(List<ServiceOrderItem> serviceOrders) { 
             this.serviceOrders = serviceOrders; }
+
+        public BigDecimal getDepositPaid() {
+            return depositPaid;
+        }
+        public void setDepositPaid(BigDecimal depositPaid) {
+            this.depositPaid = depositPaid;
+        }
+
+        public String getDepositPaidStr() {
+            return depositPaidStr;
+        }
+        public void setDepositPaidStr(String depositPaidStr) {
+            this.depositPaidStr = depositPaidStr;
+        }
+
+        public BigDecimal getNetRemainingPayable() {
+            return netRemainingPayable;
+        }
+        public void setNetRemainingPayable(BigDecimal netRemainingPayable) {
+            this.netRemainingPayable = netRemainingPayable;
+        }
+
+        public String getNetRemainingPayableStr() {
+            return netRemainingPayableStr;
+        }
+        public void setNetRemainingPayableStr(String netRemainingPayableStr) {
+            this.netRemainingPayableStr = netRemainingPayableStr;
+        }
     }
 
     public static class ServiceOrderItem {

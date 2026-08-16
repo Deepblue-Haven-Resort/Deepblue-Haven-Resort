@@ -117,7 +117,7 @@
             </div>
 
             <div class="logout-card">
-                <a th:href="@{/staff-logout}" style="text-decoration: none;">
+                <a th:href="@{/staff-logout}">
                     <button type="button">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         Logout
@@ -126,6 +126,9 @@
             </div>
         </main>
     </div>
+
+    <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+    <script th:src="@{/assets/js/admin/setting-admin.js}"></script>
 </body>
 
 </html>

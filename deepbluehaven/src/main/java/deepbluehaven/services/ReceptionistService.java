@@ -322,8 +322,7 @@ public class ReceptionistService {
                     item.setNightsStayed(2);
                 }
 
-                BigDecimal roomCharge = b.getTotalAmount() != null ? b.getTotalAmount() : new BigDecimal("3500000");
-
+                BookingDetail bDetail = (b.getDetails() != null && !b.getDetails().isEmpty()) ? b.getDetails().get(0) : null;
                 BigDecimal pricingMultiplier = BigDecimal.ONE;
                 String pricingNote = "Standard Rate";
                 if (assignedRoom != null && assignedRoom.getRoomType() != null) {
@@ -332,13 +331,25 @@ public class ReceptionistService {
                             "select pr from PricingRule pr where pr.roomType = :rt", PricingRule.class)
                             .setParameter("rt", assignedRoom.getRoomType())
                             .getResultList();
-                        if (!rules.isEmpty()) {
+                        if (!rules.isEmpty() && rules.get(0).getMultiplier() != null) {
                             pricingMultiplier = rules.get(0).getMultiplier();
                             pricingNote = "PricingRule (" + pricingMultiplier.stripTrailingZeros().toPlainString() + "x Multiplier)";
-                            roomCharge = roomCharge.multiply(pricingMultiplier).setScale(0, RoundingMode.HALF_UP);
                         }
                     } catch (Exception ignored) {}
                 }
+
+                BigDecimal roomCharge = BigDecimal.ZERO;
+                if (bDetail != null && bDetail.getSubTotal() != null && bDetail.getSubTotal().compareTo(BigDecimal.ZERO) > 0) {
+                    roomCharge = bDetail.getSubTotal();
+                } else if (bDetail != null && bDetail.getPricePerNight() != null) {
+                    roomCharge = bDetail.getPricePerNight().multiply(BigDecimal.valueOf(item.getNightsStayed()));
+                } else if (assignedRoom != null && assignedRoom.getBasePrice() != null) {
+                    BigDecimal pNight = assignedRoom.getBasePrice().multiply(pricingMultiplier).setScale(0, RoundingMode.HALF_UP);
+                    roomCharge = pNight.multiply(BigDecimal.valueOf(item.getNightsStayed()));
+                } else {
+                    roomCharge = (b.getTotalAmount() != null) ? b.getTotalAmount() : new BigDecimal("2100000");
+                }
+
                 item.setPricingRuleMultiplier(pricingMultiplier);
                 item.setPricingRuleNote(pricingNote);
                 item.setRoomCharge(roomCharge);
@@ -423,8 +434,34 @@ public class ReceptionistService {
                 item.setDiscountAmountStr(formatVnd(totalDiscountAmount));
 
                 BigDecimal netSubtotal = grossSubtotal.subtract(totalDiscountAmount);
-                BigDecimal tax = netSubtotal.multiply(new BigDecimal("0.10")).setScale(0, RoundingMode.HALF_UP);
+                BigDecimal tax = netSubtotal.multiply(new BigDecimal("0.08")).setScale(0, RoundingMode.HALF_UP);
                 BigDecimal totalFolio = netSubtotal.add(tax);
+
+                BigDecimal depositPaid = BigDecimal.ZERO;
+                try {
+                    List<Invoice> invs = invoiceRepository.findByBookingId(b.getId());
+                    if (invs != null && !invs.isEmpty()) {
+                        for (Invoice inv : invs) {
+                            if (inv.getPaidAmount() != null && inv.getPaidAmount().compareTo(depositPaid) > 0) {
+                                depositPaid = inv.getPaidAmount();
+                            }
+                        }
+                    }
+                } catch (Exception ignored) {}
+
+                if (depositPaid.compareTo(BigDecimal.ZERO) == 0 && (b.getStatus() == BookingStatus.CONFIRMED || b.getStatus() == BookingStatus.CHECKED_IN)) {
+                    depositPaid = totalFolio.multiply(new BigDecimal("0.30")).setScale(0, RoundingMode.HALF_UP);
+                }
+
+                BigDecimal netRemainingPayable = totalFolio.subtract(depositPaid);
+                if (netRemainingPayable.compareTo(BigDecimal.ZERO) < 0) {
+                    netRemainingPayable = BigDecimal.ZERO;
+                }
+
+                item.setDepositPaid(depositPaid);
+                item.setDepositPaidStr(formatVnd(depositPaid));
+                item.setNetRemainingPayable(netRemainingPayable);
+                item.setNetRemainingPayableStr(formatVnd(netRemainingPayable));
 
                 item.setTaxAmount(tax);
                 item.setTotalFolio(totalFolio);
@@ -454,17 +491,14 @@ public class ReceptionistService {
             assignedRoom = booking.getDetails().get(0).getRoom();
         }
 
-        BigDecimal roomCharge = booking.getTotalAmount() != null ? booking.getTotalAmount() : new BigDecimal("3500000");
-        if (assignedRoom != null && assignedRoom.getRoomType() != null) {
-            try {
-                List<PricingRule> rules = entityManager.createQuery(
-                    "select pr from PricingRule pr where pr.roomType = :rt", PricingRule.class)
-                    .setParameter("rt", assignedRoom.getRoomType())
-                    .getResultList();
-                if (!rules.isEmpty()) {
-                    roomCharge = roomCharge.multiply(rules.get(0).getMultiplier()).setScale(0, RoundingMode.HALF_UP);
-                }
-            } catch (Exception ignored) {}
+        BookingDetail bDetail = (booking.getDetails() != null && !booking.getDetails().isEmpty()) ? booking.getDetails().get(0) : null;
+        BigDecimal roomCharge = BigDecimal.ZERO;
+        if (bDetail != null && bDetail.getSubTotal() != null && bDetail.getSubTotal().compareTo(BigDecimal.ZERO) > 0) {
+            roomCharge = bDetail.getSubTotal();
+        } else if (booking.getTotalAmount() != null) {
+            roomCharge = booking.getTotalAmount();
+        } else {
+            roomCharge = new BigDecimal("2100000");
         }
 
         List<ServiceOrder> orders = serviceOrderRepository.findByBookingId(booking.getId());
@@ -521,7 +555,7 @@ public class ReceptionistService {
         }
 
         BigDecimal netSubtotal = grossSubtotal.subtract(totalDiscountAmount);
-        BigDecimal tax = netSubtotal.multiply(new BigDecimal("0.10")).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal tax = netSubtotal.multiply(new BigDecimal("0.08")).setScale(0, RoundingMode.HALF_UP);
         BigDecimal totalFolio = netSubtotal.add(tax);
 
         Invoice invoice = entityManager.createQuery("select i from Invoice i where i.booking.id = :bId", Invoice.class)

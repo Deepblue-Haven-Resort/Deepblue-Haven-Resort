@@ -32,7 +32,7 @@
                     </div>
                     <div>
                         <span>RevPAR</span>
-                        <strong>1,845,000 VND</strong>
+                        <strong th:text="|${#numbers.formatDecimal(revPar != null ? revPar : 0, 0, 'COMMA', 0, 'POINT')} VND|">1,845,000 VND</strong>
                         <small>Revenue per available room</small>
                     </div>
                 </article>
@@ -43,7 +43,7 @@
                     </div>
                     <div>
                         <span>ADR</span>
-                        <strong>2,450,000 VND</strong>
+                        <strong th:text="|${#numbers.formatDecimal(avgDailyRate != null ? avgDailyRate : 0, 0, 'COMMA', 0, 'POINT')} VND|">2,450,000 VND</strong>
                         <small>Average daily room rate</small>
                     </div>
                 </article>
@@ -54,7 +54,7 @@
                     </div>
                     <div>
                         <span>Guest Lifetime Points</span>
-                        <strong>18,420 pts</strong>
+                        <strong th:text="|${guestPointsTotal} pts|">18,420 pts</strong>
                         <small>Loyalty database total</small>
                     </div>
                 </article>
@@ -65,7 +65,7 @@
                     </div>
                     <div>
                         <span>Pricing Rules</span>
-                        <strong>3 Active</strong>
+                        <strong th:text="|${activeRulesCount} Active|">3 Active</strong>
                         <small>Seasonal rate multipliers</small>
                     </div>
                 </article>
@@ -104,22 +104,26 @@
                             <tr>
                                 <td><strong>Financial Revenue Summary</strong></td>
                                 <td>Calculates room charges, extra service orders, and tax logs.</td>
-                                <td>PDF Ledger / Excel</td>
+                                <td>CSV / Excel</td>
                                 <td>Invoices & Payments</td>
                                 <td class="text-center">
                                     <div class="table-actions">
-                                        <button type="button" class="btn edit-btn btn-small">Download</button>
+                                        <a th:href="@{/manager/reports/financial/export}" class="btn edit-btn btn-small">
+                                            <i class="fa-solid fa-download"></i> Download CSV
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td><strong>Occupancy & Room Utilization</strong></td>
                                 <td>Audit room status changes, check-out queues, and turnover times.</td>
-                                <td>Excel Sheet</td>
+                                <td>CSV / Excel</td>
                                 <td>Room Logs & Bookings</td>
                                 <td class="text-center">
                                     <div class="table-actions">
-                                        <button type="button" class="btn edit-btn btn-small">Download</button>
+                                        <a th:href="@{/manager/reports/occupancy/export}" class="btn edit-btn btn-small">
+                                            <i class="fa-solid fa-download"></i> Download CSV
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

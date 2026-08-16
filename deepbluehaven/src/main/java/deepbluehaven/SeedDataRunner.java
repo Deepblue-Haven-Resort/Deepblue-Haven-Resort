@@ -1,6 +1,7 @@
 package deepbluehaven;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -701,9 +702,17 @@ public class SeedDataRunner implements CommandLineRunner {
             detail.setRoomType(r.getRoomType());
             LocalDate checkIn = b.getBookingTime().toLocalDate();
             detail.setCheckIn(checkIn);
-            detail.setCheckOut(checkIn.plusDays(2 + (i % 4)));
-            detail.setPricePerNight(r.getBasePrice());
-            detail.setSubTotal(b.getTotalAmount());
+            long nights = 2 + (i % 4);
+            detail.setCheckOut(checkIn.plusDays(nights));
+
+            BigDecimal multiplier = new BigDecimal("1.15");
+            BigDecimal base = (r.getBasePrice() != null) ? r.getBasePrice() : new BigDecimal("2100000");
+            BigDecimal pricePerNight = base.multiply(multiplier).setScale(0, RoundingMode.HALF_UP);
+            BigDecimal roomTotal = pricePerNight.multiply(BigDecimal.valueOf(nights));
+
+            detail.setPricePerNight(pricePerNight);
+            detail.setSubTotal(roomTotal);
+            b.setTotalAmount(roomTotal);
             detail.setStatus(b.getStatus());
             detail.setAction("Room reserved for booking #" + b.getId());
             detail.setTimestamp(b.getBookingTime());

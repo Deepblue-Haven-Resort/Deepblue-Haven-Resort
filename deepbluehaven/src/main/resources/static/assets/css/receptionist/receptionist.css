@@ -249,6 +249,7 @@
 .table-wrapper {
     overflow-x: auto;
     border-radius: 12px;
+    margin-top: var(--space-16, 16px)
 }
 
 .activity-table {
@@ -925,4 +926,341 @@
 
 .inline-form {
     display: inline;
+}
+
+/* ==========================================================================
+   RESERVATION TABLE & LUXURY MODAL (PURE CSS & THEME DESIGN SYSTEM)
+   ========================================================================== */
+
+.table-cell-nowrap {
+    white-space: nowrap;
+}
+
+.table-empty-message {
+    text-align: center;
+    padding: var(--space-24);
+    color: var(--color-text-muted);
+}
+
+.booking-ref-link {
+    color: var(--primary-800);
+    font-weight: 800;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    transition: color 0.2s ease;
+}
+
+.booking-ref-link:hover {
+    color: var(--primary-600);
+}
+
+.booking-ref-icon {
+    font-size: 0.75rem;
+    color: var(--neutral-400);
+    margin-left: 2px;
+}
+
+.stay-dates-arrow {
+    color: var(--neutral-400);
+    margin: 0 var(--space-6, 6px);
+    font-weight: bold;
+}
+
+/* MODAL LUXURY THEME - 100% DESIGN SYSTEM TOKENS */
+.reservation-modal-dialog {
+    max-width: 620px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    padding: 0;
+    box-shadow: var(--shadow-xl);
+}
+
+.reservation-modal-header {
+    background: linear-gradient(135deg, var(--primary-900) 0%, var(--primary-800) 100%);
+    color: var(--white);
+    padding: var(--space-24) var(--space-32);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reservation-modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-14, 14px);
+}
+
+.reservation-modal-brand-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    background: var(--primary-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--white);
+}
+
+.reservation-modal-title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-10, 10px);
+}
+
+.reservation-modal-title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.5px;
+}
+
+.reservation-modal-badge {
+    font-size: 0.75rem;
+    padding: var(--space-4) var(--space-10, 10px);
+}
+
+.reservation-modal-subtitle {
+    font-size: 0.8125rem;
+    color: var(--primary-200);
+    margin-top: 2px;
+    display: block;
+}
+
+.reservation-modal-close-btn {
+    background: var(--primary-700);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.reservation-modal-close-btn:hover {
+    background: var(--primary-600);
+}
+
+.reservation-modal-body {
+    padding: var(--space-24) var(--space-32);
+    background: var(--surface-0);
+}
+
+.reservation-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-16);
+    margin-bottom: var(--space-20, 20px);
+}
+
+.reservation-modal-card {
+    background: var(--surface-100);
+    border: var(--border-1) solid var(--neutral-200);
+    border-radius: var(--radius-sm);
+    padding: var(--space-16);
+}
+
+.reservation-modal-card-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-6, 6px);
+    margin-bottom: var(--space-8);
+}
+
+.reservation-modal-card-label i {
+    color: var(--primary-800);
+}
+
+.reservation-modal-card-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--neutral-900);
+}
+
+.reservation-modal-card-sub {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin-top: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-6, 6px);
+}
+
+.reservation-modal-folio {
+    border: var(--border-1) solid var(--neutral-200);
+    border-radius: var(--radius-sm);
+    padding: var(--space-16) var(--space-20, 20px);
+    background: var(--surface-0);
+    margin-bottom: var(--space-20, 20px);
+}
+
+.reservation-modal-folio-header {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--space-10, 10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reservation-modal-folio-header i {
+    color: var(--primary-800);
+    margin-right: var(--space-6, 6px);
+}
+
+.reservation-modal-currency-tag {
+    font-size: 0.75rem;
+    color: var(--neutral-400);
+    text-transform: none;
+}
+
+.reservation-modal-folio-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: var(--neutral-700);
+    padding: var(--space-4) 0;
+}
+
+.reservation-modal-folio-row strong {
+    color: var(--neutral-900);
+}
+
+.reservation-modal-folio-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-10, 10px);
+    padding-top: var(--space-10, 10px);
+    border-top: var(--border-1) dashed var(--neutral-300);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--primary-900);
+}
+
+.reservation-modal-total-highlight {
+    color: var(--primary-600);
+}
+
+.reservation-modal-folio-deposit-row {
+    margin-top: var(--space-8);
+    padding-top: var(--space-8);
+    border-top: var(--border-1) dotted var(--neutral-300);
+    font-weight: 700;
+    color: var(--primary-800);
+}
+
+.reservation-modal-folio-remaining-row {
+    font-size: 0.8125rem;
+    color: var(--neutral-600);
+}
+
+.reservation-modal-special-request {
+    margin-bottom: var(--space-20, 20px);
+    display: none;
+    background: var(--warning-100);
+    border: var(--border-1) solid var(--warning-200);
+    padding: var(--space-12) var(--space-16);
+    border-radius: var(--radius-sm);
+    font-size: 0.8125rem;
+    color: var(--warning-900);
+}
+
+.reservation-modal-special-request strong {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6, 6px);
+    margin-bottom: var(--space-4);
+}
+
+.reservation-modal-special-request span {
+    line-height: 1.4;
+}
+
+.reservation-modal-footer {
+    background: var(--surface-100);
+    border-top: var(--border-1) solid var(--neutral-200);
+    padding: var(--space-16) var(--space-32);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--space-10, 10px);
+}
+
+.btn-confirm-action {
+    padding: 6px 14px;
+    font-size: 0.8125rem;
+}
+
+.modal-btn-confirm {
+    background: var(--primary-800);
+    color: var(--white);
+}
+
+.modal-btn-close {
+    min-width: 90px;
+}
+
+.folio-row-deposit {
+    background: var(--surface-100);
+    border-bottom: var(--border-1) solid var(--neutral-200);
+}
+
+.folio-td-deposit-name {
+    padding: var(--space-12) var(--space-16);
+    color: var(--success-900, #065f46);
+    font-size: 0.875rem;
+}
+
+.folio-td-deposit-val {
+    padding: var(--space-12) var(--space-16);
+    text-align: right;
+    font-weight: 700;
+    color: var(--success-900, #065f46);
+    font-size: 0.95rem;
+}
+
+.folio-deposit-badge {
+    color: var(--success-700, #047857);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    font-size: 0.75rem;
+}
+
+.folio-queue-card {
+    background: var(--surface-100);
+    padding: var(--space-10, 10px) var(--space-14, 14px);
+    border-radius: var(--radius-sm);
+    font-size: 0.825rem;
+    border: var(--border-1) solid var(--neutral-200);
+}
+
+.folio-queue-deposit {
+    color: var(--success-900, #065f46);
+    font-size: 0.775rem;
+    margin-top: var(--space-2);
+    font-weight: 600;
+}
+
+.folio-queue-due {
+    font-size: 1.15rem;
+    color: var(--primary-900);
+    font-weight: 800;
 }

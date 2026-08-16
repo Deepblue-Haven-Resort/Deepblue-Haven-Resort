@@ -1,124 +1,246 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservations & Bookings Management | Deep Blue Haven</title>
+    <title>Reservations & Bookings | Deep Blue Haven</title>
 
     <link rel="stylesheet" th:href="@{/assets/css/theme.css}">
     <link rel="stylesheet" th:href="@{/assets/css/base.css}">
     <link rel="stylesheet" th:href="@{/assets/css/components.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
-    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-table.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/receptionist.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
-    <div class="admin-layout">
+<div class="admin-layout">
 
-        
-        <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
+    <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
-        <main class="admin-main">
-            
-            <section class="manager-panel">
-                <div class="panel-header">
-                    <div>
-                        <h2>Resort Reservation Registry</h2>
+    <main class="admin-main">
+
+        <div th:replace="~{fragments/toast :: toast}"></div>
+
+        <section class="reception-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2><strong>All Reservations</strong></h2>
+                </div>
+                <div class="panel-header-actions">
+                    <button class="btn btn-small btn-cta">
+                        New Reservation
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="tableSearchInput" placeholder="Search by guest name, phone, or reservation code...">
+                </div>
+
+                <div class="filter-dropdown">
+                    <button class="filter-btn form-input" type="button">
+                        <span class="filter-label"><strong>All Statuses</strong></span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-menu">
+                        <button type="button" data-status="ALL" class="dropdown-item"><strong>All Statuses</strong></button>
+                        <button type="button" data-status="PENDING" class="dropdown-item"><strong>Pending</strong></button>
+                        <button type="button" data-status="CONFIRMED" class="dropdown-item"><strong>Confirmed</strong></button>
+                        <button type="button" data-status="CHECKED_IN" class="dropdown-item"><strong>Checked In</strong></button>
+                        <button type="button" data-status="CHECKED_OUT" class="dropdown-item"><strong>Checked Out</strong></button>
+                        <button type="button" data-status="CANCELLED" class="dropdown-item"><strong>Cancelled</strong></button>
                     </div>
-                    <div class="filter-options">
-                        <button type="button" class="btn btn-cta btn-medium">Export Report (Excel)</button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="activity-table" data-page-size="6">
+                    <thead>
+                    <tr>
+                        <th class="text-center table-cell-nowrap">Booking Ref</th>
+                        <th class="text-center">Guest Details</th>
+                        <th class="text-center table-cell-nowrap">Room Type</th>
+                        <th class="text-center table-cell-nowrap">Stay Dates</th>
+                        <th class="text-center table-cell-nowrap">Total Amount</th>
+                        <th class="text-center table-cell-nowrap">Status</th>
+                        <th class="text-center table-cell-nowrap">Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="b : ${bookings}" 
+                        th:data-booking-id="${b.id}"
+                        th:data-status="${b.rawStatus}"
+                        th:data-booking-code="${b.bookingCode}"
+                        th:data-guest-name="${b.guestName}"
+                        th:data-guest-email="${b.guestEmail}"
+                        th:data-guest-phone="${b.guestPhone}"
+                        th:data-room-type="${b.roomType}"
+                        th:data-room-number="${b.roomNumber}"
+                        th:data-check-in="${b.checkIn != null ? #temporals.format(b.checkIn, 'dd MMM yyyy') : 'N/A'}"
+                        th:data-check-out="${b.checkOut != null ? #temporals.format(b.checkOut, 'dd MMM yyyy') : 'N/A'}"
+                        th:data-nights="${b.nights}"
+                        th:data-status-text="${b.rawStatus != null ? b.rawStatus.displayName : 'Pending'}"
+                        th:data-room-charge="${b.roomChargeVnd != null ? #numbers.formatDecimal(b.roomChargeVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}"
+                        th:data-service-charge="${b.serviceChargeVnd != null ? #numbers.formatDecimal(b.serviceChargeVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}"
+                        th:data-total-amount="${b.totalAmountVnd != null ? #numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}"
+                        th:data-special-request="${b.specialRequest}">
+                        <td class="text-center table-cell-nowrap">
+                            <a href="javascript:void(0)" class="booking-ref-link" title="Click to view full reservation details">
+                                <span th:text="${b.bookingCode}">#BK-9021</span>
+                                <i class="fa-regular fa-eye booking-ref-icon"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <div class="user-info-stack">
+                                <strong th:text="${b.guestName}">Alexander Wright</strong>
+                                <span th:text="${b.guestEmail}">alex.wright@example.com</span>
+                            </div>
+                        </td>
+                        <td class="text-center table-cell-nowrap" th:text="|${b.roomType} (${b.roomNumber})|">Ocean Villa (304)</td>
+                        <td class="text-center table-cell-nowrap">
+                            <span th:text="${b.checkIn != null ? #temporals.format(b.checkIn, 'dd MMM yyyy') : 'N/A'}">03 Aug 2026</span>
+                            <span class="stay-dates-arrow">→</span>
+                            <span th:text="${b.checkOut != null ? #temporals.format(b.checkOut, 'dd MMM yyyy') : 'N/A'}">06 Aug 2026</span>
+                        </td>
+                        <td class="text-center table-cell-nowrap"><strong th:text="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|">1,450,000 VND</strong></td>
+                        <td class="text-center table-cell-nowrap">
+                            <span th:class="|status ${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CONFIRMED ? 'status-success' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CHECKED_IN ? 'status-info' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CHECKED_OUT ? 'status-info' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CANCELLED ? 'status-error' : (b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).COMPLETED ? 'status-success' : 'status-warning'))))}|"
+                                  th:text="${b.rawStatus != null ? b.rawStatus.displayName : 'Pending'}">Confirmed</span>
+                        </td>
+                        <td class="text-center table-cell-nowrap">
+                            <form th:if="${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
+                                  th:action="@{'/manager/confirm-booking/' + ${b.id}}" method="post" class="inline-form">
+                                <button type="submit" class="btn btn-small btn-cta btn-confirm-action" title="Confirm Reservation">
+                                    <i class="fa-solid fa-check"></i> Confirm
+                                </button>
+                            </form>
+                            <span th:if="${b.rawStatus != T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
+                                  class="action-empty-dash">—</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(bookings)}">
+                        <td colspan="7" class="table-empty-message">No reservations found in system.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<!-- LUXURY RESERVATION DETAILS MODAL -->
+<div class="modal-backdrop" id="reservationDetailModal">
+    <div class="modal-dialog reservation-modal-dialog">
+        <!-- Modal Header with Resort Branding -->
+        <div class="reservation-modal-header">
+            <div class="reservation-modal-header-left">
+                <div class="reservation-modal-brand-icon">
+                    <i class="fa-solid fa-hotel"></i>
+                </div>
+                <div>
+                    <div class="reservation-modal-title-row">
+                        <h3 id="modalBookingRef" class="reservation-modal-title">DBH-2026-001</h3>
+                        <span id="modalBookingStatus" class="status status-success reservation-modal-badge">Confirmed</span>
+                    </div>
+                    <span class="reservation-modal-subtitle">Deep Blue Haven Resort & Villas</span>
+                </div>
+            </div>
+            <button type="button" class="modal-close-btn reservation-modal-close-btn" title="Close Modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body Content -->
+        <div class="reservation-modal-body">
+            <!-- 2-Column Info Cards -->
+            <div class="reservation-modal-grid">
+                <!-- Guest Card -->
+                <div class="reservation-modal-card">
+                    <div class="reservation-modal-card-label">
+                        <i class="fa-solid fa-user"></i> Guest Information
+                    </div>
+                    <div id="modalGuestName" class="reservation-modal-card-value">Alexander Wright</div>
+                    <div class="reservation-modal-card-sub">
+                        <i class="fa-regular fa-envelope"></i> <span id="modalGuestEmail">alex@example.com</span>
+                    </div>
+                    <div class="reservation-modal-card-sub">
+                        <i class="fa-solid fa-phone"></i> <span id="modalGuestPhone">0987654321</span>
                     </div>
                 </div>
 
-                
-                <div class="filter-bar">
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="bookingSearchInput" placeholder="Search by booking code, guest name, or room...">
+                <!-- Stay Card -->
+                <div class="reservation-modal-card">
+                    <div class="reservation-modal-card-label">
+                        <i class="fa-solid fa-bed"></i> Accommodation
+                    </div>
+                    <div id="modalRoomInfo" class="reservation-modal-card-value">Ocean Villa (304)</div>
+                    <div class="reservation-modal-card-sub">
+                        <i class="fa-regular fa-calendar-days"></i> <span id="modalStayDates">03 Aug 2026 → 06 Aug 2026</span>
                     </div>
                 </div>
+            </div>
 
-                
-                <div class="table-wrapper">
-                    <table class="activity-table">
-                        <thead>
-                            <tr>
-                                <th>Booking Ref</th>
-                                <th>Guest Details</th>
-                                <th>Room details</th>
-                                <th>Stay Dates</th>
-                                <th>Total Price</th>
-                                <th class="text-center">Status</th>
-                                <th class="text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="b : ${bookings}">
-                                <td><strong th:text="${b.bookingCode}">DBH-2026-001</strong></td>
-                                <td>
-                                    <strong th:text="${b.guestName}">John Smith</strong><br>
-                                    <small th:text="${b.guestEmail}">john@example.com</small>
-                                </td>
-                                <td>
-                                    <strong th:text="|Room ${b.roomNumber}|">Room 304</strong><br>
-                                    <small th:text="${b.roomType}">Deluxe Room</small>
-                                </td>
-                                <td>
-                                    <span th:text="${b.checkIn != null ? #temporals.format(b.checkIn, 'yyyy-MM-dd') : 'N/A'}">2026-08-03</span> to <span th:text="${b.checkOut != null ? #temporals.format(b.checkOut, 'yyyy-MM-dd') : 'N/A'}">2026-08-05</span><br>
-                                </td>
-                                <td><strong th:text="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|">4,125,000 VND</strong></td>
-                                <td class="text-center">
-                                    <span th:class="|badge-status ${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CONFIRMED || b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CHECKED_IN ? 'inhouse' : 'checkout'}|"
-                                          th:text="${b.rawStatus != null ? b.rawStatus.displayName : 'Pending'}">CONFIRMED</span>
-                                </td>
-                                <td class="text-center">
-                                    <div class="table-actions">
-                                        <form th:if="${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
-                                              th:action="@{'/manager/confirm-booking/' + ${b.id}}" method="post">
-                                            <button type="submit" class="btn btn-cta btn-small">
-                                                <i class="fa-solid fa-check"></i> Confirm
-                                            </button>
-                                        </form>
-                                        <span th:if="${b.rawStatus != T(deepbluehaven.pojo.enums.BookingStatus).PENDING}"
-                                              class="action-empty-dash">—</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(bookings)}">
-                                <td colspan="7" class="empty-table-cell">No reservations registered.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- Financial Receipt Card -->
+            <div class="reservation-modal-folio">
+                <div class="reservation-modal-folio-header">
+                    <span><i class="fa-solid fa-file-invoice-dollar"></i> Folio Breakdown</span>
+                    <span class="reservation-modal-currency-tag">Currency: VND</span>
                 </div>
-
-                
-                <div class="table-footer">
-                    <p>Showing <strong>1-2</strong> of <strong>120</strong> reservations</p>
-                    <div class="pagination">
-                        <button type="button" class="page-btn disabled">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button type="button" class="page-btn active">1</button>
-                        <button type="button" class="page-btn">2</button>
-                        <span class="page-dots">...</span>
-                        <button type="button" class="page-btn">3</button>
-                        <button type="button" class="page-btn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
+                <div class="reservation-modal-folio-row">
+                    <span>Room Charges</span>
+                    <strong id="modalRoomCharge">1,200,000 VND</strong>
                 </div>
-            </section>
+                <div class="reservation-modal-folio-row">
+                    <span>Service Charges & Extras</span>
+                    <strong id="modalServiceCharge">250,000 VND</strong>
+                </div>
+                <div class="reservation-modal-folio-row">
+                    <span>VAT Tax (8%)</span>
+                    <strong id="modalVatTax">0 VND</strong>
+                </div>
+                <div class="reservation-modal-folio-total">
+                    <span>Total Amount</span>
+                    <span id="modalTotalAmount" class="reservation-modal-total-highlight">1,450,000 VND</span>
+                </div>
+                <div class="reservation-modal-folio-row reservation-modal-folio-deposit-row">
+                    <span id="modalDepositLabel">Deposit (30%):</span>
+                    <strong id="modalDepositAmount">435,000 VND</strong>
+                </div>
+                <div class="reservation-modal-folio-row reservation-modal-folio-remaining-row">
+                    <span id="modalRemainingLabel">Remaining Balance (70%):</span>
+                    <strong id="modalRemainingAmount">1,015,000 VND</strong>
+                </div>
+            </div>
 
-        </main>
+            <!-- Special Request Box -->
+            <div id="modalSpecialRequestBox" class="reservation-modal-special-request">
+                <strong><i class="fa-solid fa-comment-dots"></i> Special Request:</strong>
+                <span id="modalSpecialRequestText"></span>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="reservation-modal-footer">
+            <button type="button" class="btn btn-outline modal-close-btn modal-btn-close">Close</button>
+            <form id="modalConfirmForm" method="post" class="inline-form">
+                <button type="submit" class="btn btn-cta modal-btn-confirm">
+                    <i class="fa-solid fa-check"></i> Confirm Reservation
+                </button>
+            </form>
+        </div>
     </div>
+</div>
 
-    <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
-    <script th:src="@{/assets/js/shared/table-pagination.js}"></script>
+<script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+<script th:src="@{/assets/js/receptionist/receptionist.js}"></script>
 </body>
-
 </html>

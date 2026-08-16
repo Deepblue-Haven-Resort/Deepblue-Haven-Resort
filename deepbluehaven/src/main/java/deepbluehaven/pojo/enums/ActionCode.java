@@ -9,6 +9,7 @@ public enum ActionCode {
     START_CLEANING, 
     INSPECT_READY, 
     PAYMENT_SUCCESS, 
+    PAYMENT_FAILED,
     STOCK_OUT,
     CHANGE_STATUS,
     LOCK,

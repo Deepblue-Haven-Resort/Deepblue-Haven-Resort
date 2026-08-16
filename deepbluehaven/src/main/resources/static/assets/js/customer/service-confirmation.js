@@ -130,6 +130,10 @@
                 "selectedServicesJson"
             );
 
+        const bookingCodeInput = document.getElementById(
+            "confirmationBookingCode"
+        );
+
         if (!modal) {
             console.error(
                 "Element #serviceConfirmationModal was not found."
@@ -142,6 +146,11 @@
                 "Element #confirmationServiceList was not found."
             );
             return;
+        }
+
+        if (bookingCodeInput) {
+            bookingCodeInput.value =
+                bookingInformation.bookingId || "";
         }
 
         if (guestNameInput) {

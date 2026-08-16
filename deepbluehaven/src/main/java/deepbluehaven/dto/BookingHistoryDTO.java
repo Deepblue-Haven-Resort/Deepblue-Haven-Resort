@@ -87,89 +87,153 @@ public class BookingHistoryDTO {
 
         public Response() {}
 
-        public Long getId() { return id; }
-        public void setId(Long id) { this.id = id; }
+        public Long getId() { 
+            return id; }
+        public void setId(Long id) { 
+            this.id = id; }
 
-        public Long getRoomId() { return roomId; }
-        public void setRoomId(Long roomId) { this.roomId = roomId; }
+        public Long getRoomId() { 
+            return roomId; }
+        public void setRoomId(Long roomId) {
+            this.roomId = roomId; }
 
-        public String getBookingCode() { return bookingCode; }
-        public void setBookingCode(String bookingCode) { this.bookingCode = bookingCode; }
+        public String getBookingCode() { 
+            return bookingCode; }
+        public void setBookingCode(String bookingCode) { 
+            this.bookingCode = bookingCode; }
 
-        public String getRoomName() { return roomName; }
-        public void setRoomName(String roomName) { this.roomName = roomName; }
+        public String getRoomName() { 
+            return roomName; }
+        public void setRoomName(String roomName) { 
+            this.roomName = roomName; }
 
-        public String getRoomType() { return roomType; }
-        public void setRoomType(String roomType) { this.roomType = roomType; }
+        public String getRoomType() { 
+            return roomType; }
+        public void setRoomType(String roomType) { 
+            this.roomType = roomType; }
 
-        public String getRoomNumber() { return roomNumber; }
-        public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
+        public String getRoomNumber() { 
+            return roomNumber; }
+        public void setRoomNumber(String roomNumber) { 
+            this.roomNumber = roomNumber; }
 
-        public String getRoomImageUrl() { return roomImageUrl; }
-        public void setRoomImageUrl(String roomImageUrl) { this.roomImageUrl = roomImageUrl; }
+        public String getRoomImageUrl() { 
+            return roomImageUrl; }
+        public void setRoomImageUrl(String roomImageUrl) { 
+            this.roomImageUrl = roomImageUrl; }
 
-        public LocalDate getCheckIn() { return checkIn; }
-        public void setCheckIn(LocalDate checkIn) { this.checkIn = checkIn; }
+        public LocalDate getCheckIn() { 
+            return checkIn; }
+        public void setCheckIn(LocalDate checkIn) { 
+            this.checkIn = checkIn; }
 
-        public LocalDate getCheckOut() { return checkOut; }
-        public void setCheckOut(LocalDate checkOut) { this.checkOut = checkOut; }
+        public LocalDate getCheckOut() { 
+            return checkOut; }
+        public void setCheckOut(LocalDate checkOut) { 
+            this.checkOut = checkOut; }
 
-        public long getNights() { return nights; }
-        public void setNights(long nights) { this.nights = nights; }
+        public long getNights() { 
+            return nights; }
+        public void setNights(long nights) { 
+            this.nights = nights; }
 
-        public LocalDateTime getBookedOn() { return bookedOn; }
-        public void setBookedOn(LocalDateTime bookedOn) { this.bookedOn = bookedOn; }
+        public LocalDateTime getBookedOn() { 
+            return bookedOn; }
+        public void setBookedOn(LocalDateTime bookedOn) { 
+            this.bookedOn = bookedOn; }
 
-        public BigDecimal getTotalAmountVnd() { return totalAmountVnd; }
-        public void setTotalAmountVnd(BigDecimal totalAmountVnd) { this.totalAmountVnd = totalAmountVnd; }
+        public BigDecimal getTotalAmountVnd() { 
+            return totalAmountVnd; }
+        public void setTotalAmountVnd(BigDecimal totalAmountVnd) { 
+            this.totalAmountVnd = totalAmountVnd; }
 
-        public BigDecimal getTotalAmountUsd() { return totalAmountUsd; }
-        public void setTotalAmountUsd(BigDecimal totalAmountUsd) { this.totalAmountUsd = totalAmountUsd; }
+        public BigDecimal getTotalAmountUsd() { 
+            return totalAmountUsd; }
+        public void setTotalAmountUsd(BigDecimal totalAmountUsd) { 
+            this.totalAmountUsd = totalAmountUsd; }
 
-        public BookingStatus getRawStatus() { return rawStatus; }
-        public void setRawStatus(BookingStatus rawStatus) { this.rawStatus = rawStatus; }
+        public BookingStatus getRawStatus() { 
+            return rawStatus; }
+        public void setRawStatus(BookingStatus rawStatus) { 
+            this.rawStatus = rawStatus; }
 
-        public String getTimeGroup() { return timeGroup; }
-        public void setTimeGroup(String timeGroup) { this.timeGroup = timeGroup; }
+        public String getTimeGroup() { 
+            return timeGroup; }
+        public void setTimeGroup(String timeGroup) { 
+            this.timeGroup = timeGroup; }
 
-        public String getStatusText() { return statusText; }
-        public void setStatusText(String statusText) { this.statusText = statusText; }
+        public String getStatusText() { 
+            return statusText; }
+        public void setStatusText(String statusText) { 
+            this.statusText = statusText; }
 
-        public String getStatusClass() { return statusClass; }
-        public void setStatusClass(String statusClass) { this.statusClass = statusClass; }
+        public String getStatusClass() { 
+            return statusClass; }
+        public void setStatusClass(String statusClass) { 
+            this.statusClass = statusClass; }
 
-        public boolean isNeedsManualCheckIn() { return needsManualCheckIn; }
-        public void setNeedsManualCheckIn(boolean needsManualCheckIn) { this.needsManualCheckIn = needsManualCheckIn; }
+        public boolean isNeedsManualCheckIn() { 
+            return needsManualCheckIn; }
+        public void setNeedsManualCheckIn(boolean needsManualCheckIn) { 
+            this.needsManualCheckIn = needsManualCheckIn; }
 
-        public BigDecimal getPricePerNightVnd() { return pricePerNightVnd; }
-        public void setPricePerNightVnd(BigDecimal pricePerNightVnd) { this.pricePerNightVnd = pricePerNightVnd; }
+        public BigDecimal getPricePerNightVnd() { 
+            return pricePerNightVnd; }
+        public void setPricePerNightVnd(BigDecimal pricePerNightVnd) { 
+            this.pricePerNightVnd = pricePerNightVnd; }
 
-        public BigDecimal getRoomChargeVnd() { return roomChargeVnd; }
-        public void setRoomChargeVnd(BigDecimal roomChargeVnd) { this.roomChargeVnd = roomChargeVnd; }
+        public BigDecimal getRoomChargeVnd() { 
+            return roomChargeVnd; }
+        public void setRoomChargeVnd(BigDecimal roomChargeVnd) { 
+            this.roomChargeVnd = roomChargeVnd; }
 
-        public BigDecimal getServiceChargeVnd() { return serviceChargeVnd; }
-        public void setServiceChargeVnd(BigDecimal serviceChargeVnd) { this.serviceChargeVnd = serviceChargeVnd; }
+        public BigDecimal getServiceChargeVnd() { 
+            return serviceChargeVnd; }
+        public void setServiceChargeVnd(BigDecimal serviceChargeVnd) { 
+            this.serviceChargeVnd = serviceChargeVnd; }
 
-        public BigDecimal getTaxVnd() { return taxVnd; }
-        public void setTaxVnd(BigDecimal taxVnd) { this.taxVnd = taxVnd; }
+        public BigDecimal getTaxVnd() { 
+            return taxVnd; }
+        public void setTaxVnd(BigDecimal taxVnd) { 
+            this.taxVnd = taxVnd; }
 
-        public BigDecimal getDiscountVnd() { return discountVnd; }
-        public void setDiscountVnd(BigDecimal discountVnd) { this.discountVnd = discountVnd; }
+        public BigDecimal getDiscountVnd() { 
+            return discountVnd; }
+        public void setDiscountVnd(BigDecimal discountVnd) { 
+            this.discountVnd = discountVnd; }
 
-        public String getSpecialRequest() { return specialRequest; }
-        public void setSpecialRequest(String specialRequest) { this.specialRequest = specialRequest; }
+        public BigDecimal getDepositAmountVnd() {
+            return totalAmountVnd != null ? totalAmountVnd.multiply(new BigDecimal("0.30")) : BigDecimal.ZERO;
+        }
 
-        public String getGuestName() { return guestName; }
-        public void setGuestName(String guestName) { this.guestName = guestName; }
+        public BigDecimal getRemainingAmountVnd() {
+            return totalAmountVnd != null ? totalAmountVnd.multiply(new BigDecimal("0.70")) : BigDecimal.ZERO;
+        }
 
-        public String getGuestEmail() { return guestEmail; }
-        public void setGuestEmail(String guestEmail) { this.guestEmail = guestEmail; }
+        public String getSpecialRequest() { 
+            return specialRequest; }
+        public void setSpecialRequest(String specialRequest) { 
+            this.specialRequest = specialRequest; }
 
-        public String getGuestPhone() { return guestPhone; }
-        public void setGuestPhone(String guestPhone) { this.guestPhone = guestPhone; }
+        public String getGuestName() { 
+            return guestName; }
+        public void setGuestName(String guestName) { 
+            this.guestName = guestName; }
 
-        public List<ServiceItem> getServiceItems() { return serviceItems; }
-        public void setServiceItems(List<ServiceItem> serviceItems) { this.serviceItems = serviceItems; }
+        public String getGuestEmail() { 
+            return guestEmail; }
+        public void setGuestEmail(String guestEmail) { 
+            this.guestEmail = guestEmail; }
+
+        public String getGuestPhone() { 
+            return guestPhone; }
+        public void setGuestPhone(String guestPhone) { 
+            this.guestPhone = guestPhone; }
+
+        public List<ServiceItem> getServiceItems() { 
+            return serviceItems; }
+        public void setServiceItems(List<ServiceItem> serviceItems) { 
+            this.serviceItems = serviceItems; }
 
         public String getServiceItemsJson() {
             if (serviceItems == null || serviceItems.isEmpty()) return "[]";

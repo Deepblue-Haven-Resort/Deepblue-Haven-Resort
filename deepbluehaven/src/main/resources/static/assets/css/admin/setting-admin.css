@@ -753,7 +753,42 @@
 
 /* căn chữ + icon dropdown */
 .setting-row select {
-
     appearance: auto;
+}
 
+/* =========================
+   SETTING TOAST NOTIFICATION
+========================= */
+.setting-toast {
+    position: fixed;
+    bottom: var(--space-24);
+    right: var(--space-24);
+    background: var(--primary-900);
+    color: var(--white);
+    padding: var(--space-12) var(--space-20);
+    border: var(--border-1) solid var(--primary-700);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-xl);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+
+.setting-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.setting-toast i {
+    color: var(--success-500);
+    font-size: 1rem;
 }

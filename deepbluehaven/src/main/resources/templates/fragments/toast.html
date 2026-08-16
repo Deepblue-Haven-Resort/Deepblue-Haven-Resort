@@ -1,4 +1,7 @@
 <div th:fragment="toast">
-    <div id="toast-container" class="toast-container"></div>
+    <div id="toast-container" class="toast-container"
+         th:data-flash-success="${successMessage}"
+         th:data-flash-error="${errorMessage}"
+         th:data-flash-info="${infoMessage}"></div>
     <script th:src="@{/assets/js/shared/toast.js}"></script>
 </div>
