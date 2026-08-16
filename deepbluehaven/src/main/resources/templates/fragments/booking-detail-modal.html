@@ -4,8 +4,9 @@
 
 <body>
 
-<div th:fragment="bookingDetailModal"
-     class="booking-detail-modal"
+<th:block th:fragment="bookingDetailModal">
+
+<div class="booking-detail-modal"
      id="bookingDetailModal"
      aria-hidden="true">
 
@@ -330,7 +331,7 @@
                     </div>
 
                     <div class="booking-price-summary__row">
-                        <span>Taxes and fees</span>
+                        <span id="modalTaxLabel">VAT Tax (8%)</span>
                         <strong id="modalTax">
                             —
                         </strong>
@@ -349,6 +350,16 @@
                         <strong id="modalTotal">
                             $620
                         </strong>
+                    </div>
+
+                    <div class="booking-price-summary__row booking-price-summary__row--deposit" id="modalDepositBox">
+                        <span id="modalDepositLabel">Deposit (30%):</span>
+                        <strong id="modalDepositAmount">—</strong>
+                    </div>
+
+                    <div class="booking-price-summary__row booking-price-summary__row--remaining" id="modalRemainingBox">
+                        <span id="modalRemainingLabel">Remaining Balance (70%):</span>
+                        <strong id="modalRemainingAmount">—</strong>
                     </div>
                 </div>
 
@@ -370,12 +381,17 @@
                     Cancel Booking
                 </button>
 
+                <button type="button" class="btn btn-cta btn-small booking-detail-action js-modal-pay-deposit" id="modalPayDepositBtn" hidden>
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Pay 30% Deposit</span>
+                </button>
+
                 <a th:href="@{/services}" href="/services" class="btn btn-success btn-small booking-detail-action" id="bookServiceBtn">
                     <i class="fa-solid fa-bell-concierge"></i>
                     Book Services
                 </a>
 
-                <button type="button" class="btn btn-cta btn-small booking-detail-action" id="viewInvoiceBtn">
+                <button type="button" class="btn btn-secondary btn-small booking-detail-action" id="viewInvoiceBtn">
                     <i class="fa-regular fa-file-lines"></i>
                     <span id="invoiceButtonText">
                         Preview Invoice
@@ -383,8 +399,10 @@
                 </button>
             </div>
         </footer>
-    </    <!-- INVOICE PREVIEW MODAL -->
-    <div class="booking-detail-modal" id="invoicePreviewModal" aria-hidden="true">
+    </section>
+</div>
+
+<div class="booking-detail-modal" id="invoicePreviewModal" aria-hidden="true">
         <div class="booking-detail-modal__overlay" data-close-invoice-modal></div>
         <section class="booking-detail-modal__dialog invoice-preview-modal-dialog" role="dialog" aria-modal="true">
             <header class="invoice-preview-header">
@@ -447,7 +465,7 @@
                         <strong id="invSubtotal">6,200,000 VND</strong>
                     </div>
                     <div class="invoice-summary-row">
-                        <span>Taxes & Fees (10%):</span>
+                        <span>VAT Tax (8%):</span>
                         <strong id="invTax">620,000 VND</strong>
                     </div>
                     <div class="invoice-summary-total">
@@ -463,7 +481,8 @@
             </footer>
         </section>
     </div>
-</div>
+
+</th:block>
 
 </body>
 </html>

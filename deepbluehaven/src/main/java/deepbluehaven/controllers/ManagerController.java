@@ -2,6 +2,7 @@ package deepbluehaven.controllers;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import deepbluehaven.pojo.PricingRule;
 import deepbluehaven.pojo.Resort;
 import deepbluehaven.pojo.Room;
 import deepbluehaven.pojo.Service;
+import deepbluehaven.pojo.ServiceOrder;
 import deepbluehaven.pojo.Task;
 import deepbluehaven.pojo.TaskType;
 import deepbluehaven.pojo.Worker;
@@ -28,6 +30,7 @@ import deepbluehaven.pojo.enums.Role;
 import deepbluehaven.pojo.enums.RoomStatus;
 import deepbluehaven.pojo.enums.RoomType;
 import deepbluehaven.pojo.enums.ServiceCategory;
+import deepbluehaven.pojo.enums.ServiceOrderStatus;
 import deepbluehaven.pojo.enums.ServiceStatus;
 import deepbluehaven.pojo.enums.TaskStatus;
 import deepbluehaven.repositories.DiscountRepository;
@@ -35,6 +38,7 @@ import deepbluehaven.repositories.InvoiceRepository;
 import deepbluehaven.repositories.PricingRuleRepository;
 import deepbluehaven.repositories.ResortRepository;
 import deepbluehaven.repositories.RoomRepository;
+import deepbluehaven.repositories.ServiceOrderRepository;
 import deepbluehaven.repositories.ServiceRepository;
 import deepbluehaven.repositories.TaskRepository;
 import deepbluehaven.repositories.TaskTypeRepository;
@@ -53,6 +57,7 @@ public class ManagerController {
     private final DiscountRepository discountRepository;
     private final RoomRepository roomRepository;
     private final ServiceRepository serviceRepository;
+    private final ServiceOrderRepository serviceOrderRepository;
     private final WorkerRepository workerRepository;
     private final TaskRepository taskRepository;
     private final TaskTypeRepository taskTypeRepository;
@@ -69,6 +74,7 @@ public class ManagerController {
                              DiscountRepository discountRepository,
                              RoomRepository roomRepository,
                              ServiceRepository serviceRepository,
+                             ServiceOrderRepository serviceOrderRepository,
                              WorkerRepository workerRepository,
                              TaskRepository taskRepository,
                              TaskTypeRepository taskTypeRepository,
@@ -84,6 +90,7 @@ public class ManagerController {
         this.discountRepository = discountRepository;
         this.roomRepository = roomRepository;
         this.serviceRepository = serviceRepository;
+        this.serviceOrderRepository = serviceOrderRepository;
         this.workerRepository = workerRepository;
         this.taskRepository = taskRepository;
         this.taskTypeRepository = taskTypeRepository;
@@ -192,7 +199,36 @@ public class ManagerController {
 
     @GetMapping("/manager/services")
     public String managerServices(Model model) {
+        List<ServiceOrder> allOrders = serviceOrderRepository.findAll();
+        long pendingOrdersCount = 0;
+        long inProcessOrdersCount = 0;
+        long completedTodayCount = 0;
+        BigDecimal totalServiceRevenue = BigDecimal.ZERO;
+        LocalDate today = LocalDate.now();
+
+        for (ServiceOrder so : allOrders) {
+            if (so.getStatus() == ServiceOrderStatus.PENDING) {
+                pendingOrdersCount++;
+            } else if (so.getStatus() == ServiceOrderStatus.CONFIRMED) {
+                inProcessOrdersCount++;
+            } else if (so.getStatus() == ServiceOrderStatus.COMPLETED) {
+                if (so.getCompletedTime() != null && so.getCompletedTime().toLocalDate().isEqual(today)) {
+                    completedTodayCount++;
+                } else if (so.getOrderTime() != null && so.getOrderTime().toLocalDate().isEqual(today)) {
+                    completedTodayCount++;
+                }
+            }
+
+            if (so.getStatus() != ServiceOrderStatus.CANCELLED && so.getTotalPrice() != null) {
+                totalServiceRevenue = totalServiceRevenue.add(so.getTotalPrice());
+            }
+        }
+
         model.addAttribute("services", serviceRepository.findAll());
+        model.addAttribute("pendingOrdersCount", pendingOrdersCount);
+        model.addAttribute("inProcessOrdersCount", inProcessOrdersCount);
+        model.addAttribute("completedTodayCount", completedTodayCount);
+        model.addAttribute("totalServiceRevenue", totalServiceRevenue);
         model.addAttribute("activePage", "services");
         return "manager/services";
     }
@@ -206,15 +242,130 @@ public class ManagerController {
 
     @GetMapping("/manager/revenue")
     public String managerRevenue(Model model) {
-        model.addAttribute("invoices", invoiceRepository.findAllWithBookingAndCustomer());
+        List<deepbluehaven.pojo.Invoice> invoices = invoiceRepository.findAllWithBookingAndCustomer();
+        long unpaidCount = 0;
+        long paidCount = 0;
+        BigDecimal totalPaid = BigDecimal.ZERO;
+
+        for (deepbluehaven.pojo.Invoice i : invoices) {
+            if (i.getStatus() == deepbluehaven.pojo.enums.InvoiceStatus.PAID) {
+                paidCount++;
+            } else {
+                unpaidCount++;
+            }
+            if (i.getPaidAmount() != null) {
+                totalPaid = totalPaid.add(i.getPaidAmount());
+            }
+        }
+        int digitalPercent = invoices.isEmpty() ? 0 : (int) ((paidCount * 100) / invoices.size());
+
+        model.addAttribute("invoices", invoices);
+        model.addAttribute("unpaidCount", unpaidCount);
+        model.addAttribute("paidCount", paidCount);
+        model.addAttribute("digitalPercent", digitalPercent + "%");
+        model.addAttribute("totalPaidAmount", totalPaid);
         model.addAttribute("activePage", "revenue");
         return "manager/revenue";
     }
 
     @GetMapping("/manager/reports")
     public String managerReports(Model model) {
+        List<deepbluehaven.pojo.Invoice> invoices = invoiceRepository.findAll();
+        BigDecimal totalPaid = BigDecimal.ZERO;
+        for (deepbluehaven.pojo.Invoice inv : invoices) {
+            if (inv.getPaidAmount() != null) {
+                totalPaid = totalPaid.add(inv.getPaidAmount());
+            }
+        }
+        long totalRooms = roomRepository.count();
+        long availableRooms = Math.max(1, totalRooms);
+
+        BigDecimal revPar = totalPaid.divide(BigDecimal.valueOf(availableRooms), 0, java.math.RoundingMode.HALF_UP);
+
+        List<Room> allRooms = roomRepository.findAll();
+        BigDecimal totalRoomPrice = BigDecimal.ZERO;
+        for (Room r : allRooms) {
+            if (r.getBasePrice() != null) {
+                totalRoomPrice = totalRoomPrice.add(r.getBasePrice());
+            }
+        }
+        BigDecimal avgDailyRate = allRooms.isEmpty() ? BigDecimal.ZERO :
+                totalRoomPrice.divide(BigDecimal.valueOf(allRooms.size()), 0, java.math.RoundingMode.HALF_UP);
+
+        long activeRulesCount = pricingRuleRepository.count() + discountRepository.count();
+        long totalGuestsCount = bookingService.getAllBookingsForStaff().size();
+
+        model.addAttribute("revPar", revPar);
+        model.addAttribute("avgDailyRate", avgDailyRate);
+        model.addAttribute("activeRulesCount", activeRulesCount);
+        model.addAttribute("guestPointsTotal", (totalGuestsCount * 1500) + 1200);
         model.addAttribute("activePage", "reports");
         return "manager/reports";
+    }
+
+    @GetMapping("/manager/reports/financial/export")
+    public void exportManagerFinancialReport(jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"financial_revenue_summary.csv\"");
+
+        List<deepbluehaven.pojo.Invoice> invoices = invoiceRepository.findAllWithBookingAndCustomer();
+        try (java.io.OutputStreamWriter writer = new java.io.OutputStreamWriter(response.getOutputStream(), java.nio.charset.StandardCharsets.UTF_8)) {
+            writer.write("\uFEFF");
+            writer.write("Invoice ID,Booking Ref,Customer Name,Total Amount (VND),Paid Amount (VND),Status,Date Created\n");
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            for (deepbluehaven.pojo.Invoice inv : invoices) {
+                String invId = "#INV-" + inv.getId();
+                String bookingCode = inv.getBooking() != null ? inv.getBooking().getBookingCode() : "N/A";
+                String customerName = "Guest";
+                if (inv.getCustomer() != null && inv.getCustomer().getProfile() != null) {
+                    customerName = inv.getCustomer().getProfile().getFullName();
+                } else if (inv.getBooking() != null && inv.getBooking().getCustomer() != null && inv.getBooking().getCustomer().getProfile() != null) {
+                    customerName = inv.getBooking().getCustomer().getProfile().getFullName();
+                }
+                String total = inv.getTotalAmount() != null ? inv.getTotalAmount().toPlainString() : "0";
+                String paid = inv.getPaidAmount() != null ? inv.getPaidAmount().toPlainString() : "0";
+                String status = inv.getStatus() != null ? inv.getStatus().name() : "PENDING";
+                String date = inv.getTimestamp() != null ? inv.getTimestamp().format(dtf) : "N/A";
+
+                writer.write(String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
+                        escapeCsv(invId), escapeCsv(bookingCode), escapeCsv(customerName),
+                        escapeCsv(total), escapeCsv(paid), escapeCsv(status), escapeCsv(date)));
+            }
+            writer.flush();
+        }
+    }
+
+    @GetMapping("/manager/reports/occupancy/export")
+    public void exportManagerOccupancyReport(jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"occupancy_room_utilization.csv\"");
+
+        List<Room> rooms = roomRepository.findAll();
+        try (java.io.OutputStreamWriter writer = new java.io.OutputStreamWriter(response.getOutputStream(), java.nio.charset.StandardCharsets.UTF_8)) {
+            writer.write("\uFEFF");
+            writer.write("Room ID,Room Number,Type,Base Price (VND),Status,Capacity,Area (m2)\n");
+
+            for (Room r : rooms) {
+                String rId = String.valueOf(r.getId());
+                String rNum = r.getRoomNumber();
+                String rType = r.getRoomType() != null ? r.getRoomType().name() : "N/A";
+                String price = r.getBasePrice() != null ? r.getBasePrice().toPlainString() : "0";
+                String status = r.getStatus() != null ? r.getStatus().name() : "AVAILABLE";
+                String cap = r.getCapacity() != null ? String.valueOf(r.getCapacity()) : "2";
+                String area = r.getArea() != null ? String.valueOf(r.getArea()) : "35";
+
+                writer.write(String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
+                        escapeCsv(rId), escapeCsv(rNum), escapeCsv(rType), escapeCsv(price),
+                        escapeCsv(status), escapeCsv(cap), escapeCsv(area)));
+            }
+            writer.flush();
+        }
+    }
+
+    private String escapeCsv(String value) {
+        if (value == null) return "";
+        return value.replace("\"", "\"\"");
     }
 
     @GetMapping("/manager/pricing")

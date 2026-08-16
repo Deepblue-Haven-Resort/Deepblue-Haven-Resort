@@ -215,22 +215,30 @@
                         <span class="booking-created-date" th:text="${b.bookedOn != null ? 'Booked on ' + #temporals.format(b.bookedOn, 'MMMM dd, yyyy', new java.util.Locale('en')) : ''}">
                             Booked on July 20, 2026
                         </span>
-                        <div style="display: flex; gap: 8px; align-items: center;">
+                        <div class="booking-history-actions">
                             <button type="button"
-                                    th:if="${b.rawStatus == T(deepbluehaven.pojo.enums.BookingStatus).CHECKED_OUT}"
-                                    class="booking-detail-link js-open-comment-modal"
-                                    style="color: #d97706; background: #fffbeb; border: 1px solid #fcd34d; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 600;"
+                                    th:if="${b.rawStatus != null && b.rawStatus.name() == 'CHECKED_OUT'}"
+                                    class="booking-action-btn booking-action-btn--review js-open-comment-modal"
                                     th:data-booking-code="${b.bookingCode}"
                                     th:data-room-name="${b.roomName}"
                                     th:data-room-id="${b.roomId}">
-                                <i class="fa-solid fa-star" style="color: #f59e0b;"></i> Leave a Review
+                                <i class="fa-solid fa-star"></i> Leave a Review
+                            </button>
+
+                            <button type="button"
+                                    th:if="${b.rawStatus != null && b.rawStatus.name() == 'PENDING'}"
+                                    class="booking-action-btn booking-action-btn--deposit js-pay-deposit"
+                                    th:data-booking-id="${b.id}"
+                                    th:data-booking-code="${b.bookingCode}">
+                                <i class="fa-solid fa-credit-card"></i> Pay 30% Deposit
                             </button>
 
                             <button type="button"
                                     class="booking-detail-link js-open-booking-detail"
                                     aria-haspopup="dialog"
+                                    th:data-booking-id="${b.id}"
                                     th:data-booking-code="${b.bookingCode}"
-                                    th:data-booking-status="${b.rawStatus}"
+                                    th:data-booking-status="${b.rawStatus != null ? b.rawStatus.name() : 'PENDING'}"
                                     th:data-time-group="${b.timeGroup}"
                                     th:data-room-name="${b.roomName}"
                                     th:data-room-type="${b.roomType}"
@@ -239,8 +247,8 @@
                                     th:data-check-out="${b.checkOut != null ? #temporals.format(b.checkOut, 'MMMM dd, yyyy') : ''}"
                                     th:data-nights="|${b.nights} Nights|"
                                     th:data-booked-on="${b.bookedOn != null ? #temporals.format(b.bookedOn, 'MMMM dd, yyyy') : ''}"
-                                    th:data-payment-status="Paid"
-                                    th:data-total="|${#numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT')} VND|"
+                                    th:data-payment-status="${b.rawStatus != null && b.rawStatus.name() == 'PENDING' ? 'Deposit Pending' : 'Paid'}"
+                                    th:data-total="${b.totalAmountVnd != null ? #numbers.formatDecimal(b.totalAmountVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '0 VND'}"
                                     th:data-unit-price="${b.pricePerNightVnd != null ? #numbers.formatDecimal(b.pricePerNightVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}"
                                     th:data-room-amount="${b.roomChargeVnd != null ? #numbers.formatDecimal(b.roomChargeVnd, 0, 'COMMA', 0, 'POINT') + ' VND' : '—'}"
                                     th:data-special-request="${b.specialRequest != null && !b.specialRequest.isBlank() ? b.specialRequest : 'No special requests were submitted for this booking.'}"
@@ -361,6 +369,8 @@
 
 <div th:replace="~{fragments/booking-detail-modal :: bookingDetailModal}">
 </div>
+
+<div th:replace="~{fragments/toast :: toast}"></div>
 
 <script th:src="@{/assets/js/customer/booking-history.js}" src="/assets/js/customer/booking-history.js">
 </script>

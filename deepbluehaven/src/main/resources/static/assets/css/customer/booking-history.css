@@ -510,9 +510,10 @@
     position: absolute;
     top: var(--space-16);
     left: var(--space-16);
+    z-index: 2;
 
-    min-height: 30px;
-    padding-inline: var(--space-12);
+    min-height: 28px;
+    padding: var(--space-4) var(--space-12);
 
     display: inline-flex;
     align-items: center;
@@ -522,51 +523,52 @@
     border-radius: 999px;
 
     font-family: var(--font-body);
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 700;
     line-height: 1;
+    letter-spacing: 0.02em;
 
-    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
-
-/* Pending hoặc upcoming */
-
+/* Pending */
+.booking-status--pending,
 .booking-status--upcoming {
-    color: var(--neutral-900);
-    background: var(--warning-400);
-
-    border-color: var(--warning-500);
+    color: var(--warning-800);
+    background: var(--warning-100);
+    border-color: var(--warning-300);
 }
 
+/* Confirmed */
+.booking-status--confirmed {
+    color: var(--primary-800);
+    background: var(--primary-100);
+    border-color: var(--primary-300);
+}
 
-/* Booking đang diễn ra */
-
-.booking-status--current {
-    color: var(--secondary-900);
-    background: var(--secondary-200);
-
+/* Checked In / Current */
+.booking-status--current,
+.booking-status--checked-in {
+    color: var(--secondary-800);
+    background: var(--secondary-100);
     border-color: var(--secondary-300);
 }
 
-
-/* Booking hoàn thành */
-
-.booking-status--completed {
+/* Completed / Checked Out */
+.booking-status--completed,
+.booking-status--checked-out {
     color: var(--success-800);
     background: var(--success-100);
-
-    border-color: var(--success-200);
+    border-color: var(--success-300);
 }
 
-
-/* Booking đã hủy */
-
+/* Cancelled */
 .booking-status--cancelled {
     color: var(--error-700);
     background: var(--error-100);
-
-    border-color: var(--error-200);
+    border-color: var(--error-300);
 }
 
 
@@ -1165,22 +1167,22 @@
     gap: 10px;
 }
 .booking-flash-banner.success {
-    background: #f0fdf4;
-    color: #166534;
-    border: 1px solid #bbf7d0;
+    background: var(--success-100);
+    color: var(--success-900);
+    border: var(--border-1) solid var(--success-200);
 }
 .booking-flash-banner.success i {
     font-size: 1.1rem;
-    color: #16a34a;
+    color: var(--success-600);
 }
 .booking-flash-banner.error {
-    background: #fef2f2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
+    background: var(--error-100);
+    color: var(--error-900);
+    border: var(--border-1) solid var(--error-200);
 }
 .booking-flash-banner.error i {
     font-size: 1.1rem;
-    color: #dc2626;
+    color: var(--error-600);
 }
 
 .comment-modal-backdrop {
@@ -1189,18 +1191,19 @@
     inset: 0;
     background: rgba(15, 23, 42, 0.6);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 1100;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: var(--space-20, 20px);
 }
 
 .comment-modal-card {
-    background: #ffffff;
+    background: var(--surface-0);
     width: 100%;
     max-width: 520px;
-    border-radius: 16px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: var(--shadow-lg);
     overflow: hidden;
     animation: modalSlideUp 0.25s ease-out;
 }
@@ -1217,30 +1220,30 @@
 }
 
 .comment-modal-header {
-    padding: 20px 24px;
-    border-bottom: 1px solid #f1f5f9;
+    padding: var(--space-20, 20px) var(--space-24);
+    border-bottom: var(--border-1) solid var(--neutral-100);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #fafafa;
+    background: var(--neutral-50);
 }
 
 .comment-modal-title {
     font-size: 1.15rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--neutral-900);
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-8);
 }
 
 .comment-modal-title i {
-    color: #f59e0b;
+    color: var(--warning-500);
 }
 
 .comment-modal-subtitle {
-    color: #64748b;
+    color: var(--neutral-600);
     font-size: 0.825rem;
 }
 
@@ -1248,25 +1251,25 @@
     background: none;
     border: none;
     font-size: 1.25rem;
-    color: #94a3b8;
+    color: var(--neutral-400);
     cursor: pointer;
     transition: color 0.15s ease;
 }
 
 .comment-modal-close:hover {
-    color: #475569;
+    color: var(--neutral-700);
 }
 
 .comment-form {
-    padding: 24px;
+    padding: var(--space-24);
 }
 
 .comment-form-group {
-    margin-bottom: 18px;
+    margin-bottom: var(--space-18, 18px);
 }
 
 .comment-form-group-center {
-    margin-bottom: 20px;
+    margin-bottom: var(--space-20, 20px);
     text-align: center;
 }
 
@@ -1274,41 +1277,41 @@
     display: block;
     font-weight: 600;
     font-size: 0.875rem;
-    color: #334155;
-    margin-bottom: 6px;
+    color: var(--neutral-800);
+    margin-bottom: var(--space-6, 6px);
 }
 
 .comment-form-label-lg {
     display: block;
     font-weight: 600;
     font-size: 0.9rem;
-    color: #334155;
-    margin-bottom: 8px;
+    color: var(--neutral-800);
+    margin-bottom: var(--space-8);
 }
 
 .star-rating-container {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: var(--space-10, 10px);
     font-size: 2rem;
-    color: #cbd5e1;
+    color: var(--neutral-300);
     cursor: pointer;
 }
 
 .star-rating-container .star-icon {
-    color: #cbd5e1;
+    color: var(--neutral-300);
     transition: transform 0.15s, color 0.15s;
 }
 
 .star-rating-container .star-icon.selected {
-    color: #f59e0b;
+    color: var(--warning-500);
 }
 
 .comment-textarea {
     width: 100%;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-    padding: 12px;
+    border: var(--border-1) solid var(--neutral-300);
+    border-radius: var(--radius-md, 10px);
+    padding: var(--space-12);
     font-size: 0.9rem;
     font-family: inherit;
     outline: none;
@@ -1317,22 +1320,22 @@
 }
 
 .comment-textarea:focus {
-    border-color: #0284c7;
+    border-color: var(--primary-600);
 }
 
 .comment-complaint-group {
-    margin-bottom: 24px;
+    margin-bottom: var(--space-24);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-8);
     font-size: 0.85rem;
-    color: #475569;
+    color: var(--neutral-700);
 }
 
 .comment-complaint-check {
     width: 16px;
     height: 16px;
-    accent-color: #ef4444;
+    accent-color: var(--error-500);
 }
 
 .comment-complaint-label {
@@ -1342,36 +1345,137 @@
 .comment-modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
+    gap: var(--space-12);
 }
 
 .comment-btn-cancel {
-    padding: 10px 18px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    background: #ffffff;
-    color: #475569;
+    padding: var(--space-10, 10px) var(--space-18, 18px);
+    border: var(--border-1) solid var(--neutral-300);
+    border-radius: var(--radius-sm, 8px);
+    background: var(--surface-0);
+    color: var(--neutral-700);
     font-weight: 600;
     cursor: pointer;
     transition: background 0.15s;
 }
 
 .comment-btn-cancel:hover {
-    background: #f8fafc;
+    background: var(--neutral-50);
 }
 
 .comment-btn-submit {
-    padding: 10px 22px;
+    padding: var(--space-10, 10px) var(--space-22, 22px);
     border: none;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #0284c7, #2563eb);
-    color: #ffffff;
+    border-radius: var(--radius-sm, 8px);
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    color: var(--white);
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    box-shadow: var(--shadow-sm);
     transition: opacity 0.15s;
 }
 
 .comment-btn-submit:hover {
     opacity: 0.95;
+}
+
+/* =========================================
+   DEPOSIT & CUSTOMER ACTION BUTTONS
+   ========================================= */
+
+.booking-history-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.booking-action-btn {
+    padding: var(--space-6, 6px) var(--space-12);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-6, 6px);
+    border: var(--border-1) solid transparent;
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.booking-action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.booking-action-btn:active {
+    transform: scale(0.98);
+}
+
+.booking-action-btn--deposit {
+    background: var(--primary-800);
+    color: var(--white);
+    border-color: var(--primary-900);
+    box-shadow: var(--shadow-sm);
+}
+
+.booking-action-btn--deposit:hover {
+    background: var(--primary-700);
+}
+
+.booking-action-btn--review {
+    background: var(--warning-100);
+    color: var(--warning-900);
+    border-color: var(--warning-300);
+}
+
+.booking-action-btn--review:hover {
+    background: var(--warning-200);
+}
+
+.booking-price-summary__row--deposit {
+    color: var(--primary-800);
+    font-weight: 700;
+    background: var(--surface-100);
+    padding: var(--space-8) var(--space-12);
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-6, 6px);
+}
+
+.booking-price-summary__row--remaining {
+    color: var(--neutral-600);
+    font-size: 0.8125rem;
+    padding: 0 var(--space-12);
+    margin-top: var(--space-4);
+}
+
+.booking-status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px var(--space-6, 6px);
+    border-radius: var(--radius-sm);
+    margin-left: var(--space-6, 6px);
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.booking-status-tag--pending {
+    background: var(--warning-100);
+    color: var(--warning-900);
+    border: var(--border-1) solid var(--warning-300);
+}
+
+.booking-status-tag--confirmed {
+    background: var(--success-100);
+    color: var(--success-900);
+    border: var(--border-1) solid var(--success-300);
+}
+
+.booking-status-tag--due {
+    background: var(--neutral-200);
+    color: var(--neutral-700);
+    border: var(--border-1) solid var(--neutral-300);
 }

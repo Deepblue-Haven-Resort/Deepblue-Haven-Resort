@@ -24,8 +24,8 @@
                 </p>
 
                 <div class="footer-cta-actions">
-                    <a href="#" class="footer-btn-primary">Đặt kỳ nghỉ</a>
-                    <a href="#" class="footer-btn-secondary">Khám phá resort</a>
+                    <a th:href="@{/rooms}" class="footer-btn-primary">Đặt kỳ nghỉ</a>
+                    <a th:href="@{/about}" class="footer-btn-secondary">Khám phá resort</a>
                 </div>
             </div>
 
@@ -60,31 +60,31 @@
                 </p>
 
                 <div class="footer-socials">
-                    <a href="#">FB</a>
-                    <a href="#">IG</a>
-                    <a href="#">YT</a>
-                    <a href="#">TT</a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">FB</a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">IG</a>
+                    <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">YT</a>
+                    <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">TT</a>
                 </div>
             </div>
 
             <div class="footer-column">
                 <h4>Explore</h4>
 
-                <a href="#">Trang chủ</a>
-                <a href="#">Phòng nghỉ</a>
-                <a href="#">Dịch vụ</a>
-                <a href="#">Ưu đãi</a>
-                <a href="#">Liên hệ</a>
+                <a th:href="@{/}">Trang chủ</a>
+                <a th:href="@{/rooms}">Phòng nghỉ</a>
+                <a th:href="@{/services}">Dịch vụ</a>
+                <a th:href="@{/offers}">Ưu đãi</a>
+                <a th:href="@{/contact}">Liên hệ</a>
             </div>
 
             <div class="footer-column">
                 <h4>Support</h4>
 
-                <a href="#">FAQs</a>
-                <a href="#">Booking Policy</a>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Customer Care</a>
-                <a href="#">Terms & Conditions</a>
+                <a th:href="@{/contact}">FAQs</a>
+                <a th:href="@{/about}">Booking Policy</a>
+                <a th:href="@{/about}">Privacy Policy</a>
+                <a th:href="@{/contact}">Customer Care</a>
+                <a th:href="@{/about}">Terms & Conditions</a>
             </div>
 
             <div class="footer-column">
@@ -111,8 +111,8 @@
             <p>© 2026 Deep Blue Haven Resort. All Rights Reserved.</p>
 
             <div class="footer-bottom-links">
-                <a href="#">Privacy</a>
-                <a href="#">Terms</a>
+                <a th:href="@{/about}">Privacy</a>
+                <a th:href="@{/about}">Terms</a>
             </div>
         </div>
 

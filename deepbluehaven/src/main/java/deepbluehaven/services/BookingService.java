@@ -19,16 +19,17 @@ import deepbluehaven.pojo.Customer;
 import deepbluehaven.pojo.CustomerProfile;
 import deepbluehaven.pojo.Room;
 import deepbluehaven.pojo.ServiceOrder;
+import deepbluehaven.pojo.enums.ActionCode;
 import deepbluehaven.pojo.enums.BookingStatus;
 import deepbluehaven.pojo.enums.NotificationType;
+import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.pojo.enums.ServiceOrderStatus;
+import deepbluehaven.pojo.PricingRule;
 import deepbluehaven.repositories.BookingRepository;
 import deepbluehaven.repositories.CustomerRepository;
+import deepbluehaven.repositories.PricingRuleRepository;
 import deepbluehaven.repositories.RoomRepository;
 import deepbluehaven.repositories.ServiceOrderRepository;
-
-import deepbluehaven.pojo.enums.ActionCode;
-import deepbluehaven.pojo.enums.ObjectType;
 
 @Service
 public class BookingService {
@@ -37,6 +38,7 @@ public class BookingService {
     private final ServiceOrderRepository serviceOrderRepository;
     private final CustomerRepository customerRepository;
     private final RoomRepository roomRepository;
+    private final PricingRuleRepository pricingRuleRepository;
     private final NotificationService notificationService;
     private final LogService logService;
     private static final BigDecimal EXCHANGE_RATE_USD = new BigDecimal("26200");
@@ -45,12 +47,14 @@ public class BookingService {
                           ServiceOrderRepository serviceOrderRepository,
                           CustomerRepository customerRepository,
                           RoomRepository roomRepository,
+                          PricingRuleRepository pricingRuleRepository,
                           NotificationService notificationService,
                           LogService logService) {
         this.bookingRepository = bookingRepository;
         this.serviceOrderRepository = serviceOrderRepository;
         this.customerRepository = customerRepository;
         this.roomRepository = roomRepository;
+        this.pricingRuleRepository = pricingRuleRepository;
         this.notificationService = notificationService;
         this.logService = logService;
     }
@@ -136,9 +140,17 @@ public class BookingService {
         long nights = ChronoUnit.DAYS.between(targetCheckIn, targetCheckOut);
         nights = Math.max(nights, 1);
 
-        BigDecimal pricePerNight = room.getBasePrice() != null ? room.getBasePrice() : new BigDecimal("1500000");
+        BigDecimal pricePerNight = room.getBasePrice() != null ? room.getBasePrice() : new BigDecimal("2100000");
+        if (room.getRoomType() != null && pricingRuleRepository != null) {
+            try {
+                List<PricingRule> rules = pricingRuleRepository.findByRoomType(room.getRoomType());
+                if (rules != null && !rules.isEmpty() && rules.get(0).getMultiplier() != null) {
+                    pricePerNight = pricePerNight.multiply(rules.get(0).getMultiplier()).setScale(0, RoundingMode.HALF_UP);
+                }
+            } catch (Exception ignored) {}
+        }
         BigDecimal subTotal = pricePerNight.multiply(BigDecimal.valueOf(nights));
-        BigDecimal vatTax = subTotal.multiply(new BigDecimal("0.10")); // 10% VAT tax
+        BigDecimal vatTax = subTotal.multiply(new BigDecimal("0.08")).setScale(0, RoundingMode.HALF_UP);
         BigDecimal totalAmount = subTotal.add(vatTax);
 
         Booking booking = new Booking();
@@ -277,8 +289,10 @@ public class BookingService {
             }
         }
 
-        BigDecimal amountVnd = (booking.getTotalAmount() != null) ? booking.getTotalAmount() : BigDecimal.ZERO;
         BookingDetail firstDetail = (booking.getDetails() != null && !booking.getDetails().isEmpty()) ? booking.getDetails().get(0) : null;
+        BigDecimal roomChargeVnd = BigDecimal.ZERO;
+        BigDecimal pricePerNight = BigDecimal.ZERO;
+        long nightsCount = 1;
 
         if (firstDetail != null) {
             if (firstDetail.getRoom() != null) {
@@ -290,6 +304,9 @@ public class BookingService {
                 if (r.getImages() != null && !r.getImages().isEmpty()) {
                     dto.setRoomImageUrl(r.getImages().get(0));
                 }
+                if (r.getBasePrice() != null) {
+                    pricePerNight = r.getBasePrice();
+                }
             } else {
                 dto.setRoomNumber("—");
                 String typeName = (firstDetail.getRoomType() != null) ? firstDetail.getRoomType().name() : "Standard";
@@ -300,10 +317,16 @@ public class BookingService {
             dto.setCheckOut(firstDetail.getCheckOut());
 
             if (firstDetail.getCheckIn() != null && firstDetail.getCheckOut() != null) {
-                long nights = ChronoUnit.DAYS.between(firstDetail.getCheckIn(), firstDetail.getCheckOut());
-                dto.setNights(Math.max((int) nights, 1));
+                nightsCount = Math.max(ChronoUnit.DAYS.between(firstDetail.getCheckIn(), firstDetail.getCheckOut()), 1);
+            }
+            dto.setNights(nightsCount);
+            if (firstDetail.getPricePerNight() != null) {
+                pricePerNight = firstDetail.getPricePerNight();
+            }
+            if (firstDetail.getSubTotal() != null && firstDetail.getSubTotal().compareTo(BigDecimal.ZERO) > 0) {
+                roomChargeVnd = firstDetail.getSubTotal();
             } else {
-                dto.setNights(1);
+                roomChargeVnd = pricePerNight.multiply(BigDecimal.valueOf(nightsCount));
             }
         } else {
             dto.setRoomNumber("—");
@@ -312,11 +335,14 @@ public class BookingService {
             dto.setCheckIn(today);
             dto.setCheckOut(today.plusDays(1));
             dto.setNights(1);
+            roomChargeVnd = (booking.getTotalAmount() != null) ? booking.getTotalAmount() : BigDecimal.ZERO;
         }
 
-        dto.setTotalAmountVnd(amountVnd);
-        BigDecimal amountUsd = amountVnd.divide(EXCHANGE_RATE_USD, 2, RoundingMode.HALF_UP);
-        dto.setTotalAmountUsd(amountUsd);
+        if (roomChargeVnd.compareTo(BigDecimal.ZERO) == 0 && booking.getTotalAmount() != null) {
+            roomChargeVnd = booking.getTotalAmount();
+        }
+        dto.setPricePerNightVnd(pricePerNight);
+        dto.setRoomChargeVnd(roomChargeVnd);
 
         BookingStatus status = booking.getStatus() != null ? booking.getStatus() : BookingStatus.PENDING;
         dto.setRawStatus(status);
@@ -354,35 +380,62 @@ public class BookingService {
         dto.setStatusClass(statusClass);
 
         List<BookingHistoryDTO.ServiceItem> serviceItems = new ArrayList<>();
-        if (booking.getDetails() != null) {
-            for (BookingDetail d : booking.getDetails()) {
-                Booking bObj = d.getBooking();
-                if (bObj != null) {
-                    List<ServiceOrder> orders = serviceOrderRepository.findByBookingId(bObj.getId());
-                    for (ServiceOrder order : orders) {
-                        String name = (order.getService() != null) ? order.getService().getName() : "Extended Service";
-                        int qty = order.getQuantity();
-                        BigDecimal price = (order.getService() != null && order.getService().getBasePrice() != null) ? order.getService().getBasePrice() : BigDecimal.ZERO;
-                        BigDecimal itemTotal = (order.getTotalPrice() != null) ? order.getTotalPrice() : price.multiply(BigDecimal.valueOf(qty));
-                        boolean canCancel = (order.getStatus() == ServiceOrderStatus.PENDING || order.getStatus() == ServiceOrderStatus.CONFIRMED);
-                        serviceItems.add(new BookingHistoryDTO.ServiceItem(order.getId(), name, qty, price, itemTotal, order.getStatus() != null ? order.getStatus().name() : "PENDING", canCancel));
-                    }
+        BigDecimal totalServicesVnd = BigDecimal.ZERO;
+
+        List<ServiceOrder> orders = new ArrayList<>();
+        if (booking.getId() != null) {
+            orders.addAll(serviceOrderRepository.findByBookingId(booking.getId()));
+        }
+
+        if (booking.getCustomer() != null && booking.getCustomer().getId() != null) {
+            List<ServiceOrder> custOrders = serviceOrderRepository.findByCustomerId(booking.getCustomer().getId());
+            for (ServiceOrder co : custOrders) {
+                if (co.getBooking() == null && !orders.contains(co)) {
+                    orders.add(co);
                 }
             }
         }
+
+        for (ServiceOrder order : orders) {
+            String name = (order.getService() != null) ? order.getService().getName() : "Extended Service";
+            int qty = (order.getQuantity() != null) ? order.getQuantity() : 1;
+            BigDecimal price = (order.getService() != null && order.getService().getBasePrice() != null) ? order.getService().getBasePrice() : BigDecimal.ZERO;
+            BigDecimal itemTotal = (order.getTotalPrice() != null) ? order.getTotalPrice() : price.multiply(BigDecimal.valueOf(qty));
+            boolean canCancel = (order.getStatus() == ServiceOrderStatus.PENDING || order.getStatus() == ServiceOrderStatus.CONFIRMED);
+            serviceItems.add(new BookingHistoryDTO.ServiceItem(order.getId(), name, qty, price, itemTotal, order.getStatus() != null ? order.getStatus().name() : "PENDING", canCancel));
+            if (order.getStatus() != ServiceOrderStatus.CANCELLED) {
+                totalServicesVnd = totalServicesVnd.add(itemTotal);
+            }
+        }
         dto.setServiceItems(serviceItems);
+        dto.setServiceChargeVnd(totalServicesVnd);
+        dto.setDiscountVnd(BigDecimal.ZERO);
+        BigDecimal subtotal = roomChargeVnd.add(totalServicesVnd);
+        BigDecimal tax = subtotal.multiply(new BigDecimal("0.08")).setScale(0, RoundingMode.HALF_UP);
+        dto.setTaxVnd(tax);
+
+        BigDecimal finalTotalAmountVnd = subtotal.add(tax);
+        dto.setTotalAmountVnd(finalTotalAmountVnd);
+        BigDecimal amountUsd = finalTotalAmountVnd.divide(EXCHANGE_RATE_USD, 2, RoundingMode.HALF_UP);
+        dto.setTotalAmountUsd(amountUsd);
 
         return dto;
     }
 
     private String getStatusLabel(BookingStatus status) {
-        if (status == null) return "Chờ xác nhận";
+        if (status == null) 
+            return "Pending";
         switch (status) {
-            case PENDING: return "Chờ xác nhận";
-            case CONFIRMED: return "Đã xác nhận";
-            case CHECKED_IN: return "Đã check-in";
-            case CHECKED_OUT: return "Đã check-out";
-            case CANCELLED: return "Đã hủy";
+            case PENDING: 
+                return "Pending";
+            case CONFIRMED: 
+                return "Confirmed";
+            case CHECKED_IN: 
+                return "Checked In";
+            case CHECKED_OUT: 
+                return "Checked Out";
+            case CANCELLED: 
+                return "Cancelled";
             default: return status.name();
         }
     }

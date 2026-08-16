@@ -14,6 +14,14 @@ document.addEventListener("DOMContentLoaded", function () {
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
+    function notifyToast(type, title, message) {
+        if (typeof showToast === "function") {
+            showToast(type, title, message);
+        } else {
+            console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
+        }
+    }
+
     const filterButtons = document.querySelectorAll(".booking-filter-tab");
     const bookingCards = Array.from(document.querySelectorAll(".booking-history-card"));
     const searchInput = document.getElementById("bookingSearch");
@@ -348,7 +356,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 data-order-id="${item.orderId}"
                                 data-service-name="${escapeHtml(item.serviceName)}"
                                 style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px; cursor: pointer;">
-                            <i class="fa-solid fa-trash-can"></i> Hủy
+                            <i class="fa-solid fa-trash-can"></i> Cancel
                         </button>
                     ` : ''}
                 </div>
@@ -362,7 +370,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const orderId = btn.dataset.orderId;
                 const serviceName = btn.dataset.serviceName;
 
-                if (!confirm(`Bạn có chắc chắn muốn hủy dịch vụ "${serviceName}"?`)) {
+                if (!confirm(`Are you sure you want to cancel the service "${serviceName}"?`)) {
                     return;
                 }
 
@@ -372,13 +380,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                     const data = await res.json();
                     if (data.success) {
-                        showToast("success", "Thành công", `Đã hủy dịch vụ "${serviceName}" thành công.`);
+                        notifyToast("success", "Success", `Service "${serviceName}" cancelled successfully.`);
                         setTimeout(() => window.location.reload(), 1200);
                     } else {
-                        showToast("error", "Lỗi hủy dịch vụ", data.message || "Không thể hủy dịch vụ.");
+                        notifyToast("error", "Cancellation Error", data.message || "Unable to cancel service.");
                     }
                 } catch (err) {
-                    showToast("error", "Lỗi kết nối", "Đã xảy ra lỗi kết nối.");
+                    notifyToast("error", "Connection Error", "A network connection error occurred.");
                 }
             });
         });
@@ -404,17 +412,52 @@ document.addEventListener("DOMContentLoaded", function () {
         setElementText("modalNights", button.dataset.nights);
         setElementText("modalRoomQuantity", button.dataset.nights);
         setElementText("modalBookedOn", button.dataset.bookedOn);
+        const roomChargeRaw = (button.dataset.roomCharge || "0").replace(/[^0-9]/g, '');
+        const roomChargeNum = roomChargeRaw ? parseInt(roomChargeRaw, 10) : 0;
+        const serviceChargeRaw = (button.dataset.serviceCharge || "0").replace(/[^0-9]/g, '');
+        const serviceChargeNum = serviceChargeRaw ? parseInt(serviceChargeRaw, 10) : 0;
+        const discountRaw = (button.dataset.discount || "0").replace(/[^0-9]/g, '');
+        const discountNum = discountRaw ? parseInt(discountRaw, 10) : 0;
+
+        const subtotal = roomChargeNum + serviceChargeNum - discountNum;
+        const vatNum = Math.round(subtotal * 0.08);
+        const totalNum = subtotal + vatNum;
+        const depositVal = Math.round(totalNum * 0.3);
+        const remainingVal = totalNum - depositVal;
+
         setElementText("modalPaymentStatus", button.dataset.paymentStatus);
-        setElementText("modalSummaryTotal", button.dataset.total);
-        setElementText("modalTotal", button.dataset.total);
+        setElementText("modalSummaryTotal", totalNum.toLocaleString('vi-VN') + " VND");
+        setElementText("modalTotal", totalNum.toLocaleString('vi-VN') + " VND");
 
         setElementText("modalRoomUnitPrice", button.dataset.unitPrice || "—");
         setElementText("modalRoomAmount", button.dataset.roomAmount || "—");
         setElementText("modalSpecialRequest", button.dataset.specialRequest || "No special requests were submitted for this booking.");
         setElementText("modalRoomCharge", button.dataset.roomCharge || "—");
         setElementText("modalServiceCharge", button.dataset.serviceCharge || "0 VND");
-        setElementText("modalTax", button.dataset.tax || "0 VND");
+        setElementText("modalTax", vatNum.toLocaleString('vi-VN') + " VND");
         setElementText("modalDiscount", button.dataset.discount || "0 VND");
+
+        const depositLabelEl = document.getElementById("modalDepositLabel");
+        const depositAmtEl = document.getElementById("modalDepositAmount");
+        const remainingLabelEl = document.getElementById("modalRemainingLabel");
+        const remainingAmtEl = document.getElementById("modalRemainingAmount");
+
+        if (bookingStatus === "PENDING") {
+            if (depositLabelEl) depositLabelEl.textContent = "Deposit Required (30%):";
+            if (depositAmtEl) depositAmtEl.innerHTML = `${depositVal.toLocaleString('vi-VN')} VND <small class="booking-status-tag booking-status-tag--pending">Unpaid</small>`;
+            if (remainingLabelEl) remainingLabelEl.textContent = "Remaining Balance at Check-in (70%):";
+            if (remainingAmtEl) remainingAmtEl.textContent = remainingVal.toLocaleString('vi-VN') + " VND";
+        } else if (bookingStatus === "CONFIRMED" || bookingStatus === "CHECKED_IN") {
+            if (depositLabelEl) depositLabelEl.textContent = "Deposit (30% - VNPay):";
+            if (depositAmtEl) depositAmtEl.innerHTML = `${depositVal.toLocaleString('vi-VN')} VND <small class="booking-status-tag booking-status-tag--confirmed"><i class="fa-solid fa-check"></i> Paid</small>`;
+            if (remainingLabelEl) remainingLabelEl.textContent = "Remaining Balance at Check-out (70%):";
+            if (remainingAmtEl) remainingAmtEl.innerHTML = `${remainingVal.toLocaleString('vi-VN')} VND <small class="booking-status-tag booking-status-tag--due">Due at Check-out</small>`;
+        } else {
+            if (depositLabelEl) depositLabelEl.textContent = "Deposit (30%):";
+            if (depositAmtEl) depositAmtEl.innerHTML = `${depositVal.toLocaleString('vi-VN')} VND <small class="booking-status-tag booking-status-tag--confirmed"><i class="fa-solid fa-check"></i> Paid</small>`;
+            if (remainingLabelEl) remainingLabelEl.textContent = "Remaining Balance (70%):";
+            if (remainingAmtEl) remainingAmtEl.innerHTML = `${remainingVal.toLocaleString('vi-VN')} VND <small class="booking-status-tag booking-status-tag--confirmed"><i class="fa-solid fa-check"></i> Settled</small>`;
+        }
 
         setElementText("modalGuestName", button.dataset.guestName || "Guest");
         setElementText("modalGuestEmail", button.dataset.guestEmail || "guest@example.com");
@@ -430,6 +473,16 @@ document.addEventListener("DOMContentLoaded", function () {
             serviceItems = [];
         }
         renderModalServiceItems(serviceItems);
+
+        const modalPayDepositBtn = document.getElementById("modalPayDepositBtn");
+        if (modalPayDepositBtn) {
+            const isPending = (bookingStatus === "PENDING");
+            modalPayDepositBtn.hidden = !isPending;
+            if (isPending) {
+                modalPayDepositBtn.dataset.bookingId = button.dataset.bookingId;
+                modalPayDepositBtn.dataset.bookingCode = bookingCode;
+            }
+        }
 
         if (cancelBookingButton) {
             cancelBookingButton.hidden = (bookingStatus !== "PENDING" && bookingStatus !== "CONFIRMED");
@@ -457,6 +510,50 @@ document.addEventListener("DOMContentLoaded", function () {
         const dialog = bookingModal.querySelector(".booking-detail-modal__dialog");
         if (dialog) dialog.focus();
     }
+
+    async function initiateDepositPayment(bookingId, bookingCode, buttonEl) {
+        if (!bookingId) {
+            notifyToast("error", "Payment Error", "Booking ID not found.");
+            return;
+        }
+        const originalHtml = buttonEl ? buttonEl.innerHTML : "";
+        if (buttonEl) {
+            buttonEl.disabled = true;
+            buttonEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting to VNPay...';
+        }
+
+        try {
+            const res = await fetch(getApiUrl(`/api/vnpay/create-deposit?bookingId=${encodeURIComponent(bookingId)}`));
+            const resData = await res.json();
+            if (resData.success && resData.data) {
+                notifyToast("success", "VNPay Gateway", "Redirecting to VNPay Sandbox payment gateway...");
+                window.location.href = resData.data;
+            } else {
+                notifyToast("error", "Payment Failed", resData.message || "Could not generate deposit payment link.");
+                if (buttonEl) {
+                    buttonEl.disabled = false;
+                    buttonEl.innerHTML = originalHtml;
+                }
+            }
+        } catch (err) {
+            notifyToast("error", "Network Error", "Failed to connect to payment server: " + err);
+            if (buttonEl) {
+                buttonEl.disabled = false;
+                buttonEl.innerHTML = originalHtml;
+            }
+        }
+    }
+
+    document.addEventListener("click", function (e) {
+        const depositBtn = e.target.closest(".js-pay-deposit, .js-modal-pay-deposit");
+        if (depositBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const bookingId = depositBtn.dataset.bookingId;
+            const bookingCode = depositBtn.dataset.bookingCode;
+            initiateDepositPayment(bookingId, bookingCode, depositBtn);
+        }
+    });
 
     function closeBookingModal() {
         if (!bookingModal) return;
@@ -501,51 +598,67 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showToast("success", "Thành công", `Đơn đặt phòng ${bookingCode} đã được hủy thành công.`);
+                    notifyToast("success", "Thành công", `Đơn đặt phòng ${bookingCode} đã được hủy thành công.`);
                     setTimeout(() => window.location.reload(), 1200);
                 } else {
-                    showToast("error", "Lỗi hủy đơn", data.message || "Không thể hủy đơn đặt phòng.");
+                    notifyToast("error", "Lỗi hủy đơn", data.message || "Không thể hủy đơn đặt phòng.");
                 }
             } catch (e) {
-                showToast("error", "Lỗi kết nối", "Đã xảy ra lỗi khi kết nối máy chủ.");
+                notifyToast("error", "Lỗi kết nối", "Đã xảy ra lỗi khi kết nối máy chủ.");
             }
         });
     }
 
     if (viewInvoiceBtn && invoicePreviewModal) {
-        viewInvoiceBtn.addEventListener("click", function () {
-            if (!activeBookingButton) return;
+        viewInvoiceBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
 
-            const bookingCode = activeBookingButton.dataset.bookingCode || "DBH-2026-001";
-            const roomName = activeBookingButton.dataset.roomName || "Room";
-            const checkIn = activeBookingButton.dataset.checkIn || "";
-            const checkOut = activeBookingButton.dataset.checkOut || "";
-            const nights = activeBookingButton.dataset.nights || "1 Night";
-            const total = activeBookingButton.dataset.total || "0 VND";
-            const roomCharge = activeBookingButton.dataset.roomCharge || total;
-            const tax = activeBookingButton.dataset.tax || "0 VND";
+            const bookingCode = document.getElementById("modalBookingCode")?.textContent?.trim() || activeBookingButton?.dataset?.bookingCode || "DBH-2026-001";
+            const roomName = document.getElementById("modalRoomName")?.textContent?.trim() || activeBookingButton?.dataset?.roomName || "Room";
+            const checkIn = document.getElementById("modalCheckIn")?.textContent?.trim() || activeBookingButton?.dataset?.checkIn || "";
+            const checkOut = document.getElementById("modalCheckOut")?.textContent?.trim() || activeBookingButton?.dataset?.checkOut || "";
+            const nights = document.getElementById("modalNights")?.textContent?.trim() || activeBookingButton?.dataset?.nights || "1 Night";
+            const roomCharge = document.getElementById("modalRoomCharge")?.textContent?.trim() || "0 VND";
+            const serviceCharge = document.getElementById("modalServiceCharge")?.textContent?.trim() || "0 VND";
+            const guestName = document.getElementById("modalGuestName")?.textContent?.trim() || "Guest";
 
-            document.getElementById("invNumber").textContent = "INV-" + bookingCode;
-            document.getElementById("invBookingCode").textContent = bookingCode;
-            document.getElementById("invDate").textContent = new Date().toLocaleDateString('en-GB');
-            document.getElementById("invRoomName").textContent = roomName;
-            document.getElementById("invStayDates").textContent = checkIn + " — " + checkOut;
-            document.getElementById("invNights").textContent = nights;
-            document.getElementById("invRoomCharge").textContent = roomCharge;
-            document.getElementById("invSubtotal").textContent = roomCharge;
-            document.getElementById("invTax").textContent = tax;
-            document.getElementById("invGrandTotal").textContent = total;
+            const roomChargeNum = roomCharge ? parseInt(roomCharge.replace(/[^0-9]/g, '') || "0", 10) : 0;
+            const serviceChargeNum = serviceCharge ? parseInt(serviceCharge.replace(/[^0-9]/g, '') || "0", 10) : 0;
+            const subtotal = roomChargeNum + serviceChargeNum;
+            const vatNum = Math.round(subtotal * 0.08);
+            const totalNum = subtotal + vatNum;
 
-            const guestName = document.getElementById("modalGuestName")?.textContent || "Guest";
-            document.getElementById("invCustomerName").textContent = guestName;
+            const invNumber = document.getElementById("invNumber");
+            if (invNumber) invNumber.textContent = "INV-" + bookingCode;
+
+            const invBookingCode = document.getElementById("invBookingCode");
+            if (invBookingCode) invBookingCode.textContent = bookingCode;
+
+            const invDate = document.getElementById("invDate");
+            if (invDate) invDate.textContent = new Date().toLocaleDateString('en-GB');
+
+            const invSubtotal = document.getElementById("invSubtotal");
+            if (invSubtotal) invSubtotal.textContent = subtotal.toLocaleString('vi-VN') + " VND";
+
+            const invTax = document.getElementById("invTax");
+            if (invTax) invTax.textContent = vatNum.toLocaleString('vi-VN') + " VND";
+
+            const invGrandTotal = document.getElementById("invGrandTotal");
+            if (invGrandTotal) invGrandTotal.textContent = totalNum.toLocaleString('vi-VN') + " VND";
+
+            const invCustomerName = document.getElementById("invCustomerName");
+            if (invCustomerName) invCustomerName.textContent = guestName;
 
             const invTableBody = document.getElementById("invTableBody");
             if (invTableBody) {
                 let serviceItems = [];
-                try {
-                    serviceItems = JSON.parse(activeBookingButton.dataset.serviceItems || "[]");
-                } catch (e) {
-                    serviceItems = [];
+                if (activeBookingButton && activeBookingButton.dataset.serviceItems) {
+                    try {
+                        serviceItems = JSON.parse(activeBookingButton.dataset.serviceItems || "[]");
+                    } catch (err) {
+                        serviceItems = [];
+                    }
                 }
 
                 let html = `
@@ -581,7 +694,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     closeInvoiceButtons.forEach(function (btn) {
-        btn.addEventListener("click", function () {
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
             if (invoicePreviewModal) {
                 invoicePreviewModal.classList.remove("is-open");
                 invoicePreviewModal.setAttribute("aria-hidden", "true");

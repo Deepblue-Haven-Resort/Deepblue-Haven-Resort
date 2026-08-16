@@ -63,3 +63,22 @@ function getToastIcon(type) {
             return "fa-circle-info";
     }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const container = document.getElementById("toast-container");
+    if (!container) return;
+
+    const successMsg = container.getAttribute("data-flash-success");
+    const errorMsg = container.getAttribute("data-flash-error");
+    const infoMsg = container.getAttribute("data-flash-info");
+
+    if (successMsg && successMsg.trim() !== "") {
+        showToast("success", "Success", successMsg.trim());
+    }
+    if (errorMsg && errorMsg.trim() !== "") {
+        showToast("error", "Notice", errorMsg.trim());
+    }
+    if (infoMsg && infoMsg.trim() !== "") {
+        showToast("info", "Information", infoMsg.trim());
+    }
+});

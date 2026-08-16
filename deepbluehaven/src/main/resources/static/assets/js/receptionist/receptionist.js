@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. Dynamic Table Pagination Engine
     function setupTablePagination() {
         const tables = document.querySelectorAll('.activity-table, .account-table');
         tables.forEach((table, index) => {
@@ -16,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
             let currentKeyword = '';
             let currentStatus = 'ALL';
 
-            // Create Pagination Control Bar
             const tableWrapper = table.closest('.table-wrapper') || table.parentElement;
             let paginationBar = tableWrapper.parentElement.querySelector('.pagination-bar');
             if (!paginationBar) {
@@ -138,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
-                // Wire Button Events
                 const prevBtn = paginationBar.querySelector('.page-prev-btn');
                 if (prevBtn && currentPage > 1) {
                     prevBtn.addEventListener('click', () => renderPage(currentPage - 1));
@@ -179,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             renderPage(1);
 
-            // Search input integration
             const panel = tableWrapper.closest('.reception-panel, .account-panel') || tableWrapper.parentElement;
             const searchInput = panel ? panel.querySelector('#tableSearchInput, .search-box input') : document.getElementById('tableSearchInput');
             if (searchInput && !searchInput.dataset.listening) {
@@ -190,7 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            // Dropdown status filter integration
             const dropdown = panel ? panel.querySelector('.filter-dropdown') : null;
             if (dropdown && !dropdown.dataset.listening) {
                 dropdown.dataset.listening = 'true';
@@ -227,7 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupTablePagination();
 
-    // 2. Room Rack Grid Status Filter Buttons
     const filterButtons = document.querySelectorAll('[data-grid-filter]');
     const roomCards = document.querySelectorAll('.room-card');
 
@@ -254,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Modal Controls
     const walkInModal = document.getElementById('walkInModal');
     const roomDetailModal = document.getElementById('roomDetailModal');
     const checkoutConfirmModal = document.getElementById('checkoutConfirmModal');
@@ -263,7 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const openCheckoutBtns = document.querySelectorAll('[data-open-checkout-modal]');
     const closeModalBtns = document.querySelectorAll('[data-close-modal]');
 
-    // Open Walk-In Modal
     openWalkInBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -277,7 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Open Check-Out Confirmation Modal
     openCheckoutBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -294,6 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const serviceCharge = tr.getAttribute('data-service-charge');
             const discountCode = tr.getAttribute('data-discount-code');
             const discountAmount = tr.getAttribute('data-discount-amount');
+            const depositPaid = tr.getAttribute('data-deposit-paid');
+            const remainingPayable = tr.getAttribute('data-remaining-payable');
             const tax = tr.getAttribute('data-tax');
             const totalFolio = tr.getAttribute('data-total-folio');
 
@@ -307,41 +300,178 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('coModalServiceCharge').innerText = serviceCharge;
 
             const discountRow = document.getElementById('coModalDiscountRow');
-            if (discountCode && discountCode !== 'None' && discountAmount !== '0 VND') {
-                discountRow.style.display = 'table-row';
-                document.getElementById('coModalDiscountCode').innerText = discountCode;
-                const formattedDiscount = discountAmount.startsWith('-') ? discountAmount : '-' + discountAmount;
-                document.getElementById('coModalDiscountAmount').innerText = formattedDiscount;
-            } else {
-                discountRow.style.display = 'none';
+            if (discountRow) {
+                if (discountCode && discountCode !== 'None' && discountAmount !== '0 VND') {
+                    discountRow.style.display = 'table-row';
+                    document.getElementById('coModalDiscountCode').innerText = discountCode;
+                    const formattedDiscount = discountAmount.startsWith('-') ? discountAmount : '-' + discountAmount;
+                    document.getElementById('coModalDiscountAmount').innerText = formattedDiscount;
+                } else {
+                    discountRow.style.display = 'none';
+                }
             }
 
-            document.getElementById('coModalTax').innerText = tax;
-            document.getElementById('coModalTotalFolio').innerText = totalFolio;
+            const depositRow = document.getElementById('coModalDepositRow');
+            if (depositRow) {
+                if (depositPaid && depositPaid !== '0 VND' && depositPaid !== 'null') {
+                    depositRow.style.display = 'table-row';
+                    const formattedDeposit = depositPaid.startsWith('-') ? depositPaid : '-' + depositPaid;
+                    document.getElementById('coModalDepositPaid').innerText = formattedDeposit;
+                } else {
+                    depositRow.style.display = 'none';
+                }
+            }
+
+            const taxRow = document.getElementById('coModalTaxRow');
+            if (taxRow) {
+                if (tax && tax !== '0 VND' && tax !== '0.00 VND') {
+                    taxRow.style.display = 'table-row';
+                    document.getElementById('coModalTax').innerText = tax;
+                } else {
+                    taxRow.style.display = 'none';
+                }
+            }
+
+            document.getElementById('coModalTotalFolio').innerText = remainingPayable || totalFolio;
 
             checkoutConfirmModal.classList.add('active');
         });
     });
 
-    // Close Modals
-    closeModalBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (walkInModal) walkInModal.classList.remove('active');
-            if (roomDetailModal) roomDetailModal.classList.remove('active');
-            if (checkoutConfirmModal) checkoutConfirmModal.classList.remove('active');
-        });
-    });
+    const reservationDetailModal = document.getElementById('reservationDetailModal');
+    document.addEventListener('click', (e) => {
+        const viewTrigger = e.target.closest('.btn-view-reservation, .booking-ref-link');
+        if (!viewTrigger || !reservationDetailModal) return;
 
-    // Close on backdrop click
-    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
-        backdrop.addEventListener('click', (e) => {
-            if (e.target === backdrop) {
-                backdrop.classList.remove('active');
+        const row = viewTrigger.closest('tr');
+        if (!row) return;
+
+        const bookingId = row.getAttribute('data-booking-id') || '';
+        const code = row.getAttribute('data-booking-code') || '';
+        const guestName = row.getAttribute('data-guest-name') || '';
+        const guestEmail = row.getAttribute('data-guest-email') || '';
+        const guestPhone = row.getAttribute('data-guest-phone') || 'N/A';
+        const roomType = row.getAttribute('data-room-type') || '';
+        const roomNumber = row.getAttribute('data-room-number') || '';
+        const checkIn = row.getAttribute('data-check-in') || '';
+        const checkOut = row.getAttribute('data-check-out') || '';
+        const nights = row.getAttribute('data-nights') || '1';
+        const status = (row.getAttribute('data-status') || 'PENDING').toUpperCase();
+        const statusText = row.getAttribute('data-status-text') || 'Pending';
+        const roomCharge = row.getAttribute('data-room-charge') || '—';
+        const serviceCharge = row.getAttribute('data-service-charge') || '—';
+        const totalAmount = row.getAttribute('data-total-amount') || '0 VND';
+        const specialRequest = row.getAttribute('data-special-request') || '';
+
+        const elCode = document.getElementById('modalBookingRef') || document.getElementById('modalBookingCode');
+        if (elCode) elCode.innerText = code;
+
+        const elGuestName = document.getElementById('modalGuestName');
+        if (elGuestName) elGuestName.innerText = guestName;
+
+        const elGuestEmail = document.getElementById('modalGuestEmail');
+        if (elGuestEmail) elGuestEmail.innerText = guestEmail;
+
+        const elGuestPhone = document.getElementById('modalGuestPhone');
+        if (elGuestPhone) elGuestPhone.innerText = guestPhone;
+
+        const elRoomInfo = document.getElementById('modalRoomInfo');
+        if (elRoomInfo) elRoomInfo.innerText = roomType + (roomNumber ? ' (' + roomNumber + ')' : '');
+
+        const elStayDates = document.getElementById('modalStayDates');
+        if (elStayDates) elStayDates.innerText = checkIn + ' → ' + checkOut + ' (' + nights + ' nights)';
+
+        const statusBadge = document.getElementById('modalBookingStatus');
+        if (statusBadge) {
+            statusBadge.innerText = statusText;
+            statusBadge.className = 'status-badge status-' + status.toLowerCase().replace('_', '-');
+        }
+
+        const elRoomCharge = document.getElementById('modalRoomCharge');
+        if (elRoomCharge) elRoomCharge.innerText = roomCharge;
+
+        const elServiceCharge = document.getElementById('modalServiceCharge');
+        if (elServiceCharge) elServiceCharge.innerText = serviceCharge;
+
+        const roomChargeNum = roomCharge ? parseInt(roomCharge.replace(/[^0-9]/g, '') || '0', 10) : 0;
+        const serviceChargeNum = serviceCharge ? parseInt(serviceCharge.replace(/[^0-9]/g, '') || '0', 10) : 0;
+        const subtotal = roomChargeNum + serviceChargeNum;
+        const vatTaxNum = Math.round(subtotal * 0.08);
+        const totalNum = subtotal + vatTaxNum;
+
+        const elVatTax = document.getElementById('modalVatTax');
+        if (elVatTax) elVatTax.innerText = vatTaxNum.toLocaleString('vi-VN') + ' VND';
+
+        const elTotalAmount = document.getElementById('modalTotalAmount');
+        if (elTotalAmount) elTotalAmount.innerText = totalNum.toLocaleString('vi-VN') + ' VND';
+
+        const depositNum = Math.round(totalNum * 0.3);
+        const remainingNum = totalNum - depositNum;
+
+        const elDepositLabel = document.getElementById('modalDepositLabel');
+        const elDeposit = document.getElementById('modalDepositAmount');
+        const elRemainingLabel = document.getElementById('modalRemainingLabel');
+        const elRemaining = document.getElementById('modalRemainingAmount');
+
+        if (status === 'PENDING') {
+            if (elDepositLabel) elDepositLabel.textContent = 'Deposit Required (30%):';
+            if (elDeposit) elDeposit.innerHTML = `${depositNum.toLocaleString('vi-VN')} VND <small class="booking-status-tag booking-status-tag--pending">Unpaid</small>`;
+            if (elRemainingLabel) elRemainingLabel.textContent = 'Remaining Balance (70%):';
+            if (elRemaining) elRemaining.textContent = remainingNum.toLocaleString('vi-VN') + ' VND';
+        } else if (status === 'CONFIRMED' || status === 'CHECKED_IN') {
+            if (elDepositLabel) elDepositLabel.textContent = 'Deposit (30% - VNPay):';
+            if (elDeposit) elDeposit.innerHTML = `${depositNum.toLocaleString('vi-VN')} VND <small class="booking-status-tag booking-status-tag--confirmed"><i class="fa-solid fa-check"></i> Paid</small>`;
+            if (elRemainingLabel) elRemainingLabel.textContent = 'Remaining Balance at Check-out (70%):';
+            if (elRemaining) elRemaining.innerHTML = `${remainingNum.toLocaleString('vi-VN')} VND <small class="booking-status-tag booking-status-tag--due">Due at Check-out</small>`;
+        } else {
+            if (elDepositLabel) elDepositLabel.textContent = 'Deposit (30%):';
+            if (elDeposit) elDeposit.innerHTML = `${depositNum.toLocaleString('vi-VN')} VND <small class="booking-status-tag booking-status-tag--confirmed"><i class="fa-solid fa-check"></i> Paid</small>`;
+            if (elRemainingLabel) elRemainingLabel.textContent = 'Remaining Balance (70%):';
+            if (elRemaining) elRemaining.innerHTML = `${remainingNum.toLocaleString('vi-VN')} VND <small class="booking-status-tag booking-status-tag--confirmed"><i class="fa-solid fa-check"></i> Settled</small>`;
+        }
+
+        const reqBox = document.getElementById('modalSpecialRequestBox');
+        const reqText = document.getElementById('modalSpecialRequestText');
+        if (reqBox && reqText) {
+            if (specialRequest && specialRequest.trim() !== '' && specialRequest !== 'null') {
+                reqText.innerText = specialRequest;
+                reqBox.style.display = 'block';
+            } else {
+                reqBox.style.display = 'none';
             }
-        });
+        }
+
+        const confirmForm = document.getElementById('modalConfirmForm');
+        if (confirmForm) {
+            if (status === 'PENDING' && bookingId) {
+                const isManager = window.location.pathname.includes('/manager');
+                const basePath = isManager ? '/deepbluehaven/manager' : '/deepbluehaven/receptionist';
+                confirmForm.action = basePath + '/confirm-booking/' + bookingId;
+                confirmForm.style.display = 'block';
+            } else {
+                confirmForm.style.display = 'none';
+            }
+        }
+
+        reservationDetailModal.classList.add('active');
     });
 
-    // Room Card Click -> Open Room Details Popup
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.modal-close-btn, .modal-close, [data-close-modal], .btn-close')) {
+            document.querySelectorAll('.modal-backdrop.active').forEach(m => m.classList.remove('active'));
+            return;
+        }
+        if (e.target.classList.contains('modal-backdrop')) {
+            e.target.classList.remove('active');
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-backdrop.active').forEach(m => m.classList.remove('active'));
+        }
+    });
+
     roomCards.forEach(card => {
         card.addEventListener('click', () => {
             const roomId = card.getAttribute('data-room-id');

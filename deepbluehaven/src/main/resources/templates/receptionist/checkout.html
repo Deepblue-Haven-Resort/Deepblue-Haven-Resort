@@ -75,6 +75,8 @@
                                 th:data-service-charge="${item.serviceChargeStr + ' VND'}"
                                 th:data-discount-code="${item.discountCode != null ? item.discountCode : 'None'}"
                                 th:data-discount-amount="${item.discountAmountStr != null ? item.discountAmountStr + ' VND' : '0 VND'}"
+                                th:data-deposit-paid="${item.depositPaidStr + ' VND'}"
+                                th:data-remaining-payable="${item.netRemainingPayableStr + ' VND'}"
                                 th:data-tax="${item.taxStr + ' VND'}"
                                 th:data-total-folio="${item.totalFolioStr + ' VND'}">
 
@@ -92,26 +94,26 @@
                                     <small th:text="${item.nightsStayed + ' Nights Stayed'}">2 Nights Stayed</small>
                                 </td>
                                 <td>
-                                    <div
-                                        style="background: #f8fafc; padding: 10px 14px; border-radius: 10px; font-size: 0.825rem; border: 1px solid #e2e8f0;">
-                                        <div>Room: <strong th:text="${item.roomChargeStr + ' VND'}">3,500,000
-                                                VND</strong></div>
-                                        <div style="color: #2563eb; font-size: 0.775rem;"
-                                            th:text="${item.pricingRuleNote}">Standard Rate</div>
-                                        <div th:if="${item.discountCode != null}"
-                                            style="color: #16a34a; font-size: 0.775rem; margin-top: 2px;">
-                                            <i class="fa-solid fa-tags"></i> Offer: <span th:text="${item.discountCode}" style="font-weight: 600;">SUMMER26</span>: <strong
+                                    <div class="folio-queue-card">
+                                        <div>Room: <strong th:text="${item.roomChargeStr + ' VND'}">3,500,000 VND</strong></div>
+                                        <div class="text-primary" th:text="${item.pricingRuleNote}">Standard Rate</div>
+                                        <div th:if="${item.discountCode != null}" class="folio-deposit-badge">
+                                            <i class="fa-solid fa-tags"></i> Offer: <span th:text="${item.discountCode}">SUMMER26</span>: <strong
                                                 th:text="${'-' + item.discountAmountStr + ' VND'}">-200,000 VND</strong>
                                         </div>
-                                        <div th:if="${item.discountCode == null}"
-                                            style="color: #94a3b8; font-size: 0.775rem; margin-top: 2px;">
+                                        <div th:if="${item.discountCode == null}" class="text-muted">
                                             No Discount Applied
+                                        </div>
+                                        <div th:if="${item.depositPaid.compareTo(T(java.math.BigDecimal).ZERO) > 0}" class="folio-queue-deposit">
+                                            <i class="fa-solid fa-circle-check"></i> Deposit Paid: <strong th:text="${'-' + item.depositPaidStr + ' VND'}">-1,155,000 VND</strong>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <strong style="font-size: 1.15rem; color: #0f2c59;"
-                                        th:text="${item.totalFolioStr + ' VND'}">4,345,000 VND</strong>
+                                    <div class="folio-queue-due" th:text="${item.netRemainingPayableStr + ' VND'}">2,695,000 VND</div>
+                                    <small th:if="${item.depositPaid.compareTo(T(java.math.BigDecimal).ZERO) > 0}" class="text-muted">
+                                        Total Folio: <span th:text="${item.totalFolioStr + ' VND'}">3,850,000 VND</span>
+                                    </small>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-cta btn-small" data-open-checkout-modal>
@@ -121,9 +123,8 @@
                             </tr>
 
                             <tr th:if="${checkOutQueue == null || checkOutQueue.empty}">
-                                <td colspan="6" style="text-align: center; color: var(--neutral-500); padding: 40px;">
-                                    <i class="fa-solid fa-receipt"
-                                        style="font-size: 2rem; margin-bottom: 8px; display: block; color: var(--neutral-400);"></i>
+                                <td colspan="6" class="table-empty-cell">
+                                    <i class="fa-solid fa-receipt table-empty-icon"></i>
                                     No in-house guests currently pending check-out.
                                 </td>
                             </tr>
@@ -178,29 +179,35 @@
                                 <tr class="folio-row-white">
                                     <td class="folio-td-name">
                                         <strong>Room Stay Charge</strong><br>
-                                        <small id="coModalPricingNote" class="folio-pricing-tag">PricingRule
-                                            Applied</small>
+                                        <small id="coModalPricingNote" class="folio-pricing-tag">Standard Rate</small>
                                     </td>
                                     <td class="folio-td-val" id="coModalRoomCharge">3,500,000 VND</td>
                                 </tr>
                                 <tr class="folio-row-white">
                                     <td class="folio-td-name">Add-on Service Orders</td>
-                                    <td class="folio-td-val" id="coModalServiceCharge">450,000 VND</td>
+                                    <td class="folio-td-val" id="coModalServiceCharge">0 VND</td>
                                 </tr>
                                 <tr id="coModalDiscountRow" class="folio-row-discount">
                                     <td class="folio-td-discount-name">
                                         <strong>Applied Discount / Member Tier Offer</strong><br>
-                                        <small id="coModalDiscountCode" class="folio-discount-code" style="color: #16a34a; font-weight: 600;">SUMMER2026</small>
+                                        <small id="coModalDiscountCode" class="folio-discount-code">SUMMER2026</small>
                                     </td>
                                     <td class="folio-td-discount-val" id="coModalDiscountAmount">-200,000 VND</td>
                                 </tr>
-                                <tr class="folio-row-white">
-                                    <td class="folio-td-vat-name">VAT Tax (10%)</td>
-                                    <td class="folio-td-vat-val" id="coModalTax">375,000 VND</td>
+                                <tr id="coModalTaxRow" class="folio-row-white">
+                                    <td class="folio-td-vat-name">VAT Tax (8%)</td>
+                                    <td class="folio-td-vat-val" id="coModalTax">0 VND</td>
+                                </tr>
+                                <tr id="coModalDepositRow" class="folio-row-deposit">
+                                    <td class="folio-td-deposit-name">
+                                        <strong>Deposit Already Paid (30% via VNPay)</strong><br>
+                                        <small class="folio-deposit-badge"><i class="fa-solid fa-check"></i> Verified Online Pre-payment</small>
+                                    </td>
+                                    <td class="folio-td-deposit-val" id="coModalDepositPaid">-1,155,000 VND</td>
                                 </tr>
                                 <tr class="folio-row-total">
-                                    <td class="folio-td-total-label">Net Folio Payable</td>
-                                    <td class="folio-td-total-val" id="coModalTotalFolio">4,125,000 VND</td>
+                                    <td class="folio-td-total-label">Net Folio Due at Check-out</td>
+                                    <td class="folio-td-total-val" id="coModalTotalFolio">2,695,000 VND</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -31,7 +31,7 @@
                     </div>
                     <div>
                         <span>Unpaid Invoices</span>
-                        <strong>12</strong>
+                        <strong th:text="${unpaidCount}">12</strong>
                     </div>
                 </article>
 
@@ -41,7 +41,7 @@
                     </div>
                     <div>
                         <span>Paid Invoices</span>
-                        <strong>184</strong>
+                        <strong th:text="${paidCount}">184</strong>
                     </div>
                 </article>
 
@@ -51,7 +51,7 @@
                     </div>
                     <div>
                         <span>Digital Payments</span>
-                        <strong>78%</strong>
+                        <strong th:text="${digitalPercent}">78%</strong>
                     </div>
                 </article>
 
@@ -61,7 +61,7 @@
                     </div>
                     <div>
                         <span>Cash Ledger</span>
-                        <strong>12,400,000 VND</strong>
+                        <strong th:text="|${#numbers.formatDecimal(totalPaidAmount != null ? totalPaidAmount : 0, 0, 'COMMA', 0, 'POINT')} VND|">12,400,000 VND</strong>
                     </div>
                 </article>
             </section>
@@ -73,7 +73,9 @@
                         <h2>Financial Invoice Registry</h2>
                     </div>
                     <div class="filter-options">
-                        <button type="button" class="btn btn-outline btn-medium">Export Ledger (PDF)</button>
+                        <a th:href="@{/manager/reports/financial/export}" class="btn btn-outline btn-medium">
+                            <i class="fa-solid fa-download"></i> Export Ledger (CSV)
+                        </a>
                     </div>
                 </div>
 

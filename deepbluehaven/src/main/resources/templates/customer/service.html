@@ -352,10 +352,9 @@
     <!-- CONFIRM SERVICE POPUP -->
     <div th:replace="~{customer/service-confirmation :: serviceConfirmationModal}"></div>
 
-    <div class="toast-container" id="toastContainer"></div>
+    <div th:replace="~{fragments/toast :: toast}"></div>
 
     <script th:src="@{/assets/js/customer/service-confirmation.js}" src="/assets/js/customer/service-confirmation.js"></script>
-
     <script th:src="@{/assets/js/customer/service.js}" src="/assets/js/customer/service.js"></script>
     <script th:src="@{/assets/js/customer/favorite-toggle.js}" src="/assets/js/customer/favorite-toggle.js"></script>
 

@@ -15,6 +15,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/manager-table.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/toast.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -34,7 +35,7 @@
                     </div>
                     <div>
                         <span>Pending Orders</span>
-                        <strong>9</strong>
+                        <strong th:text="${pendingOrdersCount != null ? pendingOrdersCount : 0}">0</strong>
                     </div>
                 </article>
 
@@ -44,7 +45,7 @@
                     </div>
                     <div>
                         <span>In Process</span>
-                        <strong>14</strong>
+                        <strong th:text="${inProcessOrdersCount != null ? inProcessOrdersCount : 0}">0</strong>
                     </div>
                 </article>
 
@@ -54,7 +55,7 @@
                     </div>
                     <div>
                         <span>Completed Today</span>
-                        <strong>42</strong>
+                        <strong th:text="${completedTodayCount != null ? completedTodayCount : 0}">0</strong>
                     </div>
                 </article>
 
@@ -64,7 +65,7 @@
                     </div>
                     <div>
                         <span>Service Revenue</span>
-                        <strong>18,450,000 VND</strong>
+                        <strong th:text="|${#numbers.formatDecimal(totalServiceRevenue != null ? totalServiceRevenue : 0, 0, 'COMMA', 0, 'POINT')} VND|">0 VND</strong>
                     </div>
                 </article>
             </section>
@@ -233,6 +234,7 @@
     <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
     <script th:src="@{/assets/js/manager/services.js}"></script>
     <script th:src="@{/assets/js/shared/table-pagination.js}"></script>
+    <div th:replace="~{fragments/toast :: toast}"></div>
 </body>
 
 </html>

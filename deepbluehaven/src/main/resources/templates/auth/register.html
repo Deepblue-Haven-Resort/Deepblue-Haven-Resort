@@ -148,9 +148,9 @@
                         <input type="checkbox" name="terms" required />
                         <span>
                             I agree to the
-                            <a href="#">Terms</a>
+                            <a th:href="@{/about}">Terms</a>
                             and
-                            <a href="#">Privacy Policy</a>
+                            <a th:href="@{/about}">Privacy Policy</a>
                         </span>
                     </label>
 
@@ -166,14 +166,11 @@
                 </div>
 
                 <div class="auth-social">
-                    <a href="#" class="auth-social-btn" aria-label="Register with Google">
+                    <a th:href="@{/oauth2/authorization/google}" class="auth-social-btn" aria-label="Register with Google">
                         <i class="fa-brands fa-google"></i>
                     </a>
-                    <a href="#" class="auth-social-btn" aria-label="Register with Facebook">
+                    <a th:href="@{/oauth2/authorization/facebook}" class="auth-social-btn" aria-label="Register with Facebook">
                         <i class="fa-brands fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="auth-social-btn" aria-label="Register with Apple">
-                        <i class="fa-brands fa-apple"></i>
                     </a>
                 </div>
 

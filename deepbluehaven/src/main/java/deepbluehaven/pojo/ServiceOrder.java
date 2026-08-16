@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
@@ -74,6 +75,16 @@ public class ServiceOrder {
     @CreationTimestamp
     @Column(name = "timestamp", nullable = false, updatable = false)
     private LocalDateTime timestamp;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.action == null || this.action.trim().isEmpty()) {
+            this.action = "ORDER_CREATED";
+        }
+        if (this.orderTime == null) {
+            this.orderTime = LocalDateTime.now();
+        }
+    }
 
     public ServiceOrder() {}
 

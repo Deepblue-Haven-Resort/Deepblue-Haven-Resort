@@ -9,6 +9,7 @@
 
   <link rel="stylesheet" th:href="@{/assets/css/theme.css}" href="/assets/css/theme.css" />
   <link rel="stylesheet" th:href="@{/assets/css/base.css}" href="/assets/css/base.css" />
+  <link rel="stylesheet" th:href="@{/assets/css/toast.css}" href="/assets/css/toast.css" />
   <link rel="stylesheet" th:href="@{/assets/css/header.css}" href="/assets/css/header.css" />
   <link rel="stylesheet" th:href="@{/assets/css/footer.css}" href="/assets/css/footer.css" />
   <link rel="stylesheet" th:href="@{/assets/css/customer/home.css}" href="/assets/css/customer/home.css" />
@@ -444,19 +445,20 @@
       </div>
     </section>
 
-    <section class="home-subscribe reveal">
+    <section class="home-subscribe reveal" id="newsletter">
       <span class="home-section__tag">Stay Connected</span>
       <h2>Get new offers from Deep Blue Haven</h2>
       <p>Subscribe to receive information on rooms, seasonal packages, and the latest resort experiences.</p>
 
-      <form class="home-subscribe__form" action="#" method="post">
-        <input type="email" name="email" placeholder="Enter your email" aria-label="Email" />
+      <form class="home-subscribe__form" th:action="@{/subscribe}" method="post">
+        <input type="email" name="email" placeholder="Enter your email" aria-label="Email" required />
         <button class="btn btn-cta btn-medium" type="submit">Subscribe</button>
       </form>
     </section>
   </main>
 
   <div th:replace="~{fragments/footer :: footer}"></div>
+  <div th:replace="~{fragments/toast :: toast}"></div>
 
   <script th:src="@{/assets/js/customer/reveal-animation.js}"></script>
 </body>
