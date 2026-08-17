@@ -48,6 +48,13 @@ import deepbluehaven.services.LogService;
 import deepbluehaven.services.ManagerDashboardService;
 import jakarta.servlet.http.HttpSession;
 
+import deepbluehaven.pojo.InventoryItem;
+import deepbluehaven.pojo.InventoryTransaction;
+import deepbluehaven.pojo.Supplier;
+import deepbluehaven.repositories.InventoryItemRepository;
+import deepbluehaven.repositories.InventoryTransactionRepository;
+import deepbluehaven.repositories.SupplierRepository;
+
 @Controller
 public class ManagerController {
 
@@ -67,6 +74,9 @@ public class ManagerController {
     private final deepbluehaven.repositories.MembershipTierRepository membershipTierRepository;
     private final deepbluehaven.services.CommentAndInquiryService commentAndInquiryService;
     private final deepbluehaven.services.ChatService chatService;
+    private final InventoryItemRepository inventoryItemRepository;
+    private final SupplierRepository supplierRepository;
+    private final InventoryTransactionRepository inventoryTransactionRepository;
 
     public ManagerController(ManagerDashboardService managerDashboardService,
                              BookingService bookingService,
@@ -83,7 +93,10 @@ public class ManagerController {
                              LogService logService,
                              deepbluehaven.repositories.MembershipTierRepository membershipTierRepository,
                              deepbluehaven.services.CommentAndInquiryService commentAndInquiryService,
-                             deepbluehaven.services.ChatService chatService) {
+                             deepbluehaven.services.ChatService chatService,
+                             InventoryItemRepository inventoryItemRepository,
+                             SupplierRepository supplierRepository,
+                             InventoryTransactionRepository inventoryTransactionRepository) {
         this.managerDashboardService = managerDashboardService;
         this.bookingService = bookingService;
         this.pricingRuleRepository = pricingRuleRepository;
@@ -100,6 +113,9 @@ public class ManagerController {
         this.membershipTierRepository = membershipTierRepository;
         this.commentAndInquiryService = commentAndInquiryService;
         this.chatService = chatService;
+        this.inventoryItemRepository = inventoryItemRepository;
+        this.supplierRepository = supplierRepository;
+        this.inventoryTransactionRepository = inventoryTransactionRepository;
     }
 
     @GetMapping("/manager/dashboard")
@@ -800,5 +816,161 @@ public class ManagerController {
         model.addAttribute("activePage", "chat");
         model.addAttribute("sessions", chatService.getStaffSessions("ALL"));
         return "manager/chat";
+    }
+
+    @GetMapping("/manager/inventory")
+    public String managerInventory(Model model) {
+        List<InventoryItem> items = inventoryItemRepository.findAllWithSupplierAndResort();
+        List<Supplier> suppliers = supplierRepository.findAllWithItems();
+        List<InventoryTransaction> transactions = inventoryTransactionRepository.findAllWithItemOrderByIdDesc();
+
+        long totalItems = items.size();
+        long lowStockCount = items.stream().filter(i -> i.getQuantity() != null && i.getMinThreshold() != null && i.getQuantity() <= i.getMinThreshold() && i.getQuantity() > 0).count();
+        long outOfStockCount = items.stream().filter(i -> i.getQuantity() == null || i.getQuantity() <= 0).count();
+        long totalSuppliers = suppliers.size();
+
+        model.addAttribute("items", items);
+        model.addAttribute("suppliers", suppliers);
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("totalItems", totalItems);
+        model.addAttribute("lowStockCount", lowStockCount);
+        model.addAttribute("outOfStockCount", outOfStockCount);
+        model.addAttribute("totalSuppliers", totalSuppliers);
+        model.addAttribute("activePage", "inventory");
+        return "manager/inventory";
+    }
+
+    @PostMapping("/manager/inventory/save")
+    public String saveInventoryItem(@RequestParam(value = "id", required = false) Long id,
+                                   @RequestParam("name") String name,
+                                   @RequestParam("unit") String unit,
+                                   @RequestParam("quantity") Integer quantity,
+                                   @RequestParam("minThreshold") Integer minThreshold,
+                                   @RequestParam("supplierId") Long supplierId,
+                                   RedirectAttributes redirectAttrs,
+                                   HttpSession session) {
+        try {
+            InventoryItem item;
+            boolean isNew = (id == null);
+            if (id != null) {
+                item = inventoryItemRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("Inventory item not found"));
+            } else {
+                item = new InventoryItem();
+                Resort resort = resortRepository.findAll().stream().findFirst().orElseGet(() -> {
+                    Resort r = new Resort();
+                    r.setName("Deepblue Haven Resort");
+                    r.setLocation("Da Nang, Vietnam");
+                    return resortRepository.save(r);
+                });
+                item.setResort(resort);
+            }
+
+            Supplier supplier = supplierRepository.findById(supplierId)
+                    .orElseThrow(() -> new IllegalArgumentException("Supplier not found"));
+
+            item.setName(name);
+            item.setUnit(unit);
+            item.setQuantity(quantity);
+            item.setMinThreshold(minThreshold);
+            item.setSupplier(supplier);
+
+            inventoryItemRepository.save(item);
+            logService.log(ObjectType.SYSTEM, isNew ? ActionCode.CREATE : ActionCode.UPDATE, item.getId(),
+                    "Manager saved inventory item: " + name + " (Qty: " + quantity + " " + unit + ")", session);
+
+            redirectAttrs.addFlashAttribute("successMessage", "Inventory item '" + name + "' saved successfully!");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to save item: " + e.getMessage());
+        }
+        return "redirect:/manager/inventory";
+    }
+
+    @PostMapping("/manager/inventory/transaction")
+    public String recordInventoryTransaction(@RequestParam("itemId") Long itemId,
+                                             @RequestParam("type") String type,
+                                             @RequestParam("quantity") Integer quantity,
+                                             @RequestParam(value = "reason", required = false) String reason,
+                                             RedirectAttributes redirectAttrs,
+                                             HttpSession session) {
+        try {
+            InventoryItem item = inventoryItemRepository.findById(itemId)
+                    .orElseThrow(() -> new IllegalArgumentException("Inventory item not found"));
+
+            int qty = (quantity != null && quantity > 0) ? quantity : 1;
+            int change = "EXPORT".equalsIgnoreCase(type) ? -qty : qty;
+            int currentQty = item.getQuantity() != null ? item.getQuantity() : 0;
+            int newQty = Math.max(0, currentQty + change);
+
+            item.setQuantity(newQty);
+            inventoryItemRepository.save(item);
+
+            InventoryTransaction tx = new InventoryTransaction();
+            tx.setInventoryItem(item);
+            tx.setChangeAmount(change);
+            String desc = reason != null && !reason.isBlank() ? reason : ("IMPORT".equalsIgnoreCase(type) ? "Restock shipment" : "Housekeeping usage");
+            tx.setReason(desc);
+            inventoryTransactionRepository.save(tx);
+
+            logService.log(ObjectType.SYSTEM, ActionCode.UPDATE, item.getId(),
+                    "Manager recorded inventory " + type + " of " + qty + " " + item.getUnit() + " for " + item.getName() + " (New Qty: " + newQty + ")", session);
+
+            redirectAttrs.addFlashAttribute("successMessage", "Recorded " + type + " of " + qty + " " + item.getUnit() + " for '" + item.getName() + "'. New balance: " + newQty);
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to record transaction: " + e.getMessage());
+        }
+        return "redirect:/manager/inventory";
+    }
+
+    @PostMapping("/manager/inventory/supplier/save")
+    public String saveSupplier(@RequestParam(value = "id", required = false) Long id,
+                               @RequestParam("name") String name,
+                               @RequestParam("phoneNumber") String phoneNumber,
+                               @RequestParam("email") String email,
+                               @RequestParam("address") String address,
+                               RedirectAttributes redirectAttrs,
+                               HttpSession session) {
+        try {
+            Supplier supplier;
+            boolean isNew = (id == null);
+            if (id != null) {
+                supplier = supplierRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("Supplier not found"));
+            } else {
+                supplier = new Supplier();
+            }
+
+            supplier.setName(name);
+            supplier.setPhoneNumber(phoneNumber);
+            supplier.setEmail(email);
+            supplier.setAddress(address);
+
+            supplierRepository.save(supplier);
+            logService.log(ObjectType.SYSTEM, isNew ? ActionCode.CREATE : ActionCode.UPDATE, supplier.getId(),
+                    "Manager saved supplier: " + name, session);
+
+            redirectAttrs.addFlashAttribute("successMessage", "Supplier '" + name + "' saved successfully!");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to save supplier: " + e.getMessage());
+        }
+        return "redirect:/manager/inventory?tab=suppliers";
+    }
+
+    @PostMapping("/manager/inventory/{id}/delete")
+    public String deleteInventoryItem(@PathVariable("id") Long id,
+                                      RedirectAttributes redirectAttrs,
+                                      HttpSession session) {
+        try {
+            InventoryItem item = inventoryItemRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Item not found"));
+            String itemName = item.getName();
+            inventoryItemRepository.delete(item);
+            logService.log(ObjectType.SYSTEM, ActionCode.DELETE, id,
+                    "Manager deleted inventory item: " + itemName, session);
+            redirectAttrs.addFlashAttribute("successMessage", "Deleted inventory item '" + itemName + "'");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to delete item: " + e.getMessage());
+        }
+        return "redirect:/manager/inventory";
     }
 }

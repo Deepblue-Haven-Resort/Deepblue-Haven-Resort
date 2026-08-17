@@ -712,3 +712,155 @@
         }
     }
 }
+
+/* ==========================================================================
+   CUSTOMER LOYALTY & VIP REWARDS ACTIVITY (100% DESIGN TOKENS)
+   ========================================================================== */
+
+.loyalty-overview-section {
+    margin-top: var(--space-24);
+}
+
+.loyalty-subtitle {
+    color: var(--neutral-600);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-4);
+}
+
+.vip-tier-badge-container {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.vip-tier-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    padding: var(--space-8) var(--space-20);
+    background: linear-gradient(135deg, var(--gold-100), var(--primary-100));
+    border: 1.5px solid var(--gold-400);
+    border-radius: var(--radius-xl);
+    color: var(--primary-900);
+    font-weight: 800;
+    font-size: var(--font-size-sm);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-sm);
+}
+
+.vip-tier-badge i {
+    color: var(--gold-600);
+    font-size: 1.05rem;
+}
+
+.loyalty-table-wrapper {
+    overflow-x: auto;
+    margin-top: var(--space-16);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-md);
+    background: var(--surface-0);
+}
+
+.loyalty-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: var(--font-size-sm);
+}
+
+.loyalty-table thead tr {
+    background: var(--neutral-50);
+    border-bottom: 1px solid var(--neutral-200);
+    color: var(--neutral-700);
+}
+
+.loyalty-table th {
+    padding: var(--space-12) var(--space-16);
+    font-weight: 700;
+}
+
+.loyalty-table th.text-center {
+    text-align: center;
+}
+
+.loyalty-table th.text-right {
+    text-align: right;
+}
+
+.loyalty-table tbody tr {
+    border-bottom: 1px solid var(--neutral-100);
+    transition: background 0.15s ease;
+}
+
+.loyalty-table tbody tr:hover {
+    background: var(--neutral-50);
+}
+
+.loyalty-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.loyalty-empty-cell {
+    padding: var(--space-32) var(--space-16);
+    text-align: center;
+    color: var(--neutral-500);
+}
+
+.loyalty-empty-icon {
+    font-size: 2.2rem;
+    margin-bottom: var(--space-8);
+    display: block;
+    opacity: 0.8;
+    color: var(--gold-500);
+}
+
+.loyalty-col-date {
+    width: 170px;
+    padding: var(--space-12) var(--space-16);
+    color: var(--neutral-600);
+    white-space: nowrap;
+    font-size: var(--font-size-sm);
+}
+
+.loyalty-col-reason {
+    padding: var(--space-12) var(--space-16);
+    font-weight: 600;
+    color: var(--neutral-900);
+    font-size: var(--font-size-sm);
+}
+
+.loyalty-col-ref {
+    width: 150px;
+    padding: var(--space-12) var(--space-16);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.ref-badge-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    color: var(--neutral-700);
+}
+
+.loyalty-col-points {
+    width: 150px;
+    padding: var(--space-12) var(--space-16);
+    text-align: right;
+    font-weight: 800;
+    white-space: nowrap;
+    font-size: var(--font-size-sm);
+}
+
+.points-gain {
+    color: var(--success-600);
+}
+
+.points-loss {
+    color: var(--error-600);
+}

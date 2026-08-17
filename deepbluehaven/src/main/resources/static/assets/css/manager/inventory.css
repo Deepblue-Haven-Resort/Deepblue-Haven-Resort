@@ -1,0 +1,341 @@
+/* ==========================================================================
+   MANAGER INVENTORY & WAREHOUSE CSS (100% DESIGN TOKENS)
+   ========================================================================== */
+.stat-icon--warning {
+    color: var(--warning-600);
+    background: var(--warning-100);
+}
+
+.stat-icon--danger {
+    color: var(--error-600);
+    background: var(--error-100);
+}
+
+.stat-number--warning {
+    color: var(--warning-600);
+}
+
+.stat-number--danger {
+    color: var(--error-600);
+}
+
+.inventory-subtitle {
+    color: var(--neutral-600);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-4);
+}
+
+.inventory-header-actions {
+    display: flex;
+    gap: var(--space-8);
+}
+
+.inventory-filter-bar {
+    margin-top: var(--space-16);
+    margin-bottom: var(--space-16);
+}
+
+.inventory-search-box {
+    flex: 1;
+}
+
+.activity-table th,
+.activity-table td {
+    vertical-align: middle;
+}
+
+.col-id {
+    width: 95px;
+    font-weight: 700;
+    color: var(--neutral-700);
+    white-space: nowrap;
+    text-align: left;
+}
+
+.col-name {
+    min-width: 220px;
+    color: var(--neutral-900);
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.col-unit {
+    width: 90px;
+    color: var(--neutral-600);
+    white-space: nowrap;
+    text-align: center;
+}
+
+.col-stock {
+    width: 160px;
+    text-align: left;
+}
+
+.col-min {
+    width: 110px;
+    text-align: center;
+    color: var(--neutral-700);
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.col-supplier {
+    min-width: 180px;
+    text-align: left;
+}
+
+.col-status {
+    width: 140px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.col-actions {
+    width: 140px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.col-tx-type {
+    width: 140px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.col-tx-qty {
+    width: 130px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.col-sup-id {
+    width: 130px;
+    font-weight: 700;
+    color: var(--neutral-700);
+    white-space: nowrap;
+    text-align: left;
+}
+
+.col-sup-name {
+    width: 420px;
+    min-width: 380px;
+    font-weight: 600;
+    color: var(--neutral-900);
+    white-space: nowrap;
+    text-align: left;
+}
+
+.supplier-title-row {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    vertical-align: middle;
+}
+
+.btn-icon-view {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: none;
+    color: var(--primary-600);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+}
+
+.btn-icon-view:hover {
+    background: var(--primary-50);
+    color: var(--primary-800);
+}
+
+.col-sup-items {
+    width: auto;
+    text-align: left;
+}
+
+.supplied-items-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.supplied-product-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-8);
+    background: var(--primary-50);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--radius-sm);
+    color: var(--primary-800);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.supplied-product-tag i {
+    font-size: 0.75rem;
+    color: var(--primary-600);
+}
+
+.col-sup-actions {
+    width: 120px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.stock-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-width: 130px;
+}
+
+.stock-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--neutral-200);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.stock-progress-fill {
+    height: 100%;
+    border-radius: var(--radius-xl);
+    transition: width 0.3s ease;
+}
+
+.stock-progress-fill--in {
+    background: var(--success-500);
+}
+
+.stock-progress-fill--low {
+    background: var(--warning-500);
+}
+
+.stock-progress-fill--out {
+    background: var(--error-500);
+}
+
+.table-action-btns {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6);
+}
+
+.btn-action-inout {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.item-supplier-link {
+    color: var(--primary-700);
+    font-weight: 600;
+}
+
+.item-supplier-unassigned {
+    color: var(--neutral-400);
+    font-style: italic;
+}
+
+.inventory-empty-cell {
+    padding: var(--space-32);
+    color: var(--neutral-500);
+    text-align: center;
+}
+
+.inventory-empty-icon {
+    font-size: 2rem;
+    margin-bottom: var(--space-8);
+    display: block;
+    opacity: 0.7;
+}
+
+.tx-badge--import {
+    color: var(--success-600);
+    font-weight: 700;
+}
+
+.tx-badge--export {
+    color: var(--error-600);
+    font-weight: 700;
+}
+
+.modal-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-16);
+}
+
+.modal-input-readonly {
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+    font-weight: 600;
+}
+
+.supplier-detail-card {
+    background: var(--neutral-50);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-sm);
+    padding: var(--space-16);
+}
+
+.supplier-detail-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    margin-bottom: var(--space-16);
+    padding-bottom: var(--space-12);
+    border-bottom: 1px solid var(--neutral-200);
+}
+
+.supplier-detail-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    background: var(--primary-100);
+    color: var(--primary-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.supplier-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
+}
+
+.supplier-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.grid-span-2 {
+    grid-column: span 2;
+}
+
+.detail-label {
+    font-size: var(--font-size-xs);
+    color: var(--neutral-500);
+    font-weight: 600;
+}
+
+.detail-val {
+    font-size: var(--font-size-sm);
+    color: var(--neutral-900);
+    font-weight: 600;
+    word-break: break-word;
+}
