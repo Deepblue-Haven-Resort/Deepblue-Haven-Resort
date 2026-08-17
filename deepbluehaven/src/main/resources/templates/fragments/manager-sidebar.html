@@ -29,6 +29,12 @@
             <span>Services</span>
         </a>
 
+        <a th:href="@{/manager/inventory}"
+            th:class="${activePage == 'inventory'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>Inventory</span>
+        </a>
+
         <a th:href="@{/manager/staff}" th:class="${activePage == 'staff'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-user-tie"></i>
             <span>Staff</span>

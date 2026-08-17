@@ -333,6 +333,7 @@ public class HomeController {
         int upcomingStays = bookingService.getValidBookingsByCustomer(customerId).size();
         model.addAttribute("totalBookingsCount", totalBookings);
         model.addAttribute("upcomingStaysCount", upcomingStays);
+        model.addAttribute("loyaltyLogs", customerService.getLoyaltyLogsByCustomer(customerId));
 
         return "customer/profile";
     }

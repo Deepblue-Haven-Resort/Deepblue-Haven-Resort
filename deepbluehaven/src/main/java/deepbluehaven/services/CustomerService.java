@@ -14,9 +14,11 @@ import deepbluehaven.dto.CustomerProfileDTO;
 import deepbluehaven.dto.RoomCardViewDTO;
 import deepbluehaven.dto.ServiceDTO;
 import deepbluehaven.pojo.Customer;
+import deepbluehaven.pojo.CustomerLoyaltyLog;
 import deepbluehaven.pojo.CustomerProfile;
 import deepbluehaven.pojo.Room;
 import deepbluehaven.pojo.enums.ServiceStatus;
+import deepbluehaven.repositories.CustomerLoyaltyLogRepository;
 import deepbluehaven.repositories.CustomerProfileRepository;
 import deepbluehaven.repositories.CustomerRepository;
 import deepbluehaven.repositories.RoomRepository;
@@ -30,17 +32,20 @@ public class CustomerService {
     private final CustomerProfileRepository customerProfileRepository;
     private final RoomRepository roomRepository;
     private final RoomService roomService;
+    private final CustomerLoyaltyLogRepository customerLoyaltyLogRepository;
 
     public CustomerService(ServiceRepository serviceRepository,
                            CustomerRepository customerRepository,
                            CustomerProfileRepository customerProfileRepository,
                            RoomRepository roomRepository,
-                           RoomService roomService) {
+                           RoomService roomService,
+                           CustomerLoyaltyLogRepository customerLoyaltyLogRepository) {
         this.serviceRepository = serviceRepository;
         this.customerRepository = customerRepository;
         this.customerProfileRepository = customerProfileRepository;
         this.roomRepository = roomRepository;
         this.roomService = roomService;
+        this.customerLoyaltyLogRepository = customerLoyaltyLogRepository;
     }
 
     @Transactional(readOnly = true)
@@ -226,5 +231,10 @@ public class CustomerService {
         dto.setStatusValue(isAvailable ? "active" : "out-of-stock");
         dto.setFavorite(favoriteServiceIds != null && favoriteServiceIds.contains(entity.getId()));
         return dto;
+    }
+
+    @Transactional(readOnly = true)
+    public List<CustomerLoyaltyLog> getLoyaltyLogsByCustomer(Long customerId) {
+        return customerLoyaltyLogRepository.findByCustomerIdOrderByTimestampDesc(customerId);
     }
 }

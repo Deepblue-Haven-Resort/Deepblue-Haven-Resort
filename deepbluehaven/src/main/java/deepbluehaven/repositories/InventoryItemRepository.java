@@ -11,6 +11,9 @@ import deepbluehaven.pojo.InventoryItem;
 @Repository
 public interface InventoryItemRepository extends JpaRepository<InventoryItem, Long> {
 
+    @Query("SELECT i FROM InventoryItem i LEFT JOIN FETCH i.supplier LEFT JOIN FETCH i.resort")
+    List<InventoryItem> findAllWithSupplierAndResort();
+
     @Query("SELECT i FROM InventoryItem i WHERE i.quantity <= i.minThreshold")
     List<InventoryItem> findLowInventoryItems();
 }
