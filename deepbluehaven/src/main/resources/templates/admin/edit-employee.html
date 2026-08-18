@@ -35,7 +35,6 @@
 
                             <div>
                                 <h2>Edit Employee</h2>
-                                <!-- Hiển thị thông tin mã nhân viên (read-only) -->
                                 <div style="color: var(--white); opacity: 0.8; font-size: 0.8rem; margin-top: 4px;">
                                     <span th:text="${editWorkerForm != null ? editWorkerForm.employeeCode : 'EMP-001'}">EMP-001</span>
                                 </div>
@@ -458,7 +457,6 @@
                                 Back
                             </button>
 
-                            <!-- Thêm khoảng trống để căn phải -->
                             <div style="flex: 1;"></div>
 
                             <button class="primary-btn" type="button" id="nextBtn">

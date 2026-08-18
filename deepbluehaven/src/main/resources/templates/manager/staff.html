@@ -12,18 +12,32 @@
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/dashboard.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/manager/manager-modal.css}">
     <link rel="stylesheet" th:href="@{/assets/css/manager/manager-table.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/toast.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
     <div class="admin-layout">
-
         
         <div th:replace="~{fragments/manager-sidebar :: managerSidebar}"></div>
 
         <main class="admin-main">
+
+            <div th:replace="~{fragments/toast :: toast}"></div>
+
+            <!-- Flash Notifications -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fa-solid fa-circle-check"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+
             <section class="stats-grid">
                 <article class="stat-card">
                     <div class="stat-icon">
@@ -31,7 +45,7 @@
                     </div>
                     <div>
                         <span>Total Employees</span>
-                        <strong>25</strong>
+                        <strong th:text="${totalEmployees != null ? totalEmployees : #lists.size(staffList)}">25</strong>
                     </div>
                 </article>
 
@@ -41,7 +55,7 @@
                     </div>
                     <div>
                         <span>Receptionists</span>
-                        <strong>7</strong>
+                        <strong th:text="${receptionistCount != null ? receptionistCount : 0}">7</strong>
                     </div>
                 </article>
 
@@ -51,7 +65,7 @@
                     </div>
                     <div>
                         <span>Housekeepers</span>
-                        <strong>13</strong>
+                        <strong th:text="${housekeeperCount != null ? housekeeperCount : 0}">13</strong>
                     </div>
                 </article>
 
@@ -61,22 +75,23 @@
                     </div>
                     <div>
                         <span>Average Performance</span>
-                        <strong>85.4%</strong>
+                        <strong th:text="|${#numbers.formatDecimal(avgPerformance != null ? avgPerformance : 90.0, 1, 1)}%|">90.0%</strong>
                     </div>
                 </article>
             </section>
-
             
             <section class="manager-panel">
                 <div class="panel-header">
                     <div>
                         <h2>Employee Roster</h2>
+                        <p class="panel-subtitle">Manage resort workforce, department assignments, and access privileges.</p>
                     </div>
                     <div class="filter-options">
-                        <button type="button" class="btn btn-cta btn-medium">Register New Staff</button>
+                        <button type="button" class="btn btn-cta btn-medium" id="openRegisterStaffModalBtn" data-open-staff-modal>
+                            <i class="fa-solid fa-user-plus"></i> Register New Staff
+                        </button>
                     </div>
                 </div>
-
                 
                 <div class="filter-bar">
                     <div class="search-box">
@@ -84,10 +99,9 @@
                         <input type="text" placeholder="Search staff by code, name, phone, or role...">
                     </div>
                 </div>
-
                 
                 <div class="table-wrapper">
-                    <table class="activity-table">
+                    <table class="activity-table" data-page-size="6">
                         <thead>
                             <tr>
                                 <th>Employee Code</th>
@@ -100,7 +114,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="w : ${staffList}">
+                            <tr th:each="w : ${staffList}" th:data-status="${w.status}">
                                 <td><strong th:text="${w.employeeCode != null ? w.employeeCode : 'EMP-' + w.id}">SEED-EMP-006</strong></td>
                                 <td>
                                     <div class="table-user-info">
@@ -118,11 +132,10 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="table-actions">
-                                        <form th:action="@{'/admin/accounts/' + ${w.id} + '/status'}" method="post">
-                                            <input type="hidden" name="status" th:value="${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'LOCKED' : 'ACTIVE'}" />
+                                        <form th:action="@{'/manager/staff/' + ${w.id} + '/toggle-status'}" method="post">
                                             <button type="submit" class="btn btn-small"
-                                                    th:classappend="${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'delete-btn' : 'lock-btn'}"
-                                                    th:text="${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'Lock' : 'Unlock'}">Toggle Lock</button>
+                                                    th:classappend="${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'btn-danger' : 'btn-success'}"
+                                                    th:text="${w.status == T(deepbluehaven.pojo.enums.WorkerStatus).ACTIVE ? 'Deactivate' : 'Activate'}">Toggle</button>
                                         </form>
                                     </div>
                                 </td>
@@ -133,29 +146,107 @@
                         </tbody>
                     </table>
                 </div>
-
                 
                 <div class="table-footer">
-                    <p>Showing <strong>1-2</strong> of <strong>25</strong> staff members</p>
-                    <div class="pagination">
-                        <button type="button" class="page-btn disabled">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button type="button" class="page-btn active">1</button>
-                        <button type="button" class="page-btn">2</button>
-                        <span class="page-dots">...</span>
-                        <button type="button" class="page-btn">3</button>
-                        <button type="button" class="page-btn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
+                    <p>Showing <strong>1-6</strong> of <strong th:text="${#lists.size(staffList)}">0</strong> staff members</p>
+                    <div class="pagination"></div>
                 </div>
             </section>
 
         </main>
     </div>
 
+    <!-- REGISTER NEW STAFF MODAL -->
+    <div class="modal-overlay" id="registerStaffModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-plus"></i> Register New Staff Member</h3>
+                <button type="button" class="modal-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form th:action="@{/manager/staff/save}" method="post">
+                <div class="modal-body">
+                    <div class="modal-form-grid">
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Employee Code</label>
+                                <input type="text" name="employeeCode" class="form-input uppercase-input" placeholder="Auto-generated if blank" />
+                            </div>
+                            <div class="form-group">
+                                <label>Username <span>*</span></label>
+                                <input type="text" name="username" class="form-input" placeholder="e.g. jessica.reception" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Default Password <span>*</span></label>
+                            <input type="password" name="password" class="form-input" placeholder="Enter temporary password" required minlength="6" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Full Name <span>*</span></label>
+                            <input type="text" name="fullName" class="form-input" placeholder="e.g. Jessica Miller" required />
+                        </div>
+
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Staff Role <span>*</span></label>
+                                <select name="role" class="modal-select-field" required>
+                                    <option value="RECEPTIONIST" selected>Receptionist</option>
+                                    <option value="HOUSEKEEPER">Housekeeper</option>
+                                    <option value="MANAGER">Manager</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Department <span>*</span></label>
+                                <select name="department" class="modal-select-field" required>
+                                    <option value="FRONT_DESK" selected>Front Desk</option>
+                                    <option value="HOUSEKEEPING">Housekeeping</option>
+                                    <option value="MANAGEMENT">Management</option>
+                                    <option value="FOOD_BEVERAGE">Food & Beverage</option>
+                                    <option value="MAINTENANCE">Maintenance</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Phone Number <span>*</span></label>
+                                <input type="tel" name="phoneNumber" class="form-input" placeholder="0901234567" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" name="email" class="form-input" placeholder="staff@deepbluehaven.com" />
+                            </div>
+                        </div>
+
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <select name="gender" class="modal-select-field">
+                                    <option value="MALE">Male</option>
+                                    <option value="FEMALE" selected>Female</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Address</label>
+                                <input type="text" name="address" class="form-input" placeholder="e.g. Da Nang, Vietnam" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-btn" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-cta"><i class="fa-solid fa-save"></i> Register Staff</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+    <script th:src="@{/assets/js/manager/staff.js}"></script>
     <script th:src="@{/assets/js/shared/table-pagination.js}"></script>
 </body>
 

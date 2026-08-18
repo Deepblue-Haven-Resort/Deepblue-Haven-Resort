@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpSession;
 @Configuration
 public class SecurityConfig {
 
-    private static final int SESSION_TIMEOUT_SECONDS = 60 * 60 * 8; 
+    private static final int SESSION_TIMEOUT_SECONDS = 60 * 60 * 8;
 
     private final AuthService authService;
 
@@ -27,25 +27,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers(
-                    "/api/vnpay/**",
-                    "/vnpay/**",
-                    "/dinio/vnpay/**",
-                    "/auth/**",
-                    "/api/chat/**",
-                    "/api/favorites/**",
-                    "/api/customer/**"
-                )
-            )
-            .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-            .oauth2Login(oauth2 -> oauth2
-                .loginPage("/login")
-                .successHandler(oAuth2SuccessHandler())
-            );
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers(
+                                "/api/vnpay/**",
+                                "/vnpay/**",
+                                "/dinio/vnpay/**",
+                                "/auth/**",
+                                "/api/chat/**",
+                                "/api/favorites/**",
+                                "/api/customer/**"))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .successHandler(oAuth2SuccessHandler()));
 
         return http.build();
     }

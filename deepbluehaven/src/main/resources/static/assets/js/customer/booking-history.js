@@ -636,16 +636,18 @@ document.addEventListener("DOMContentLoaded", function () {
             if (invBookingCode) invBookingCode.textContent = bookingCode;
 
             const invDate = document.getElementById("invDate");
-            if (invDate) invDate.textContent = new Date().toLocaleDateString('en-GB');
+            if (invDate) invDate.textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            const formatVndText = (num) => Number(num || 0).toLocaleString('en-US') + " VND";
 
             const invSubtotal = document.getElementById("invSubtotal");
-            if (invSubtotal) invSubtotal.textContent = subtotal.toLocaleString('vi-VN') + " VND";
+            if (invSubtotal) invSubtotal.textContent = formatVndText(subtotal);
 
             const invTax = document.getElementById("invTax");
-            if (invTax) invTax.textContent = vatNum.toLocaleString('vi-VN') + " VND";
+            if (invTax) invTax.textContent = formatVndText(vatNum);
 
             const invGrandTotal = document.getElementById("invGrandTotal");
-            if (invGrandTotal) invGrandTotal.textContent = totalNum.toLocaleString('vi-VN') + " VND";
+            if (invGrandTotal) invGrandTotal.textContent = formatVndText(totalNum);
 
             const invCustomerName = document.getElementById("invCustomerName");
             if (invCustomerName) invCustomerName.textContent = guestName;
@@ -707,7 +709,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const printInvoiceBtn = document.getElementById("printInvoiceBtn") || document.querySelector("[data-print-invoice]");
     if (printInvoiceBtn) {
         printInvoiceBtn.addEventListener("click", function () {
-            const bookingCode = document.getElementById("modalBookingCode")?.textContent?.trim() || activeBookingButton?.dataset?.bookingCode || "";
+            const bookingCode = document.getElementById("invBookingCode")?.textContent?.trim() ||
+                                document.getElementById("modalBookingCode")?.textContent?.trim() ||
+                                activeBookingButton?.dataset?.bookingCode || "";
             if (bookingCode) {
                 window.open(getApiUrl("/customer/booking/" + encodeURIComponent(bookingCode) + "/invoice"), "_blank");
             } else {

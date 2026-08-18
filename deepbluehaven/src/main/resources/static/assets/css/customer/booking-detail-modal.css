@@ -86,8 +86,7 @@ body.booking-modal-open {
         box-shadow 0.3s ease;
 }
 
-.booking-detail-modal.is-open
-.booking-detail-modal__dialog {
+.booking-detail-modal.is-open .booking-detail-modal__dialog {
     transform: translateY(0) scale(1);
 }
 
@@ -114,11 +113,9 @@ body.booking-modal-open {
     color: var(--white);
 
     background:
-        linear-gradient(
-            135deg,
+        linear-gradient(135deg,
             var(--primary-900),
-            var(--primary-700)
-        );
+            var(--primary-700));
 
     overflow: hidden;
 }
@@ -267,8 +264,7 @@ body.booking-modal-open {
 
     scrollbar-width: thin;
     scrollbar-color:
-        var(--primary-300)
-        var(--primary-100);
+        var(--primary-300) var(--primary-100);
 }
 
 .booking-detail-modal__body::-webkit-scrollbar {
@@ -299,11 +295,9 @@ body.booking-modal-open {
     gap: var(--space-24);
 
     background:
-        linear-gradient(
-            135deg,
+        linear-gradient(135deg,
             var(--surface-0),
-            var(--primary-100)
-        );
+            var(--primary-100));
 
     border: var(--border-1) solid var(--primary-200);
     border-radius: var(--radius-md);
@@ -594,7 +588,7 @@ body.booking-modal-open {
     font-size: 0.82rem;
 }
 
-.booking-detail-guest__item > div:last-child {
+.booking-detail-guest__item>div:last-child {
     min-width: 0;
 }
 
@@ -636,10 +630,7 @@ body.booking-modal-open {
 .booking-detail-items__row {
     display: grid;
     grid-template-columns:
-        minmax(240px, 1.8fr)
-        minmax(90px, 0.6fr)
-        minmax(100px, 0.7fr)
-        minmax(100px, 0.7fr);
+        minmax(240px, 1.8fr) minmax(90px, 0.6fr) minmax(100px, 0.7fr) minmax(100px, 0.7fr);
 
     align-items: center;
     gap: var(--space-16);
@@ -673,8 +664,8 @@ body.booking-modal-open {
     font-size: 0.76rem;
 }
 
-.booking-detail-items__row > span,
-.booking-detail-items__row > strong {
+.booking-detail-items__row>span,
+.booking-detail-items__row>strong {
     text-align: right;
 }
 
@@ -701,7 +692,7 @@ body.booking-modal-open {
     border-radius: var(--radius-sm);
 }
 
-.booking-detail-items__description > div:last-child {
+.booking-detail-items__description>div:last-child {
     min-width: 0;
 }
 
@@ -765,7 +756,7 @@ body.booking-modal-open {
     border-radius: var(--radius-sm);
 }
 
-.booking-special-request > i {
+.booking-special-request>i {
     flex-shrink: 0;
 
     margin-top: var(--space-4);
@@ -832,11 +823,9 @@ body.booking-modal-open {
     padding-inline: var(--space-16);
 
     background:
-        linear-gradient(
-            135deg,
+        linear-gradient(135deg,
             var(--primary-900),
-            var(--primary-700)
-        );
+            var(--primary-700));
 
     border: none;
     border-radius: var(--radius-sm);
@@ -930,10 +919,7 @@ body.booking-modal-open {
     .booking-detail-items__header,
     .booking-detail-items__row {
         grid-template-columns:
-            minmax(190px, 1.5fr)
-            minmax(75px, 0.5fr)
-            minmax(85px, 0.6fr)
-            minmax(85px, 0.6fr);
+            minmax(190px, 1.5fr) minmax(75px, 0.5fr) minmax(85px, 0.6fr) minmax(85px, 0.6fr);
 
         gap: var(--space-8);
     }
@@ -969,16 +955,12 @@ body.booking-modal-open {
         border-bottom: 0;
         border-left: 0;
         border-radius:
-            var(--radius-lg)
-            var(--radius-lg)
-            0
-            0;
+            var(--radius-lg) var(--radius-lg) 0 0;
 
         transform: translateY(100%);
     }
 
-    .booking-detail-modal.is-open
-    .booking-detail-modal__dialog {
+    .booking-detail-modal.is-open .booking-detail-modal__dialog {
         transform: translateY(0);
     }
 
@@ -1077,142 +1059,177 @@ body.booking-modal-open {
 
 .invoice-preview-modal-dialog {
     max-width: 680px;
+    width: min(680px, calc(100vw - 32px));
+    margin: auto;
     padding: 0;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-xl, 24px);
     overflow: hidden;
-    background: var(--surface-0);
-    box-shadow: var(--shadow-xl);
+    background: var(--surface-0, #ffffff);
+    border: 1px solid var(--primary-200, #d4ebff);
+    box-shadow: 0 24px 60px rgba(7, 54, 95, 0.28);
 }
 
 .invoice-preview-header {
-    background: var(--primary-900);
-    color: var(--white);
-    padding: var(--space-24) var(--space-28);
+    background: linear-gradient(135deg, #072544 0%, #0c3e6d 100%);
+    color: #ffffff;
+    padding: 20px 28px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.invoice-preview-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.invoice-preview-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: #e2f1ff;
+    flex-shrink: 0;
 }
 
 .invoice-preview-title {
-    font-family: var(--font-heading);
-    font-size: 1.5rem;
+    font-family: var(--font-heading, "Cormorant Garamond", serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
     margin: 0;
-    color: var(--white);
+    color: #ffffff;
+    letter-spacing: 0.5px;
 }
 
 .invoice-preview-subtitle {
+    display: block;
+    margin-top: 4px;
     font-size: 0.85rem;
-    opacity: 0.8;
+    font-weight: 600;
+    color: #93c5fd;
+    letter-spacing: 0.5px;
 }
 
 .invoice-preview-close {
-    background: rgba(var(--white-rgb), 0.15);
-    border: none;
-    color: var(--white);
-    width: 36px;
-    height: 36px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     cursor: pointer;
     font-size: 1.1rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.15s ease;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .invoice-preview-close:hover {
-    background: rgba(var(--white-rgb), 0.25);
+    background: rgba(255, 255, 255, 0.28);
+    transform: scale(1.08);
 }
 
 .invoice-preview-body {
-    padding: var(--space-28);
-    background: var(--surface-0);
+    padding: 28px;
+    background: var(--surface-0, #ffffff);
 }
 
 .invoice-preview-meta {
     display: flex;
     justify-content: space-between;
-    border-bottom: var(--border-2) solid var(--neutral-200);
-    padding-bottom: var(--space-20);
-    margin-bottom: var(--space-20);
+    border-bottom: 2px solid var(--neutral-200, #d9eaf1);
+    padding-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .invoice-resort-title {
-    margin: 0 0 var(--space-6);
+    margin: 0 0 6px;
     font-size: 1.1rem;
-    color: var(--primary-800);
+    font-weight: 700;
+    color: var(--primary-800, #0f3d5e);
 }
 
 .invoice-resort-sub {
     margin: 0;
     font-size: 0.85rem;
-    color: var(--neutral-600);
+    color: var(--neutral-600, #52616b);
 }
 
 .invoice-meta-label {
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--neutral-500);
+    color: var(--neutral-500, #6b7b88);
     font-weight: 700;
 }
 
 .invoice-meta-val {
-    margin: var(--space-4) 0 0;
+    margin: 4px 0 0;
     font-weight: 700;
-    color: var(--neutral-900);
+    color: var(--neutral-900, #0f1720);
 }
 
 .invoice-customer-card {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-20);
-    margin-bottom: var(--space-24);
-    background: var(--neutral-50);
-    border: var(--border-1) solid var(--neutral-200);
-    padding: var(--space-16) var(--space-20);
-    border-radius: var(--radius-md);
+    gap: 20px;
+    margin-bottom: 24px;
+    background: var(--neutral-50, #f8fcfe);
+    border: 1px solid var(--neutral-200, #d9eaf1);
+    padding: 16px 20px;
+    border-radius: 12px;
 }
 
 .invoice-cust-label {
     font-size: 0.78rem;
     text-transform: uppercase;
-    color: var(--neutral-600);
+    color: var(--neutral-600, #52616b);
     font-weight: 700;
 }
 
 .invoice-cust-val {
-    margin: var(--space-4) 0 0;
+    margin: 4px 0 0;
     font-weight: 700;
-    color: var(--neutral-900);
+    color: var(--neutral-900, #0f1720);
 }
 
 .invoice-cust-code {
-    margin: var(--space-4) 0 0;
+    margin: 4px 0 0;
     font-weight: 700;
-    color: var(--primary-800);
+    color: var(--primary-800, #0f3d5e);
 }
 
 .invoice-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: var(--space-24);
+    margin-bottom: 24px;
     font-size: 0.9rem;
 }
 
 .invoice-table thead tr {
-    border-bottom: var(--border-2) solid var(--neutral-200);
+    border-bottom: 2px solid var(--neutral-200, #d9eaf1);
     text-align: left;
-    color: var(--neutral-700);
+    color: var(--neutral-700, #2e4756);
 }
 
 .invoice-table th,
 .invoice-table td {
-    padding: var(--space-10) var(--space-8);
+    padding: 10px 8px;
 }
 
 .invoice-table tbody tr {
-    border-bottom: var(--border-1) solid var(--neutral-100);
+    border-bottom: 1px solid var(--neutral-100, #eef8fc);
 }
 
 .invoice-table td.text-center,
@@ -1229,9 +1246,9 @@ body.booking-modal-open {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: var(--space-8);
-    border-top: var(--border-2) solid var(--neutral-200);
-    padding-top: var(--space-16);
+    gap: 8px;
+    border-top: 2px solid var(--neutral-200, #d9eaf1);
+    padding-top: 16px;
     font-size: 0.95rem;
 }
 
@@ -1242,7 +1259,7 @@ body.booking-modal-open {
 }
 
 .invoice-summary-row span {
-    color: var(--neutral-600);
+    color: var(--neutral-600, #52616b);
 }
 
 .invoice-summary-total {
@@ -1250,17 +1267,17 @@ body.booking-modal-open {
     justify-content: space-between;
     width: 260px;
     font-size: 1.1rem;
-    color: var(--primary-800);
-    border-top: var(--border-1) solid var(--neutral-300);
-    padding-top: var(--space-8);
-    margin-top: var(--space-4);
+    color: var(--primary-800, #0f3d5e);
+    border-top: 1px solid var(--neutral-300, #bcc8d0);
+    padding-top: 8px;
+    margin-top: 4px;
 }
 
 .invoice-preview-footer {
-    background: var(--neutral-50);
-    padding: var(--space-16) var(--space-28);
+    background: var(--neutral-50, #f8fcfe);
+    padding: 16px 28px;
     display: flex;
     justify-content: flex-end;
-    gap: var(--space-12);
-    border-top: var(--border-1) solid var(--neutral-200);
+    gap: 12px;
+    border-top: 1px solid var(--neutral-200, #d9eaf1);
 }

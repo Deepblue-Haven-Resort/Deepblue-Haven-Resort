@@ -359,6 +359,7 @@
   color: white;
   text-decoration: none;
   font-weight: 700;
+  font-size: 1.25rem;
 
   background: rgba(255,255,255,0.16);
   border: 1px solid rgba(255,255,255,0.26);
@@ -369,6 +370,7 @@
 .footer-socials a:hover {
   transform: translateY(-5px);
   background: rgba(255,255,255,0.32);
+  box-shadow: 0 10px 24px rgba(7, 54, 95, 0.25);
 }
 
 /* COLUMNS */
@@ -414,9 +416,18 @@
   text-transform: uppercase;
 }
 
-.contact-item p {
+.contact-item p,
+.contact-item a {
   color: white;
   line-height: 1.8;
+  text-decoration: none;
+  display: inline-block;
+  transition: .3s ease;
+}
+
+.contact-item a:hover {
+  color: #a8d8ff;
+  transform: translateX(4px);
 }
 
 /* BOTTOM */

@@ -5,6 +5,32 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.reload();
         });
     }
+
+    const walkInModal = document.getElementById('walkInModal');
+    const openWalkInBtn = document.querySelector('[data-open-walkin]');
+    if (openWalkInBtn && walkInModal) {
+        openWalkInBtn.addEventListener('click', function() {
+            walkInModal.classList.add('active');
+        });
+    }
+
+    document.querySelectorAll('[data-close-modal]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        });
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-overlay')) {
+            e.target.classList.remove('active');
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        }
+    });
 });
 
 function filterLiveActivity(category, btn) {

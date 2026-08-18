@@ -9,6 +9,7 @@
 
     <div class="footer-container">
 
+        <!-- CTA SECTION -->
         <div class="footer-cta">
             <div class="footer-cta-content">
                 <span class="footer-badge">Luxury Coastal Escape</span>
@@ -19,13 +20,13 @@
                 </h2>
 
                 <p>
-                    Trải nghiệm nghỉ dưỡng đẳng cấp giữa đại dương xanh,
-                    nơi sự sang trọng hòa quyện cùng thiên nhiên yên bình.
+                    Experience world-class luxury amidst the azure sea,
+                    where timeless elegance harmonizes with serene nature.
                 </p>
 
                 <div class="footer-cta-actions">
-                    <a th:href="@{/rooms}" class="footer-btn-primary">Đặt kỳ nghỉ</a>
-                    <a th:href="@{/about}" class="footer-btn-secondary">Khám phá resort</a>
+                    <a th:href="@{/rooms}" class="footer-btn-primary">Book Your Stay</a>
+                    <a th:href="@{/about}" class="footer-btn-secondary">Explore Resort</a>
                 </div>
             </div>
 
@@ -40,8 +41,10 @@
             </div>
         </div>
 
+        <!-- MAIN FOOTER GRID -->
         <div class="footer-grid">
 
+            <!-- BRAND COLUMN -->
             <div class="footer-brand">
                 <div class="footer-logo">
                     <div class="logo-box">
@@ -55,28 +58,38 @@
                 </div>
 
                 <p class="footer-desc">
-                    Không gian nghỉ dưỡng biển sang trọng,
-                    riêng tư và tinh tế dành cho những trải nghiệm đáng nhớ.
+                    An exclusive coastal sanctuary offering refined elegance,
+                    ultimate privacy, and unforgettable oceanfront experiences.
                 </p>
 
                 <div class="footer-socials">
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">FB</a>
-                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">IG</a>
-                    <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">YT</a>
-                    <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">TT</a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+                    <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </a>
                 </div>
             </div>
 
+            <!-- EXPLORE COLUMN -->
             <div class="footer-column">
                 <h4>Explore</h4>
 
-                <a th:href="@{/}">Trang chủ</a>
-                <a th:href="@{/rooms}">Phòng nghỉ</a>
-                <a th:href="@{/services}">Dịch vụ</a>
-                <a th:href="@{/offers}">Ưu đãi</a>
-                <a th:href="@{/contact}">Liên hệ</a>
+                <a th:href="@{/}">Home</a>
+                <a th:href="@{/rooms}">Accommodations</a>
+                <a th:href="@{/services}">Services & Amenities</a>
+                <a th:href="@{/offers}">Special Offers</a>
+                <a th:href="@{/contact}">Contact Us</a>
             </div>
 
+            <!-- SUPPORT COLUMN -->
             <div class="footer-column">
                 <h4>Support</h4>
 
@@ -87,26 +100,28 @@
                 <a th:href="@{/about}">Terms & Conditions</a>
             </div>
 
+            <!-- GET IN TOUCH COLUMN -->
             <div class="footer-column">
                 <h4>Get In Touch</h4>
 
                 <div class="contact-item">
                     <span>Phone</span>
-                    <p>+84 999 888 777</p>
+                    <a href="tel:+84999888777">+84 999 888 777</a>
                 </div>
 
                 <div class="contact-item">
                     <span>Email</span>
-                    <p>booking@deepbluehaven.com</p>
+                    <a href="mailto:booking@deepbluehaven.com">booking@deepbluehaven.com</a>
                 </div>
 
                 <div class="contact-item">
                     <span>Location</span>
-                    <p>Deep Blue Beach, Vietnam</p>
+                    <p>Deep Blue Beach, Nha Trang, Vietnam</p>
                 </div>
             </div>
         </div>
 
+        <!-- FOOTER BOTTOM -->
         <div class="footer-bottom">
             <p>© 2026 Deep Blue Haven Resort. All Rights Reserved.</p>
 

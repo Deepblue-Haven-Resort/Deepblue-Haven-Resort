@@ -127,10 +127,26 @@ public class BookingHistoryDTO {
         public void setCheckIn(LocalDate checkIn) { 
             this.checkIn = checkIn; }
 
+        public String getCheckInFormatted() {
+            return checkIn != null ? checkIn.format(java.time.format.DateTimeFormatter.ofPattern("MMM dd, yyyy", java.util.Locale.ENGLISH)) : "";
+        }
+
+        public String getCheckInFullFormatted() {
+            return checkIn != null ? checkIn.format(java.time.format.DateTimeFormatter.ofPattern("MMMM dd, yyyy", java.util.Locale.ENGLISH)) : "N/A";
+        }
+
         public LocalDate getCheckOut() { 
             return checkOut; }
         public void setCheckOut(LocalDate checkOut) { 
             this.checkOut = checkOut; }
+
+        public String getCheckOutFormatted() {
+            return checkOut != null ? checkOut.format(java.time.format.DateTimeFormatter.ofPattern("MMM dd, yyyy", java.util.Locale.ENGLISH)) : "";
+        }
+
+        public String getCheckOutFullFormatted() {
+            return checkOut != null ? checkOut.format(java.time.format.DateTimeFormatter.ofPattern("MMMM dd, yyyy", java.util.Locale.ENGLISH)) : "N/A";
+        }
 
         public long getNights() { 
             return nights; }
@@ -141,6 +157,14 @@ public class BookingHistoryDTO {
             return bookedOn; }
         public void setBookedOn(LocalDateTime bookedOn) { 
             this.bookedOn = bookedOn; }
+
+        public String getBookedOnFormatted() {
+            return bookedOn != null ? bookedOn.format(java.time.format.DateTimeFormatter.ofPattern("MMM dd, yyyy", java.util.Locale.ENGLISH)) : "";
+        }
+
+        public String getBookedOnFullFormatted() {
+            return bookedOn != null ? bookedOn.format(java.time.format.DateTimeFormatter.ofPattern("MMMM dd, yyyy", java.util.Locale.ENGLISH)) : "";
+        }
 
         public BigDecimal getTotalAmountVnd() { 
             return totalAmountVnd; }

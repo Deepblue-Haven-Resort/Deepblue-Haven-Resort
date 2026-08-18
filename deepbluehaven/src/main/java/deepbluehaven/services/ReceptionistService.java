@@ -309,7 +309,6 @@ public class ReceptionistService {
         String moveReason = (request.getReason() != null && !request.getReason().isBlank()) ? request.getReason() : "Guest requested room change";
         String oldRoomNum = (oldRoom != null) ? oldRoom.getRoomNumber() : "Unassigned";
 
-        // 1. Update Old Room -> CLEANING (requires turnover cleaning)
         if (oldRoom != null) {
             RoomStatus oldRStatus = oldRoom.getStatus();
             oldRoom.setStatus(RoomStatus.CLEANING);
@@ -323,7 +322,6 @@ public class ReceptionistService {
             oldRLog.setTimestamp(LocalDateTime.now());
             entityManager.persist(oldRLog);
 
-            // Create automatic cleaning task
             try {
                 Task cleaningTask = new Task();
                 cleaningTask.setRoom(oldRoom);
@@ -338,7 +336,6 @@ public class ReceptionistService {
             } catch (Exception ignored) {}
         }
 
-        // 2. Update New Room -> OCCUPIED
         RoomStatus newRStatus = newRoom.getStatus();
         newRoom.setStatus(RoomStatus.OCCUPIED);
         roomRepository.save(newRoom);
@@ -351,14 +348,12 @@ public class ReceptionistService {
         newRLog.setTimestamp(LocalDateTime.now());
         entityManager.persist(newRLog);
 
-        // 3. Update Booking Detail
         detail.setRoom(newRoom);
         if (newRoom.getRoomType() != null) {
             detail.setRoomType(newRoom.getRoomType());
         }
         bookingRepository.save(booking);
 
-        // 4. Log Booking History & System Audit
         BookingLog bLog = new BookingLog();
         bLog.setBooking(booking);
         bLog.setActorId(receptionist != null ? receptionist.getId() : 1L);
@@ -378,7 +373,6 @@ public class ReceptionistService {
         log.setMetadata("Booking #" + booking.getId() + " switched room: " + oldRoomNum + " -> " + newRoom.getRoomNumber() + " | Reason: " + moveReason);
         logRepository.save(log);
 
-        // 5. Notify Guest
         if (booking.getCustomer() != null) {
             notificationService.createCustomerNotification(
                 booking.getCustomer(),
@@ -510,7 +504,6 @@ public class ReceptionistService {
                 if (b.getCustomer() != null && b.getCustomer().getId() != null) {
                     Long custId = b.getCustomer().getId();
 
-                    // 1. Membership Tier Discount Rate
                     try {
                         CustomerProfile profile = entityManager.find(CustomerProfile.class, custId);
                         if (profile != null && profile.getMembershipTier() != null) {
@@ -522,7 +515,6 @@ public class ReceptionistService {
                         }
                     } catch (Exception ignored) {}
 
-                    // 2. Promotional Discount Code Voucher
                     try {
                         List<CustomerDiscount> custDiscounts = entityManager.createQuery(
                             "select cd from CustomerDiscount cd join fetch cd.discount d where cd.customer.id = :cId and cd.status = :st", CustomerDiscount.class)
@@ -665,7 +657,6 @@ public class ReceptionistService {
         if (booking.getCustomer() != null && booking.getCustomer().getId() != null) {
             Long custId = booking.getCustomer().getId();
 
-            // 1. Membership Tier Discount Rate
             try {
                 CustomerProfile profile = entityManager.find(CustomerProfile.class, custId);
                 if (profile != null && profile.getMembershipTier() != null) {
@@ -676,7 +667,6 @@ public class ReceptionistService {
                 }
             } catch (Exception ignored) {}
 
-            // 2. Targeted or available Promotional Discount Code Voucher
             try {
                 if (request.getCustomerDiscountId() != null) {
                     CustomerDiscount cd = entityManager.find(CustomerDiscount.class, request.getCustomerDiscountId());

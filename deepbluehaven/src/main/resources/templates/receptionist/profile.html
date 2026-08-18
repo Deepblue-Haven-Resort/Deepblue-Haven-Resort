@@ -25,7 +25,6 @@
 
         <section class="account-profile-card">
 
-            <!-- Cột bên trái (Sidebar Card) -->
             <aside class="profile-sidebar-card">
                 <div class="profile-avatar">
                     <img th:src="${worker?.profile?.avatarUrl ?: 'https://res.cloudinary.com/xio0mgix/image/upload/v1786687237/c683ecce-3e41-423d-b8ee-f8dd0189ffdc.png'}"
@@ -59,7 +58,6 @@
                 </div>
             </aside>
 
-            <!-- Cột bên phải (Content Card) -->
             <div class="profile-content-card">
 
                 <div class="profile-info-section">
@@ -159,7 +157,6 @@
         </div>
 
         <form id="changePasswordForm">
-            <!-- Current Password -->
             <div class="password-form-group">
                 <label for="currentPassword">Current Password</label>
                 <div class="password-input-wrapper">
@@ -170,7 +167,6 @@
                 </div>
             </div>
 
-            <!-- New Password -->
             <div class="password-form-group">
                 <label for="newPassword">New Password (min 6 characters)</label>
                 <div class="password-input-wrapper">
@@ -181,7 +177,6 @@
                 </div>
             </div>
 
-            <!-- Confirm New Password -->
             <div class="password-form-group">
                 <label for="confirmNewPassword">Confirm New Password</label>
                 <div class="password-input-wrapper">

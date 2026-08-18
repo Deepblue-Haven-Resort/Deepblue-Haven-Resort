@@ -28,10 +28,10 @@
         <!-- Sidebar -->
         <aside class="profile-sidebar">
           <div class="profile-user">
-            <div class="profile-avatar" style="overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer;">
-              <img id="avatarImagePreview" th:if="${profile != null && profile.avatarUrl != null}" th:src="${profile.avatarUrl}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+            <div class="profile-avatar">
+              <img id="avatarImagePreview" th:if="${profile != null && profile.avatarUrl != null}" th:src="${profile.avatarUrl}" alt="Avatar" />
               <i id="avatarIconFallback" th:if="${profile == null || profile.avatarUrl == null}" class="fa-regular fa-user"></i>
-              <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" />
+              <input type="file" id="avatarFileInput" accept="image/*" />
               <button type="button" id="avatarEditBtn" class="profile-avatar__edit" aria-label="Change profile picture">
                 <i class="fa-solid fa-camera"></i>
               </button>
@@ -49,19 +49,19 @@
               <i class="fa-regular fa-user"></i>
               <span>Personal Information</span>
             </button>
-            <a th:href="@{/booking/history}" class="profile-navigation__item" style="text-decoration: none;">
+            <a th:href="@{/booking/history}" class="profile-navigation__item">
               <i class="fa-regular fa-calendar-check"></i>
               <span>My Bookings</span>
             </a>
-            <a th:href="@{/favorites}" class="profile-navigation__item" style="text-decoration: none;">
+            <a th:href="@{/favorites}" class="profile-navigation__item">
               <i class="fa-regular fa-heart"></i>
               <span>My Favorites</span>
             </a>
           </nav>
 
           <div class="profile-sidebar__footer">
-            <form th:action="@{/logout}" method="post" style="width: 100%;">
-              <button type="submit" class="profile-logout" style="width: 100%; border: none; background: transparent; cursor: pointer;">
+            <form th:action="@{/logout}" method="post">
+              <button type="submit" class="profile-logout">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 Logout
               </button>

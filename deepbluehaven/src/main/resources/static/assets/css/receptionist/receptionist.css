@@ -513,6 +513,30 @@
     color: var(--error-700);
 }
 
+.modal-header-icon-primary {
+    color: var(--primary-600);
+    margin-right: 8px;
+}
+
+.modal-form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+@media (max-width: 600px) {
+    .modal-form-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.modal-action-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
 .form-group {
     margin-bottom: 18px;
 }

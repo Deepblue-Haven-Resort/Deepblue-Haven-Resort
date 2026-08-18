@@ -27,6 +27,18 @@
 
         <main class="admin-main">
 
+            <div th:replace="~{fragments/toast :: toast}"></div>
+
+            <!-- FLASH NOTIFICATIONS -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fa-solid fa-circle-check"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+
             <section class="account-panel">
 
                 <div class="panel-header">
@@ -233,8 +245,9 @@
                 <h3><i class="fa-solid fa-camera"></i> Complete Task - Proof Upload</h3>
                 <button type="button" class="modal-close" id="closeCompleteModalBtn"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form id="completeTaskForm" action="" method="post">
-                <input type="hidden" name="proofImageUrl" id="proofImageUrlInput" required>
+            <form id="completeTaskForm" action="" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" name="proofImageUrl" id="proofImageUrlInput">
                 <div class="modal-body">
                     <div class="modal-form-grid">
                         <p class="modal-instruction-text">
@@ -243,7 +256,7 @@
                         <div class="form-group">
                             <label>Cleaning Evidence Photo(s) (Max 5) <span>*</span></label>
                             <div class="file-upload-row">
-                                <input type="file" id="proofFileInput" accept="image/*" multiple class="file-input-hidden">
+                                <input type="file" name="proofFiles" id="proofFileInput" accept="image/*" multiple class="file-input-hidden">
                                 <button type="button" class="btn outline-btn" id="triggerProofUploadBtn">
                                     <i class="fa-solid fa-cloud-arrow-up"></i> Choose Photo(s)
                                 </button>
@@ -258,7 +271,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn outline-btn" id="cancelCompleteModalBtn">Cancel</button>
-                    <button type="submit" class="btn btn-cta btn-success" id="submitCompleteTaskBtn" disabled>
+                    <button type="submit" class="btn btn-cta btn-success" id="submitCompleteTaskBtn">
                         <i class="fa-solid fa-paper-plane"></i> Submit Inspection
                     </button>
                 </div>

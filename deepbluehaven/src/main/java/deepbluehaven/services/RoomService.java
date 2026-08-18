@@ -151,17 +151,20 @@ public class RoomService {
     }
 
     private String tagToViewValue(RoomTag tag) {
-        return switch (tag) {
+        if (tag == null) return "";
+        String enumName = tag.name().toLowerCase();
+        String slug = switch (tag) {
             case GARDEN_VIEW -> "garden";
             case POOL_VIEW -> "pool";
             case OCEAN_VIEW -> "ocean";
             case PARTIAL_OCEAN_VIEW -> "partial-ocean";
             case BEACHFRONT -> "beachfront";
         };
+        return enumName + "," + slug;
     }
 
     private String formatVnd(java.math.BigDecimal amount) {
-        NumberFormat formatter = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
+        NumberFormat formatter = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
         return formatter.format(amount.longValue());
     }
 

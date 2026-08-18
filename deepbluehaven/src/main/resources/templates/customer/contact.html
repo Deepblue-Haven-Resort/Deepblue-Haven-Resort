@@ -115,12 +115,12 @@
                     <p>Fill out the form below and our guest experience manager will contact you promptly.</p>
 
                     <!-- Alert message banners -->
-                    <div th:if="${successMessage}" class="alert alert-success" style="padding: 16px; border-radius: var(--radius-md); background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; margin-bottom: 20px; font-size: 0.95rem; font-weight: 600;">
+                    <div th:if="${successMessage}" class="alert alert-success">
                         <i class="fa-solid fa-circle-check"></i>
                         <span th:text="${successMessage}"></span>
                     </div>
 
-                    <div th:if="${errorMessage}" class="alert alert-danger" style="padding: 16px; border-radius: var(--radius-md); background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; margin-bottom: 20px; font-size: 0.95rem; font-weight: 600;">
+                    <div th:if="${errorMessage}" class="alert alert-danger">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                         <span th:text="${errorMessage}"></span>
                     </div>

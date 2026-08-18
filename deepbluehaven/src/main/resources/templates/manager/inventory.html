@@ -91,7 +91,7 @@
                             <h2>Resort Warehouse & Inventory Control</h2>
                             <p class="inventory-subtitle">Monitor hospitality amenities, housekeeping supplies, and stock levels.</p>
                         </div>
-                        <div class="filter-options" style="display: flex; gap: 8px;">
+                        <div class="filter-options">
                             <a th:href="@{/manager/inventory/export-csv}" class="btn btn-outline btn-medium">
                                 <i class="fa-solid fa-file-csv"></i> Export CSV
                             </a>
@@ -500,5 +500,6 @@
     <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
     <script th:src="@{/assets/js/shared/toast.js}"></script>
     <script th:src="@{/assets/js/manager/inventory.js}"></script>
+    <script th:src="@{/assets/js/shared/table-pagination.js}"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+function initServicePage() {
     initServiceDropdowns();
     initServicePriceFilter();
     initServiceFiltering();
@@ -10,9 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "?bookingCode=" + encodeURIComponent(bookingItem.dataset.bookingCode);
         }
     });
+}
 
-    console.log("service.js loaded");
-});
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initServicePage);
+} else {
+    initServicePage();
+}
 
 const serviceFilterState = {
     category: "all",
@@ -27,15 +31,20 @@ const serviceCategoryAliases = {
     "food-beverage": [
         "food-beverage",
         "food_beverage",
-        "food",
-        "beverage",
         "fnb"
     ],
+    dining: ["dining"],
+    food: ["food"],
+    beverage: ["beverage"],
     laundry: ["laundry"],
     spa: ["spa"],
+    wellness: ["wellness"],
+    fitness: ["fitness"],
     transport: ["transport", "transfer"],
     "mini-bar": ["mini-bar", "mini_bar", "minibar"],
     sport: ["sport", "sports"],
+    tour: ["tour"],
+    entertainment: ["entertainment"],
     other: ["other"]
 };
 
@@ -70,7 +79,11 @@ const serviceStatusAliases = {
         "out-of-stock",
         "out_of_stock"
     ],
-    hidden: ["hidden"]
+    hidden: ["hidden"],
+    inactive: ["inactive"],
+    unavailable: ["unavailable"],
+    maintenance: ["maintenance"],
+    discontinued: ["discontinued"]
 };
 
 function getServiceCards() {
@@ -135,6 +148,7 @@ function initServiceDropdowns() {
         options.forEach((option) => {
             option.addEventListener("click", (event) => {
                 event.preventDefault();
+                event.stopPropagation();
 
                 const filterName = dropdown.dataset.filter;
 
@@ -167,6 +181,7 @@ function initServiceDropdowns() {
 
                 option.classList.add("is-active");
 
+                dropdown.open = false;
                 dropdown.removeAttribute("open");
 
                 applyServiceFilters();

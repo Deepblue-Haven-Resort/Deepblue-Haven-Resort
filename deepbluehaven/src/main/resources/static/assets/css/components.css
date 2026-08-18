@@ -632,4 +632,30 @@
     pointer-events: none;
     background: var(--gray-50);
     border-color: var(--gray-200);
+}
+
+/* =========================
+   ALERT BANNERS
+========================= */
+.alert {
+    padding: var(--space-16);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-20);
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+}
+
+.alert-success {
+    background: #dcfce7;
+    color: #166534;
+    border: var(--border-1) solid #bbf7d0;
+}
+
+.alert-danger {
+    background: #fee2e2;
+    color: #991b1b;
+    border: var(--border-1) solid #fecaca;
 }

@@ -61,6 +61,7 @@ public class ReceptionistController {
     @GetMapping("/bookings")
     public String bookingsPage(Model model) {
         model.addAttribute("bookings", bookingService.getAllBookingsForStaff());
+        model.addAttribute("availableRoomsList", receptionistService.getAvailableRoomsForMove());
         model.addAttribute("activePage", "bookings");
         return "receptionist/bookings";
     }
@@ -165,6 +166,10 @@ public class ReceptionistController {
             redirectAttrs.addFlashAttribute("successMessage", "Walk-In Booking created and guest checked in successfully!");
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Walk-In Booking failed: " + e.getMessage());
+        }
+        String referer = req.getHeader("Referer");
+        if (referer != null && referer.contains("/receptionist/bookings")) {
+            return "redirect:/receptionist/bookings";
         }
         return "redirect:/receptionist/dashboard";
     }

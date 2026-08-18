@@ -26,20 +26,20 @@
 
     <div th:replace="~{fragments/header :: header(activePage='services')}"></div>
 
-    <div th:if="${!hasValidBooking}" class="no-booking-notice-overlay" style="position: fixed; inset: 0; background: rgba(10, 37, 64, 0.65); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(6px);">
-        <div style="background: #fff; border-radius: 24px; max-width: 500px; padding: 40px 32px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
-            <div style="width: 76px; height: 76px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 20px;">
+    <div th:if="${!hasValidBooking}" class="no-booking-notice-overlay">
+        <div class="no-booking-notice-card">
+            <div class="no-booking-notice-icon">
                 <i class="fa-solid fa-bed"></i>
             </div>
-            <h2 style="font-family: var(--font-heading, sans-serif); font-size: 1.5rem; color: #0f172a; margin-bottom: 12px; font-weight: 700;">No Active Reservation Found</h2>
-            <p style="color: #64748b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 28px;">
+            <h2 class="no-booking-notice-title">No Active Reservation Found</h2>
+            <p class="no-booking-notice-desc">
                 Deepblue Haven luxury resort services are exclusively available for guests with an active reservation (Pending, Confirmed, or Checked In). Please reserve your stay before ordering services!
             </p>
-            <div style="display: flex; gap: 14px; justify-content: center;">
-                <a th:href="@{/rooms}" class="btn btn-cta" style="padding: 12px 24px; font-weight: 700; border-radius: 12px;">
+            <div class="no-booking-notice-actions">
+                <a th:href="@{/rooms}" class="btn btn-cta">
                     <i class="fa-solid fa-hotel"></i> Explore & Book Rooms
                 </a>
-                <a th:href="@{/home}" class="btn btn-secondary" style="padding: 12px 20px; border-radius: 12px;">Home</a>
+                <a th:href="@{/home}" class="btn btn-secondary">Home</a>
             </div>
         </div>
     </div>
@@ -80,8 +80,17 @@
                                         <button type="button" class="rooms-dropdown__option is-active" data-value="all">
                                             All Categories
                                         </button>
-                                        <button type="button" class="rooms-dropdown__option" data-value="food-beverage">
+                                        <button type="button" class="rooms-dropdown__option" data-value="food_beverage">
                                             Food & Beverage
+                                        </button>
+                                        <button type="button" class="rooms-dropdown__option" data-value="dining">
+                                            Dining
+                                        </button>
+                                        <button type="button" class="rooms-dropdown__option" data-value="food">
+                                            Food
+                                        </button>
+                                        <button type="button" class="rooms-dropdown__option" data-value="beverage">
+                                            Beverage
                                         </button>
                                         <button type="button" class="rooms-dropdown__option" data-value="laundry">
                                             Laundry
@@ -89,14 +98,26 @@
                                         <button type="button" class="rooms-dropdown__option" data-value="spa">
                                             Spa
                                         </button>
+                                        <button type="button" class="rooms-dropdown__option" data-value="wellness">
+                                            Wellness
+                                        </button>
+                                        <button type="button" class="rooms-dropdown__option" data-value="fitness">
+                                            Fitness
+                                        </button>
                                         <button type="button" class="rooms-dropdown__option" data-value="transport">
                                             Transport
                                         </button>
-                                        <button type="button" class="rooms-dropdown__option" data-value="mini-bar">
+                                        <button type="button" class="rooms-dropdown__option" data-value="mini_bar">
                                             Mini Bar
                                         </button>
                                         <button type="button" class="rooms-dropdown__option" data-value="sport">
                                             Sport
+                                        </button>
+                                        <button type="button" class="rooms-dropdown__option" data-value="tour">
+                                            Tour
+                                        </button>
+                                        <button type="button" class="rooms-dropdown__option" data-value="entertainment">
+                                            Entertainment
                                         </button>
                                         <button type="button" class="rooms-dropdown__option" data-value="other">
                                             Other
@@ -147,13 +168,25 @@
                                             Active
                                         </button>
                                         <button type="button" class="rooms-dropdown__option" data-value="all">
-                                            All Status
+                                            All Statuses
                                         </button>
-                                        <button type="button" class="rooms-dropdown__option" data-value="out-of-stock">
+                                        <button type="button" class="rooms-dropdown__option" data-value="out_of_stock">
                                             Out of Stock
                                         </button>
                                         <button type="button" class="rooms-dropdown__option" data-value="hidden">
                                             Hidden
+                                        </button>
+                                        <button type="button" class="rooms-dropdown__option" data-value="inactive">
+                                            Inactive
+                                        </button>
+                                        <button type="button" class="rooms-dropdown__option" data-value="unavailable">
+                                            Unavailable
+                                        </button>
+                                        <button type="button" class="rooms-dropdown__option" data-value="maintenance">
+                                            Maintenance
+                                        </button>
+                                        <button type="button" class="rooms-dropdown__option" data-value="discontinued">
+                                            Discontinued
                                         </button>
                                     </div>
                                 </details>

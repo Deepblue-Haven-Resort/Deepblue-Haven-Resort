@@ -20,14 +20,14 @@
 
     <main class="admin-main">
         <!-- Hero Header -->
-        <section class="dashboard-hero manager-hero" style="padding: 18px 32px 14px;">
+        <section class="dashboard-hero manager-hero manager-chat-hero">
             <div>
                 <span class="page-label"><i class="fa-solid fa-headset"></i> Executive Guest Concierge</span>
-                <h1 style="font-size: 1.5rem;">Live Concierge Guest Chat</h1>
+                <h1>Live Concierge Guest Chat</h1>
             </div>
         </section>
 
-        <div class="admin-content" style="padding: 0 32px 24px; height: calc(100vh - 140px); display: flex; flex-direction: column;">
+        <div class="admin-content manager-chat-content">
             <!-- Live Chat Workspace Container -->
             <div class="staff-chat-container" id="staffChatWorkspace">
                 
@@ -72,7 +72,7 @@
                     </div>
 
                     <!-- Active Chat View (shown when session is loaded) -->
-                    <div class="chat-active-view" id="chatActiveView" style="display: none;">
+                    <div class="chat-active-view" id="chatActiveView">
                         <!-- Chat Conversation Header -->
                         <div class="chat-active-header">
                             <div class="guest-header-info">
@@ -122,7 +122,7 @@
                 </section>
 
                 <!-- COLUMN 3: GUEST DOSSIER SIDEBAR -->
-                <aside class="chat-guest-sidebar" id="chatGuestSidebar" style="display: none;">
+                <aside class="chat-guest-sidebar" id="chatGuestSidebar">
                     <div class="guest-dossier-card">
                         <div class="dossier-avatar-wrap">
                             <div class="dossier-avatar" id="dossierAvatar">G</div>
