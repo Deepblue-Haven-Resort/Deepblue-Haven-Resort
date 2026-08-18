@@ -43,7 +43,10 @@
 
         <footer class="offer-detail-modal__footer">
             <button type="button" class="offers-outline-btn" data-close-offer-detail>Close</button>
-            <a th:href="@{/rooms}" class="btn btn-luxury btn-medium" style="text-decoration: none;">Book Stay</a>
+            <button type="button" class="btn btn-luxury btn-medium btn-claim-voucher" id="btnClaimVoucherModal">
+                <i class="fa-solid fa-gift"></i> Claim to Wallet
+            </button>
+            <a th:href="@{/rooms}" class="btn btn-luxury btn-medium">Book Stay</a>
         </footer>
     </div>
 </div>

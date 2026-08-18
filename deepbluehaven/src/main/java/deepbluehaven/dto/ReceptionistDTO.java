@@ -431,13 +431,26 @@ public class ReceptionistDTO {
         public void setNetRemainingPayable(BigDecimal netRemainingPayable) {
             this.netRemainingPayable = netRemainingPayable;
         }
-
         public String getNetRemainingPayableStr() {
             return netRemainingPayableStr;
         }
         public void setNetRemainingPayableStr(String netRemainingPayableStr) {
             this.netRemainingPayableStr = netRemainingPayableStr;
         }
+
+        private BigDecimal surchargeAmount = BigDecimal.ZERO;
+        private String surchargeAmountStr = "0 VND";
+        private String surchargeNote;
+        private List<CustomerDiscountOption> availableVouchers = new ArrayList<>();
+
+        public BigDecimal getSurchargeAmount() { return surchargeAmount; }
+        public void setSurchargeAmount(BigDecimal surchargeAmount) { this.surchargeAmount = surchargeAmount; }
+        public String getSurchargeAmountStr() { return surchargeAmountStr; }
+        public void setSurchargeAmountStr(String surchargeAmountStr) { this.surchargeAmountStr = surchargeAmountStr; }
+        public String getSurchargeNote() { return surchargeNote; }
+        public void setSurchargeNote(String surchargeNote) { this.surchargeNote = surchargeNote; }
+        public List<CustomerDiscountOption> getAvailableVouchers() { return availableVouchers; }
+        public void setAvailableVouchers(List<CustomerDiscountOption> availableVouchers) { this.availableVouchers = availableVouchers; }
     }
 
     public static class ServiceOrderItem {
@@ -473,10 +486,53 @@ public class ReceptionistDTO {
             this.statusStr = statusStr; }
     }
 
+    public static class CustomerDiscountOption {
+        private Long id;
+        private String code;
+        private String discountType;
+        private BigDecimal discountValue;
+        private String description;
+
+        public CustomerDiscountOption() {}
+        public CustomerDiscountOption(Long id, String code, String discountType, BigDecimal discountValue, String description) {
+            this.id = id;
+            this.code = code;
+            this.discountType = discountType;
+            this.discountValue = discountValue;
+            this.description = description;
+        }
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public String getCode() { return code; }
+        public void setCode(String code) { this.code = code; }
+        public String getDiscountType() { return discountType; }
+        public void setDiscountType(String discountType) { this.discountType = discountType; }
+        public BigDecimal getDiscountValue() { return discountValue; }
+        public void setDiscountValue(BigDecimal discountValue) { this.discountValue = discountValue; }
+        public String getDescription() { return description; }
+        public void setDescription(String description) { this.description = description; }
+    }
+
+    public static class RoomMoveRequest {
+        private Long bookingId;
+        private Long newRoomId;
+        private String reason;
+
+        public Long getBookingId() { return bookingId; }
+        public void setBookingId(Long bookingId) { this.bookingId = bookingId; }
+        public Long getNewRoomId() { return newRoomId; }
+        public void setNewRoomId(Long newRoomId) { this.newRoomId = newRoomId; }
+        public String getReason() { return reason; }
+        public void setReason(String reason) { this.reason = reason; }
+    }
+
     public static class CheckOutRequest {
         private Long bookingId;
         private String paymentMethodStr = "CREDIT_CARD";
         private String notes;
+        private String surchargeType = "NONE";
+        private BigDecimal customSurchargeAmount = BigDecimal.ZERO;
+        private Long customerDiscountId;
 
         public Long getBookingId() { 
             return bookingId; }
@@ -492,6 +548,15 @@ public class ReceptionistDTO {
             return notes; }
         public void setNotes(String notes) { 
             this.notes = notes; }
+
+        public String getSurchargeType() { return surchargeType; }
+        public void setSurchargeType(String surchargeType) { this.surchargeType = surchargeType; }
+
+        public BigDecimal getCustomSurchargeAmount() { return customSurchargeAmount; }
+        public void setCustomSurchargeAmount(BigDecimal customSurchargeAmount) { this.customSurchargeAmount = customSurchargeAmount; }
+
+        public Long getCustomerDiscountId() { return customerDiscountId; }
+        public void setCustomerDiscountId(Long customerDiscountId) { this.customerDiscountId = customerDiscountId; }
     }
 
     public static class RoomRackItem {
@@ -567,6 +632,10 @@ public class ReceptionistDTO {
             return isAvailable; }
         public void setAvailable(boolean available) { 
             isAvailable = available; }
+
+        private Long bookingId;
+        public Long getBookingId() { return bookingId; }
+        public void setBookingId(Long bookingId) { this.bookingId = bookingId; }
     }
 
     public static class ActivityItem {

@@ -116,9 +116,14 @@
                                     </small>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-cta btn-small" data-open-checkout-modal>
-                                        <i class="fa-solid fa-file-invoice-dollar"></i> Check Out & Folio
-                                    </button>
+                                    <div style="display: flex; gap: 6px; align-items: center;">
+                                        <button type="button" class="btn btn-cta btn-small" data-open-checkout-modal>
+                                            <i class="fa-solid fa-file-invoice-dollar"></i> Settle Folio
+                                        </button>
+                                        <a th:href="@{'/receptionist/invoice/' + ${item.bookingId} + '/print'}" target="_blank" class="btn btn-outline btn-small" title="Print Folio Invoice">
+                                            <i class="fa-solid fa-print"></i> Print
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
 
@@ -187,6 +192,13 @@
                                     <td class="folio-td-name">Add-on Service Orders</td>
                                     <td class="folio-td-val" id="coModalServiceCharge">0 VND</td>
                                 </tr>
+                                <tr id="coModalSurchargeRow" class="folio-row-white" style="display: none;">
+                                    <td class="folio-td-name">
+                                        <strong>Surcharge (Early/Late Fee)</strong><br>
+                                        <small id="coModalSurchargeNote" class="folio-pricing-tag">Standard</small>
+                                    </td>
+                                    <td class="folio-td-val" id="coModalSurchargeAmount">0 VND</td>
+                                </tr>
                                 <tr id="coModalDiscountRow" class="folio-row-discount">
                                     <td class="folio-td-discount-name">
                                         <strong>Applied Discount / Member Tier Offer</strong><br>
@@ -211,6 +223,27 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <!-- SURCHARGES & VOUCHER SELECTORS -->
+                <div class="form-grid-2col mb-16">
+                    <div class="form-group form-group-marginless">
+                        <label>Early Check-In / Late Check-Out Surcharge</label>
+                        <select name="surchargeType" id="coModalSurchargeType" class="form-select">
+                            <option value="NONE" selected>None (Standard)</option>
+                            <option value="EARLY_CHECKIN_30">Early Check-In (+30% Room Rate)</option>
+                            <option value="EARLY_CHECKIN_50">Early Check-In (+50% Room Rate)</option>
+                            <option value="LATE_CHECKOUT_30">Late Check-Out (+30% Room Rate)</option>
+                            <option value="LATE_CHECKOUT_50">Late Check-Out (+50% Room Rate)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group form-group-marginless">
+                        <label>Apply Customer Promotion Voucher</label>
+                        <select name="customerDiscountId" id="coModalVoucherSelect" class="form-select">
+                            <option value="">-- No Extra Voucher Applied --</option>
+                        </select>
                     </div>
                 </div>
 

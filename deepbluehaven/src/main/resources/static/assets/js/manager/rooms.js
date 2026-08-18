@@ -11,8 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
             title.textContent = 'Add New Room';
             form.reset();
             if (document.getElementById('roomId')) document.getElementById('roomId').value = '';
+            if (document.getElementById('roomDescription')) document.getElementById('roomDescription').value = '';
+            if (document.getElementById('roomPlanUrl')) document.getElementById('roomPlanUrl').value = '';
             if (document.getElementById('roomImageUrl')) document.getElementById('roomImageUrl').value = '';
             if (document.getElementById('roomImagePreviewBox')) document.getElementById('roomImagePreviewBox').style.display = 'none';
+            document.querySelectorAll('input[name="amenities"], input[name="tags"]').forEach(cb => cb.checked = false);
             window.setDropdownValue('roomType', 'STANDARD');
             window.setDropdownValue('roomStatus', 'AVAILABLE');
             modal.classList.add('active');
@@ -43,6 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const price = row.dataset.price || '1000000';
             const area = row.dataset.area || '';
             const status = row.dataset.status || 'AVAILABLE';
+            const description = row.dataset.description || '';
+            const planUrl = row.dataset.planUrl || '';
+            const amenitiesStr = row.dataset.amenities || '';
+            const tagsStr = row.dataset.tags || '';
             const existingImg = row.dataset.image || '';
             
             title.textContent = 'Edit Room ' + roomNum;
@@ -52,7 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('capacity').value = capacity;
             document.getElementById('basePrice').value = price;
             if (document.getElementById('area')) document.getElementById('area').value = area;
+            if (document.getElementById('roomDescription')) document.getElementById('roomDescription').value = description;
+            if (document.getElementById('roomPlanUrl')) document.getElementById('roomPlanUrl').value = planUrl;
             window.setDropdownValue('roomStatus', status);
+
+            // Populate amenities & tags checkboxes
+            const selectedAmenities = amenitiesStr.split(',').map(s => s.trim());
+            document.querySelectorAll('input[name="amenities"]').forEach(cb => {
+                cb.checked = selectedAmenities.includes(cb.value);
+            });
+
+            const selectedTags = tagsStr.split(',').map(s => s.trim());
+            document.querySelectorAll('input[name="tags"]').forEach(cb => {
+                cb.checked = selectedTags.includes(cb.value);
+            });
             
             if (document.getElementById('roomImageUrl')) document.getElementById('roomImageUrl').value = existingImg;
             if (document.getElementById('roomImagePreview') && existingImg) {

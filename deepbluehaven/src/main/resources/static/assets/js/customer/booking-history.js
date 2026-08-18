@@ -707,7 +707,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const printInvoiceBtn = document.getElementById("printInvoiceBtn") || document.querySelector("[data-print-invoice]");
     if (printInvoiceBtn) {
         printInvoiceBtn.addEventListener("click", function () {
-            window.print();
+            const bookingCode = document.getElementById("modalBookingCode")?.textContent?.trim() || activeBookingButton?.dataset?.bookingCode || "";
+            if (bookingCode) {
+                window.open(getApiUrl("/customer/booking/" + encodeURIComponent(bookingCode) + "/invoice"), "_blank");
+            } else {
+                window.print();
+            }
         });
     }
 

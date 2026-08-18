@@ -31,6 +31,12 @@
             <span>Check-Out & Folio</span>
         </a>
 
+        <a th:href="@{/receptionist/services}"
+           th:class="${activePage == 'services'} ? 'sidebar-item active' : 'sidebar-item'">
+            <i class="fa-solid fa-bell-concierge"></i>
+            <span>Guest Service Orders</span>
+        </a>
+
         <a th:href="@{/receptionist/room-grid}"
            th:class="${activePage == 'room-grid'} ? 'sidebar-item active' : 'sidebar-item'">
             <i class="fa-solid fa-border-all"></i>

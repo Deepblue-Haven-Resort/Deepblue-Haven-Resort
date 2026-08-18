@@ -1,14 +1,6 @@
-// Admin and Staff Sidebar Toggle Logic - DeepBlue Haven PMS
-const sidebar = document.getElementById("adminSidebar");
-const toggle = document.getElementById("sidebarToggle");
-
-if (sidebar && toggle) {
-    toggle.addEventListener("click", function () {
-        sidebar.classList.toggle("is-collapsed");
-    });
-}
-
-// Realtime Notification & Live Poller for Staff
+/**
+ * Realtime Notification & Badge Poller - DeepBlue Haven PMS
+ */
 (function () {
     const getContextPath = () => {
         const path = window.location.pathname;
@@ -48,12 +40,14 @@ if (sidebar && toggle) {
                 }
             }
         } catch (err) {
-            // Background polling failover
+            // Quiet fail during network blips
         }
     };
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Initial poll after 1s
         setTimeout(pollNotifications, 1000);
+        // Polling interval: 15 seconds
         setInterval(pollNotifications, 15000);
     });
 })();

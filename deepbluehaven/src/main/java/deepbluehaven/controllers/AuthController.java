@@ -306,6 +306,48 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/api/auth/change-password")
+    @ResponseBody
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request,
+                                           jakarta.servlet.http.HttpSession session) {
+        try {
+            String currentPassword = getRequiredValue(request, "currentPassword");
+            String newPassword = getRequiredValue(request, "newPassword");
+
+            if (newPassword.length() < 6) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "New password must be at least 6 characters."));
+            }
+
+            Long workerId = (Long) session.getAttribute("loggedInWorkerId");
+            Long customerId = (Long) session.getAttribute("loggedInCustomerId");
+
+            boolean success = false;
+            if (workerId != null) {
+                success = authService.changeWorkerPassword(workerId, currentPassword, newPassword);
+                if (success) {
+                    session.setAttribute("forceChangePassword", false);
+                    logService.log(ObjectType.WORKER, ActionCode.UPDATE, workerId, "Worker changed password", workerId);
+                }
+            } else if (customerId != null) {
+                success = authService.changeCustomerPassword(customerId, currentPassword, newPassword);
+                if (success) {
+                    logService.log(ObjectType.USER, ActionCode.UPDATE, customerId, "Customer changed password", (Long) null);
+                }
+            } else {
+                return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("success", false, "message", "You must be logged in to change password."));
+            }
+
+            if (success) {
+                return ResponseEntity.ok(Map.of("success", true, "message", "Password changed successfully!"));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Incorrect current password."));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
     private String getRequiredValue(Map<String, String> request, String fieldName) {
         String value = request.get(fieldName);
         if (value == null || value.isBlank()) {

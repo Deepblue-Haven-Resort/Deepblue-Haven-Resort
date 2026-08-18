@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import deepbluehaven.dto.ReceptionistDTO;
@@ -132,6 +133,30 @@ public class ReceptionistController {
         return "receptionist/room-grid";
     }
 
+    @PostMapping("/room-move")
+    public String executeRoomMove(@ModelAttribute ReceptionistDTO.RoomMoveRequest request, RedirectAttributes redirectAttrs, HttpServletRequest req) {
+        try {
+            Worker receptionist = getActiveReceptionist(req);
+            receptionistService.executeRoomMove(request, receptionist);
+            redirectAttrs.addFlashAttribute("successMessage", "Room move executed successfully for Booking #" + request.getBookingId());
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Room move failed: " + e.getMessage());
+        }
+        return "redirect:/receptionist/room-grid";
+    }
+
+    @GetMapping("/api/available-rooms-for-move")
+    @ResponseBody
+    public List<ReceptionistDTO.AvailableRoomOption> getAvailableRoomsForMoveApi() {
+        return receptionistService.getAvailableRoomsForMove();
+    }
+
+    @GetMapping("/api/checkout-folio/{bookingId}")
+    @ResponseBody
+    public ReceptionistDTO.CheckOutQueueItem getCheckoutFolioApi(@PathVariable Long bookingId) {
+        return receptionistService.getInvoiceFolioDetails(bookingId);
+    }
+
     @PostMapping("/walkin-booking")
     public String executeWalkInBooking(@ModelAttribute ReceptionistDTO.WalkInBookingRequest request, RedirectAttributes redirectAttrs, HttpServletRequest req) {
         try {
@@ -233,6 +258,39 @@ public class ReceptionistController {
         model.addAttribute("activePage", "chat");
         model.addAttribute("sessions", chatService.getStaffSessions("ALL"));
         return "receptionist/chat";
+    }
+
+    @GetMapping("/services")
+    public String receptionistServices(Model model) {
+        model.addAttribute("activePage", "services");
+        model.addAttribute("serviceOrders", bookingService.getAllServiceOrdersForStaff());
+        return "receptionist/services";
+    }
+
+    @PostMapping("/services/orders/{id}/status")
+    public String updateServiceOrderStatus(@PathVariable("id") Long id,
+                                           @RequestParam("status") deepbluehaven.pojo.enums.ServiceOrderStatus status,
+                                           RedirectAttributes redirectAttrs,
+                                           HttpServletRequest req) {
+        try {
+            Worker receptionist = getActiveReceptionist(req);
+            bookingService.updateServiceOrderStatus(id, status, receptionist);
+            redirectAttrs.addFlashAttribute("successMessage", "Service Order #" + id + " updated to " + status + " successfully!");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to update service order: " + e.getMessage());
+        }
+        return "redirect:/receptionist/services";
+    }
+
+    @GetMapping("/invoice/{bookingId}/print")
+    public String printInvoice(@PathVariable("bookingId") Long bookingId, Model model) {
+        ReceptionistDTO.CheckOutQueueItem folio = receptionistService.getInvoiceFolioDetails(bookingId);
+        if (folio == null) {
+            return "redirect:/receptionist/dashboard";
+        }
+        model.addAttribute("folio", folio);
+        model.addAttribute("nowDate", java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        return "receptionist/invoice-print";
     }
 
     private Worker getActiveReceptionist(HttpServletRequest req) {

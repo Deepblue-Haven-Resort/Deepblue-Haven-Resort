@@ -30,18 +30,69 @@ public class HousekeeperService {
     private final WorkerRepository workerRepository;
     private final LogService logService;
     private final WorkerPerformanceService workerPerformanceService;
+    private final jakarta.persistence.EntityManager entityManager;
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm a");
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy hh:mm a");
 
     public HousekeeperService(TaskRepository taskRepository, RoomRepository roomRepository,
                               WorkerRepository workerRepository, LogService logService,
-                              WorkerPerformanceService workerPerformanceService) {
+                              WorkerPerformanceService workerPerformanceService,
+                              jakarta.persistence.EntityManager entityManager) {
         this.taskRepository = taskRepository;
         this.roomRepository = roomRepository;
         this.workerRepository = workerRepository;
         this.logService = logService;
         this.workerPerformanceService = workerPerformanceService;
+        this.entityManager = entityManager;
+    }
+
+    @Transactional
+    public void logMinibarConsumption(Long taskId, String itemName, int quantity, Long workerId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Task not found: " + taskId));
+
+        Room room = task.getRoom();
+        if (room == null) {
+            throw new IllegalStateException("Task is not associated with a valid room.");
+        }
+
+        deepbluehaven.pojo.Booking activeBooking = null;
+        try {
+            List<deepbluehaven.pojo.BookingDetail> details = entityManager.createQuery(
+                "select bd from BookingDetail bd join fetch bd.booking b where bd.room.id = :rId and b.status = :st", deepbluehaven.pojo.BookingDetail.class)
+                .setParameter("rId", room.getId())
+                .setParameter("st", deepbluehaven.pojo.enums.BookingStatus.CHECKED_IN)
+                .getResultList();
+            if (!details.isEmpty()) {
+                activeBooking = details.get(0).getBooking();
+            }
+        } catch (Exception ignored) {}
+
+        deepbluehaven.pojo.Service s = null;
+        try {
+            s = entityManager.createQuery(
+                "select s from Service s where lower(s.name) like lower(:name)", deepbluehaven.pojo.Service.class)
+                .setParameter("name", "%" + itemName.trim() + "%")
+                .getResultStream().findFirst().orElse(null);
+        } catch (Exception ignored) {}
+
+        deepbluehaven.pojo.ServiceOrder so = new deepbluehaven.pojo.ServiceOrder();
+        so.setService(s);
+        so.setBooking(activeBooking);
+        so.setCustomer(activeBooking != null ? activeBooking.getCustomer() : null);
+        so.setQuantity(Math.max(1, quantity));
+        java.math.BigDecimal unitPrice = (s != null && s.getBasePrice() != null) ? s.getBasePrice() : new java.math.BigDecimal("50000");
+        so.setTotalPrice(unitPrice.multiply(java.math.BigDecimal.valueOf(so.getQuantity())));
+        so.setNote("Minibar consumption recorded by Housekeeping (Room " + room.getRoomNumber() + ")");
+        so.setAction("Minibar: " + itemName);
+        so.setStatus(deepbluehaven.pojo.enums.ServiceOrderStatus.COMPLETED);
+        so.setOrderTime(java.time.LocalDateTime.now());
+        so.setCompletedTime(java.time.LocalDateTime.now());
+        if (workerId != null) {
+            so.setProcessedBy(entityManager.find(Worker.class, workerId));
+        }
+        entityManager.persist(so);
     }
 
     @Transactional(readOnly = true)

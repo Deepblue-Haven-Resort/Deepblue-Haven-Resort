@@ -15,13 +15,16 @@ import deepbluehaven.pojo.Customer;
 import deepbluehaven.pojo.Notification;
 import deepbluehaven.pojo.Worker;
 import deepbluehaven.pojo.enums.NotificationType;
+import deepbluehaven.pojo.enums.Role;
 import deepbluehaven.repositories.NotificationRepository;
+import deepbluehaven.repositories.WorkerRepository;
 
 @Service
 public class NotificationService {
 
     private final JavaMailSender mailSender;
     private final NotificationRepository notificationRepository;
+    private final WorkerRepository workerRepository;
 
     @Value("${esms.api.key:}")
     private String apiKey;
@@ -32,9 +35,22 @@ public class NotificationService {
     @Value("${esms.api.brandname:}")
     private String brandname;
 
-    public NotificationService(JavaMailSender mailSender, NotificationRepository notificationRepository) {
+    public NotificationService(JavaMailSender mailSender, 
+                               NotificationRepository notificationRepository,
+                               WorkerRepository workerRepository) {
         this.mailSender = mailSender;
         this.notificationRepository = notificationRepository;
+        this.workerRepository = workerRepository;
+    }
+
+    @Transactional
+    public void notifyManagers(String title, String message, NotificationType type, String link) {
+        List<Worker> managers = workerRepository.findAllWithProfile().stream()
+                .filter(w -> w.getProfile() != null && (w.getProfile().getRole() == Role.MANAGER || w.getProfile().getRole() == Role.ADMIN))
+                .toList();
+        for (Worker m : managers) {
+            createWorkerNotification(m, title, message, type, link);
+        }
     }
 
     public void sendEmailOtp(String toEmail, String otp) {

@@ -35,7 +35,7 @@
                     </div>
                     <div>
                         <span>Available Rooms</span>
-                        <strong>24</strong>
+                        <strong th:text="${availableRoomsCount != null ? availableRoomsCount : 0}">0</strong>
                     </div>
                 </article>
 
@@ -45,7 +45,7 @@
                     </div>
                     <div>
                         <span>Occupied Rooms</span>
-                        <strong>34</strong>
+                        <strong th:text="${occupiedRoomsCount != null ? occupiedRoomsCount : 0}">0</strong>
                     </div>
                 </article>
 
@@ -55,7 +55,7 @@
                     </div>
                     <div>
                         <span>Cleaning Queue</span>
-                        <strong>8</strong>
+                        <strong th:text="${cleaningQueueCount != null ? cleaningQueueCount : 0}">0</strong>
                     </div>
                 </article>
 
@@ -65,7 +65,7 @@
                     </div>
                     <div>
                         <span>Out of Order</span>
-                        <strong>4</strong>
+                        <strong th:text="${maintenanceCount != null ? maintenanceCount : 0}">0</strong>
                     </div>
                 </article>
             </section>
@@ -122,6 +122,10 @@
                                     th:data-price="${r.basePrice}"
                                     th:data-area="${r.area}"
                                     th:data-status="${r.status}"
+                                    th:data-description="${r.description}"
+                                    th:data-plan-url="${r.planUrl}"
+                                    th:data-amenities="${r.amenities != null ? #strings.listJoin(r.amenities, ',') : ''}"
+                                    th:data-tags="${r.tags != null ? #strings.listJoin(r.tags, ',') : ''}"
                                     th:data-image="${r.images != null && !r.images.isEmpty() ? r.images[0] : ''}">
                                     <td><strong th:text="|Room ${r.roomNumber}|">Room 101</strong></td>
                                     <td th:text="${r.roomType}">Premium Room</td>
@@ -322,6 +326,36 @@
                             </div>
                         </div>
                         <div class="form-group full-width">
+                            <label>Room Description</label>
+                            <input type="text" id="roomDescription" name="description" placeholder="e.g. Luxurious oceanfront room with panoramic sunset view">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Floor Plan Image URL</label>
+                            <input type="text" id="roomPlanUrl" name="planUrl" placeholder="https://res.cloudinary.com/.../floorplan.jpg">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Room Amenities</label>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; max-height: 120px; overflow-y: auto; padding: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;">
+                                <label th:each="amenity : ${allAmenities}" style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                                    <input type="checkbox" name="amenities" th:value="${amenity}">
+                                    <span th:text="${amenity.displayName}">Wifi</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Room Tags / Highlights</label>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; max-height: 100px; overflow-y: auto; padding: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;">
+                                <label th:each="tag : ${allTags}" style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                                    <input type="checkbox" name="tags" th:value="${tag}">
+                                    <span th:text="${tag.displayName}">Sea View</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
                             <label>Room Image (Cloudinary)</label>
                             <div class="file-upload-row">
                                 <input type="text" id="roomImageUrl" name="imageUrl" placeholder="https://res.cloudinary.com/...">
@@ -423,11 +457,6 @@
         </div>
     </div>
 
-    <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
-    <script th:src="@{/assets/js/shared/toast.js}"></script>
-    <script th:src="@{/assets/js/manager/rooms.js}"></script>
-    <script th:src="@{/assets/js/shared/table-pagination.js}"></script>
-
     <div class="modal-overlay" id="viewProofModal">
         <div class="modal-container proof-modal-container">
             <div class="modal-header">
@@ -459,6 +488,10 @@
             </div>
         </div>
     </div>
-</body>
 
+    <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+    <script th:src="@{/assets/js/shared/toast.js}"></script>
+    <script th:src="@{/assets/js/manager/rooms.js}"></script>
+    <script th:src="@{/assets/js/shared/table-pagination.js}"></script>
+</body>
 </html>

@@ -343,4 +343,29 @@ public class AuthService {
         return "+84" + localPhone.substring(1);
     }
 
+    @Transactional
+    public boolean changeWorkerPassword(Long workerId, String currentPassword, String newPassword) {
+        Worker worker = workerRepository.findById(workerId).orElse(null);
+        if (worker == null) return false;
+        if (!passwordEncoder.matches(currentPassword, worker.getPasswordHash())) {
+            return false;
+        }
+        worker.setPasswordHash(passwordEncoder.encode(newPassword));
+        worker.setForceChangePassword(false);
+        workerRepository.save(worker);
+        return true;
+    }
+
+    @Transactional
+    public boolean changeCustomerPassword(Long customerId, String currentPassword, String newPassword) {
+        Customer customer = customerRepository.findById(customerId).orElse(null);
+        if (customer == null) return false;
+        if (!passwordEncoder.matches(currentPassword, customer.getPasswordHash())) {
+            return false;
+        }
+        customer.setPasswordHash(passwordEncoder.encode(newPassword));
+        customerRepository.save(customer);
+        return true;
+    }
+
 }

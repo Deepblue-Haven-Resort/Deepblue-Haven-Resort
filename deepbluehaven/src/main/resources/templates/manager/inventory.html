@@ -91,7 +91,10 @@
                             <h2>Resort Warehouse & Inventory Control</h2>
                             <p class="inventory-subtitle">Monitor hospitality amenities, housekeeping supplies, and stock levels.</p>
                         </div>
-                        <div class="filter-options">
+                        <div class="filter-options" style="display: flex; gap: 8px;">
+                            <a th:href="@{/manager/inventory/export-csv}" class="btn btn-outline btn-medium">
+                                <i class="fa-solid fa-file-csv"></i> Export CSV
+                            </a>
                             <button type="button" class="btn btn-cta btn-medium" id="openAddItemModalBtn">
                                 <i class="fa-solid fa-plus"></i> Add Item
                             </button>

@@ -92,4 +92,28 @@ public class NotificationController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    @GetMapping("/api/notifications/realtime-badges")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getRealtimeBadges(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Map<String, Object> resp = new java.util.HashMap<>();
+        long unreadCount = 0;
+        if (session != null) {
+            Long customerId = (Long) session.getAttribute("loggedInCustomerId");
+            if (customerId != null) {
+                try {
+                    unreadCount = notificationService.getNotificationsForCustomer(customerId).getUnreadCount();
+                } catch (Exception ignored) {}
+            }
+            Long workerId = (Long) session.getAttribute("loggedInWorkerId");
+            if (workerId != null) {
+                try {
+                    unreadCount = notificationService.getNotificationsForWorker(workerId).getUnreadCount();
+                } catch (Exception ignored) {}
+            }
+        }
+        resp.put("unreadNotifications", unreadCount);
+        return ResponseEntity.ok(resp);
+    }
 }

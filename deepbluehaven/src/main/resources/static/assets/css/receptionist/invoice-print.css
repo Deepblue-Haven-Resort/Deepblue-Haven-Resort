@@ -1,0 +1,311 @@
+/* Guest Folio Invoice Print Stylesheet */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #f1f5f9;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    padding: 40px 20px;
+}
+
+.invoice-toolbar {
+    max-width: 850px;
+    margin: 0 auto 24px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-print {
+    background: linear-gradient(135deg, #0a3663 0%, #065a82 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(10, 54, 99, 0.25);
+}
+
+.btn-print:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.btn-back {
+    background: #ffffff;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-back:hover {
+    background: #f8fafc;
+    color: #0f172a;
+}
+
+.invoice-card {
+    max-width: 850px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    padding: 48px;
+    border: 1px solid #e2e8f0;
+}
+
+/* HEADER */
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid #0a3663;
+    padding-bottom: 24px;
+    margin-bottom: 28px;
+}
+
+.brand-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo {
+    width: 44px;
+    height: 44px;
+    background: #0a3663;
+    color: #ffffff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.brand-title h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0a3663;
+    letter-spacing: -0.5px;
+}
+
+.brand-title p {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+.resort-meta {
+    text-align: right;
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.folio-title-badge {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+/* INFO GRID */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+}
+
+.info-block h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.info-row span {
+    color: #64748b;
+}
+
+.info-row strong {
+    color: #0f172a;
+}
+
+/* TABLE */
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 28px;
+}
+
+.invoice-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 16px;
+    text-align: left;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.invoice-table td {
+    padding: 14px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+/* TOTALS */
+.totals-section {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 36px;
+}
+
+.totals-box {
+    width: 360px;
+}
+
+.totals-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.totals-row.strong {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.totals-row.discount {
+    color: #16a34a;
+}
+
+.totals-row.grand-total {
+    border-top: 2px solid #0a3663;
+    border-bottom: 2px solid #0a3663;
+    padding: 14px 0;
+    margin: 8px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0a3663;
+}
+
+.totals-row.paid {
+    color: #0284c7;
+    font-weight: 600;
+}
+
+.totals-row.balance {
+    font-size: 15px;
+    font-weight: 700;
+    color: #16a34a;
+}
+
+/* SIGNATURES */
+.signatures-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.sign-box {
+    text-align: center;
+}
+
+.sign-box p {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 60px;
+}
+
+.sign-box .sign-line {
+    width: 180px;
+    margin: 0 auto;
+    border-bottom: 1px solid #94a3b8;
+}
+
+.sign-box .sign-name {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.invoice-footer-note {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.invoice-footer-note p + p {
+    margin-top: 4px;
+}
+
+/* PRINT STYLES */
+@media print {
+    body {
+        background: #ffffff;
+        padding: 0;
+    }
+
+    .invoice-toolbar {
+        display: none !important;
+    }
+
+    .invoice-card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+    }
+}
