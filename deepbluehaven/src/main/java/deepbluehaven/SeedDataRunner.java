@@ -180,27 +180,30 @@ public class SeedDataRunner implements CommandLineRunner {
 
     private List<MembershipTier> seedMembershipTiers() {
         TierStatus[] statuses = TierStatus.values();
-        int[] minimumPoints = { 0, 1_000, 3_000, 7_000, 15_000 };
+        int[] minimumPoints = { 0, 1_000, 3_000, 7_000, 15_000, 25_000, 0, 50_000 };
         BigDecimal[] minSpents = { 
             new BigDecimal("0"), 
             new BigDecimal("10000000"), 
             new BigDecimal("30000000"), 
             new BigDecimal("70000000"), 
-            new BigDecimal("150000000") 
+            new BigDecimal("150000000"),
+            new BigDecimal("250000000"),
+            new BigDecimal("0"),
+            new BigDecimal("500000000")
         };
-        String[] multipliers = { "1.00", "1.20", "1.50", "2.00", "2.50" };
-        String[] discountRates = { "0.00", "3.00", "5.00", "8.00", "12.00" };
-        int[] priorityDurations = { 0, 15, 30, 45, 60 };
+        String[] multipliers = { "1.00", "1.20", "1.50", "2.00", "2.50", "3.00", "1.00", "3.50" };
+        String[] discountRates = { "0.00", "3.00", "5.00", "8.00", "12.00", "15.00", "0.00", "20.00" };
+        int[] priorityDurations = { 0, 15, 30, 45, 60, 90, 0, 120 };
 
         List<MembershipTier> tiers = new ArrayList<>();
         for (int i = 0; i < statuses.length; i++) {
             MembershipTier tier = new MembershipTier();
             tier.setTierName(statuses[i]);
-            tier.setMinPoints(minimumPoints[i]);
+            tier.setMinPoints(i < minimumPoints.length ? minimumPoints[i] : 0);
             tier.setMinSpent(i < minSpents.length ? minSpents[i] : BigDecimal.ZERO);
-            tier.setPointMultiplier(new BigDecimal(multipliers[i]));
-            tier.setDiscountRate(new BigDecimal(discountRates[i]));
-            tier.setPriorityDuration(priorityDurations[i]);
+            tier.setPointMultiplier(new BigDecimal(i < multipliers.length ? multipliers[i] : "1.00"));
+            tier.setDiscountRate(new BigDecimal(i < discountRates.length ? discountRates[i] : "0.00"));
+            tier.setPriorityDuration(i < priorityDurations.length ? priorityDurations[i] : 0);
             tier.setDescription("Membership Tier: " + statuses[i].name());
             persist(tier);
             tiers.add(tier);
