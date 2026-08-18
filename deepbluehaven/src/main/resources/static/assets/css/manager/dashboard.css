@@ -231,8 +231,13 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: var(--space-16);
-
     margin-bottom: var(--space-24);
+}
+
+.filter-options {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8, 8px);
 }
 
 .card-header h2 {

@@ -174,7 +174,7 @@
                     <div class="panel-header">
                         <div>
                             <h2>Guest Service Orders</h2>
-                            <p style="color: #64748b; font-size: 13px;">Manage in-room service fulfillment and automatic stock reduction.</p>
+                            <p class="panel-subtitle">Manage in-room service fulfillment and automatic stock reduction.</p>
                         </div>
                     </div>
 
@@ -219,12 +219,12 @@
                                     <td><strong th:text="|#SO-${ord.id}|">#SO-101</strong></td>
                                     <td>
                                         <strong th:text="${ord.service != null ? ord.service.name : 'Resort Service'}">Service</strong>
-                                        <div style="font-size: 12px; color: #64748b;" th:if="${ord.service != null and ord.service.category != null}" th:text="${ord.service.category.displayName}">Category</div>
+                                        <div class="table-subtext" th:if="${ord.service != null and ord.service.category != null}" th:text="${ord.service.category.displayName}">Category</div>
                                     </td>
                                     <td>
                                         <strong th:if="${ord.customer != null and ord.customer.profile != null}" th:text="${ord.customer.profile.fullName}">Guest</strong>
                                         <strong th:if="${ord.customer != null and ord.customer.profile == null}" th:text="${ord.customer.username}">Guest</strong>
-                                        <div style="font-size: 12px; color: #0284c7;" th:if="${ord.booking != null}" th:text="|Booking #${ord.booking.id}|">Booking #101</div>
+                                        <div class="table-subtext-primary" th:if="${ord.booking != null}" th:text="|Booking #${ord.booking.id}|">Booking #101</div>
                                     </td>
                                     <td class="text-center" th:text="${ord.quantity != null ? ord.quantity : 1}">1</td>
                                     <td><strong th:text="|${#numbers.formatDecimal(ord.totalPrice != null ? ord.totalPrice : 0, 0, 'COMMA', 0, 'POINT')} VND|">0 VND</strong></td>
@@ -237,7 +237,7 @@
                                         <span th:if="${ord.status == null}" class="status status-warning">Pending</span>
                                     </td>
                                     <td class="text-center">
-                                        <div class="table-actions" style="display: flex; gap: 6px; justify-content: center;">
+                                        <div class="table-actions">
                                             <form th:if="${ord.status != null and ord.status.name() == 'PENDING'}" 
                                                   th:action="@{'/manager/services/orders/' + ${ord.id} + '/status'}" method="post">
                                                 <input type="hidden" name="status" value="CONFIRMED" />
@@ -254,10 +254,10 @@
                                                 <input type="hidden" name="status" value="CANCELLED" />
                                                 <button type="submit" class="btn btn-small btn-danger" title="Cancel Order">Cancel</button>
                                             </form>
-                                            <span th:if="${ord.status != null and ord.status.name() == 'COMPLETED'}" style="color: #16a34a; font-size: 13px; font-weight: 600;">
+                                            <span th:if="${ord.status != null and ord.status.name() == 'COMPLETED'}" class="order-fulfilled-tag">
                                                 <i class="fa-solid fa-circle-check"></i> Fulfilled
                                             </span>
-                                            <span th:if="${ord.status != null and ord.status.name() == 'CANCELLED'}" style="color: #94a3b8; font-size: 13px;">
+                                            <span th:if="${ord.status != null and ord.status.name() == 'CANCELLED'}" class="order-cancelled-tag">
                                                 Cancelled
                                             </span>
                                         </div>
@@ -335,15 +335,15 @@
                         </div>
                         <div class="form-group">
                             <label>Service Image (Cloudinary)</label>
-                            <div style="display: flex; gap: 8px; align-items: center;">
+                            <div class="upload-action-row">
                                 <input type="text" id="serviceImageUrl" name="imageUrl" placeholder="https://res.cloudinary.com/...">
-                                <input type="file" id="serviceImageFileInput" accept="image/*" style="display:none">
+                                <input type="file" id="serviceImageFileInput" accept="image/*" class="file-input-hidden">
                                 <button type="button" class="btn outline-btn" id="uploadServiceImageBtn">
                                     <i class="fa-solid fa-cloud-arrow-up"></i> Upload
                                 </button>
                             </div>
-                            <div id="serviceImagePreviewBox" style="margin-top: 8px; display: none;">
-                                <img id="serviceImagePreview" src="" style="max-height: 80px; border-radius: 6px; border: 1px solid #cbd5e1; object-fit: cover;" />
+                            <div id="serviceImagePreviewBox" class="preview-box-hidden">
+                                <img id="serviceImagePreview" src="" class="preview-img-thumbnail" alt="Service Preview" />
                             </div>
                         </div>
                     </div>

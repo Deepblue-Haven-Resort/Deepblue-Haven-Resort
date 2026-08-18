@@ -62,7 +62,6 @@ public class CloudinaryStorageService {
             log.error("[ImageUpload] Cloudinary API upload failed! Cause: {}", e.getMessage(), e);
         }
 
-        // Fallback to local storage if Cloudinary fails or credentials are demo/invalid
         return saveFileLocally(file);
     }
 
@@ -77,8 +76,6 @@ public class CloudinaryStorageService {
             }
 
             String filename = UUID.randomUUID().toString() + extension;
-            
-            // Save to static uploads directory
             Path uploadDir = Paths.get("target/classes/static/uploads");
             if (!Files.exists(uploadDir)) {
                 Files.createDirectories(uploadDir);

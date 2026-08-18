@@ -47,7 +47,6 @@ public class ChatService {
             customer = customerRepository.findById(customerId).orElse(null);
         }
 
-        // If no logged in customer, use/fallback to first customer in DB as guest persona
         if (customer == null) {
             List<Customer> all = customerRepository.findAll();
             if (!all.isEmpty()) {
@@ -59,7 +58,6 @@ public class ChatService {
             return null;
         }
 
-        // Check for existing active session
         Optional<ChatSession> activeOpt = chatSessionRepository.findFirstByCustomerIdAndStatusNotOrderByUpdatedAtDesc(
                 customer.getId(), ChatStatus.RESOLVED);
 
@@ -73,7 +71,6 @@ public class ChatService {
             session.setRead(false);
             session = chatSessionRepository.save(session);
 
-            // Add automatic system welcome greeting
             ChatMessage welcome = new ChatMessage();
             welcome.setChatSession(session);
             welcome.setSenderType(SenderType.SYSTEM);

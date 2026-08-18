@@ -98,7 +98,6 @@
 
             <!-- TAB 1: CUSTOMER REVIEWS & COMPLAINTS -->
             <div class="feedback-tab-pane active" id="tab-reviews">
-                <!-- Filter bar -->
                 <div class="feedback-filter-bar">
                     <div class="filter-pills">
                         <a th:href="@{/receptionist/comments(filter='all')}" th:class="${currentFilter == 'all' or currentFilter == null} ? 'filter-pill active' : 'filter-pill'">All Feedback</a>
@@ -109,7 +108,6 @@
                     </div>
                 </div>
 
-                <!-- Reviews Grid -->
                 <div class="reviews-list-grid" th:if="${not #lists.isEmpty(comments)}">
                     <div th:each="c : ${comments}" class="review-card" th:classappend="${c.isComplaint} ? 'review-card--complaint' : ''">
                         <div class="review-card__header">
@@ -130,7 +128,6 @@
                             </div>
                         </div>
 
-                        <!-- Rating Stars -->
                         <div class="review-card__rating">
                             <span class="stars-gold">
                                 <i th:each="i : ${#numbers.sequence(1, c.rating != null ? c.rating : 5)}" class="fa-solid fa-star"></i>
@@ -138,12 +135,10 @@
                             <span class="rating-num" th:text="${c.rating} + '.0'">5.0</span>
                         </div>
 
-                        <!-- Review Text -->
                         <div class="review-card__content">
                             <p th:text="${c.content}">Customer comment content goes here...</p>
                         </div>
 
-                        <!-- Staff Response (if any) -->
                         <div class="review-card__response" th:if="${c.response != null and not #strings.isEmpty(c.response)}">
                             <div class="response-header">
                                 <i class="fa-solid fa-reply"></i>
@@ -153,7 +148,6 @@
                             <p th:text="${c.response}"></p>
                         </div>
 
-                        <!-- Action Buttons -->
                         <div class="review-card__footer">
                             <button type="button" class="btn-reply-feedback" 
                                     th:data-id="${c.id}"
@@ -174,7 +168,6 @@
                     </div>
                 </div>
 
-                <!-- Empty State -->
                 <div class="feedback-empty-state" th:if="${#lists.isEmpty(comments)}">
                     <i class="fa-solid fa-comment-slash"></i>
                     <h3>No customer feedback found</h3>
@@ -184,7 +177,6 @@
 
             <!-- TAB 2: CONTACT FORM INQUIRIES -->
             <div class="feedback-tab-pane" id="tab-inquiries">
-                <!-- Inquiries Filter Bar -->
                 <div class="feedback-filter-bar">
                     <div class="filter-pills">
                         <a th:href="@{/receptionist/comments(inquiryStatus='ALL')}" th:class="${currentInquiryStatus == 'ALL' or currentInquiryStatus == null} ? 'filter-pill active' : 'filter-pill'">All Inquiries</a>
@@ -194,7 +186,6 @@
                     </div>
                 </div>
 
-                <!-- Inquiries Table -->
                 <div class="inquiries-table-card" th:if="${not #lists.isEmpty(inquiries)}">
                     <table class="inquiries-table">
                         <thead>

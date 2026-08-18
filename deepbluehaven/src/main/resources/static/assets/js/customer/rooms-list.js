@@ -1,10 +1,9 @@
-document.addEventListener("DOMContentLoaded", () => {
-    initRoomsDropdowns();
-    initRoomsPriceFilter();
-    initRoomsFiltering();
-
-    console.log("rooms-list.js loaded");
-});
+/**
+ * Customer Rooms List - Interactive Filter, Sort & Pagination Controller
+ */
+const ROOMS_PER_PAGE = 8;
+let currentRoomsPage = 1;
+let matchingCardsList = [];
 
 const roomsFilterState = {
     resort: "all",
@@ -29,35 +28,30 @@ function formatMillion(millionValue) {
 
 function initRoomsDropdowns() {
     const dropdowns = document.querySelectorAll(".rooms-dropdown");
-
-    if (!dropdowns.length) {
-        return;
-    }
+    if (!dropdowns.length) return;
 
     dropdowns.forEach((dropdown) => {
         dropdown.addEventListener("toggle", () => {
-            if (!dropdown.open) {
-                return;
-            }
-
+            if (!dropdown.open) return;
             dropdowns.forEach((item) => {
                 if (item !== dropdown) {
+                    item.open = false;
                     item.removeAttribute("open");
                 }
             });
         });
 
         const options = dropdown.querySelectorAll(".rooms-dropdown__option");
-
         options.forEach((option) => {
             option.addEventListener("click", (event) => {
                 event.preventDefault();
+                event.stopPropagation();
 
                 const filterName = dropdown.dataset.filter;
                 const valueText = dropdown.querySelector(".rooms-dropdown__value");
 
                 if (filterName) {
-                    roomsFilterState[filterName] = option.dataset.value || "all";
+                    roomsFilterState[filterName] = (option.dataset.value || "all").toLowerCase().trim();
                 }
 
                 if (valueText) {
@@ -67,18 +61,20 @@ function initRoomsDropdowns() {
                 options.forEach((item) => item.classList.remove("is-active"));
                 option.classList.add("is-active");
 
+                dropdown.open = false;
                 dropdown.removeAttribute("open");
-                applyRoomsFilters();
+
+                applyRoomsFilters(true);
             });
         });
     });
 
     document.addEventListener("click", (event) => {
-        if (event.target.closest(".rooms-dropdown")) {
-            return;
-        }
-
-        dropdowns.forEach((dropdown) => dropdown.removeAttribute("open"));
+        if (event.target.closest(".rooms-dropdown")) return;
+        dropdowns.forEach((dropdown) => {
+            dropdown.open = false;
+            dropdown.removeAttribute("open");
+        });
     });
 }
 
@@ -91,13 +87,21 @@ function initRoomsPriceFilter() {
     const priceMaxLabel = document.getElementById("priceMaxLabel");
     const priceValue = document.querySelector(".rooms-price-filter__value");
 
-    if (!priceMin || !priceMax) {
-        return;
+    if (!priceMin || !priceMax) return;
+
+    const cards = getRoomCards();
+    const highestCardPrice = cards.reduce((max, c) => Math.max(max, Number(c.dataset.price || 0)), 0);
+    const maxMillion = Math.max(10, Math.ceil(highestCardPrice / 1000000));
+
+    priceMin.max = String(maxMillion);
+    priceMax.max = String(maxMillion);
+    if (Number(priceMax.value) < maxMillion && Number(priceMax.value) === 10) {
+        priceMax.value = String(maxMillion);
     }
 
     const getConfig = () => ({
         min: Number(priceMin.min || 0),
-        max: Number(priceMin.max || 10),
+        max: Number(priceMax.max || maxMillion),
         step: Number(priceMin.step || 0.5)
     });
 
@@ -155,7 +159,7 @@ function initRoomsPriceFilter() {
         }
 
         updatePriceUI();
-        applyRoomsFilters();
+        applyRoomsFilters(true);
     });
 
     priceMax.addEventListener("input", () => {
@@ -168,7 +172,7 @@ function initRoomsPriceFilter() {
         }
 
         updatePriceUI();
-        applyRoomsFilters();
+        applyRoomsFilters(true);
     });
 
     updatePriceUI();
@@ -186,11 +190,45 @@ function initRoomsFiltering() {
     if (applyButton) {
         applyButton.addEventListener("click", (event) => {
             event.preventDefault();
-            applyRoomsFilters();
+            applyRoomsFilters(true);
         });
     }
 
-    applyRoomsFilters();
+    initRoomsPagination();
+    applyRoomsFilters(true);
+}
+
+function initRoomsPagination() {
+    const prevBtn = document.getElementById("roomsPrevPage");
+    const nextBtn = document.getElementById("roomsNextPage");
+
+    if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+            if (currentRoomsPage > 1) {
+                currentRoomsPage -= 1;
+                renderRoomsPagination();
+                scrollToResults();
+            }
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+            const totalPages = Math.ceil(matchingCardsList.length / ROOMS_PER_PAGE);
+            if (currentRoomsPage < totalPages) {
+                currentRoomsPage += 1;
+                renderRoomsPagination();
+                scrollToResults();
+            }
+        });
+    }
+}
+
+function scrollToResults() {
+    const resultsSection = document.querySelector(".rooms-results");
+    if (resultsSection) {
+        resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
 }
 
 function getSelectedPriceRange() {
@@ -204,48 +242,50 @@ function getSelectedPriceRange() {
         };
     }
 
+    const minVal = Number(priceMin.value);
+    const maxVal = Number(priceMax.value);
+    const maxLimit = Number(priceMax.max || 10);
+
     return {
-        minPrice: toVnd(priceMin.value),
-        maxPrice: toVnd(priceMax.value)
+        minPrice: toVnd(minVal),
+        maxPrice: maxVal >= maxLimit ? Number.MAX_SAFE_INTEGER : toVnd(maxVal)
     };
 }
 
 function roomMatchesGuests(cardGuests) {
-    if (roomsFilterState.guests === "any") {
+    if (!roomsFilterState.guests || roomsFilterState.guests === "any") {
         return true;
     }
 
     const capacity = Number(cardGuests || 0);
-    const requestedGuests = roomsFilterState.guests === "4+"
-        ? 4
-        : Number(roomsFilterState.guests);
+    if (roomsFilterState.guests === "4+") {
+        return capacity >= 4;
+    }
 
-    return capacity >= requestedGuests;
+    const requested = Number(roomsFilterState.guests);
+    return capacity >= requested;
 }
 
 function roomMatchesView(cardViews) {
-    if (roomsFilterState.view === "any") {
+    if (!roomsFilterState.view || roomsFilterState.view === "any") {
         return true;
     }
 
+    const targetView = roomsFilterState.view.toLowerCase().trim();
     const views = String(cardViews || "")
+        .toLowerCase()
         .split(",")
-        .map((view) => view.trim())
+        .map((v) => v.trim())
         .filter(Boolean);
 
-    return views.includes(roomsFilterState.view);
+    return views.some((v) => v === targetView || v.replace(/_/g, "-") === targetView.replace(/_/g, "-") || v.includes(targetView) || targetView.includes(v));
 }
 
 function sortRooms() {
     const grid = document.getElementById("roomsGrid") || document.querySelector(".rooms-grid");
+    if (!grid) return;
 
-    if (!grid) {
-        return;
-    }
-
-    const cards = getRoomCards();
-
-    cards.sort((a, b) => {
+    matchingCardsList.sort((a, b) => {
         const priceA = Number(a.dataset.price || 0);
         const priceB = Number(b.dataset.price || 0);
         const ratingA = Number(a.dataset.rating || 0);
@@ -260,42 +300,169 @@ function sortRooms() {
         return orderA - orderB;
     });
 
-    cards.forEach((card) => grid.appendChild(card));
+    matchingCardsList.forEach((card) => grid.appendChild(card));
 }
 
-function applyRoomsFilters() {
+function applyRoomsFilters(resetPage = true) {
     const resultCount = document.getElementById("roomsResultCount");
     const emptyMessage = document.getElementById("roomsEmptyMessage");
     const cards = getRoomCards();
     const { minPrice, maxPrice } = getSelectedPriceRange();
 
-    let visibleRooms = 0;
+    if (resetPage) {
+        currentRoomsPage = 1;
+    }
+
+    matchingCardsList = [];
 
     cards.forEach((card) => {
         const roomPrice = Number(card.dataset.price || 0);
+        const cardResort = (card.dataset.resort || "").toLowerCase().trim();
+        const cardType = (card.dataset.type || "").toLowerCase().trim();
+        const filterResort = (roomsFilterState.resort || "all").toLowerCase().trim();
+        const filterType = (roomsFilterState.type || "all").toLowerCase().trim();
 
-        const isMatch =
-            (roomsFilterState.resort === "all" || card.dataset.resort === roomsFilterState.resort) &&
-            (roomsFilterState.type === "all" || card.dataset.type === roomsFilterState.type) &&
-            roomMatchesGuests(card.dataset.guests) &&
-            roomMatchesView(card.dataset.view) &&
-            roomPrice >= minPrice &&
-            roomPrice <= maxPrice;
+        const matchResort = filterResort === "all" ||
+            cardResort === filterResort ||
+            cardResort.includes(filterResort) ||
+            filterResort.includes(cardResort);
 
-        card.hidden = !isMatch;
+        const matchType = filterType === "all" ||
+            cardType === filterType ||
+            cardType.replace(/_/g, "-") === filterType.replace(/_/g, "-") ||
+            cardType.includes(filterType) ||
+            filterType.includes(cardType);
+
+        const matchGuests = roomMatchesGuests(card.dataset.guests);
+        const matchView = roomMatchesView(card.dataset.view);
+        const matchPrice = roomPrice >= minPrice && roomPrice <= maxPrice;
+
+        const isMatch = matchResort && matchType && matchGuests && matchView && matchPrice;
 
         if (isMatch) {
-            visibleRooms += 1;
+            matchingCardsList.push(card);
+        } else {
+            card.hidden = true;
+            card.style.display = "none";
         }
     });
 
     sortRooms();
 
     if (resultCount) {
-        resultCount.textContent = String(visibleRooms);
+        resultCount.textContent = String(matchingCardsList.length);
     }
 
     if (emptyMessage) {
-        emptyMessage.hidden = visibleRooms !== 0;
+        emptyMessage.hidden = matchingCardsList.length !== 0;
+        emptyMessage.style.display = matchingCardsList.length === 0 ? "block" : "none";
     }
+
+    renderRoomsPagination();
+}
+
+function renderRoomsPagination() {
+    const paginationEl = document.getElementById("roomsPagination");
+    const numbersEl = document.getElementById("roomsPaginationNumbers");
+    const prevBtn = document.getElementById("roomsPrevPage");
+    const nextBtn = document.getElementById("roomsNextPage");
+
+    const total = matchingCardsList.length;
+    const totalPages = Math.ceil(total / ROOMS_PER_PAGE);
+
+    currentRoomsPage = Math.min(Math.max(1, currentRoomsPage), totalPages || 1);
+
+    if (total <= ROOMS_PER_PAGE) {
+        if (paginationEl) {
+            paginationEl.hidden = true;
+            paginationEl.style.display = "none";
+        }
+
+        matchingCardsList.forEach((card) => {
+            card.hidden = false;
+            card.style.display = "";
+        });
+        return;
+    }
+
+    if (paginationEl) {
+        paginationEl.hidden = false;
+        paginationEl.style.display = "flex";
+    }
+
+    const startIndex = (currentRoomsPage - 1) * ROOMS_PER_PAGE;
+    const endIndex = startIndex + ROOMS_PER_PAGE;
+
+    matchingCardsList.forEach((card, index) => {
+        const isVisible = index >= startIndex && index < endIndex;
+        card.hidden = !isVisible;
+        card.style.display = isVisible ? "" : "none";
+    });
+
+    if (prevBtn) {
+        prevBtn.disabled = currentRoomsPage === 1;
+    }
+
+    if (nextBtn) {
+        nextBtn.disabled = currentRoomsPage === totalPages;
+    }
+
+    if (!numbersEl) return;
+
+    numbersEl.innerHTML = "";
+
+    const pages = getPaginationPageList(currentRoomsPage, totalPages);
+
+    pages.forEach((p) => {
+        if (p === "...") {
+            const ellipsis = document.createElement("span");
+            ellipsis.className = "rooms-pagination__ellipsis";
+            ellipsis.textContent = "...";
+            numbersEl.appendChild(ellipsis);
+        } else {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = `rooms-pagination__number ${p === currentRoomsPage ? "is-active" : ""}`;
+            btn.textContent = String(p);
+            btn.setAttribute("aria-label", `Page ${p}`);
+            btn.addEventListener("click", () => {
+                if (currentRoomsPage !== p) {
+                    currentRoomsPage = p;
+                    renderRoomsPagination();
+                    scrollToResults();
+                }
+            });
+            numbersEl.appendChild(btn);
+        }
+    });
+}
+
+function getPaginationPageList(current, total) {
+    if (total <= 7) {
+        const list = [];
+        for (let i = 1; i <= total; i += 1) list.push(i);
+        return list;
+    }
+
+    if (current <= 4) {
+        return [1, 2, 3, 4, 5, "...", total];
+    }
+
+    if (current >= total - 3) {
+        return [1, "...", total - 4, total - 3, total - 2, total - 1, total];
+    }
+
+    return [1, "...", current - 1, current, current + 1, "...", total];
+}
+
+function initRoomsPage() {
+    initRoomsDropdowns();
+    initRoomsPriceFilter();
+    initRoomsFiltering();
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initRoomsPage);
+} else {
+    initRoomsPage();
 }

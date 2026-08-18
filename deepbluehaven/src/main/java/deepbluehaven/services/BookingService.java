@@ -243,7 +243,6 @@ public class BookingService {
                     booking.setStatus(BookingStatus.CANCELLED);
                     bookingRepository.save(booking);
 
-                    // Auto-cancel any pending service orders for this booking
                     List<ServiceOrder> serviceOrders = serviceOrderRepository.findByBookingId(booking.getId());
                     if (serviceOrders != null) {
                         for (ServiceOrder so : serviceOrders) {
@@ -429,7 +428,6 @@ public class BookingService {
         boolean isBookingActive = (booking.getStatus() == BookingStatus.PENDING || booking.getStatus() == BookingStatus.CONFIRMED || booking.getStatus() == BookingStatus.CHECKED_IN);
 
         for (ServiceOrder order : orders) {
-            // If booking is already checked out, cancelled, or completed, auto-cancel any leftover pending services
             if (!isBookingActive && order.getStatus() == ServiceOrderStatus.PENDING) {
                 order.setStatus(ServiceOrderStatus.CANCELLED);
                 order.setNote((order.getNote() != null && !order.getNote().isBlank() ? order.getNote() + " | " : "") + "Auto-cancelled: Booking is " + (booking.getStatus() != null ? booking.getStatus().getDisplayName() : "Checked Out"));
@@ -480,7 +478,6 @@ public class BookingService {
         if (newStatus == ServiceOrderStatus.COMPLETED) {
             order.setCompletedTime(LocalDateTime.now());
 
-            // Auto-inventory deduction for physical / Minibar / F&B items
             if (order.getService() != null) {
                 deepbluehaven.pojo.Service s = order.getService();
                 if (s.getCategory() == ServiceCategory.MINI_BAR || s.getCategory() == ServiceCategory.FOOD_BEVERAGE) {
@@ -499,7 +496,6 @@ public class BookingService {
                         tx.setReason("Service Order #" + order.getId() + " (" + s.getName() + ") completed for guest");
                         inventoryTransactionRepository.save(tx);
 
-                        // Automated low stock alert for Managers
                         int threshold = (item.getMinThreshold() != null) ? item.getMinThreshold() : 5;
                         if (newQty <= threshold) {
                             notificationService.notifyManagers(
@@ -513,7 +509,6 @@ public class BookingService {
                 }
             }
 
-            // Notify Customer if applicable
             if (order.getCustomer() != null) {
                 notificationService.createCustomerNotification(
                     order.getCustomer(),

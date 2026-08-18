@@ -1,4 +1,22 @@
+/**
+ * Deep Blue Haven - Housekeeper Dashboard Script
+ */
 (function () {
+    'use strict';
+
+    function getAppUrl(path) {
+        let contextPath = document.querySelector('meta[name="_context_path"]')?.content;
+        if (!contextPath || contextPath === "/") {
+            const match = window.location.pathname.match(/^\/([^\/]+)/);
+            if (match && match[1] === "deepbluehaven") {
+                contextPath = "/" + match[1];
+            } else {
+                contextPath = "";
+            }
+        }
+        return contextPath.replace(/\/$/, "") + (path.startsWith("/") ? path : "/" + path);
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         const btnRefresh = document.querySelector(".panel-header button");
         if (btnRefresh) {
@@ -17,94 +35,97 @@
         const previewBox = document.getElementById('proofImagePreviewContainer');
         const progressBox = document.getElementById('proofUploadProgress');
 
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             const btn = e.target.closest('.open-complete-modal-btn');
             if (btn) {
                 e.preventDefault();
                 const taskId = btn.getAttribute('data-task-id');
-                const roomNum = btn.getAttribute('data-room-number');
-                if (completeForm) {
-                    completeForm.action = '/deepbluehaven/housekeeper/tasks/' + taskId + '/complete';
+                const roomNum = btn.getAttribute('data-room-number') || '';
+                
+                if (completeForm && taskId) {
+                    completeForm.action = getAppUrl('/housekeeper/tasks/' + taskId + '/complete');
                 }
+                
                 const modalRoomDisplay = document.getElementById('modalRoomNumberDisplay');
                 if (modalRoomDisplay) {
-                    modalRoomDisplay.textContent = 'Room ' + roomNum;
+                    modalRoomDisplay.textContent = roomNum ? 'Room ' + roomNum : 'Assigned Room';
                 }
-                if (proofImageUrlInput) 
-                    proofImageUrlInput.value = '';
-                if (proofFileName) 
-                    proofFileName.textContent = 'No file chosen';
+                
+                if (proofImageUrlInput) proofImageUrlInput.value = '';
+                if (proofFileInput) proofFileInput.value = '';
+                if (proofFileName) proofFileName.textContent = 'No file chosen';
                 if (previewBox) {
                     previewBox.innerHTML = '';
                     previewBox.style.display = 'none';
                 }
-                if (submitBtn) 
-                    submitBtn.disabled = true;
-                if (completeModal) 
-                    completeModal.classList.add('active');
+                if (progressBox) progressBox.style.display = 'none';
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Inspection';
+                }
+                if (completeModal) completeModal.classList.add('active');
             }
         });
 
-        if (triggerUploadBtn) {
+        if (triggerUploadBtn && proofFileInput) {
             triggerUploadBtn.addEventListener('click', () => proofFileInput.click());
         }
 
         if (proofFileInput) {
-            proofFileInput.addEventListener('change', function() {
+            proofFileInput.addEventListener('change', function () {
                 if (this.files && this.files.length > 0) {
                     let files = Array.from(this.files);
                     if (files.length > 5) {
-                        showToast('warning', 'Photo Limit Exceeded', 'You can upload a maximum of 5 evidence photos. Only the first 5 photos will be selected.');
+                        if (typeof showToast === 'function') {
+                            showToast('warning', 'Photo Limit Exceeded', 'You can upload a maximum of 5 evidence photos. First 5 photos selected.');
+                        }
                         files = files.slice(0, 5);
                     }
-                    if (proofFileName) 
+                    if (proofFileName) {
                         proofFileName.textContent = files.length + '/5 photo(s) chosen';
-                    if (progressBox) 
-                        progressBox.style.display = 'block';
-                    if (submitBtn) 
-                        submitBtn.disabled = true;
+                    }
+
+                    // Immediate thumbnail preview
+                    if (previewBox) {
+                        previewBox.innerHTML = '';
+                        previewBox.style.display = 'flex';
+                        previewBox.style.gap = '8px';
+                        previewBox.style.justifyContent = 'center';
+                        previewBox.style.flexWrap = 'wrap';
+
+                        files.forEach(file => {
+                            const img = document.createElement('img');
+                            img.src = URL.createObjectURL(file);
+                            img.style.cssText = 'max-height: 90px; max-width: 110px; border-radius: 6px; border: 1px solid #cbd5e1; object-fit: cover;';
+                            previewBox.appendChild(img);
+                        });
+                    }
+
+                    // Asynchronous upload to Cloudinary/local fallback
+                    if (progressBox) progressBox.style.display = 'block';
 
                     const uploadPromises = files.map(file => {
                         const formData = new FormData();
                         formData.append('file', file);
                         formData.append('folder', 'deepbluehaven/housekeeping_proofs');
-                        return fetch('/deepbluehaven/api/upload/image', {
+                        return fetch(getAppUrl('/api/upload/image'), {
                             method: 'POST',
                             body: formData
-                        }).then(res => res.json());
+                        })
+                        .then(res => res.ok ? res.json() : null)
+                        .catch(() => null);
                     });
 
                     Promise.all(uploadPromises)
                         .then(results => {
-                            if (progressBox) 
-                                progressBox.style.display = 'none';
-                            const successfulUrls = results.filter(r => r.success && r.url).map(r => r.url);
-                            if (successfulUrls.length > 0) {
-                                if (proofImageUrlInput) 
-                                    proofImageUrlInput.value = successfulUrls.join(',');
-                                if (previewBox) {
-                                    previewBox.innerHTML = '';
-                                    previewBox.style.display = 'flex';
-                                    previewBox.style.gap = '8px';
-                                    previewBox.style.justifyContent = 'center';
-                                    previewBox.style.flexWrap = 'wrap';
-                                    successfulUrls.forEach(url => {
-                                        const img = document.createElement('img');
-                                        img.src = url;
-                                        img.style.cssText = 'max-height: 100px; max-width: 120px; border-radius: 6px; border: 1px solid #cbd5e1; object-fit: cover;';
-                                        previewBox.appendChild(img);
-                                    });
-                                }
-                                if (submitBtn) 
-                                    submitBtn.disabled = false;
-                            } else {
-                                showToast('error', 'Upload Failed', 'Upload failed for selected photo(s).');
+                            if (progressBox) progressBox.style.display = 'none';
+                            const validUrls = (results || []).filter(r => r && r.success && r.url).map(r => r.url);
+                            if (validUrls.length > 0 && proofImageUrlInput) {
+                                proofImageUrlInput.value = validUrls.join(',');
                             }
                         })
-                        .catch(err => {
-                            if (progressBox) 
-                                progressBox.style.display = 'none';
-                            showToast('error', 'Upload Error', 'Upload error: ' + err.message);
+                        .catch(() => {
+                            if (progressBox) progressBox.style.display = 'none';
                         });
                 }
             });
@@ -113,12 +134,24 @@
         const closeBtn = document.getElementById('closeCompleteModalBtn');
         const cancelBtn = document.getElementById('cancelCompleteModalBtn');
         [closeBtn, cancelBtn].forEach(b => {
-            if (b) 
-                b.addEventListener('click', () => {
-                if (completeModal) 
-                    completeModal.classList.remove('active');
-            });
+            if (b) {
+                b.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (completeModal) completeModal.classList.remove('active');
+                });
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (e.target === completeModal || e.target.classList.contains('modal-overlay')) {
+                document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+            }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+            }
         });
     });
 })();
-

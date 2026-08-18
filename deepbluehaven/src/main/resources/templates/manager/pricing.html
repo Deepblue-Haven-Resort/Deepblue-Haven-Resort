@@ -217,7 +217,7 @@
                     <div class="panel-header">
                         <div>
                             <h2>Service Category Loyalty Point Rules</h2>
-                            <p style="color: #64748b; font-size: 13px; margin-top: 4px;">Define reward points earned by guests when purchasing specific service categories (Spa, Minibar, Dining, etc.).</p>
+                            <p class="pricing-subtitle">Define reward points earned by guests when purchasing specific service categories (Spa, Minibar, Dining, etc.).</p>
                         </div>
                         <div class="filter-options">
                             <button type="button" class="btn btn-cta btn-medium" id="addServicePointBtn">Add Service Point Rule</button>
@@ -290,13 +290,13 @@
                     <div class="modal-form-grid">
                         <div class="form-group">
                             <label>Service Category <span>*</span></label>
-                            <select id="spCategory" name="serviceCategory" required style="width: 100%; height: 46px; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0 14px; font-weight: 500; outline: none; background: #fff; color: #1e293b;">
+                            <select id="spCategory" name="serviceCategory" required class="modal-select-field">
                                 <option th:each="cat : ${serviceCategories}" th:value="${cat}" th:text="${cat.displayName}">Food & Beverage</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Calculation Type <span>*</span></label>
-                            <select id="spCalcType" name="calculationType" required style="width: 100%; height: 46px; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0 14px; font-weight: 500; outline: none; background: #fff; color: #1e293b;">
+                            <select id="spCalcType" name="calculationType" required class="modal-select-field">
                                 <option value="PERCENTAGE">PERCENTAGE (% of spend)</option>
                                 <option value="FIXED_AMOUNT">FIXED_AMOUNT (Fixed points)</option>
                             </select>
@@ -311,7 +311,7 @@
                         </div>
                         <div class="form-group">
                             <label>Status</label>
-                            <select id="spIsActive" name="isActive" style="width: 100%; height: 46px; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0 14px; font-weight: 500; outline: none; background: #fff; color: #1e293b;">
+                            <select id="spIsActive" name="isActive" class="modal-select-field">
                                 <option value="true">Active</option>
                                 <option value="false">Inactive</option>
                             </select>
@@ -341,7 +341,7 @@
                     <div class="modal-form-grid">
                         <div class="form-group">
                             <label>Room Type <span>*</span></label>
-                            <select id="ruleRoomType" name="roomType" required style="width: 100%; height: 46px; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0 14px; font-weight: 500; outline: none; background: #fff; color: #1e293b;">
+                            <select id="ruleRoomType" name="roomType" required class="modal-select-field">
                                 <option th:each="rt : ${roomTypes}" th:value="${rt}" th:text="${rt == T(deepbluehaven.pojo.enums.RoomType).PRESIDENT ? 'President Suite' : (rt == T(deepbluehaven.pojo.enums.RoomType).SUITE ? 'Deluxe Suite' : (rt == T(deepbluehaven.pojo.enums.RoomType).PREMIUM ? 'Premium Room' : 'Standard Room'))}">Standard Room</option>
                             </select>
                         </div>
@@ -396,8 +396,7 @@
                     <div class="modal-form-grid">
                         <div class="form-group">
                             <label>Code <span>*</span></label>
-                            <input type="text" id="discountCode" name="code" required placeholder="e.g. SUMMER26"
-                                style="text-transform: uppercase;">
+                            <input type="text" id="discountCode" name="code" required placeholder="e.g. SUMMER26" class="uppercase-input">
                         </div>
                         <div class="form-group">
                             <label>Discount Type <span>*</span></label>
@@ -462,7 +461,7 @@
                     <div class="modal-form-grid">
                         <div class="form-group">
                             <label>Tier Name</label>
-                            <input type="text" id="tierNameInput" readonly style="background: var(--gray-100);">
+                            <input type="text" id="tierNameInput" readonly class="readonly-bg">
                         </div>
                         <div class="form-group">
                             <label>Min Spent Threshold (VND) <span>*</span></label>
@@ -484,7 +483,7 @@
                             <input type="number" id="tierDiscountRate" name="discountRate" required min="0" step="0.50"
                                 placeholder="e.g. 5.0">
                         </div>
-                        <div class="form-group full-width" style="grid-column: 1 / -1;">
+                        <div class="form-group full-width grid-col-full">
                             <label>Description</label>
                             <input type="text" id="tierDescription" name="description"
                                 placeholder="e.g. Silver Tier Benefits">

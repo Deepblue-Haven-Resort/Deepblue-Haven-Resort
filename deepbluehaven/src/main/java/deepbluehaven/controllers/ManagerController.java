@@ -54,6 +54,15 @@ import deepbluehaven.pojo.Supplier;
 import deepbluehaven.repositories.InventoryItemRepository;
 import deepbluehaven.repositories.InventoryTransactionRepository;
 import deepbluehaven.repositories.SupplierRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+import deepbluehaven.dto.ReceptionistDTO;
+import deepbluehaven.pojo.WorkerProfile;
+import deepbluehaven.pojo.enums.WorkerStatus;
+import deepbluehaven.services.ReceptionistService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class ManagerController {
@@ -78,6 +87,8 @@ public class ManagerController {
     private final SupplierRepository supplierRepository;
     private final InventoryTransactionRepository inventoryTransactionRepository;
     private final deepbluehaven.repositories.ServicePointRepository servicePointRepository;
+    private final ReceptionistService receptionistService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public ManagerController(ManagerDashboardService managerDashboardService,
                              BookingService bookingService,
@@ -98,7 +109,9 @@ public class ManagerController {
                              InventoryItemRepository inventoryItemRepository,
                              SupplierRepository supplierRepository,
                              InventoryTransactionRepository inventoryTransactionRepository,
-                             deepbluehaven.repositories.ServicePointRepository servicePointRepository) {
+                             deepbluehaven.repositories.ServicePointRepository servicePointRepository,
+                             ReceptionistService receptionistService,
+                             BCryptPasswordEncoder passwordEncoder) {
         this.managerDashboardService = managerDashboardService;
         this.bookingService = bookingService;
         this.pricingRuleRepository = pricingRuleRepository;
@@ -119,6 +132,8 @@ public class ManagerController {
         this.supplierRepository = supplierRepository;
         this.inventoryTransactionRepository = inventoryTransactionRepository;
         this.servicePointRepository = servicePointRepository;
+        this.receptionistService = receptionistService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/manager/dashboard")
@@ -127,6 +142,9 @@ public class ManagerController {
         model.addAttribute("dashboardData", dashboardData);
         model.addAttribute("recentLogs", logService.getRecentManagerOperationalLogs());
         model.addAttribute("recentBookingLogs", logService.getRecentManagerBookingLogs());
+        model.addAttribute("availableRooms", roomRepository.findAll().stream()
+                .filter(r -> r.getStatus() == RoomStatus.AVAILABLE)
+                .toList());
         model.addAttribute("activePage", "dashboard");
 
         return "manager/dashboard";
@@ -135,8 +153,29 @@ public class ManagerController {
     @GetMapping("/manager/bookings")
     public String managerBookings(Model model) {
         model.addAttribute("bookings", bookingService.getAllBookingsForStaff());
+        model.addAttribute("availableRooms", roomRepository.findAll().stream()
+                .filter(r -> r.getStatus() == RoomStatus.AVAILABLE)
+                .toList());
         model.addAttribute("activePage", "bookings");
         return "manager/bookings";
+    }
+
+    @PostMapping("/manager/bookings/create")
+    public String createManagerBooking(@ModelAttribute ReceptionistDTO.WalkInBookingRequest request,
+                                       RedirectAttributes redirectAttrs,
+                                       HttpServletRequest req) {
+        try {
+            Worker manager = getActiveWorker(req);
+            receptionistService.executeWalkInBooking(request, manager);
+            redirectAttrs.addFlashAttribute("successMessage", "Reservation created & checked in successfully for " + request.getFullName() + "!");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Create Booking failed: " + e.getMessage());
+        }
+        String referer = req.getHeader("Referer");
+        if (referer != null && referer.contains("/manager/bookings")) {
+            return "redirect:/manager/bookings";
+        }
+        return "redirect:/manager/dashboard";
     }
 
     @GetMapping("/manager/rooms")
@@ -287,9 +326,111 @@ public class ManagerController {
 
     @GetMapping("/manager/staff")
     public String managerStaff(Model model) {
-        model.addAttribute("staffList", workerRepository.findAllWithProfile());
+        List<Worker> staffList = workerRepository.findAllWithProfile();
+        long totalEmployees = staffList.size();
+        long receptionistCount = staffList.stream()
+                .filter(w -> w.getProfile() != null && w.getProfile().getRole() == Role.RECEPTIONIST)
+                .count();
+        long housekeeperCount = staffList.stream()
+                .filter(w -> w.getProfile() != null && w.getProfile().getRole() == Role.HOUSEKEEPER)
+                .count();
+        double avgPerformance = staffList.stream()
+                .filter(w -> w.getProfile() != null && w.getProfile().getPerformanceScore() != null)
+                .mapToDouble(w -> w.getProfile().getPerformanceScore())
+                .average()
+                .orElse(90.0);
+
+        model.addAttribute("staffList", staffList);
+        model.addAttribute("totalEmployees", totalEmployees);
+        model.addAttribute("receptionistCount", receptionistCount);
+        model.addAttribute("housekeeperCount", housekeeperCount);
+        model.addAttribute("avgPerformance", avgPerformance);
         model.addAttribute("activePage", "staff");
         return "manager/staff";
+    }
+
+    @PostMapping("/manager/staff/save")
+    public String saveStaffMember(@RequestParam("fullName") String fullName,
+                                  @RequestParam("username") String username,
+                                  @RequestParam("password") String password,
+                                  @RequestParam("role") Role role,
+                                  @RequestParam(value = "department", required = false) deepbluehaven.pojo.enums.Department department,
+                                  @RequestParam("phoneNumber") String phoneNumber,
+                                  @RequestParam(value = "email", required = false) String email,
+                                  @RequestParam(value = "employeeCode", required = false) String employeeCode,
+                                  @RequestParam(value = "gender", required = false) deepbluehaven.pojo.enums.Gender gender,
+                                  @RequestParam(value = "address", required = false) String address,
+                                  RedirectAttributes redirectAttrs,
+                                  HttpServletRequest req) {
+        try {
+            if (workerRepository.existsByUsername(username.trim())) {
+                redirectAttrs.addFlashAttribute("errorMessage", "Username '" + username + "' is already taken.");
+                return "redirect:/manager/staff";
+            }
+
+            if (employeeCode == null || employeeCode.isBlank()) {
+                employeeCode = "EMP-" + String.format("%03d", workerRepository.count() + 1);
+            } else if (workerRepository.existsByEmployeeCodeIgnoreCase(employeeCode.trim())) {
+                redirectAttrs.addFlashAttribute("errorMessage", "Employee Code '" + employeeCode + "' already exists.");
+                return "redirect:/manager/staff";
+            }
+
+            Worker worker = new Worker();
+            worker.setUsername(username.trim());
+            worker.setEmployeeCode(employeeCode.trim().toUpperCase());
+            worker.setPasswordHash(passwordEncoder.encode(password));
+            worker.setStatus(WorkerStatus.ACTIVE);
+            worker.setLocked(false);
+            worker.setForceChangePassword(false);
+            worker.setCreatedAt(java.time.LocalDateTime.now());
+            worker.applyDefaultPermissions(role);
+
+            WorkerProfile profile = new WorkerProfile();
+            profile.setWorker(worker);
+            profile.setFullName(fullName.trim());
+            profile.setRole(role);
+            profile.setRoleLevel(role == Role.MANAGER ? 3 : (role == Role.RECEPTIONIST ? 2 : 1));
+            profile.setDepartment(department != null ? department : (role == Role.HOUSEKEEPER ? deepbluehaven.pojo.enums.Department.HOUSEKEEPING : deepbluehaven.pojo.enums.Department.FRONT_DESK));
+            profile.setPhoneNumber(phoneNumber.trim());
+            profile.setEmail(email != null && !email.isBlank() ? email.trim() : null);
+            profile.setGender(gender != null ? gender : deepbluehaven.pojo.enums.Gender.OTHER);
+            profile.setAddress(address != null && !address.isBlank() ? address.trim() : null);
+            profile.setPerformanceScore(90.0);
+            profile.setAvatarUrl("https://res.cloudinary.com/xio0mgix/image/upload/v1786687242/d070bf12-83fd-4d5c-a16e-b4735f2d1d19.png");
+
+            worker.setProfile(profile);
+            workerRepository.save(worker);
+
+            Worker manager = getActiveWorker(req);
+            logService.log(ObjectType.WORKER, ActionCode.CREATE, worker.getId(),
+                    "Manager registered staff member: " + fullName + " (" + role.name() + ")", manager != null ? manager.getId() : 1L);
+
+            redirectAttrs.addFlashAttribute("successMessage", "Registered new staff member " + fullName + " (" + employeeCode + ") successfully!");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to register staff: " + e.getMessage());
+        }
+        return "redirect:/manager/staff";
+    }
+
+    @PostMapping("/manager/staff/{id}/toggle-status")
+    public String toggleStaffStatus(@PathVariable("id") Long id, RedirectAttributes redirectAttrs, HttpServletRequest req) {
+        try {
+            Worker w = workerRepository.findById(id).orElse(null);
+            if (w != null) {
+                WorkerStatus oldStatus = w.getStatus();
+                WorkerStatus newStatus = (oldStatus == WorkerStatus.ACTIVE) ? WorkerStatus.INACTIVE : WorkerStatus.ACTIVE;
+                w.setStatus(newStatus);
+                workerRepository.save(w);
+
+                Worker manager = getActiveWorker(req);
+                logService.log(ObjectType.WORKER, ActionCode.UPDATE, w.getId(),
+                        "Manager updated staff #" + id + " status from " + oldStatus + " to " + newStatus, manager != null ? manager.getId() : 1L);
+                redirectAttrs.addFlashAttribute("successMessage", "Staff #" + id + " status updated to " + newStatus.name());
+            }
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to update staff status: " + e.getMessage());
+        }
+        return "redirect:/manager/staff";
     }
 
     @GetMapping("/manager/revenue")
@@ -353,6 +494,94 @@ public class ManagerController {
         model.addAttribute("guestPointsTotal", (totalGuestsCount * 1500) + 1200);
         model.addAttribute("activePage", "reports");
         return "manager/reports";
+    }
+
+    @GetMapping("/manager/dashboard/export-report")
+    public void exportManagerDashboardExecutiveReport(HttpServletResponse response) throws java.io.IOException {
+        exportManagerExecutiveReport(response);
+    }
+
+    @GetMapping("/manager/reports/export")
+    public void exportManagerExecutiveReport(HttpServletResponse response) throws java.io.IOException {
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"executive_operations_report.csv\"");
+
+        ManagerDashboardDTO dashboardData = managerDashboardService.getDashboardData();
+        List<Room> rooms = roomRepository.findAll();
+        List<deepbluehaven.pojo.Invoice> invoices = invoiceRepository.findAllWithBookingAndCustomer();
+        List<deepbluehaven.pojo.Task> tasks = taskRepository.findAll();
+
+        try (java.io.OutputStreamWriter writer = new java.io.OutputStreamWriter(response.getOutputStream(), java.nio.charset.StandardCharsets.UTF_8)) {
+            writer.write("\uFEFF");
+
+            writer.write("=== DEEP BLUE HAVEN RESORT - EXECUTIVE OPERATIONS REPORT ===\n");
+            writer.write("Report Date," + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "\n");
+            writer.write("Generated At," + java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "\n\n");
+
+            writer.write("--- EXECUTIVE METRICS ---\n");
+            writer.write("Metric,Value\n");
+            writer.write(String.format("Today Revenue (VND),\"%s\"\n", escapeCsv(dashboardData.getKpi().getRevenueTodayStr())));
+            writer.write(String.format("Revenue Growth,\"%s\"\n", escapeCsv(dashboardData.getKpi().getRevenueGrowthStr())));
+            writer.write(String.format("Total Rooms,%d\n", dashboardData.getKpi().getTotalRooms()));
+            writer.write(String.format("Occupied Rooms,%d\n", dashboardData.getKpi().getOccupiedRooms()));
+            writer.write(String.format("Occupancy Rate,%d%%\n", dashboardData.getKpi().getOccupancyRate()));
+            writer.write(String.format("Today Expected Check-Ins,%d\n", dashboardData.getKpi().getTodayCheckInCount()));
+            writer.write(String.format("Today Expected Check-Outs,%d\n", dashboardData.getKpi().getTodayCheckOutCount()));
+            writer.write(String.format("Rooms Requiring Cleaning / Turnover,%d\n", dashboardData.getKpi().getCleaningRoomsCount()));
+            writer.write(String.format("Rooms Under Maintenance,%d\n", dashboardData.getKpi().getMaintenanceRoomsCount()));
+            writer.write("\n");
+
+            writer.write("--- ROOM STATUS ROSTER ---\n");
+            writer.write("Room Number,Room Type,Base Price (VND),Status,Capacity,Area (m2)\n");
+            for (Room r : rooms) {
+                writer.write(String.format("\"%s\",\"%s\",\"%s\",\"%s\",%d,%d\n",
+                        escapeCsv(r.getRoomNumber()),
+                        escapeCsv(r.getRoomType() != null ? r.getRoomType().name() : "STANDARD"),
+                        escapeCsv(r.getBasePrice() != null ? r.getBasePrice().toPlainString() : "0"),
+                        escapeCsv(r.getStatus() != null ? r.getStatus().name() : "AVAILABLE"),
+                        r.getCapacity() != null ? r.getCapacity() : 2,
+                        r.getArea() != null ? r.getArea() : 35));
+            }
+            writer.write("\n");
+
+            writer.write("--- RECENT BILLING & INVOICES ---\n");
+            writer.write("Invoice Ref,Booking Ref,Customer Name,Total Amount (VND),Paid Amount (VND),Status,Date\n");
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            for (deepbluehaven.pojo.Invoice inv : invoices) {
+                String customerName = "Guest";
+                if (inv.getCustomer() != null && inv.getCustomer().getProfile() != null) {
+                    customerName = inv.getCustomer().getProfile().getFullName();
+                } else if (inv.getBooking() != null && inv.getBooking().getCustomer() != null && inv.getBooking().getCustomer().getProfile() != null) {
+                    customerName = inv.getBooking().getCustomer().getProfile().getFullName();
+                }
+                writer.write(String.format("\"#INV-%d\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
+                        inv.getId(),
+                        escapeCsv(inv.getBooking() != null ? inv.getBooking().getBookingCode() : "N/A"),
+                        escapeCsv(customerName),
+                        escapeCsv(inv.getTotalAmount() != null ? inv.getTotalAmount().toPlainString() : "0"),
+                        escapeCsv(inv.getPaidAmount() != null ? inv.getPaidAmount().toPlainString() : "0"),
+                        escapeCsv(inv.getStatus() != null ? inv.getStatus().name() : "PENDING"),
+                        escapeCsv(inv.getTimestamp() != null ? inv.getTimestamp().format(dtf) : "N/A")));
+            }
+            writer.write("\n");
+
+            writer.write("--- HOUSEKEEPING & MAINTENANCE TASKS ---\n");
+            writer.write("Task ID,Room Number,Action,Due Time,Assigned Staff,Status\n");
+            for (deepbluehaven.pojo.Task t : tasks) {
+                String rNum = t.getRoom() != null ? t.getRoom().getRoomNumber() : "N/A";
+                String staff = (t.getAssignedTo() != null && t.getAssignedTo().getProfile() != null) ? t.getAssignedTo().getProfile().getFullName() : "Unassigned";
+                String due = t.getDueTime() != null ? t.getDueTime().format(dtf) : "N/A";
+                writer.write(String.format("\"#TASK-%d\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
+                        t.getId(),
+                        escapeCsv(rNum),
+                        escapeCsv(t.getAction() != null ? t.getAction() : "Room Turnover"),
+                        escapeCsv(due),
+                        escapeCsv(staff),
+                        escapeCsv(t.getStatus() != null ? t.getStatus().name() : "PENDING")));
+            }
+
+            writer.flush();
+        }
     }
 
     @GetMapping("/manager/reports/financial/export")
@@ -1092,5 +1321,22 @@ public class ManagerController {
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to delete item: " + e.getMessage());
         }
         return "redirect:/manager/inventory";
+    }
+
+    private Worker getActiveWorker(HttpServletRequest req) {
+        HttpSession session = req != null ? req.getSession(false) : null;
+        if (session != null && session.getAttribute("loggedInWorkerId") != null) {
+            Long workerId = (Long) session.getAttribute("loggedInWorkerId");
+            return workerRepository.findWithProfileAndPermissionsById(workerId)
+                    .orElseGet(() -> workerRepository.findById(workerId).orElse(null));
+        }
+        return getActiveWorker();
+    }
+
+    private Worker getActiveWorker() {
+        return workerRepository.findAllWithProfile().stream()
+                .filter(w -> w.getProfile() != null && w.getProfile().getRole() == Role.MANAGER)
+                .findFirst()
+                .orElseGet(() -> workerRepository.findAllWithProfile().stream().findFirst().orElse(null));
     }
 }

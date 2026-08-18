@@ -43,10 +43,7 @@ public class CustomerRewardService {
             if (profile == null) return;
         }
 
-        // 1. Calculate points base: 1 point per 10,000 VND
         BigDecimal basePointsDecimal = amountPaid.divide(new BigDecimal("10000"), 2, RoundingMode.DOWN);
-        
-        // 2. Multiplier from current MembershipTier (default 1.00)
         BigDecimal multiplier = BigDecimal.ONE;
         if (profile.getMembershipTier() != null && profile.getMembershipTier().getPointMultiplier() != null) {
             multiplier = profile.getMembershipTier().getPointMultiplier();
@@ -55,17 +52,13 @@ public class CustomerRewardService {
         int pointsEarned = basePointsDecimal.multiply(multiplier).setScale(0, RoundingMode.DOWN).intValue();
         if (pointsEarned <= 0) pointsEarned = 1;
 
-        // 3. Update Profile totals
         profile.setTotalSpent((profile.getTotalSpent() != null ? profile.getTotalSpent() : BigDecimal.ZERO).add(amountPaid));
         profile.setTotalPoints((profile.getTotalPoints() != null ? profile.getTotalPoints() : 0) + pointsEarned);
         profile.setTotalBookings((profile.getTotalBookings() != null ? profile.getTotalBookings() : 0) + 1);
 
-        // 4. Dynamic Tier Progression Check against DB rules
         updateTierAndSegment(profile);
-
         customerProfileRepository.save(profile);
 
-        // 5. Create Loyalty Log Entry
         CustomerLoyaltyLog log = new CustomerLoyaltyLog();
         log.setCustomer(customer);
         log.setReferenceType(ReferenceType.INVOICE);
@@ -83,7 +76,7 @@ public class CustomerRewardService {
         BigDecimal totalSpent = profile.getTotalSpent() != null ? profile.getTotalSpent() : BigDecimal.ZERO;
         int totalPoints = profile.getTotalPoints() != null ? profile.getTotalPoints() : 0;
 
-        MembershipTier qualifiedTier = tiers.get(0); // Default Bronze
+        MembershipTier qualifiedTier = tiers.get(0);
 
         for (MembershipTier tier : tiers) {
             boolean spentQualifies = tier.getMinSpent() != null && totalSpent.compareTo(tier.getMinSpent()) >= 0;

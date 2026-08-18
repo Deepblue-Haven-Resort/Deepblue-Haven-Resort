@@ -138,8 +138,6 @@
                     <div class="room-detail-amenity-item"><i class="fa-solid fa-wifi text-primary"></i> High-speed WiFi</div>
                     <div class="room-detail-amenity-item"><i class="fa-solid fa-snowflake text-primary"></i> Climate Control</div>
                 </div>
-
-                <!-- OCCUPANT BOX (If Occupied) -->
                 <div id="modalOccupantBox" class="room-occupant-box">
                     <div class="room-occupant-tag">Active In-House Occupant</div>
                     <div class="room-occupant-name" id="modalGuestName">John Smith</div>
@@ -169,7 +167,6 @@
             <form th:action="@{/receptionist/room-move}" method="post">
                 <input type="hidden" name="bookingId" id="moveBookingId" />
                 <div class="modal-body">
-                    <!-- Current Occupied Room Banner -->
                     <div class="transfer-current-banner">
                         <div class="transfer-banner-tag">
                             <i class="fa-solid fa-circle-dot"></i> Current Occupied Room
@@ -181,7 +178,6 @@
                         </div>
                     </div>
 
-                    <!-- Select Destination Room -->
                     <div class="transfer-form-group">
                         <label class="transfer-form-label" for="moveDestinationSelect">
                             Select Destination Room <span class="required-star">*</span>
@@ -191,7 +187,6 @@
                         </select>
                     </div>
 
-                    <!-- Reason for Move -->
                     <div class="transfer-form-group">
                         <label class="transfer-form-label" for="moveReasonTextarea">
                             Reason for Room Move

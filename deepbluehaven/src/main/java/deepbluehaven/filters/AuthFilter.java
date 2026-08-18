@@ -30,7 +30,6 @@ public class AuthFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        // Thử tự động khôi phục đăng nhập từ Persistent Remember-Me Cookie nếu chưa có Session
         rememberMeService.tryAutoLoginFromCookie(request, response);
 
         HttpSession session = request.getSession(false);

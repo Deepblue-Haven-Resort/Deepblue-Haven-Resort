@@ -40,3 +40,34 @@
     transform: translateY(0) scale(1) !important;
     opacity: 1 !important;
 }
+
+.pricing-subtitle {
+    color: var(--gray-500);
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.modal-select-field {
+    width: 100%;
+    height: 46px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 10px;
+    padding: 0 14px;
+    font-weight: 500;
+    outline: none;
+    background: var(--white);
+    color: var(--gray-800);
+    transition: border-color 0.2s ease;
+}
+
+.modal-select-field:focus {
+    border-color: var(--primary-600);
+}
+
+.uppercase-input {
+    text-transform: uppercase;
+}
+
+.grid-col-full {
+    grid-column: 1 / -1;
+}

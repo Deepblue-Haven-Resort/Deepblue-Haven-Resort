@@ -164,16 +164,25 @@
     --color-border: var(--neutral-300);
 
 
+    --radius-xs: 4px;
     --radius-sm: 8px;
     --radius-md: 16px;
     --radius-lg: 24px;
     --radius-xl: 40px;
+    --radius-pill: 9999px;
 
+    --space-2: 2px;
     --space-4: 4px;
+    --space-6: 6px;
     --space-8: 8px;
+    --space-10: 10px;
     --space-12: 12px;
+    --space-14: 14px;
     --space-16: 16px;
+    --space-18: 18px;
+    --space-20: 20px;
     --space-24: 24px;
+    --space-28: 28px;
     --space-32: 32px;
     --space-40: 40px;
     --space-48: 48px;
@@ -207,6 +216,7 @@
     --border-05: 0.5px;
     --border-1: 1px;
     --border-15: 1.5px;
+    --border-2: 2px;
     --border-3: 3px;
 }
 @media (max-width: 1024px) {

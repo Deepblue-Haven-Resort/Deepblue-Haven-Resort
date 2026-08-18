@@ -70,7 +70,14 @@
                                     <button type="button" class="rooms-dropdown__option is-active" data-value="all">All Rooms</button>
                                     <button type="button" class="rooms-dropdown__option" data-value="standard">Standard</button>
                                     <button type="button" class="rooms-dropdown__option" data-value="premium">Premium</button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="deluxe">Deluxe</button>
                                     <button type="button" class="rooms-dropdown__option" data-value="suite">Suite</button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="ocean_suite">Ocean Suite</button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="family">Family</button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="villa">Villa</button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="bungalow">Bungalow</button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="superior">Superior</button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="executive">Executive</button>
                                     <button type="button" class="rooms-dropdown__option" data-value="president">President</button>
                                 </div>
                             </details>
@@ -104,10 +111,10 @@
 
                                 <div class="rooms-dropdown__menu">
                                     <button type="button" class="rooms-dropdown__option is-active" data-value="any">Any View</button>
-                                    <button type="button" class="rooms-dropdown__option" data-value="ocean">Ocean View</button>
-                                    <button type="button" class="rooms-dropdown__option" data-value="garden">Garden View</button>
-                                    <button type="button" class="rooms-dropdown__option" data-value="pool">Pool View</button>
-                                    <button type="button" class="rooms-dropdown__option" data-value="partial-ocean">Partial Ocean View</button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="ocean_view">Ocean View</button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="garden_view">Garden View</button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="pool_view">Pool View</button>
+                                    <button type="button" class="rooms-dropdown__option" data-value="partial_ocean_view">Partial Ocean View</button>
                                     <button type="button" class="rooms-dropdown__option" data-value="beachfront">Beachfront</button>
                                 </div>
                             </details>
@@ -202,6 +209,22 @@
                     <p class="rooms-empty-message" id="roomsEmptyMessage" hidden>
                         No rooms match your filters. Try changing the price range, room type or view.
                     </p>
+
+                    <!-- ROOMS PAGINATION -->
+                    <nav class="rooms-pagination" id="roomsPagination" aria-label="Rooms pagination" hidden>
+                        <button type="button" class="rooms-pagination__control" id="roomsPrevPage" aria-label="Previous page">
+                            <i class="fa-solid fa-chevron-left"></i>
+                            <span>Previous</span>
+                        </button>
+
+                        <div class="rooms-pagination__numbers" id="roomsPaginationNumbers">
+                        </div>
+
+                        <button type="button" class="rooms-pagination__control" id="roomsNextPage" aria-label="Next page">
+                            <span>Next</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </nav>
                 </section>
             </div>
         </div>

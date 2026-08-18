@@ -337,8 +337,8 @@
 
                         <div class="form-group full-width">
                             <label>Room Amenities</label>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; max-height: 120px; overflow-y: auto; padding: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;">
-                                <label th:each="amenity : ${allAmenities}" style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                            <div class="modal-checkbox-grid">
+                                <label th:each="amenity : ${allAmenities}" class="modal-checkbox-label">
                                     <input type="checkbox" name="amenities" th:value="${amenity}">
                                     <span th:text="${amenity.displayName}">Wifi</span>
                                 </label>
@@ -347,8 +347,8 @@
 
                         <div class="form-group full-width">
                             <label>Room Tags / Highlights</label>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; max-height: 100px; overflow-y: auto; padding: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;">
-                                <label th:each="tag : ${allTags}" style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">
+                            <div class="modal-checkbox-grid sm-height">
+                                <label th:each="tag : ${allTags}" class="modal-checkbox-label">
                                     <input type="checkbox" name="tags" th:value="${tag}">
                                     <span th:text="${tag.displayName}">Sea View</span>
                                 </label>
