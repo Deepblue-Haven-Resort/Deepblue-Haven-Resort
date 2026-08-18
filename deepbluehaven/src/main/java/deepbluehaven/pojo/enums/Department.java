@@ -4,5 +4,14 @@ public enum Department {
     HOUSEKEEPING,
     RECEPTION,
     MANAGEMENT,
-    ADMINISTRATION
+    ADMINISTRATION,
+    FRONT_DESK,
+    FOOD_BEVERAGE,
+    MAINTENANCE,
+    SECURITY,
+    SPA,
+    FINANCE,
+    SALES_MARKETING,
+    IT,
+    HR
 }

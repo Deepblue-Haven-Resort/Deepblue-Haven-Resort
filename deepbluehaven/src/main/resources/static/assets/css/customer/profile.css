@@ -8,7 +8,7 @@
 
     background:
         radial-gradient(circle at 88% 10%,
-            rgba(77, 168, 255, 0.15),
+            rgba(var(--primary-500-rgb), 0.15),
             transparent 28%),
         var(--primary-100);
 }
@@ -29,8 +29,8 @@
 
     background:
         linear-gradient(120deg,
-            rgba(255, 255, 255, 0.95),
-            rgba(212, 235, 255, 0.75));
+            rgba(var(--white-rgb), 0.95),
+            rgba(var(--primary-200-rgb), 0.75));
 
     border: 1px solid var(--primary-300);
     border-radius: var(--radius-xl);
@@ -48,7 +48,7 @@
     width: 330px;
     height: 330px;
 
-    border: 1px solid rgba(20, 93, 160, 0.12);
+    border: 1px solid rgba(var(--primary-700-rgb), 0.12);
     border-radius: 50%;
 }
 
@@ -108,9 +108,9 @@
     justify-content: center;
 
     color: var(--primary-600);
-    background: rgba(255, 255, 255, 0.65);
+    background: rgba(var(--white-rgb), 0.65);
 
-    border: 1px solid rgba(169, 215, 255, 0.85);
+    border: 1px solid rgba(var(--primary-300-rgb), 0.85);
     border-radius: 50%;
 
     font-size: 2.5rem;
@@ -136,7 +136,7 @@
 .profile-sidebar {
     overflow: hidden;
 
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(var(--white-rgb), 0.92);
 
     border: 1px solid var(--primary-200);
     border-radius: var(--radius-lg);
@@ -233,7 +233,7 @@
     color: var(--primary-800);
     background: linear-gradient(135deg,
             var(--gold-300),
-            #f7edcf);
+            var(--gold-100));
 
     border-radius: 999px;
 
@@ -329,7 +329,7 @@
 .profile-overview {
     padding: 2rem;
 
-    background: rgba(255, 255, 255, 0.94);
+    background: rgba(var(--white-rgb), 0.94);
 
     border: 1px solid var(--primary-200);
     border-radius: var(--radius-lg);
@@ -449,7 +449,7 @@
     background: var(--white);
     border-color: var(--primary-400);
 
-    box-shadow: 0 0 0 3px rgba(77, 168, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(var(--primary-500-rgb), 0.1);
 }
 
 .profile-form__actions {
@@ -690,10 +690,8 @@
 
         .profile-panel__header h2 {
             font-size: 1.5rem !important;
-            /* Hạ cỡ chữ xuống 1.5rem (hoặc 1.35rem nếu cần) */
             line-height: 1.25 !important;
             white-space: nowrap !important;
-            /* Ép chữ nằm thẳng hàng không xuống dòng */
         }
 
         .profile-panel__label,
@@ -863,4 +861,4 @@
 
 .points-loss {
     color: var(--error-600);
-}
+}

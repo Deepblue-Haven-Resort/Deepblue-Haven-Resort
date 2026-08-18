@@ -8,14 +8,14 @@
 .room-grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    gap: 16px;
+    gap: var(--space-16);
 }
 
 .room-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 16px;
+    background: var(--white);
+    border: var(--border-1) solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: var(--space-16);
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
@@ -23,32 +23,32 @@
     justify-content: space-between;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 1px 3px rgba(var(--gray-900-rgb), 0.04);
 }
 
 .room-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.09), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
-    border-color: #cbd5e1;
+    box-shadow: 0 12px 24px -6px rgba(var(--gray-900-rgb), 0.09), 0 4px 8px -2px rgba(var(--gray-900-rgb), 0.04);
+    border-color: var(--gray-300);
 }
 
 .room-card.available {
-    border-top: 4px solid #10b981;
+    border-top: 4px solid var(--success-500);
 }
 
 .room-card.occupied {
-    border-top: 4px solid #3b82f6;
-    background: #f8fafc;
+    border-top: 4px solid var(--primary-600);
+    background: var(--gray-50);
 }
 
 .room-card.cleaning {
-    border-top: 4px solid #f59e0b;
-    background: #fffbeb;
+    border-top: 4px solid var(--warning-500);
+    background: var(--warning-50);
 }
 
 .room-card.maintenance {
-    border-top: 4px solid #ef4444;
-    background: #fef2f2;
+    border-top: 4px solid var(--error-500);
+    background: var(--error-50);
 }
 
 .room-header {
@@ -61,24 +61,24 @@
 .room-number {
     font-size: 1.15rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--gray-900);
 }
 
 .room-type {
     font-size: 0.85rem;
-    color: #64748b;
+    color: var(--gray-500);
     margin-bottom: 8px;
 }
 
 .room-guest-info {
     font-size: 0.85rem;
-    color: #334155;
-    background: #f1f5f9;
+    color: var(--gray-700);
+    background: var(--gray-100);
     padding: 6px 10px;
     border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-8);
     margin-top: 6px;
 }
 
@@ -88,13 +88,13 @@
     align-items: center;
     margin-top: 14px;
     padding-top: 10px;
-    border-top: 1px dashed #e2e8f0;
+    border-top: 1px dashed var(--gray-200);
     font-size: 0.825rem;
-    color: #64748b;
+    color: var(--gray-500);
 }
 
 .room-card-footer strong {
-    color: #1e293b;
+    color: var(--gray-800);
 }
 
 /* --------------------------------------------------------------------------
@@ -110,23 +110,23 @@
 }
 
 .badge-status.available {
-    background: #d1fae5;
-    color: #065f46;
+    background: var(--success-100);
+    color: var(--success-800);
 }
 
 .badge-status.occupied {
-    background: #dbeafe;
-    color: #1e40af;
+    background: var(--primary-100);
+    color: var(--primary-800);
 }
 
 .badge-status.cleaning {
-    background: #fef3c7;
-    color: #92400e;
+    background: var(--warning-100);
+    color: var(--warning-800);
 }
 
 .badge-status.maintenance {
-    background: #fee2e2;
-    color: #991b1b;
+    background: var(--error-100);
+    color: var(--error-800);
 }
 
 /* --------------------------------------------------------------------------
@@ -136,15 +136,15 @@
     margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--gray-900);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-8);
 }
 
 .modal-room-subtitle {
     font-size: 0.85rem;
-    color: #64748b;
+    color: var(--gray-500);
     display: block;
     margin-top: 2px;
 }
@@ -154,31 +154,31 @@
     justify-content: space-between;
     align-items: center;
     padding: 12px 16px;
-    background: #f8fafc;
+    background: var(--gray-50);
     border-radius: 12px;
-    margin-bottom: 16px;
-    border: 1px solid #e2e8f0;
+    margin-bottom: var(--space-16);
+    border: 1px solid var(--gray-200);
 }
 
 .room-detail-label {
     font-size: 0.78rem;
-    color: #64748b;
+    color: var(--gray-500);
     display: block;
     margin-bottom: 2px;
 }
 
 .room-detail-price {
     font-size: 1.15rem;
-    color: #0f2c59;
+    color: var(--primary-900);
     font-weight: 700;
 }
 
 .room-detail-amenities-row {
     display: flex;
-    gap: 16px;
+    gap: var(--space-16);
     font-size: 0.875rem;
-    color: #475569;
-    margin-bottom: 16px;
+    color: var(--gray-600);
+    margin-bottom: var(--space-16);
     flex-wrap: wrap;
 }
 
@@ -190,17 +190,17 @@
 
 .room-occupant-box {
     display: none;
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
+    background: var(--primary-50);
+    border: 1px solid var(--primary-200);
     border-radius: 12px;
     padding: 14px 16px;
-    margin-bottom: 16px;
+    margin-bottom: var(--space-16);
 }
 
 .room-occupant-tag {
     font-size: 0.75rem;
     font-weight: 700;
-    color: #1e40af;
+    color: var(--primary-800);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 4px;
@@ -209,12 +209,12 @@
 .room-occupant-name {
     font-size: 1.05rem;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--gray-800);
 }
 
 .room-occupant-checkout {
     font-size: 0.85rem;
-    color: #2563eb;
+    color: var(--primary-600);
     margin-top: 4px;
 }
 
@@ -224,9 +224,9 @@
 .modal-container-transfer {
     max-width: 520px;
     width: 95%;
-    border-radius: 16px;
-    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
-    background: #ffffff;
+    border-radius: var(--radius-md);
+    box-shadow: 0 25px 50px -12px rgba(var(--gray-900-rgb), 0.25);
+    background: var(--white);
 }
 
 .transfer-header-title {
@@ -235,7 +235,7 @@
     gap: 10px;
     font-size: 1.15rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--gray-900);
 }
 
 .transfer-header-icon {
@@ -245,14 +245,14 @@
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    background: #e0f2fe;
-    color: #0284c7;
+    background: var(--primary-100);
+    color: var(--primary-600);
     font-size: 0.95rem;
 }
 
 .transfer-current-banner {
-    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
-    border: 1px solid #a7f3d0;
+    background: linear-gradient(135deg, var(--success-50) 0%, var(--success-50) 100%);
+    border: 1px solid var(--success-200);
     border-radius: 12px;
     padding: 14px 16px;
     margin-bottom: 20px;
@@ -262,7 +262,7 @@
 .transfer-banner-tag {
     font-size: 0.725rem;
     font-weight: 700;
-    color: #059669;
+    color: var(--success-600);
     text-transform: uppercase;
     letter-spacing: 0.6px;
     display: flex;
@@ -274,12 +274,12 @@
 .transfer-current-room-text {
     font-size: 1.2rem;
     font-weight: 800;
-    color: #065f46;
+    color: var(--success-800);
 }
 
 .transfer-banner-subtext {
     font-size: 0.8rem;
-    color: #047857;
+    color: var(--success-700);
     margin-top: 4px;
     line-height: 1.4;
     display: flex;
@@ -297,14 +297,14 @@
 .transfer-form-label {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #334155;
+    color: var(--gray-700);
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
 .transfer-form-label .required-star {
-    color: #ef4444;
+    color: var(--error-500);
 }
 
 .transfer-select {
@@ -313,9 +313,9 @@
     padding: 0 14px;
     font-size: 0.925rem;
     font-weight: 500;
-    color: #1e293b;
-    background-color: #ffffff;
-    border: 1.5px solid #cbd5e1;
+    color: var(--gray-800);
+    background-color: var(--white);
+    border: 1.5px solid var(--gray-300);
     border-radius: 10px;
     transition: all 0.2s ease;
     cursor: pointer;
@@ -329,8 +329,8 @@
 
 .transfer-select:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    border-color: var(--primary-600);
+    box-shadow: 0 0 0 3px rgba(var(--primary-600-rgb), 0.15);
 }
 
 .transfer-textarea {
@@ -339,9 +339,9 @@
     padding: 12px 14px;
     font-size: 0.9rem;
     font-family: inherit;
-    color: #1e293b;
-    background-color: #ffffff;
-    border: 1.5px solid #cbd5e1;
+    color: var(--gray-800);
+    background-color: var(--white);
+    border: 1.5px solid var(--gray-300);
     border-radius: 10px;
     transition: all 0.2s ease;
     resize: none;
@@ -350,50 +350,50 @@
 }
 
 .transfer-textarea::placeholder {
-    color: #94a3b8;
+    color: var(--gray-400);
 }
 
 .transfer-textarea:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    border-color: var(--primary-600);
+    box-shadow: 0 0 0 3px rgba(var(--primary-600-rgb), 0.15);
 }
 
 .transfer-notice-box {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
     border-radius: 10px;
     padding: 10px 12px;
     font-size: 0.8rem;
-    color: #64748b;
+    color: var(--gray-500);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-8);
     margin-top: 4px;
 }
 
 .transfer-notice-icon {
-    color: #3b82f6;
+    color: var(--primary-600);
     font-size: 0.9rem;
 }
 
 .btn-transfer-confirm {
-    background: #0f3460;
-    color: #ffffff;
+    background: var(--primary-900);
+    color: var(--white);
     padding: 10px 20px;
     font-size: 0.925rem;
     font-weight: 600;
     border-radius: 10px;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-8);
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .btn-transfer-confirm:hover {
-    background: #1a4d8c;
+    background: var(--primary-700);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(15, 52, 96, 0.25);
+    box-shadow: 0 4px 12px rgba(var(--primary-900-rgb), 0.25);
 }

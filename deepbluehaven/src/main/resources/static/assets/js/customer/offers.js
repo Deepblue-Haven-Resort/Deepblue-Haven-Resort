@@ -259,5 +259,31 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Copy promo code
+    document.querySelectorAll(".offer-card__copy-btn").forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const code = btn.dataset.code || "";
+            if (!code) return;
+
+            navigator.clipboard.writeText(code).then(() => {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Copied!</span>';
+                btn.style.background = "var(--success-700)";
+                btn.style.color = "var(--white)";
+                btn.style.borderColor = "var(--success-700)";
+
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.style.background = "";
+                    btn.style.color = "";
+                    btn.style.borderColor = "";
+                }, 2000);
+            }).catch(() => {
+                prompt("Copy this voucher code:", code);
+            });
+        });
+    });
+
     updateOffers();
 });

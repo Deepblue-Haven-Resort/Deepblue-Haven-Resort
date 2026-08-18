@@ -26,14 +26,14 @@
     background:
         radial-gradient(
             circle at 82% 30%,
-            rgba(77, 168, 255, 0.22),
+            rgba(var(--primary-500-rgb), 0.22),
             transparent 28%
         ),
         linear-gradient(
             130deg,
             var(--primary-900),
             var(--primary-800) 55%,
-            #174e6e
+            var(--primary-700)
         );
 }
 
@@ -47,12 +47,12 @@
 
     background-image:
         linear-gradient(
-            rgba(255, 255, 255, 0.25) 1px,
+            rgba(var(--white-rgb), 0.25) 1px,
             transparent 1px
         ),
         linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.25) 1px,
+            rgba(var(--white-rgb), 0.25) 1px,
             transparent 1px
         );
 
@@ -69,7 +69,7 @@
     width: 520px;
     height: 520px;
 
-    border: 1px solid rgba(255, 255, 255, 0.13);
+    border: 1px solid rgba(var(--white-rgb), 0.13);
     border-radius: 50%;
 }
 
@@ -126,7 +126,7 @@
     max-width: 620px;
     margin-bottom: var(--space-32);
 
-    color: rgba(255, 255, 255, 0.76);
+    color: rgba(var(--white-rgb), 0.76);
 
     font-size: 1.05rem;
     line-height: 1.75;
@@ -148,7 +148,7 @@
 
     color: var(--white);
 
-    border: var(--border-1) solid rgba(255, 255, 255, 0.5);
+    border: var(--border-1) solid rgba(var(--white-rgb), 0.5);
     border-radius: 999px;
 
     font-size: 0.875rem;
@@ -161,7 +161,7 @@
 }
 
 .offers-outline-btn:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(var(--white-rgb), 0.12);
     border-color: var(--white);
 
     transform: translateY(-2px);
@@ -185,11 +185,11 @@
 
     overflow: hidden;
 
-    border: 2px solid rgba(233, 214, 174, 0.8);
+    border: 2px solid rgba(var(--gold-400-rgb), 0.8);
     border-radius: 170px 170px 36px 36px;
 
     box-shadow:
-        0 30px 70px rgba(0, 0, 0, 0.32);
+        0 30px 70px rgba(var(--black-rgb), 0.32);
 }
 
 .offers-hero__image img {
@@ -221,13 +221,13 @@
             var(--gold-500)
         );
 
-    border: 6px solid rgba(255, 255, 255, 0.15);
+    border: 6px solid rgba(var(--white-rgb), 0.15);
     border-radius: 50%;
 
     text-align: center;
 
     box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.25);
+        0 18px 40px rgba(var(--black-rgb), 0.25);
 }
 
 .offers-discount span,
@@ -256,15 +256,15 @@
     gap: var(--space-12);
 
     color: var(--white);
-    background: rgba(8, 28, 44, 0.85);
+    background: rgba(var(--primary-900-rgb), 0.85);
 
-    border: var(--border-1) solid rgba(255, 255, 255, 0.18);
+    border: var(--border-1) solid rgba(var(--white-rgb), 0.18);
     border-radius: var(--radius-md);
 
     backdrop-filter: blur(12px);
 
     box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.25);
+        0 18px 40px rgba(var(--black-rgb), 0.25);
 }
 
 .offers-floating-card > i {
@@ -305,7 +305,7 @@
 
 /* =========================================
    CONTENT
-========================================= */
+======================================== */
 
 .offers-content {
     padding: var(--space-80) 0;
@@ -359,7 +359,7 @@
 
 /* =========================================
    TOOLBAR
-========================================= */
+======================================== */
 
 .offers-toolbar {
     margin-bottom: var(--space-32);
@@ -370,7 +370,7 @@
     justify-content: space-between;
     gap: var(--space-16);
 
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(var(--white-rgb), 0.95);
 
     border: var(--border-1) solid var(--primary-200);
     border-radius: var(--radius-lg);
@@ -502,12 +502,12 @@
     border-color: var(--primary-500);
 
     box-shadow:
-        0 0 0 4px rgba(77, 168, 255, 0.12);
+        0 0 0 4px rgba(var(--primary-500-rgb), 0.12);
 }
 
 /* =========================================
    OFFER GRID
-========================================= */
+======================================== */
 
 .offers-grid {
     display: grid;
@@ -517,93 +517,98 @@
 
 .offer-card {
     min-width: 0;
-
-    overflow: hidden;
-
+    position: relative;
     display: flex;
     flex-direction: column;
-
-    background: rgba(255, 255, 255, 0.97);
-
+    background: var(--surface-0);
     border: var(--border-1) solid var(--primary-200);
     border-radius: var(--radius-lg);
-
-    box-shadow: var(--shadow-md);
-
-    transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease,
-        border-color 0.3s ease;
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-24);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .offer-card:hover {
-    transform: translateY(-7px);
-
+    transform: translateY(-5px);
     border-color: var(--primary-300);
-
-    box-shadow:
-        0 22px 50px rgba(var(--shadow-color), 0.13);
+    box-shadow: var(--shadow-md);
 }
 
 .offer-card[hidden] {
     display: none;
 }
 
-/* Card image */
+/* Card Top: Category & Favorite */
 
-.offer-card__image {
-    position: relative;
-
-    height: 235px;
-
-    overflow: hidden;
+.offer-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-12);
+    margin-bottom: var(--space-16);
 }
 
-.offer-card__image::after {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    background:
-        linear-gradient(
-            to top,
-            rgba(8, 28, 44, 0.32),
-            transparent 55%
-        );
-
-    pointer-events: none;
+.offer-card__category {
+    width: fit-content;
+    padding: 5px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-6);
+    color: var(--primary-700);
+    background: var(--primary-100);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
-.offer-card__image img {
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-    transition: transform 0.45s ease;
-}
-
-.offer-card:hover .offer-card__image img {
-    transform: scale(1.06);
-}
-
-.offer-card__badge {
-    position: absolute;
-    top: var(--space-16);
-    left: var(--space-16);
-    z-index: 2;
-
-    min-height: 32px;
-    padding-inline: var(--space-12);
-
+.offer-card__favorite {
+    width: 36px;
+    height: 36px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    background: var(--surface-50);
+    color: var(--neutral-600);
+    border: var(--border-1) solid var(--primary-200);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
 
+.offer-card__favorite:hover {
+    background: var(--error-50);
+    color: var(--error-600);
+    border-color: var(--error-200);
+    transform: scale(1.08);
+}
+
+.offer-card__favorite.is-favorite {
+    background: var(--error-600);
+    color: var(--white);
+    border-color: var(--error-600);
+}
+
+/* Card Content */
+
+.offer-card__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.offer-card__badge-row {
+    margin-bottom: var(--space-12);
+}
+
+.offer-card__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 12px;
     border-radius: 999px;
-
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 800;
 }
 
@@ -632,144 +637,31 @@
     background: var(--secondary-300);
 }
 
-.offer-card__favorite {
-    position: absolute;
-    top: var(--space-16);
-    right: var(--space-16);
-    z-index: 2;
-
-    width: 42px;
-    height: 42px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: var(--primary-800);
-    background: rgba(255, 255, 255, 0.9);
-
-    border-radius: 50%;
-
-    box-shadow: var(--shadow-md);
-
-    transition:
-        color 0.25s ease,
-        background-color 0.25s ease,
-        transform 0.25s ease;
-}
-
-.offer-card__favorite:hover {
-    color: var(--error-600);
-
-    transform: scale(1.08);
-}
-
-.offer-card__favorite.is-favorite {
-    color: var(--white);
-    background: var(--error-600);
-}
-
-/* Card content */
-
-.offer-card__content {
-    flex: 1;
-
-    padding: var(--space-24);
-
-    display: flex;
-    flex-direction: column;
-}
-
-.offer-card__category {
-    width: fit-content;
-    margin-bottom: var(--space-12);
-    padding: 6px 10px;
-
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-
-    color: var(--primary-700);
-    background: var(--primary-100);
-
-    border-radius: 999px;
-
-    font-size: 0.67rem;
-    font-weight: 700;
-
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-}
-
-.offer-card__category--dining {
-    color: #946100;
-    background: #fff4d6;
-}
-
-.offer-card__category--spa {
-    color: var(--success-700);
-    background: var(--success-100);
-}
-
-.offer-card__category--experience {
-    color: var(--secondary-800);
-    background: var(--secondary-100);
-}
-
 .offer-card h3 {
-    margin-bottom: var(--space-12);
-
-    font-size: 1.65rem;
+    margin-bottom: var(--space-8);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-900);
+    line-height: 1.25;
 }
 
 .offer-card__content > p {
-    min-height: 72px;
+    min-height: 48px;
     margin-bottom: var(--space-16);
-
-    font-size: 0.82rem;
-    line-height: 1.65;
-}
-
-.offer-card__benefits {
-    margin-bottom: var(--space-16);
-
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-8);
-}
-
-.offer-card__benefits li {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-8);
-
-    color: var(--neutral-700);
-
-    font-size: 0.75rem;
-    line-height: 1.45;
-}
-
-.offer-card__benefits i {
-    margin-top: 3px;
-
-    color: var(--success-600);
-
-    font-size: 0.65rem;
+    font-size: 0.84rem;
+    line-height: 1.55;
+    color: var(--neutral-600);
 }
 
 .offer-card__validity {
     margin-top: auto;
     padding: var(--space-12) 0;
-
     display: flex;
     align-items: center;
     gap: var(--space-8);
-
     color: var(--neutral-500);
-
     border-top: var(--border-1) solid var(--neutral-200);
-
-    font-size: 0.7rem;
+    font-size: 0.72rem;
 }
 
 .offer-card__validity i {
@@ -778,7 +670,6 @@
 
 .offer-card__footer {
     padding-top: var(--space-16);
-
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -787,23 +678,19 @@
 
 .offer-card__price span {
     display: block;
-
     color: var(--neutral-500);
-
     font-size: 0.65rem;
 }
 
 .offer-card__price strong {
     color: var(--primary-800);
-
     font-family: var(--font-heading);
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     line-height: 1;
 }
 
 .offer-card__price small {
     color: var(--neutral-500);
-
     font-size: 0.65rem;
 }
 
@@ -811,11 +698,13 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-8);
-
     color: var(--primary-700);
-
     font-size: 0.75rem;
     font-weight: 800;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
 }
 
 .offer-card__detail i {
@@ -871,7 +760,7 @@
 
 /* =========================================
    MEMBER OFFER
-========================================= */
+======================================== */
 
 .member-offer-section {
     padding: 0 0 var(--space-80);
@@ -893,7 +782,7 @@
     background:
         radial-gradient(
             circle at 80% 30%,
-            rgba(77, 168, 255, 0.3),
+            rgba(var(--primary-500-rgb), 0.3),
             transparent 28%
         ),
         linear-gradient(
@@ -918,7 +807,7 @@
     width: 340px;
     height: 340px;
 
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(var(--white-rgb), 0.15);
     border-radius: 50%;
 }
 
@@ -967,7 +856,7 @@
 }
 
 .member-offer p {
-    color: rgba(255, 255, 255, 0.72);
+    color: rgba(var(--white-rgb), 0.72);
 
     font-size: 0.85rem;
 }
@@ -1002,7 +891,7 @@
 
 /* =========================================
    TERMS
-========================================= */
+======================================== */
 
 .offer-terms-section {
     padding: var(--space-80) 0;
@@ -1228,15 +1117,15 @@
   /* 4. Căn giữa khối ảnh nổi bật Hero Visual trên Tablet */
   .offers-hero__visual {
     min-height: 470px !important;
-    width: 380px !important;       /* Độ rộng container bọc ảnh */
-    margin: 48px auto 0 !important; /* Dịch xuống và căn giữa */
+    width: 380px !important;
+    margin: 48px auto 0 !important;
     position: relative !important;
   }
 
   .offers-hero__image {
-    width: 340px !important;       /* Giữ nguyên kích thước ảnh lớn của Tablet */
+    width: 340px !important;
     height: 450px !important;
-    position: relative !important;  /* Bỏ absolute để tự căn giữa */
+    position: relative !important;
     margin: 0 auto !important;
     right: auto !important;
     left: auto !important;
@@ -1371,7 +1260,7 @@
 .offer-detail-modal__overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.65);
+    background: rgba(var(--gray-900-rgb), 0.65);
     backdrop-filter: blur(6px);
 }
 
@@ -1380,11 +1269,11 @@
     z-index: 1;
     width: 100%;
     max-width: 680px;
-    background: #ffffff;
+    background: var(--white);
     border-radius: 20px;
-    border-top: 5px solid var(--primary-600, #0284c7);
+    border-top: 5px solid var(--primary-600);
     padding: 32px 36px;
-    box-shadow: 0 30px 60px -12px rgba(15, 23, 42, 0.35);
+    box-shadow: 0 30px 60px -12px rgba(var(--gray-900-rgb), 0.35);
     transform: translateY(20px) scale(0.95);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1402,8 +1291,8 @@
     height: 40px;
     border-radius: 50%;
     border: none;
-    background: #f1f5f9;
-    color: #475569;
+    background: var(--gray-100);
+    color: var(--gray-600);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1413,8 +1302,8 @@
 }
 
 .offer-detail-modal__close:hover {
-    background: #e2e8f0;
-    color: #0f172a;
+    background: var(--gray-200);
+    color: var(--gray-900);
     transform: rotate(90deg);
 }
 
@@ -1435,7 +1324,7 @@
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.1em;
-    color: var(--primary-700, #0284c7);
+    color: var(--primary-700);
     text-transform: uppercase;
 }
 
@@ -1447,25 +1336,25 @@
     margin: 0 !important;
     display: inline-flex !important;
     align-items: center !important;
-    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%) !important;
+    color: var(--white) !important;
     font-size: 0.85rem !important;
     font-weight: 700 !important;
     padding: 6px 16px !important;
     border-radius: 999px !important;
-    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25) !important;
+    box-shadow: 0 4px 12px rgba(var(--primary-600-rgb), 0.25) !important;
 }
 
 .offer-detail-modal__title {
     font-size: 2rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--gray-900);
     margin: 4px 0 12px 0;
     letter-spacing: -0.02em;
 }
 
 .offer-detail-modal__description {
-    color: #475569;
+    color: var(--gray-600);
     font-size: 1.05rem;
     line-height: 1.65;
     margin-bottom: 24px;
@@ -1475,8 +1364,8 @@
     display: grid;
     grid-template-columns: 1.4fr 1fr 1fr;
     gap: 20px;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+    border: 1px solid var(--gray-200);
     padding: 20px 24px;
     border-radius: 14px;
     margin-bottom: 28px;
@@ -1494,12 +1383,12 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #64748b;
+    color: var(--gray-500);
     margin-bottom: 6px;
 }
 
 .offer-detail-modal__info-item .info-value {
-    color: #0f172a;
+    color: var(--gray-900);
     font-size: 1.05rem;
     font-weight: 700;
     white-space: nowrap;
@@ -1513,33 +1402,33 @@
 }
 
 .offer-detail-modal__footer .btn-luxury {
-    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25);
+    box-shadow: 0 4px 14px rgba(var(--warning-600-rgb), 0.25);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .offer-detail-modal__footer .btn-luxury:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(217, 119, 6, 0.35);
+    box-shadow: 0 8px 20px rgba(var(--warning-600-rgb), 0.35);
 }
 @media (max-width: 480px) {
   /* 1. Đặt chiều rộng cố định cho container visual và dùng auto margin để căn giữa */
   .offers-hero__visual {
     min-height: 400px !important;
-    width: 290px !important;       /* Chiều rộng ôm khít ảnh to 250px và mép của discount/floating card */
-    margin: 32px auto 0 !important; /* Căn giữa toàn bộ cụm này tắp lự */
-    position: relative !important;  /* Làm mốc định vị cho các phần tử con */
+    width: 290px !important;
+    margin: 32px auto 0 !important;
+    position: relative !important;
     left: 0 !important;
     right: 0 !important;
   }
 
   /* 2. Ảnh chính tự động căn giữa theo container */
   .offers-hero__image {
-    width: 250px !important;       /* Độ rộng ảnh to nổi bật */
-    height: 340px !important;      /* Chiều cao ảnh */
+    width: 250px !important;
+    height: 340px !important;
     border-radius: 125px 125px 30px 30px !important;
-    position: relative !important;  /* Chuyển sang relative để tự căn giữa */
-    margin: 0 auto !important;      /* Căn giữa ảnh */
-    right: auto !important;         /* Hủy thuộc tính absolute right cũ */
+    position: relative !important;
+    margin: 0 auto !important;
+    right: auto !important;
     left: auto !important;
   }
 
@@ -1548,7 +1437,7 @@
     width: 120px !important;
     height: 120px !important;
     top: 60px !important;
-    left: -15px !important;        /* Lệch nhẹ ra ngoài viền ảnh trái */
+    left: -15px !important;
     right: auto !important;
     position: absolute !important;
   }
@@ -1556,7 +1445,7 @@
   /* 4. Thẻ Floating Card bám sát mép phải ảnh */
   .offers-floating-card {
     position: absolute !important;
-    right: -15px !important;       /* Lệch nhẹ ra ngoài viền ảnh phải */
+    right: -15px !important;
     bottom: 30px !important;
     min-width: 190px !important;
     padding: 10px !important;
@@ -1610,8 +1499,8 @@
 
 /* Modal Claim Voucher Button */
 .btn-claim-voucher {
-    background: var(--gold-400, #d4af37) !important;
-    color: var(--primary-950, #0a3663) !important;
+    background: var(--gold-400) !important;
+    color: var(--primary-900) !important;
     font-weight: 700 !important;
     border: none !important;
     cursor: pointer !important;
@@ -1624,4 +1513,4 @@
 .btn-claim-voucher:hover {
     filter: brightness(1.08) !important;
     transform: translateY(-1px) !important;
-}
+}

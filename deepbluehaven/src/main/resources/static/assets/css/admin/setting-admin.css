@@ -3,595 +3,257 @@
    Deep Blue Haven Design System
 ===================================== */
 
-
 /* =========================
    MAIN PANEL
 ========================= */
-
 .setting-panel {
-
     padding: var(--space-32);
-
     background: var(--surface-0);
-
-    border:
-        var(--border-1) solid var(--primary-200);
-
+    border: var(--border-1) solid var(--primary-200);
     border-radius: var(--radius-xl);
-
     box-shadow: var(--shadow-xl);
-
 }
-
-
 
 /* =========================
    HEADER
 ========================= */
-
 .panel-header {
-
     margin-bottom: var(--space-32);
-
 }
-
 
 .panel-header h2 {
-
     font-family: var(--font-heading);
-
     font-size: 2.5rem;
-
     font-weight: 700;
-
     color: var(--primary-800);
-
 }
-
 
 .panel-header p {
-
     margin-top: var(--space-8);
-
     color: var(--neutral-600);
-
 }
-
-
-
-
 
 /* =========================
    SETTING CARD
 ========================= */
-
-
 .setting-card {
-
     margin-top: var(--space-24);
-
     padding: var(--space-24);
-
-
     background: var(--surface-0);
-
-
-    border:
-        var(--border-1) solid var(--primary-200);
-
-
+    border: var(--border-1) solid var(--primary-200);
     border-radius: var(--radius-lg);
-
-
-    box-shadow:
-        0 12px 30px rgba(var(--shadow-color), 0.06);
-
+    box-shadow: 0 12px 30px rgba(var(--shadow-color), 0.06);
 }
-
-
-
-
 
 /* =========================
    TITLE
 ========================= */
-
-
 .setting-title {
-
-
     display: flex;
-
     align-items: center;
-
     gap: var(--space-16);
-
     margin-bottom: var(--space-24);
-
 }
-
-
 
 .setting-title i {
-
-
     width: 46px;
-
     height: 46px;
-
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
-
     border-radius: var(--radius-md);
-
-
     background: var(--primary-100);
-
     color: var(--primary-700);
-
-
     font-size: 1.25rem;
-
 }
-
-
 
 .setting-title h3 {
-
-
     margin: 0;
-
     color: var(--primary-800);
-
     font-size: 1.5rem;
-
 }
-
-
 
 .setting-title p {
-
-
     margin-top: 5px;
-
     color: var(--neutral-600);
-
 }
-
-
-
-
 
 /* =========================
    SETTING ROW
 ========================= */
-
-
 .setting-row {
-
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
-
-    padding:
-        var(--space-16) 0;
-
-
-    border-bottom:
-        var(--border-1) solid var(--neutral-200);
-
+    padding: var(--space-16) 0;
+    border-bottom: var(--border-1) solid var(--neutral-200);
 }
-
-
 
 .setting-row:last-child {
-
     border-bottom: none;
-
 }
-
-
-
 
 .setting-row strong {
-
-
     color: var(--neutral-900);
-
     font-weight: 700;
-
 }
-
-
 
 .setting-row p {
-
-
     margin-top: 5px;
-
-    font-size: .875rem;
-
+    font-size: 0.875rem;
     color: var(--neutral-600);
-
 }
-
-
-
-
-
 
 /* =========================
-   SELECT + TIME INPUT
+   SELECT + TIME INPUT & SIZE FIX
 ========================= */
-
-
 .setting-row select,
 .setting-row input[type="time"] {
-
-
+    width: 180px;
     height: 44px;
-
-
-    padding:
-        0 var(--space-16);
-
-
+    padding: 0 var(--space-16);
     background: var(--primary-100);
-
-
-    border:
-        var(--border-1) solid var(--primary-200);
-
-
+    border: var(--border-1) solid var(--primary-200);
     border-radius: var(--radius-md);
-
-
     color: var(--primary-800);
-
-
     font-weight: 700;
-
-
+    cursor: pointer;
 }
-
 
 .setting-row select:focus,
 .setting-row input[type="time"]:focus {
-
-
     border-color: var(--primary-600);
-
+    outline: none;
 }
 
-
-
-
-
+/* Căn chữ + Icon Dropdown (Size & Alignment Fix) */
+.setting-row select {
+    appearance: auto;
+}
 
 /* =========================
    THEME SWITCH BUTTON
 ========================= */
-
-
 .theme-switch {
-
-
     display: flex;
-
     gap: var(--space-12);
-
 }
-
-
-
 
 .theme-btn {
-
-
     min-height: 42px;
-
-
-    padding:
-        0 var(--space-16);
-
-
+    padding: 0 var(--space-16);
     border-radius: 999px;
-
-
     background: var(--primary-100);
-
-
     color: var(--primary-800);
-
-
     font-weight: 800;
-
-
-    transition: .25s ease;
-
+    border: none;
+    cursor: pointer;
+    transition: 0.25s ease;
 }
-
-
-
 
 .theme-btn:hover {
-
-
     background: var(--primary-200);
-
 }
-
-
-
 
 .theme-btn.active {
-
-
-    background:
-        linear-gradient(135deg,
-            var(--primary-800),
-            var(--primary-700));
-
-
+    background: linear-gradient(135deg, var(--primary-800), var(--primary-700));
     color: var(--white);
-
-
     box-shadow: var(--shadow-md);
-
 }
-
-
-
-
-
 
 /* =========================
    TOGGLE SWITCH
 ========================= */
-
-
 .toggle {
-
-
     position: relative;
-
     width: 52px;
-
     height: 30px;
-
     display: inline-block;
-
     cursor: pointer;
-
 }
-
-
 
 .toggle input {
-
-
     position: absolute;
-
     opacity: 0;
-
 }
-
-
 
 .toggle span {
-
-
     position: absolute;
-
     inset: 0;
-
-
     background: var(--neutral-300);
-
-
     border-radius: 999px;
-
-
-    transition: .25s ease;
-
+    transition: 0.25s ease;
 }
-
-
-
 
 .toggle span::before {
-
-
     content: "";
-
-
     position: absolute;
-
-
     top: 4px;
-
     left: 4px;
-
-
     width: 22px;
-
     height: 22px;
-
-
     background: var(--surface-0);
-
-
     border-radius: 50%;
-
-
     box-shadow: var(--shadow-md);
-
-
-    transition: .25s ease;
-
+    transition: 0.25s ease;
 }
 
-
-
-.toggle input:checked+span {
-
-
+.toggle input:checked + span {
     background: var(--success-600);
-
 }
 
-
-
-.toggle input:checked+span::before {
-
-
+.toggle input:checked + span::before {
     transform: translateX(22px);
-
 }
-
-
-
-
-
-
 
 /* =========================
    DATA BUTTON GROUP
 ========================= */
-
-
 .button-group {
-
-
     display: flex;
-
     gap: var(--space-16);
-
 }
-
-
 
 .primary-btn,
 .secondary-btn {
-
-
     min-height: 3rem;
-
-
-    padding:
-        0 var(--space-24);
-
-
+    padding: 0 var(--space-24);
     display: inline-flex;
-
-
     align-items: center;
-
     justify-content: center;
-
-
     gap: var(--space-8);
-
-
     border-radius: 999px;
-
-
     font-weight: 700;
-
-
     cursor: pointer;
-
-
-    transition: .3s ease;
-
+    transition: 0.3s ease;
 }
-
-
-
-
 
 .primary-btn {
-
-
-    background:
-        linear-gradient(135deg,
-            var(--primary-800),
-            var(--primary-700));
-
-
+    background: linear-gradient(135deg, var(--primary-800), var(--primary-700));
     color: var(--white);
-
-
+    border: none;
     box-shadow: var(--shadow-md);
-
 }
-
-
-
 
 .primary-btn:hover {
-
-
     transform: translateY(-2px);
-
-
-    background:
-        linear-gradient(135deg,
-            var(--primary-700),
-            var(--primary-600));
-
-
+    background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
     box-shadow: var(--shadow-xl);
-
 }
-
-
-
-
 
 .secondary-btn {
-
-
     background: var(--primary-100);
-
-
     color: var(--primary-800);
-
-
-    border:
-        var(--border-1) solid var(--primary-200);
-
+    border: var(--border-1) solid var(--primary-200);
 }
-
-
 
 .secondary-btn:hover {
-
-
     background: var(--primary-200);
-
 }
-
-
-
-
-
-
 
 /* =========================
    LOGOUT CARD
 ========================= */
-
-
 .logout-card {
     margin-top: var(--space-24);
     padding: var(--space-24);
@@ -604,156 +266,50 @@
     display: block;
 }
 
-
-
-
-
 .logout-card button {
-
-
     width: 100%;
-
-
     min-height: 3rem;
-
-
     display: flex;
-
-
     align-items: center;
-
     justify-content: center;
-
-
     gap: var(--space-8);
-
-
+    border: none;
     border-radius: 999px;
-
-
-    background:
-        linear-gradient(135deg,
-            var(--error-800),
-            var(--error-600));
-
-
+    background: linear-gradient(135deg, var(--error-800), var(--error-600));
     color: var(--white);
-
-
     font-weight: 800;
-
-
     cursor: pointer;
-
-
-    transition: .3s ease;
-
+    transition: 0.3s ease;
 }
-
-
-
 
 .logout-card button:hover {
-
-
     transform: translateY(-2px);
-
-
-    background:
-        linear-gradient(135deg,
-            var(--error-700),
-            var(--error-500));
-
-
+    background: linear-gradient(135deg, var(--error-700), var(--error-500));
     box-shadow: var(--shadow-xl);
-
 }
-
-
-
-
-
 
 /* =========================
    RESPONSIVE
 ========================= */
-
-
-@media(max-width:768px) {
-
-
+@media (max-width: 768px) {
     .setting-panel {
-
         padding: var(--space-16);
-
     }
-
-
 
     .setting-row {
-
-
         flex-direction: column;
-
         align-items: flex-start;
-
         gap: var(--space-16);
-
     }
-
-
 
     .button-group {
-
-
         flex-direction: column;
-
     }
-
-
 
     .primary-btn,
     .secondary-btn {
-
-
         width: 100%;
-
     }
-
-}
-
-/* =========================
-   SELECT SIZE FIX
-========================= */
-
-.setting-row select,
-.setting-row input[type="time"] {
-
-    width: 180px;
-
-    height: 44px;
-
-    padding: 0 var(--space-16);
-
-    background: var(--primary-100);
-
-    border:
-        var(--border-1) solid var(--primary-200);
-
-    border-radius: var(--radius-md);
-
-    color: var(--primary-800);
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-}
-
-
-/* căn chữ + icon dropdown */
-.setting-row select {
-    appearance: auto;
 }
 
 /* =========================

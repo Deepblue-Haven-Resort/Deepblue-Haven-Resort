@@ -6,7 +6,9 @@ public enum BookingStatus {
     CANCELLED("Cancelled"),
     CHECKED_IN("Checked In"),
     CHECKED_OUT("Checked Out"),
-    COMPLETED("Completed");
+    COMPLETED("Completed"),
+    REJECTED("Rejected"),
+    EXPIRED("Expired");
 
     private final String displayName;
 
@@ -15,6 +17,6 @@ public enum BookingStatus {
     }
 
     public String getDisplayName() {
-        return displayName;
+        return displayName != null ? displayName : name();
     }
 }

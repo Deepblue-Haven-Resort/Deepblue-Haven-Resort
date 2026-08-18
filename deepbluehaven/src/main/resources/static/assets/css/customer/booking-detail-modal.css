@@ -1078,16 +1078,16 @@ body.booking-modal-open {
 .invoice-preview-modal-dialog {
     max-width: 680px;
     padding: 0;
-    border-radius: var(--radius-xl, 20px);
+    border-radius: var(--radius-xl);
     overflow: hidden;
     background: var(--surface-0);
-    box-shadow: var(--shadow-xl, var(--shadow-lg));
+    box-shadow: var(--shadow-xl);
 }
 
 .invoice-preview-header {
     background: var(--primary-900);
     color: var(--white);
-    padding: var(--space-24) var(--space-28, 28px);
+    padding: var(--space-24) var(--space-28);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1106,7 +1106,7 @@ body.booking-modal-open {
 }
 
 .invoice-preview-close {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(var(--white-rgb), 0.15);
     border: none;
     color: var(--white);
     width: 36px;
@@ -1121,24 +1121,24 @@ body.booking-modal-open {
 }
 
 .invoice-preview-close:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(var(--white-rgb), 0.25);
 }
 
 .invoice-preview-body {
-    padding: var(--space-28, 28px);
+    padding: var(--space-28);
     background: var(--surface-0);
 }
 
 .invoice-preview-meta {
     display: flex;
     justify-content: space-between;
-    border-bottom: var(--border-2, 2px) solid var(--neutral-200);
-    padding-bottom: var(--space-20, 20px);
-    margin-bottom: var(--space-20, 20px);
+    border-bottom: var(--border-2) solid var(--neutral-200);
+    padding-bottom: var(--space-20);
+    margin-bottom: var(--space-20);
 }
 
 .invoice-resort-title {
-    margin: 0 0 var(--space-6, 6px);
+    margin: 0 0 var(--space-6);
     font-size: 1.1rem;
     color: var(--primary-800);
 }
@@ -1166,12 +1166,12 @@ body.booking-modal-open {
 .invoice-customer-card {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-20, 20px);
+    gap: var(--space-20);
     margin-bottom: var(--space-24);
     background: var(--neutral-50);
     border: var(--border-1) solid var(--neutral-200);
-    padding: var(--space-16) var(--space-20, 20px);
-    border-radius: var(--radius-md, 12px);
+    padding: var(--space-16) var(--space-20);
+    border-radius: var(--radius-md);
 }
 
 .invoice-cust-label {
@@ -1201,14 +1201,14 @@ body.booking-modal-open {
 }
 
 .invoice-table thead tr {
-    border-bottom: var(--border-2, 2px) solid var(--neutral-200);
+    border-bottom: var(--border-2) solid var(--neutral-200);
     text-align: left;
     color: var(--neutral-700);
 }
 
 .invoice-table th,
 .invoice-table td {
-    padding: var(--space-10, 10px) var(--space-8);
+    padding: var(--space-10) var(--space-8);
 }
 
 .invoice-table tbody tr {
@@ -1230,7 +1230,7 @@ body.booking-modal-open {
     flex-direction: column;
     align-items: flex-end;
     gap: var(--space-8);
-    border-top: var(--border-2, 2px) solid var(--neutral-200);
+    border-top: var(--border-2) solid var(--neutral-200);
     padding-top: var(--space-16);
     font-size: 0.95rem;
 }
@@ -1258,7 +1258,7 @@ body.booking-modal-open {
 
 .invoice-preview-footer {
     background: var(--neutral-50);
-    padding: var(--space-16) var(--space-28, 28px);
+    padding: var(--space-16) var(--space-28);
     display: flex;
     justify-content: flex-end;
     gap: var(--space-12);

@@ -208,8 +208,8 @@
                     </td>
                   </tr>
                   <tr th:each="log : ${loyaltyLogs}">
-                    <td class="loyalty-col-date" th:text="${#temporals.format(log.createdAt, 'MMM dd, yyyy HH:mm')}">Oct 24, 2024 14:30</td>
-                    <td class="loyalty-col-reason" th:text="${log.reason}">Earned points from completed room booking</td>
+                    <td class="loyalty-col-date" th:text="${log.createdAt != null ? #temporals.format(log.createdAt, 'MMM dd, yyyy HH:mm') : (log.timestamp != null ? #temporals.format(log.timestamp, 'MMM dd, yyyy HH:mm') : '-')}">Oct 24, 2024 14:30</td>
+                    <td class="loyalty-col-reason" th:text="${log.reason != null ? log.reason : 'Loyalty points transaction'}">Earned points from completed room booking</td>
                     <td class="loyalty-col-ref text-center">
                       <span th:if="${log.referenceCode != null}" class="ref-badge-tag" th:text="${log.referenceCode}">#BK-1024</span>
                       <span th:unless="${log.referenceCode != null}" class="text-muted-dash">-</span>

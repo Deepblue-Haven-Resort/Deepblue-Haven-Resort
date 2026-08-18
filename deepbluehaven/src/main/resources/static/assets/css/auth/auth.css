@@ -11,8 +11,8 @@
     overflow-x: hidden;
 
     background:
-        radial-gradient(circle at top left, rgba(169, 215, 255, 0.9), transparent 34%),
-        radial-gradient(circle at bottom right, rgba(194, 245, 231, 0.72), transparent 34%),
+        radial-gradient(circle at top left, rgba(var(--primary-300-rgb), 0.9), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(var(--secondary-300-rgb), 0.72), transparent 34%),
         linear-gradient(180deg, var(--primary-100), var(--neutral-50));
 }
 
@@ -36,14 +36,14 @@
     grid-template-columns: minmax(440px, 1.04fr) minmax(390px, 0.96fr);
 
     border-radius: clamp(28px, 3vw, 42px);
-    border: var(--border-1) solid rgba(169, 215, 255, 0.9);
+    border: var(--border-1) solid rgba(var(--primary-300-rgb), 0.9);
 
     overflow: hidden;
 
-    background: rgba(255, 255, 255, 0.86);
+    background: rgba(var(--white-rgb), 0.86);
     box-shadow:
         0 30px 80px rgba(var(--shadow-color), 0.16),
-        inset 0 1px 0 rgba(255, 255, 255, 0.96);
+        inset 0 1px 0 rgba(var(--white-rgb), 0.96);
 
     backdrop-filter: blur(18px);
 }
@@ -79,7 +79,7 @@
     isolation: isolate;
 
     background:
-        linear-gradient(180deg, rgba(8, 28, 44, 0.08), rgba(8, 28, 44, 0.82)),
+        linear-gradient(180deg, rgba(var(--primary-900-rgb), 0.08), rgba(var(--primary-900-rgb), 0.82)),
         url("/assets/pic/login-bg.jpg");
 
     background-size: cover;
@@ -93,8 +93,8 @@
     z-index: -2;
 
     background:
-        linear-gradient(135deg, rgba(169, 215, 255, 0.88), rgba(20, 93, 160, 0.88)),
-        radial-gradient(circle at top left, rgba(255, 255, 255, 0.36), transparent 38%);
+        linear-gradient(135deg, rgba(var(--primary-300-rgb), 0.88), rgba(var(--primary-700-rgb), 0.88)),
+        radial-gradient(circle at top left, rgba(var(--white-rgb), 0.36), transparent 38%);
 }
 
 .auth-visual__overlay {
@@ -105,8 +105,8 @@
     background:
         linear-gradient(
             135deg,
-            rgba(8, 28, 44, 0.24),
-            rgba(8, 28, 44, 0.82)
+            rgba(var(--primary-900-rgb), 0.24),
+            rgba(var(--primary-900-rgb), 0.82)
         );
 }
 
@@ -121,8 +121,8 @@
     border-radius: 999px;
 
     color: var(--white);
-    background: rgba(255, 255, 255, 0.16);
-    border: var(--border-1) solid rgba(255, 255, 255, 0.28);
+    background: rgba(var(--white-rgb), 0.16);
+    border: var(--border-1) solid rgba(var(--white-rgb), 0.28);
 
     backdrop-filter: blur(14px);
 }
@@ -136,7 +136,7 @@
     justify-content: center;
 
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.78);
+    background: rgba(var(--white-rgb), 0.78);
     overflow: hidden;
 }
 
@@ -168,7 +168,7 @@
     height: 9px;
     border-radius: 999px;
 
-    background: rgba(255, 255, 255, 0.55);
+    background: rgba(var(--white-rgb), 0.55);
 }
 
 .auth-dots span.is-active {
@@ -199,7 +199,7 @@
 .auth-visual p {
     max-width: 500px;
 
-    color: rgba(255, 255, 255, 0.84);
+    color: rgba(var(--white-rgb), 0.84);
     font-size: clamp(0.92rem, 1.5vw, 1.02rem);
     line-height: 1.75;
 }
@@ -224,8 +224,8 @@
     overscroll-behavior: contain;
 
     background:
-        radial-gradient(circle at top right, rgba(212, 235, 255, 0.92), transparent 38%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(245, 251, 254, 0.98));
+        radial-gradient(circle at top right, rgba(var(--primary-200-rgb), 0.92), transparent 38%),
+        linear-gradient(180deg, rgba(var(--white-rgb), 0.94), rgba(var(--primary-100-rgb), 0.98));
 }
 
 .auth-panel::before {
@@ -238,7 +238,7 @@
     top: -110px;
 
     border-radius: 50%;
-    background: rgba(169, 215, 255, 0.42);
+    background: rgba(var(--primary-300-rgb), 0.42);
     filter: blur(2px);
 }
 
@@ -253,7 +253,7 @@
 
 .auth-panel::-webkit-scrollbar-thumb {
     border-radius: 999px;
-    background: rgba(20, 93, 160, 0.28);
+    background: rgba(var(--primary-700-rgb), 0.28);
 }
 
 .auth-card {
@@ -279,8 +279,8 @@
     gap: 6px;
 
     border-radius: 999px;
-    background: rgba(212, 235, 255, 0.82);
-    border: var(--border-1) solid rgba(169, 215, 255, 0.86);
+    background: rgba(var(--primary-200-rgb), 0.82);
+    border: var(--border-1) solid rgba(var(--primary-300-rgb), 0.86);
 }
 
 .auth-tab {
@@ -305,14 +305,14 @@
 
 .auth-tab:hover {
     color: var(--primary-900);
-    background: rgba(255, 255, 255, 0.76);
+    background: rgba(var(--white-rgb), 0.76);
     transform: translateY(-1px);
 }
 
 .auth-tab.is-active {
     color: var(--white);
     background: linear-gradient(135deg, var(--primary-800), var(--primary-600));
-    box-shadow: 0 12px 26px rgba(20, 93, 160, 0.24);
+    box-shadow: 0 12px 26px rgba(var(--primary-700-rgb), 0.24);
 }
 
 /* =========================
@@ -383,15 +383,15 @@
     padding: 0 54px 0 28px;
 
     border-radius: 999px;
-    border: var(--border-1) solid rgba(188, 200, 208, 0.9);
+    border: var(--border-1) solid rgba(var(--neutral-300-rgb), 0.9);
 
     color: var(--primary-900);
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(var(--white-rgb), 0.92);
 
     font-size: clamp(0.86rem, 1.3vw, 0.95rem);
     font-weight: 700;
 
-    box-shadow: 0 10px 24px rgba(8, 28, 44, 0.04);
+    box-shadow: 0 10px 24px rgba(var(--primary-900-rgb), 0.04);
 
     transition:
         border-color 0.25s ease,
@@ -406,15 +406,15 @@
 }
 
 .auth-field input:hover {
-    border-color: rgba(77, 168, 255, 0.72);
+    border-color: rgba(var(--primary-500-rgb), 0.72);
 }
 
 .auth-field input:focus {
     border-color: var(--primary-500);
     background: var(--white);
     box-shadow:
-        0 0 0 4px rgba(77, 168, 255, 0.16),
-        0 14px 30px rgba(8, 28, 44, 0.08);
+        0 0 0 4px rgba(var(--primary-500-rgb), 0.16),
+        0 14px 30px rgba(var(--primary-900-rgb), 0.08);
     transform: translateY(-1px);
 }
 
@@ -554,7 +554,7 @@ input::-webkit-credentials-auto-fill-button {
 
 .auth-divider span {
     height: 1px;
-    background: rgba(188, 200, 208, 0.9);
+    background: rgba(var(--neutral-300-rgb), 0.9);
 }
 
 .auth-divider p {
@@ -589,13 +589,13 @@ input::-webkit-credentials-auto-fill-button {
     color: var(--primary-900);
 
     background:
-        linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(237, 247, 252, 0.92));
+        linear-gradient(145deg, rgba(var(--white-rgb), 0.96), rgba(var(--primary-100-rgb), 0.92));
 
-    border: var(--border-1) solid rgba(169, 215, 255, 0.72);
+    border: var(--border-1) solid rgba(var(--primary-300-rgb), 0.72);
 
     box-shadow:
-        0 14px 28px rgba(8, 28, 44, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        0 14px 28px rgba(var(--primary-900-rgb), 0.1),
+        inset 0 1px 0 rgba(var(--white-rgb), 0.95);
 
     transition:
         transform 0.25s ease,
@@ -609,8 +609,8 @@ input::-webkit-credentials-auto-fill-button {
     color: var(--primary-700);
     border-color: var(--gold-400);
     box-shadow:
-        0 20px 38px rgba(8, 28, 44, 0.16),
-        0 0 0 4px rgba(245, 196, 94, 0.14);
+        0 20px 38px rgba(var(--primary-900-rgb), 0.16),
+        0 0 0 4px rgba(var(--gold-400-rgb), 0.14);
 }
 
 /* =========================
@@ -719,7 +719,7 @@ input::-webkit-credentials-auto-fill-button {
     position: absolute;
     inset: 0;
 
-    background: rgba(8, 28, 44, 0.52);
+    background: rgba(var(--primary-900-rgb), 0.52);
     backdrop-filter: blur(8px);
 }
 
@@ -731,15 +731,15 @@ input::-webkit-credentials-auto-fill-button {
     padding: 32px;
 
     border-radius: 32px;
-    border: 1px solid rgba(169, 215, 255, 0.9);
+    border: var(--border-1) solid rgba(var(--primary-300-rgb), 0.9);
 
     background:
-        radial-gradient(circle at top right, rgba(212, 235, 255, 0.92), transparent 38%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 251, 254, 0.98));
+        radial-gradient(circle at top right, rgba(var(--primary-200-rgb), 0.92), transparent 38%),
+        linear-gradient(180deg, rgba(var(--white-rgb), 0.98), rgba(var(--primary-100-rgb), 0.98));
 
     box-shadow:
         0 30px 80px rgba(var(--shadow-color), 0.24),
-        inset 0 1px 0 rgba(255, 255, 255, 0.96);
+        inset 0 1px 0 rgba(var(--white-rgb), 0.96);
 
     transform: translateY(16px) scale(0.98);
     transition: transform 0.28s ease;
@@ -795,7 +795,7 @@ input::-webkit-credentials-auto-fill-button {
     background:
         linear-gradient(135deg, var(--primary-100), var(--secondary-100));
 
-    border: 1px solid rgba(169, 215, 255, 0.82);
+    border: var(--border-1) solid rgba(var(--primary-300-rgb), 0.82);
     box-shadow: var(--shadow-md);
 }
 
@@ -862,10 +862,10 @@ input::-webkit-credentials-auto-fill-button {
     padding-inline: 1.5rem;
 
     border-radius: 999px;
-    border: 1px solid rgba(169, 215, 255, 0.82);
+    border: var(--border-1) solid rgba(var(--primary-300-rgb), 0.82);
 
     color: var(--primary-800);
-    background: rgba(212, 235, 255, 0.7);
+    background: rgba(var(--primary-200-rgb), 0.7);
 
     font-size: 0.95rem;
     font-weight: 800;
@@ -876,7 +876,7 @@ input::-webkit-credentials-auto-fill-button {
 }
 
 .auth-modal__btn--ghost:hover {
-    background: rgba(169, 215, 255, 0.34);
+    background: rgba(var(--primary-300-rgb), 0.34);
     transform: translateY(-1px);
 }
 
@@ -920,16 +920,16 @@ input::-webkit-credentials-auto-fill-button {
     padding: 0;
 
     border-radius: 18px;
-    border: 1px solid rgba(188, 200, 208, 0.9);
+    border: var(--border-1) solid rgba(var(--neutral-300-rgb), 0.9);
 
     color: var(--primary-900);
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(var(--white-rgb), 0.95);
 
     text-align: center;
     font-size: 1.35rem;
     font-weight: 900;
 
-    box-shadow: 0 10px 24px rgba(8, 28, 44, 0.04);
+    box-shadow: 0 10px 24px rgba(var(--primary-900-rgb), 0.04);
 
     transition:
         border-color 0.25s ease,
@@ -940,8 +940,8 @@ input::-webkit-credentials-auto-fill-button {
 .auth-otp__input:focus {
     border-color: var(--primary-500);
     box-shadow:
-        0 0 0 4px rgba(77, 168, 255, 0.16),
-        0 14px 30px rgba(8, 28, 44, 0.08);
+        0 0 0 4px rgba(var(--primary-500-rgb), 0.16),
+        0 14px 30px rgba(var(--primary-900-rgb), 0.08);
     transform: translateY(-1px);
 }
 

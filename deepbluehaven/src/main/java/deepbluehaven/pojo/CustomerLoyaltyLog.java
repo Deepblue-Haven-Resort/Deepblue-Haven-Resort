@@ -50,37 +50,62 @@ public class CustomerLoyaltyLog {
     public CustomerLoyaltyLog() {}
 
     public Long getId() { 
-        return id; }
+        return id; 
+    }
     public void setId(Long id) { 
-        this.id = id; }
+        this.id = id; 
+    }
 
     public ReferenceType getReferenceType() { 
-        return referenceType; }
+        return referenceType; 
+    }
     public void setReferenceType(ReferenceType referenceType) { 
-        this.referenceType = referenceType; }
+        this.referenceType = referenceType; 
+    }
 
     public Customer getCustomer() { 
-        return customer; }
+        return customer; 
+    }
     public void setCustomer(Customer customer) { 
-        this.customer = customer; }
+        this.customer = customer; 
+    }
 
     public Long getReferenceId() { 
-        return referenceId; }
+        return referenceId; 
+    }
     public void setReferenceId(Long referenceId) { 
-        this.referenceId = referenceId; }
+        this.referenceId = referenceId; 
+    }
 
     public Integer getPointsChanged() { 
-        return pointsChanged; }
+        return pointsChanged; 
+    }
     public void setPointsChanged(Integer pointsChanged) { 
-        this.pointsChanged = pointsChanged; }
+        this.pointsChanged = pointsChanged; 
+    }
 
     public String getReason() { 
-        return reason; }
+        return reason; 
+    }
     public void setReason(String reason) { 
-        this.reason = reason; }
+        this.reason = reason; 
+    }
 
     public LocalDateTime getTimestamp() { 
-        return timestamp; }
+        return timestamp; 
+    }
     public void setTimestamp(LocalDateTime timestamp) { 
-        this.timestamp = timestamp; }
+        this.timestamp = timestamp; 
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return timestamp != null ? timestamp : LocalDateTime.now();
+    }
+
+    public String getReferenceCode() {
+        if (referenceType != null && referenceId != null) {
+            return "#" + referenceType.name() + "-" + referenceId;
+        }
+        return referenceId != null ? "#" + referenceId : null;
+    }
 }

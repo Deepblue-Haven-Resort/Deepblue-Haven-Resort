@@ -61,10 +61,10 @@
 
                     <div class="profile-actions-bar">
                         <a th:href="@{/admin/accounts/{id}/edit(id=${worker?.id})}" class="btn btn-cta btn-small">
-                            <i class="fa-solid fa-pen"></i> Chỉnh sửa
+                            <i class="fa-solid fa-pen"></i> Edit Profile
                         </a>
                         <a th:href="@{/admin/accounts}" class="profile-btn-outline">
-                            <i class="fa-solid fa-arrow-left"></i> Quay lại
+                            <i class="fa-solid fa-arrow-left"></i> Back to Accounts
                         </a>
                     </div>
                 </aside>
@@ -216,7 +216,7 @@
                                 </tr>
                                 <tr th:if="${assignments == null or #lists.isEmpty(assignments)}">
                                     <td colspan="4" class="profile-empty-message">
-                                        Chưa có lịch sử phân công phòng cho nhân viên này.
+                                        No room assignment history recorded for this employee.
                                     </td>
                                 </tr>
                             </tbody>
