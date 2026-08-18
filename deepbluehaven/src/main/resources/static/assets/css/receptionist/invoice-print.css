@@ -7,9 +7,9 @@
 }
 
 body {
-    background-color: #f1f5f9;
+    background-color: var(--gray-100);
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color: #1e293b;
+    color: var(--gray-800);
     padding: 40px 20px;
 }
 
@@ -24,7 +24,7 @@ body {
 .toolbar-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-8);
     padding: 10px 20px;
     border-radius: 8px;
     font-weight: 600;
@@ -36,9 +36,9 @@ body {
 }
 
 .btn-print {
-    background: linear-gradient(135deg, #0a3663 0%, #065a82 100%);
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(10, 54, 99, 0.25);
+    background: linear-gradient(135deg, var(--primary-800) 0%, var(--primary-700) 100%);
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(var(--primary-800-rgb), 0.25);
 }
 
 .btn-print:hover {
@@ -47,24 +47,24 @@ body {
 }
 
 .btn-back {
-    background: #ffffff;
-    color: #475569;
-    border: 1px solid #cbd5e1;
+    background: var(--white);
+    color: var(--gray-600);
+    border: 1px solid var(--gray-300);
 }
 
 .btn-back:hover {
-    background: #f8fafc;
-    color: #0f172a;
+    background: var(--gray-50);
+    color: var(--gray-900);
 }
 
 .invoice-card {
     max-width: 850px;
     margin: 0 auto;
-    background: #ffffff;
+    background: var(--white);
     border-radius: 12px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 10px 25px -5px rgba(var(--black-rgb), 0.08), 0 8px 10px -6px rgba(var(--black-rgb), 0.04);
     padding: 48px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--gray-200);
 }
 
 /* HEADER */
@@ -72,7 +72,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    border-bottom: 2px solid #0a3663;
+    border-bottom: 2px solid var(--primary-800);
     padding-bottom: 24px;
     margin-bottom: 28px;
 }
@@ -86,8 +86,8 @@ body {
 .brand-logo {
     width: 44px;
     height: 44px;
-    background: #0a3663;
-    color: #ffffff;
+    background: var(--primary-800);
+    color: var(--white);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -98,27 +98,27 @@ body {
 .brand-title h1 {
     font-size: 22px;
     font-weight: 700;
-    color: #0a3663;
+    color: var(--primary-800);
     letter-spacing: -0.5px;
 }
 
 .brand-title p {
     font-size: 13px;
-    color: #64748b;
+    color: var(--gray-500);
     margin-top: 2px;
 }
 
 .resort-meta {
     text-align: right;
     font-size: 13px;
-    color: #64748b;
+    color: var(--gray-500);
     line-height: 1.6;
 }
 
 .folio-title-badge {
     display: inline-block;
-    background: #e0f2fe;
-    color: #0369a1;
+    background: var(--primary-100);
+    color: var(--primary-700);
     font-weight: 700;
     font-size: 12px;
     padding: 4px 10px;
@@ -134,17 +134,17 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 24px;
     margin-bottom: 32px;
-    background: #f8fafc;
+    background: var(--gray-50);
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--gray-100);
 }
 
 .info-block h3 {
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #64748b;
+    color: var(--gray-500);
     margin-bottom: 12px;
     font-weight: 700;
 }
@@ -157,11 +157,11 @@ body {
 }
 
 .info-row span {
-    color: #64748b;
+    color: var(--gray-500);
 }
 
 .info-row strong {
-    color: #0f172a;
+    color: var(--gray-900);
 }
 
 /* TABLE */
@@ -172,22 +172,22 @@ body {
 }
 
 .invoice-table th {
-    background: #f8fafc;
-    color: #475569;
+    background: var(--gray-50);
+    color: var(--gray-600);
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     padding: 12px 16px;
     text-align: left;
-    border-top: 1px solid #e2e8f0;
-    border-bottom: 1px solid #e2e8f0;
+    border-top: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
 }
 
 .invoice-table td {
     padding: 14px 16px;
     font-size: 14px;
-    border-bottom: 1px solid #f1f5f9;
-    color: #334155;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-700);
 }
 
 .text-right {
@@ -214,37 +214,37 @@ body {
     justify-content: space-between;
     padding: 8px 0;
     font-size: 14px;
-    color: #64748b;
+    color: var(--gray-500);
 }
 
 .totals-row.strong {
     font-weight: 600;
-    color: #1e293b;
+    color: var(--gray-800);
 }
 
 .totals-row.discount {
-    color: #16a34a;
+    color: var(--success-600);
 }
 
 .totals-row.grand-total {
-    border-top: 2px solid #0a3663;
-    border-bottom: 2px solid #0a3663;
+    border-top: 2px solid var(--primary-800);
+    border-bottom: 2px solid var(--primary-800);
     padding: 14px 0;
     margin: 8px 0;
     font-size: 18px;
     font-weight: 700;
-    color: #0a3663;
+    color: var(--primary-800);
 }
 
 .totals-row.paid {
-    color: #0284c7;
+    color: var(--primary-600);
     font-weight: 600;
 }
 
 .totals-row.balance {
     font-size: 15px;
     font-weight: 700;
-    color: #16a34a;
+    color: var(--success-600);
 }
 
 /* SIGNATURES */
@@ -254,7 +254,7 @@ body {
     gap: 48px;
     margin-top: 48px;
     padding-top: 24px;
-    border-top: 1px dashed #cbd5e1;
+    border-top: 1px dashed var(--gray-300);
 }
 
 .sign-box {
@@ -264,27 +264,27 @@ body {
 .sign-box p {
     font-size: 13px;
     font-weight: 600;
-    color: #475569;
+    color: var(--gray-600);
     margin-bottom: 60px;
 }
 
 .sign-box .sign-line {
     width: 180px;
     margin: 0 auto;
-    border-bottom: 1px solid #94a3b8;
+    border-bottom: 1px solid var(--gray-400);
 }
 
 .sign-box .sign-name {
     margin-top: 8px;
     font-size: 13px;
-    color: #64748b;
+    color: var(--gray-500);
 }
 
 .invoice-footer-note {
     text-align: center;
     margin-top: 40px;
     font-size: 12px;
-    color: #94a3b8;
+    color: var(--gray-400);
 }
 
 .invoice-footer-note p + p {
@@ -294,7 +294,7 @@ body {
 /* PRINT STYLES */
 @media print {
     body {
-        background: #ffffff;
+        background: var(--white);
         padding: 0;
     }
 

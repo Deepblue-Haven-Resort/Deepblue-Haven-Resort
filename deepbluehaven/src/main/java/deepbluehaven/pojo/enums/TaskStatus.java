@@ -5,5 +5,8 @@ public enum TaskStatus {
     ASSIGNED,
     CLEANING,
     WAITING_INSPECTION,
-    INSPECTED;
+    INSPECTED,
+    COMPLETED,
+    IN_PROGRESS,
+    CANCELLED;
 }

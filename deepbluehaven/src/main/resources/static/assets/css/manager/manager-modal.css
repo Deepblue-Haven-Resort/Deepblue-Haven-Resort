@@ -6,7 +6,7 @@
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.55);
+    background: rgba(var(--gray-900-rgb), 0.55);
     backdrop-filter: blur(3px);
     display: flex;
     align-items: center;
@@ -30,7 +30,7 @@
     max-width: 440px;
     max-height: 92vh;
     overflow-y: auto;
-    box-shadow: 0 24px 48px -8px rgba(0, 0, 0, 0.18), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 24px 48px -8px rgba(var(--black-rgb), 0.18), 0 8px 16px -4px rgba(var(--black-rgb), 0.08);
     transform: translateY(16px) scale(0.98);
     transition: transform 0.25s ease, opacity 0.25s ease;
     opacity: 0;
@@ -160,7 +160,7 @@
 .modal-form-grid .form-group > textarea:focus,
 .modal-form-grid .form-group > select:focus {
     border-color: var(--primary-600);
-    box-shadow: 0 0 0 3px rgba(30, 116, 198, 0.12);
+    box-shadow: 0 0 0 3px rgba(var(--primary-600-rgb), 0.12);
 }
 
 /* ---------- Custom dropdown (filter-dropdown) inside modal ---------- */
@@ -208,7 +208,7 @@
 .filter-dropdown.active .filter-btn,
 .filter-dropdown.active .form-filter-btn {
     border-color: var(--primary-600);
-    box-shadow: 0 0 0 3px rgba(30, 116, 198, 0.12);
+    box-shadow: 0 0 0 3px rgba(var(--primary-600-rgb), 0.12);
 }
 
 .filter-dropdown.active .fa-chevron-down {
@@ -242,7 +242,7 @@
     background: var(--white) !important;
     border: 1.5px solid var(--gray-200);
     border-radius: 10px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 24px rgba(var(--black-rgb), 0.12);
     z-index: 500;
     overflow: hidden;
     display: none;
@@ -315,7 +315,7 @@
 .modal-footer .btn-cta:hover,
 .modal-footer [type="submit"]:hover {
     background: var(--primary-800);
-    box-shadow: 0 4px 12px rgba(20, 93, 160, 0.3);
+    box-shadow: 0 4px 12px rgba(var(--primary-700-rgb), 0.3);
 }
 
 /* Cancel / outline button */
@@ -453,7 +453,7 @@
     background: var(--white);
     padding: 4px 14px;
     border-radius: 20px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 4px rgba(var(--black-rgb), 0.06);
     width: fit-content;
     border: 1px solid var(--gray-200);
 }

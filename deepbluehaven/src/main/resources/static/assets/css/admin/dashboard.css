@@ -3,7 +3,7 @@
     min-height: 100vh;
     display: flex;
     background:
-        radial-gradient(circle at top right, rgba(77, 168, 255, 0.18), transparent 35%),
+        radial-gradient(circle at top right, rgba(var(--primary-500-rgb), 0.18), transparent 35%),
         linear-gradient(180deg, var(--neutral-50) 0%, var(--primary-100) 100%);
 }
 
@@ -808,7 +808,7 @@
         top: 0;
         left: 0;
         z-index: 1000;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 12px rgba(var(--black-rgb), 0.05);
         overflow: hidden;
         transition: height 0.3s ease;
         display: flex;
@@ -862,13 +862,13 @@
  
     .admin-sidebar .sidebar-item.active {
         background: var(--primary-700);
-        color: #ffffff;
+        color: var(--white);
     }
     
     .admin-sidebar .sidebar-item.active i,
     .admin-sidebar .sidebar-item.active svg,
     .admin-sidebar .sidebar-item.active span {
-        color: #ffffff;
+        color: var(--white);
     }
  
     .admin-sidebar .sidebar-item i,
@@ -904,7 +904,7 @@
         height: auto; 
         max-height: 85vh;
         border-radius: 0 0 16px 16px; 
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12); 
+        box-shadow: 0 12px 24px rgba(var(--black-rgb), 0.12); 
         flex-direction: column; 
         align-items: stretch;
         padding: 12px 0 16px 0;
@@ -946,13 +946,13 @@
  
     .admin-sidebar.is-collapsed .sidebar-item.active {
         background: var(--primary-700);
-        color: #ffffff;
+        color: var(--white);
     }
     
     .admin-sidebar.is-collapsed .sidebar-item.active i,
     .admin-sidebar.is-collapsed .sidebar-item.active svg,
     .admin-sidebar.is-collapsed .sidebar-item.active span {
-        color: #ffffff;
+        color: var(--white);
     }
  
     .admin-sidebar.is-collapsed .sidebar-item i,
@@ -1173,9 +1173,9 @@
 /* Worker Notifications Component */
 .worker-notify-panel {
     background: var(--white);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-md);
+    padding: var(--space-24);
+    box-shadow: 0 4px 20px rgba(var(--black-rgb), 0.05);
 }
 
 .worker-notify-header {

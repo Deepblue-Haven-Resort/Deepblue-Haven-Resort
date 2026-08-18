@@ -6,8 +6,6 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="zalo-platform-site-verification" content="UFcI5VhVHpyVhi0O-ALpCdhNooQMeH5yC30s">
-
     <title>Special Offers | Deep Blue Haven</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -140,22 +138,25 @@
                     <article class="offer-card" th:each="offer : ${offers}" th:data-category="${offer.category}"
                         th:data-search="${offer.searchContent}">
 
-                        <div class="offer-card__image">
-                            <img th:src="@{${offer.imageUrl}}" th:alt="${offer.code}">
-                            <span class="offer-card__badge" th:classappend="${offer.badgeClass}"
-                                th:text="${offer.badgeText}">
-                                25% OFF
-                            </span>
+                        <!-- Card Top: Category & Favorite -->
+                        <div class="offer-card__header">
+                            <div class="offer-card__category">
+                                <i class="fa-solid" th:classappend="${offer.categoryIcon}"></i>
+                                <span th:text="${offer.categoryLabel}">Room Offer</span>
+                            </div>
 
                             <button type="button" class="offer-card__favorite" th:aria-label="'Save ' + ${offer.code}">
                                 <i class="fa-regular fa-heart"></i>
                             </button>
                         </div>
 
+                        <!-- Card Content -->
                         <div class="offer-card__content">
-                            <div class="offer-card__category">
-                                <i class="fa-solid" th:classappend="${offer.categoryIcon}"></i>
-                                <span th:text="${offer.categoryLabel}">Room Offer</span>
+                            <div class="offer-card__badge-row">
+                                <span class="offer-card__badge" th:classappend="${offer.badgeClass}"
+                                    th:text="${offer.badgeText}">
+                                    25% OFF
+                                </span>
                             </div>
 
                             <h3 th:text="${offer.code}">Code</h3>

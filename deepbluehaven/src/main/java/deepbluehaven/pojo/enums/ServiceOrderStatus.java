@@ -3,8 +3,15 @@ package deepbluehaven.pojo.enums;
 public enum ServiceOrderStatus {
     PENDING("Pending"),
     CONFIRMED("Confirmed"),
+    PROCESSING("Processing"),
+    IN_PROGRESS("In Progress"),
+    DELIVERED("Delivered"),
+    SERVED("Served"),
+    READY("Ready"),
     COMPLETED("Completed"),
-    CANCELLED("Cancelled");
+    PAID("Paid"),
+    CANCELLED("Cancelled"),
+    REJECTED("Rejected");
 
     private final String displayName;
 

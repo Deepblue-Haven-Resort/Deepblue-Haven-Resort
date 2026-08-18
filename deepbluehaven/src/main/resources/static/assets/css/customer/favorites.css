@@ -12,12 +12,12 @@
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(var(--white-rgb), 0.92);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    color: #94a3b8;
+    border: 1px solid rgba(var(--white-rgb), 0.6);
+    box-shadow: 0 4px 12px rgba(var(--black-rgb), 0.12);
+    color: var(--gray-400);
     font-size: 1.1rem;
     display: flex;
     align-items: center;
@@ -30,16 +30,16 @@
 .room-card__favorite-btn:hover,
 .service-card__favorite-btn:hover {
     transform: scale(1.12);
-    background: #ffffff;
-    color: #e11d48;
-    box-shadow: 0 6px 16px rgba(225, 29, 72, 0.25);
+    background: var(--white);
+    color: var(--error-600);
+    box-shadow: 0 6px 16px rgba(var(--error-500-rgb), 0.25);
 }
 
 .room-card__favorite-btn.is-active,
 .service-card__favorite-btn.is-active {
-    color: #e11d48;
-    background: #ffffff;
-    box-shadow: 0 6px 16px rgba(225, 29, 72, 0.25);
+    color: var(--error-600);
+    background: var(--white);
+    box-shadow: 0 6px 16px rgba(var(--error-500-rgb), 0.25);
 }
 
 .room-hero__actions {
@@ -54,28 +54,28 @@
     gap: 10px;
     padding: 10px 22px;
     border-radius: 999px;
-    background: #ffffff;
-    border: 1.5px solid #e2e8f0;
-    color: #4a5568;
+    background: var(--white);
+    border: 1.5px solid var(--gray-200);
+    color: var(--gray-600);
     font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 8px rgba(var(--black-rgb), 0.06);
     transition: all 0.25s ease;
 }
 
 .room-hero__favorite-btn:hover {
-    background: #fff1f2;
-    border-color: #fecdd3;
-    color: #e11d48;
+    background: var(--error-50);
+    border-color: var(--error-200);
+    color: var(--error-600);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15);
+    box-shadow: 0 4px 12px rgba(var(--error-500-rgb), 0.15);
 }
 
 .room-hero__favorite-btn.is-active {
-    background: #fff1f2;
-    border-color: #fecdd3;
-    color: #e11d48;
+    background: var(--error-50);
+    border-color: var(--error-200);
+    color: var(--error-600);
 }
 
 /* =========================================
@@ -248,7 +248,7 @@
     height: 44px;
     border-radius: var(--radius-md);
     background: linear-gradient(135deg, var(--secondary-900), var(--secondary-700));
-    color: #ffffff;
+    color: var(--white);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -258,7 +258,7 @@
 }
 
 .favorites-section__badge--services {
-    background: linear-gradient(135deg, #d97706, #b45309);
+    background: linear-gradient(135deg, var(--warning-600), var(--warning-700));
 }
 
 .favorites-section__title {
@@ -402,8 +402,8 @@
     padding-block: 14px;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-top: 1px solid rgba(217, 234, 241, 0.85);
-    border-bottom: 1px solid rgba(217, 234, 241, 0.85);
+    border-top: 1px solid var(--neutral-200);
+    border-bottom: 1px solid var(--neutral-200);
 }
 
 .favorites-page .room-card__features span {
@@ -416,7 +416,7 @@
 }
 
 .favorites-page .room-card__features > span:not(:last-child) {
-    border-right: 1px solid rgba(217, 234, 241, 0.95);
+    border-right: 1px solid var(--neutral-200);
 }
 
 .favorites-page .room-card__features > span:not(:first-child) {
@@ -498,8 +498,8 @@
 }
 
 .favorites-empty-icon {
-    color: #e11d48;
-    background: #ffe4e6;
+    color: var(--error-600);
+    background: var(--error-100);
 }
 
 .favorites-empty-actions {

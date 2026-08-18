@@ -530,7 +530,7 @@
 
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 6px rgba(var(--black-rgb), 0.12);
 }
 
 /* Pending */
@@ -1189,20 +1189,20 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.6);
+    background: rgba(var(--gray-900-rgb), 0.6);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     z-index: 1100;
     align-items: center;
     justify-content: center;
-    padding: var(--space-20, 20px);
+    padding: var(--space-20);
 }
 
 .comment-modal-card {
     background: var(--surface-0);
     width: 100%;
     max-width: 520px;
-    border-radius: var(--radius-lg, 16px);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     overflow: hidden;
     animation: modalSlideUp 0.25s ease-out;
@@ -1220,7 +1220,7 @@
 }
 
 .comment-modal-header {
-    padding: var(--space-20, 20px) var(--space-24);
+    padding: var(--space-20) var(--space-24);
     border-bottom: var(--border-1) solid var(--neutral-100);
     display: flex;
     align-items: center;
@@ -1265,11 +1265,11 @@
 }
 
 .comment-form-group {
-    margin-bottom: var(--space-18, 18px);
+    margin-bottom: var(--space-18);
 }
 
 .comment-form-group-center {
-    margin-bottom: var(--space-20, 20px);
+    margin-bottom: var(--space-20);
     text-align: center;
 }
 
@@ -1278,7 +1278,7 @@
     font-weight: 600;
     font-size: 0.875rem;
     color: var(--neutral-800);
-    margin-bottom: var(--space-6, 6px);
+    margin-bottom: var(--space-6);
 }
 
 .comment-form-label-lg {
@@ -1292,7 +1292,7 @@
 .star-rating-container {
     display: flex;
     justify-content: center;
-    gap: var(--space-10, 10px);
+    gap: var(--space-10);
     font-size: 2rem;
     color: var(--neutral-300);
     cursor: pointer;
@@ -1310,7 +1310,7 @@
 .comment-textarea {
     width: 100%;
     border: var(--border-1) solid var(--neutral-300);
-    border-radius: var(--radius-md, 10px);
+    border-radius: var(--radius-md);
     padding: var(--space-12);
     font-size: 0.9rem;
     font-family: inherit;
@@ -1349,9 +1349,9 @@
 }
 
 .comment-btn-cancel {
-    padding: var(--space-10, 10px) var(--space-18, 18px);
+    padding: var(--space-10) var(--space-18);
     border: var(--border-1) solid var(--neutral-300);
-    border-radius: var(--radius-sm, 8px);
+    border-radius: var(--radius-sm);
     background: var(--surface-0);
     color: var(--neutral-700);
     font-weight: 600;
@@ -1364,9 +1364,9 @@
 }
 
 .comment-btn-submit {
-    padding: var(--space-10, 10px) var(--space-22, 22px);
+    padding: var(--space-10) var(--space-22);
     border: none;
-    border-radius: var(--radius-sm, 8px);
+    border-radius: var(--radius-sm);
     background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
     color: var(--white);
     font-weight: 600;
@@ -1390,7 +1390,7 @@
 }
 
 .booking-action-btn {
-    padding: var(--space-6, 6px) var(--space-12);
+    padding: var(--space-6) var(--space-12);
     border-radius: var(--radius-sm);
     font-family: var(--font-body);
     font-size: 0.8125rem;
@@ -1398,7 +1398,7 @@
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: var(--space-6, 6px);
+    gap: var(--space-6);
     border: var(--border-1) solid transparent;
     transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
@@ -1438,7 +1438,7 @@
     background: var(--surface-100);
     padding: var(--space-8) var(--space-12);
     border-radius: var(--radius-sm);
-    margin-top: var(--space-6, 6px);
+    margin-top: var(--space-6);
 }
 
 .booking-price-summary__row--remaining {
@@ -1454,9 +1454,9 @@
     gap: var(--space-4);
     font-size: 0.7rem;
     font-weight: 700;
-    padding: 2px var(--space-6, 6px);
+    padding: 2px var(--space-6);
     border-radius: var(--radius-sm);
-    margin-left: var(--space-6, 6px);
+    margin-left: var(--space-6);
     vertical-align: middle;
     text-transform: uppercase;
     letter-spacing: 0.03em;

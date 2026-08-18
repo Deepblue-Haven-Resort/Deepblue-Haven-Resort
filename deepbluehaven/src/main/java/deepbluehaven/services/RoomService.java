@@ -105,6 +105,12 @@ public class RoomService {
     }
 
     private void mapStatusToView(RoomStatus status, RoomCardViewDTO view) {
+        if (status == null) {
+            view.setIcon("fa-check");
+            view.setStatusText("Available");
+            view.setTagClass("room-card__tag--blue");
+            return;
+        }
         switch (status) {
             case AVAILABLE -> {
                 view.setIcon("fa-check");
@@ -116,10 +122,25 @@ public class RoomService {
                 view.setStatusText("Occupied");
                 view.setTagClass("room-card__tag--gray"); 
             }
-            case CLEANING -> {  
+            case CLEANING, DIRTY -> {  
                 view.setIcon("fa-broom");
                 view.setStatusText("Cleaning");
                 view.setTagClass("room-card__tag--gold"); 
+            }
+            case MAINTENANCE, OUT_OF_SERVICE, BLOCKED -> {
+                view.setIcon("fa-wrench");
+                view.setStatusText("Maintenance");
+                view.setTagClass("room-card__tag--gray");
+            }
+            case RESERVED -> {
+                view.setIcon("fa-clock");
+                view.setStatusText("Reserved");
+                view.setTagClass("room-card__tag--gold");
+            }
+            default -> {
+                view.setIcon("fa-circle-info");
+                view.setStatusText("Unavailable");
+                view.setTagClass("room-card__tag--gray");
             }
         }
     }

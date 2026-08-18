@@ -4,5 +4,12 @@ public enum RoomType {
     STANDARD,
     PREMIUM,
     SUITE,
-    PRESIDENT
+    PRESIDENT,
+    DELUXE,
+    VILLA,
+    BUNGALOW,
+    SUPERIOR,
+    EXECUTIVE,
+    FAMILY,
+    OCEAN_SUITE
 }

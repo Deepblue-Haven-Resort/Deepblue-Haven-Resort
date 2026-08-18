@@ -101,26 +101,31 @@ public class DiscountService {
     }
 
     private DiscountDTO.Response toResponse(Discount entity) {
+        if (entity == null) {
+            return null;
+        }
         DiscountDTO.Response dto = new DiscountDTO.Response();
         dto.setId(entity.getId());
-        dto.setCode(entity.getCode());
-        dto.setType(entity.getType());
-        dto.setDiscountValue(entity.getDiscountValue());
-        dto.setDescription(entity.getDescription());
+        dto.setCode(entity.getCode() != null ? entity.getCode() : "OFFER");
+        dto.setType(entity.getType() != null ? entity.getType() : DiscountType.PERCENTAGE);
+        dto.setDiscountValue(entity.getDiscountValue() != null ? entity.getDiscountValue() : java.math.BigDecimal.ZERO);
+        dto.setDescription(entity.getDescription() != null ? entity.getDescription() : "Special Deep Blue Haven Resort Promotion");
         dto.setStartDate(entity.getStartDate());
         dto.setEndDate(entity.getEndDate());
         dto.setMinValueService(entity.getMinValueService());
         dto.setUsageLimit(entity.getUsageLimit());
-        dto.setUsageCount(entity.getUsageCount());
-        dto.setLimitPerUser(entity.getLimitPerUser());
-        dto.setIsActive(entity.getIsActive());
-        dto.setIsStackable(entity.getIsStackable());
+        dto.setUsageCount(entity.getUsageCount() != null ? entity.getUsageCount() : 0);
+        dto.setLimitPerUser(entity.getLimitPerUser() != null ? entity.getLimitPerUser() : 1);
+        dto.setIsActive(Boolean.TRUE.equals(entity.getIsActive()));
+        dto.setIsStackable(Boolean.TRUE.equals(entity.getIsStackable()));
 
-        if (entity.getType() == DiscountType.PERCENTAGE) {
-            dto.setBadgeText(entity.getDiscountValue().stripTrailingZeros().toPlainString() + "% OFF");
+        if (dto.getType() == DiscountType.PERCENTAGE) {
+            String val = dto.getDiscountValue() != null ? dto.getDiscountValue().stripTrailingZeros().toPlainString() : "0";
+            dto.setBadgeText(val + "% OFF");
             dto.setBadgeClass("offer-card__badge--primary");
         } else {
-            dto.setBadgeText(entity.getDiscountValue().stripTrailingZeros().toPlainString() + " VND OFF");
+            String val = dto.getDiscountValue() != null ? String.format("%,d", dto.getDiscountValue().longValue()) : "0";
+            dto.setBadgeText(val + " VND OFF");
             dto.setBadgeClass("offer-card__badge--gold");
         }
 
@@ -136,17 +141,35 @@ public class DiscountService {
             dto.setPriceText("Contact Us");
         }
 
+        String codeUpper = entity.getCode() != null ? entity.getCode().toUpperCase() : "";
         if (entity.getRoomType() != null && !entity.getRoomType().isBlank()) {
             dto.setCategory("rooms");
             dto.setCategoryLabel("Room Offer - " + entity.getRoomType());
             dto.setCategoryIcon("fa-bed");
+            dto.setImageUrl("https://res.cloudinary.com/xio0mgix/image/upload/v1786686618/1f196b65-2daa-49b5-9a6c-f1e5e1d50a6e.png");
+        } else if (codeUpper.contains("SPA") || codeUpper.contains("RELAX") || codeUpper.contains("MASSAGE")) {
+            dto.setCategory("spa");
+            dto.setCategoryLabel("Spa & Wellness Offer");
+            dto.setCategoryIcon("fa-spa");
+            dto.setImageUrl("https://res.cloudinary.com/xio0mgix/image/upload/v1786686824/f9b9112d-047b-4756-a23d-95fd3d7dd478.png");
+        } else if (codeUpper.contains("DINE") || codeUpper.contains("FOOD") || codeUpper.contains("BUFFET") || codeUpper.contains("RESTAURANT")) {
+            dto.setCategory("dining");
+            dto.setCategoryLabel("Dining & Cuisine Offer");
+            dto.setCategoryIcon("fa-utensils");
+            dto.setImageUrl("https://res.cloudinary.com/xio0mgix/image/upload/v1786686829/9ce92d78-c98f-4a75-854a-50a54bc99a48.png");
+        } else if (codeUpper.contains("VIP") || codeUpper.contains("LUXURY") || codeUpper.contains("PRESIDENT")) {
+            dto.setCategory("rooms");
+            dto.setCategoryLabel("VIP Executive Stay");
+            dto.setCategoryIcon("fa-crown");
+            dto.setImageUrl("https://res.cloudinary.com/xio0mgix/image/upload/v1786686505/937e83ec-1217-4027-8c10-0b204c14631c.png");
         } else {
             dto.setCategory("experiences");
             dto.setCategoryLabel("Special Experience");
             dto.setCategoryIcon("fa-umbrella-beach");
+            dto.setImageUrl("https://res.cloudinary.com/xio0mgix/image/upload/v1786686614/56d6bc0e-045d-4c53-8635-32d2ecc0b840.png");
         }
 
-        String search = (entity.getCode() + " " + (entity.getDescription() != null ? entity.getDescription() : "") + " " + (entity.getRoomType() != null ? entity.getRoomType() : "")).toLowerCase();
+        String search = (dto.getCode() + " " + dto.getDescription() + " " + (entity.getRoomType() != null ? entity.getRoomType() : "")).toLowerCase();
         dto.setSearchContent(search);
 
         return dto;

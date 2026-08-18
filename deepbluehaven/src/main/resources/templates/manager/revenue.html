@@ -94,7 +94,7 @@
                             <tr>
                                 <th>Invoice Code</th>
                                 <th>Booking Ref</th>
-                                <th>Customer details</th>
+                                <th>Customer Details</th>
                                 <th>Total Amount</th>
                                 <th>Paid Amount</th>
                                 <th>Payment Method</th>
@@ -107,10 +107,10 @@
                                 <td th:text="${inv.booking != null ? inv.booking.bookingCode : 'N/A'}">DBH-2026-001</td>
                                 <td th:text="${inv.customer != null && inv.customer.profile != null ? inv.customer.profile.fullName : (inv.booking != null && inv.booking.customer != null && inv.booking.customer.profile != null ? inv.booking.customer.profile.fullName : 'Guest')}">John Smith</td>
                                 <td><strong th:text="|${#numbers.formatDecimal(inv.totalAmount != null ? inv.totalAmount : 0, 0, 'COMMA', 0, 'POINT')} VND|">4,125,000 VND</strong></td>
-                                <td th:text="|${#numbers.formatDecimal(inv.paidAmount != null ? inv.paidAmount : 0, 0, 'COMMA', 0, 'POINT')} VND|">4,125,000 VND</td>
-                                <td>Bank / Card</td>
+                                <td><span th:text="|${#numbers.formatDecimal(inv.paidAmount != null ? inv.paidAmount : 0, 0, 'COMMA', 0, 'POINT')} VND|">4,125,000 VND</span></td>
+                                <td><span class="badge badge-subtle">Bank / Card</span></td>
                                 <td class="text-center">
-                                    <span th:class="|status ${inv.status == T(deepbluehaven.pojo.enums.InvoiceStatus).PAID ? 'status-success' : 'status-danger'}|"
+                                    <span th:class="|status ${inv.status == T(deepbluehaven.pojo.enums.InvoiceStatus).PAID ? 'status-success' : (inv.status == T(deepbluehaven.pojo.enums.InvoiceStatus).PARTIAL_PAID ? 'status-warning' : (inv.status == T(deepbluehaven.pojo.enums.InvoiceStatus).CANCELLED ? 'status-error' : (inv.status == T(deepbluehaven.pojo.enums.InvoiceStatus).REFUNDED ? 'status-info' : 'status-warning')))}|"
                                           th:text="${inv.status}">PAID</span>
                                 </td>
                             </tr>

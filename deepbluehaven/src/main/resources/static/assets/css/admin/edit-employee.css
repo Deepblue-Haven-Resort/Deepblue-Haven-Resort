@@ -4,8 +4,8 @@
 
 .security-section {
     background:
-        radial-gradient(circle at top right, rgba(77, 168, 255, 0.1), transparent 34%),
-        linear-gradient(135deg, rgba(255, 255, 255, 0.6), var(--surface-0));
+        radial-gradient(circle at top right, rgba(var(--primary-500-rgb), 0.1), transparent 34%),
+        linear-gradient(135deg, rgba(var(--white-rgb), 0.6), var(--surface-0));
     border: var(--border-1) solid var(--primary-200);
     border-radius: 20px;
     padding: 20px;

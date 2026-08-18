@@ -120,7 +120,7 @@
 }
 
 .action-empty-dash {
-    color: var(--neutral-400, #94a3b8);
+    color: var(--neutral-400);
     font-weight: 500;
 }
 
