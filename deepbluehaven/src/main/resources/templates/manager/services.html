@@ -72,81 +72,207 @@
 
            
             <section class="manager-panel">
-                <div class="panel-header">
-                    <div>
-                        <h2>Resort Services Registry</h2>
+                <div class="panel-tabs-bar">
+                    <button type="button" class="panel-tab-btn"
+                            th:classappend="${activeTab == 'tab-catalog' or activeTab == 'catalog' or activeTab == null ? 'active' : ''}"
+                            data-tab="tab-catalog">
+                        <i class="fa-solid fa-list-ul"></i> Services Catalog
+                        <span class="tab-badge-count" th:if="${services != null and !services.isEmpty()}" th:text="${services.size()}">0</span>
+                    </button>
+                    <button type="button" class="panel-tab-btn"
+                            th:classappend="${activeTab == 'tab-orders' or activeTab == 'orders' ? 'active' : ''}"
+                            data-tab="tab-orders">
+                        <i class="fa-solid fa-bell-concierge"></i> Guest Orders & Fulfillment
+                        <span class="tab-badge-count" th:if="${allServiceOrders != null and !allServiceOrders.isEmpty()}" th:text="${allServiceOrders.size()}">0</span>
+                    </button>
+                </div>
+
+                <!-- TAB 1: CATALOG -->
+                <div id="tab-catalog" class="tab-content-panel"
+                     th:classappend="${activeTab == 'tab-catalog' or activeTab == 'catalog' or activeTab == null ? 'active' : ''}">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Resort Services Registry</h2>
+                        </div>
+                        <div class="filter-options">
+                            <button type="button" class="btn btn-cta btn-medium" id="addServiceBtn">Add New Service</button>
+                        </div>
                     </div>
-                    <div class="filter-options">
-                        <button type="button" class="btn btn-cta btn-medium" id="addServiceBtn">Add New Service</button>
+
+                    <div class="filter-bar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search services by name, category, or price...">
+                        </div>
+
+                        <div class="filter-dropdown">
+                            <button class="filter-btn" type="button">
+                                <span class="filter-label"><strong>All Status</strong></span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                            <div class="filter-menu">
+                                <button type="button" data-status="ALL"><strong>All Status</strong></button>
+                                <button type="button" data-status="ACTIVE"><strong>Active</strong></button>
+                                <button type="button" data-status="HIDDEN"><strong>Hidden</strong></button>
+                                <button type="button" data-status="OUT_OF_STOCK"><strong>Out of Stock</strong></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="activity-table" data-page-size="5">
+                            <thead>
+                                <tr>
+                                    <th>Service Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="s : ${services}"
+                                    th:data-id="${s.id}"
+                                    th:data-name="${s.name}"
+                                    th:data-category="${s.category}"
+                                    th:data-price="${s.basePrice}"
+                                    th:data-status="${s.status}"
+                                    th:data-image="${s.images != null && !s.images.isEmpty() ? s.images[0] : ''}">
+                                    <td><strong th:text="${s.name}">Club Sandwich & Orange Juice</strong></td>
+                                    <td th:text="${s.category != null ? s.category.displayName : s.category}">Food Beverage</td>
+                                    <td><strong th:text="|${#numbers.formatDecimal(s.basePrice, 0, 'COMMA', 0, 'POINT')} VND|">350,000 VND</strong></td>
+                                    <td class="text-center">
+                                        <span th:class="|status ${s.status == T(deepbluehaven.pojo.enums.ServiceStatus).ACTIVE ? 'status-success' : 'status-danger'}|"
+                                              th:text="${s.status}">ACTIVE</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="table-actions">
+                                            <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
+                                            <form th:action="@{'/manager/services/' + ${s.id} + '/status'}" method="post">
+                                                <input type="hidden" name="status" th:value="${s.status == T(deepbluehaven.pojo.enums.ServiceStatus).ACTIVE ? 'HIDDEN' : 'ACTIVE'}" />
+                                                <button type="submit" class="btn warning-btn btn-small" th:text="${s.status == T(deepbluehaven.pojo.enums.ServiceStatus).ACTIVE ? 'Hide' : 'Activate'}">Hide</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(services)}">
+                                    <td colspan="5" class="empty-table-cell">No services registered in database.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                        <p>Showing <strong>1-5</strong> of <strong th:text="${#lists.size(services)}">0</strong> services</p>
+                        <div class="pagination"></div>
                     </div>
                 </div>
 
-                
-                <div class="filter-bar">
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search orders by room, guest, or service category...">
+                <!-- TAB 2: GUEST ORDERS -->
+                <div id="tab-orders" class="tab-content-panel"
+                     th:classappend="${activeTab == 'tab-orders' or activeTab == 'orders' ? 'active' : ''}">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Guest Service Orders</h2>
+                            <p style="color: #64748b; font-size: 13px;">Manage in-room service fulfillment and automatic stock reduction.</p>
+                        </div>
                     </div>
-                </div>
 
-                
-                <div class="table-wrapper">
-                    <table class="activity-table">
-                        <thead>
-                            <tr>
-                                <th>Service Name</th>
-                                <th>Category</th>
-                                <th>Price</th>
-                                <th>Status</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="s : ${services}"
-                                th:data-id="${s.id}"
-                                th:data-name="${s.name}"
-                                th:data-category="${s.category}"
-                                th:data-price="${s.basePrice}"
-                                th:data-status="${s.status}"
-                                th:data-image="${s.images != null && !s.images.isEmpty() ? s.images[0] : ''}">
-                                <td><strong th:text="${s.name}">Club Sandwich & Orange Juice</strong></td>
-                                <td th:text="${s.category != null ? s.category.displayName : s.category}">Food Beverage</td>
-                                <td><strong th:text="|${#numbers.formatDecimal(s.basePrice, 0, 'COMMA', 0, 'POINT')} VND|">350,000 VND</strong></td>
-                                <td class="text-center">
-                                    <span th:class="|status ${s.status == T(deepbluehaven.pojo.enums.ServiceStatus).ACTIVE ? 'status-success' : 'status-danger'}|"
-                                          th:text="${s.status}">ACTIVE</span>
-                                </td>
-                                <td class="text-center">
-                                    <div class="table-actions">
-                                        <button type="button" class="btn outline-btn edit-btn btn-small">Edit</button>
-                                        <form th:action="@{'/manager/services/' + ${s.id} + '/status'}" method="post">
-                                            <input type="hidden" name="status" th:value="${s.status == T(deepbluehaven.pojo.enums.ServiceStatus).ACTIVE ? 'HIDDEN' : 'ACTIVE'}" />
-                                            <button type="submit" class="btn warning-btn btn-small" th:text="${s.status == T(deepbluehaven.pojo.enums.ServiceStatus).ACTIVE ? 'Hide' : 'Activate'}">Hide</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(services)}">
-                                <td colspan="5" class="empty-table-cell">No services registered in database.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="filter-bar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search orders by item name, guest name, booking code...">
+                        </div>
 
-                
-                <div class="table-footer">
-                    <p>Showing <strong>1-2</strong> of <strong>65</strong> service orders</p>
-                    <div class="pagination">
-                        <button type="button" class="page-btn disabled">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button type="button" class="page-btn active">1</button>
-                        <button type="button" class="page-btn">2</button>
-                        <span class="page-dots">...</span>
-                        <button type="button" class="page-btn">3</button>
-                        <button type="button" class="page-btn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
+                        <div class="filter-dropdown">
+                            <button class="filter-btn" type="button">
+                                <span class="filter-label"><strong>All Status</strong></span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                            <div class="filter-menu">
+                                <button type="button" data-status="ALL"><strong>All Status</strong></button>
+                                <button type="button" data-status="PENDING"><strong>Pending</strong></button>
+                                <button type="button" data-status="CONFIRMED"><strong>Confirmed</strong></button>
+                                <button type="button" data-status="COMPLETED"><strong>Completed</strong></button>
+                                <button type="button" data-status="CANCELLED"><strong>Cancelled</strong></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="activity-table" data-page-size="5">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Service Item</th>
+                                    <th>Guest / Booking</th>
+                                    <th class="text-center">Qty</th>
+                                    <th>Total Price</th>
+                                    <th>Order Time</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="ord : ${allServiceOrders}"
+                                    th:data-status="${ord.status}">
+                                    <td><strong th:text="|#SO-${ord.id}|">#SO-101</strong></td>
+                                    <td>
+                                        <strong th:text="${ord.service != null ? ord.service.name : 'Resort Service'}">Service</strong>
+                                        <div style="font-size: 12px; color: #64748b;" th:if="${ord.service != null and ord.service.category != null}" th:text="${ord.service.category.displayName}">Category</div>
+                                    </td>
+                                    <td>
+                                        <strong th:if="${ord.customer != null and ord.customer.profile != null}" th:text="${ord.customer.profile.fullName}">Guest</strong>
+                                        <strong th:if="${ord.customer != null and ord.customer.profile == null}" th:text="${ord.customer.username}">Guest</strong>
+                                        <div style="font-size: 12px; color: #0284c7;" th:if="${ord.booking != null}" th:text="|Booking #${ord.booking.id}|">Booking #101</div>
+                                    </td>
+                                    <td class="text-center" th:text="${ord.quantity != null ? ord.quantity : 1}">1</td>
+                                    <td><strong th:text="|${#numbers.formatDecimal(ord.totalPrice != null ? ord.totalPrice : 0, 0, 'COMMA', 0, 'POINT')} VND|">0 VND</strong></td>
+                                    <td th:text="${ord.orderTime != null ? #temporals.format(ord.orderTime, 'dd/MM HH:mm') : '—'}">18/08 14:00</td>
+                                    <td class="text-center">
+                                        <span th:if="${ord.status != null and ord.status.name() == 'PENDING'}" class="status status-warning">Pending</span>
+                                        <span th:if="${ord.status != null and ord.status.name() == 'CONFIRMED'}" class="status status-info">Confirmed</span>
+                                        <span th:if="${ord.status != null and ord.status.name() == 'COMPLETED'}" class="status status-success">Completed</span>
+                                        <span th:if="${ord.status != null and ord.status.name() == 'CANCELLED'}" class="status status-danger">Cancelled</span>
+                                        <span th:if="${ord.status == null}" class="status status-warning">Pending</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="table-actions" style="display: flex; gap: 6px; justify-content: center;">
+                                            <form th:if="${ord.status != null and ord.status.name() == 'PENDING'}" 
+                                                  th:action="@{'/manager/services/orders/' + ${ord.id} + '/status'}" method="post">
+                                                <input type="hidden" name="status" value="CONFIRMED" />
+                                                <button type="submit" class="btn btn-small btn-cta">Confirm</button>
+                                            </form>
+                                            <form th:if="${ord.status != null and (ord.status.name() == 'CONFIRMED' or ord.status.name() == 'PENDING')}" 
+                                                  th:action="@{'/manager/services/orders/' + ${ord.id} + '/status'}" method="post">
+                                                <input type="hidden" name="status" value="COMPLETED" />
+                                                <button type="submit" class="btn btn-small btn-success" title="Complete & Deduct Stock">Deliver</button>
+                                            </form>
+                                            <form th:if="${ord.status != null and (ord.status.name() == 'PENDING' or ord.status.name() == 'CONFIRMED')}" 
+                                                  th:action="@{'/manager/services/orders/' + ${ord.id} + '/status'}" method="post"
+                                                  onsubmit="return confirm('Are you sure you want to cancel this service order?');">
+                                                <input type="hidden" name="status" value="CANCELLED" />
+                                                <button type="submit" class="btn btn-small btn-danger" title="Cancel Order">Cancel</button>
+                                            </form>
+                                            <span th:if="${ord.status != null and ord.status.name() == 'COMPLETED'}" style="color: #16a34a; font-size: 13px; font-weight: 600;">
+                                                <i class="fa-solid fa-circle-check"></i> Fulfilled
+                                            </span>
+                                            <span th:if="${ord.status != null and ord.status.name() == 'CANCELLED'}" style="color: #94a3b8; font-size: 13px;">
+                                                Cancelled
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(allServiceOrders)}">
+                                    <td colspan="8" class="empty-table-cell">No guest service orders.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                        <p>Showing <strong>1-5</strong> of <strong th:text="${#lists.size(allServiceOrders)}">0</strong> orders</p>
+                        <div class="pagination"></div>
                     </div>
                 </div>
             </section>

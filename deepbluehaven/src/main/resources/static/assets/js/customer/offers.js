@@ -213,5 +213,51 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.addEventListener("click", closeOfferModal);
     });
 
+    const claimVoucherModalBtn = document.getElementById("btnClaimVoucherModal");
+    if (claimVoucherModalBtn) {
+        claimVoucherModalBtn.addEventListener("click", function () {
+            const titleEl = document.getElementById("modalOfferTitle");
+            const code = titleEl ? titleEl.textContent.trim() : "";
+            if (!code) return;
+
+            claimVoucherModalBtn.disabled = true;
+            claimVoucherModalBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Claiming...';
+
+            const basePath = window.location.pathname.startsWith('/deepbluehaven') ? '/deepbluehaven' : '';
+            fetch(basePath + "/api/profile/claim-voucher", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ code: code })
+            })
+            .then(res => res.json())
+            .then(data => {
+                claimVoucherModalBtn.disabled = false;
+                claimVoucherModalBtn.innerHTML = '<i class="fa-solid fa-gift"></i> Claim to Wallet';
+
+                if (data.success) {
+                    if (window.showToast) {
+                        window.showToast(data.message, "success");
+                    } else {
+                        alert(data.message);
+                    }
+                    closeOfferModal();
+                } else {
+                    if (window.showToast) {
+                        window.showToast(data.message, "error");
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            })
+            .catch(err => {
+                claimVoucherModalBtn.disabled = false;
+                claimVoucherModalBtn.innerHTML = '<i class="fa-solid fa-gift"></i> Claim to Wallet';
+                alert("Failed to claim voucher. Please make sure you are logged in.");
+            });
+        });
+    }
+
     updateOffers();
 });

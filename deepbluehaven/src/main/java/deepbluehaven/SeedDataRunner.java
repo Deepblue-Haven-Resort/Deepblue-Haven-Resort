@@ -823,12 +823,18 @@ public class SeedDataRunner implements CommandLineRunner {
             so.setNote("Service requested for " + s.getName() + " at Room " + (101 + i % 50));
 
             ServiceOrderStatus status = statuses[i % statuses.length];
+            if (b.getStatus() == BookingStatus.CHECKED_OUT || b.getStatus() == BookingStatus.CANCELLED || b.getStatus() == BookingStatus.COMPLETED) {
+                if (status == ServiceOrderStatus.PENDING) {
+                    status = ServiceOrderStatus.CANCELLED;
+                    so.setNote(so.getNote() + " | Auto-cancelled: Booking is " + (b.getStatus() != null ? b.getStatus().getDisplayName() : "Checked Out"));
+                }
+            }
             so.setStatus(status);
             so.setProcessedBy(workers.get(5 + (i % 10)));
             LocalDateTime orderTime = LocalDateTime.now().minusDays(14 - (i % 14)).withHour(10 + (i % 8))
                     .withMinute((i * 11) % 60);
             so.setOrderTime(orderTime);
-            if (status == ServiceOrderStatus.DELIVERED) {
+            if (status == ServiceOrderStatus.COMPLETED) {
                 so.setCompletedTime(orderTime.plusMinutes(45));
             }
             so.setAction("Order #" + (i + 1) + " processed by service staff");

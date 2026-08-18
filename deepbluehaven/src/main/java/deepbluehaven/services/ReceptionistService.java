@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -279,6 +280,129 @@ public class ReceptionistService {
         }
     }
 
+    @Transactional
+    public void executeRoomMove(ReceptionistDTO.RoomMoveRequest request, Worker receptionist) {
+        Booking booking = bookingRepository.findById(request.getBookingId())
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found: " + request.getBookingId()));
+
+        if (booking.getStatus() != BookingStatus.CHECKED_IN) {
+            throw new IllegalStateException("Only currently CHECKED_IN bookings can be moved.");
+        }
+
+        Room newRoom = roomRepository.findById(request.getNewRoomId())
+                .orElseThrow(() -> new IllegalArgumentException("Destination room not found: " + request.getNewRoomId()));
+
+        if (newRoom.getStatus() != RoomStatus.AVAILABLE) {
+            throw new IllegalStateException("Destination Room " + newRoom.getRoomNumber() + " is not ready for check-in (Current status: " + newRoom.getStatus() + ")");
+        }
+
+        BookingDetail detail = (booking.getDetails() != null && !booking.getDetails().isEmpty()) ? booking.getDetails().get(0) : null;
+        if (detail == null) {
+            throw new IllegalStateException("Booking detail missing for Booking #" + booking.getId());
+        }
+
+        Room oldRoom = detail.getRoom();
+        if (oldRoom != null && oldRoom.getId().equals(newRoom.getId())) {
+            throw new IllegalArgumentException("Guest is already assigned to Room " + oldRoom.getRoomNumber());
+        }
+
+        String moveReason = (request.getReason() != null && !request.getReason().isBlank()) ? request.getReason() : "Guest requested room change";
+        String oldRoomNum = (oldRoom != null) ? oldRoom.getRoomNumber() : "Unassigned";
+
+        // 1. Update Old Room -> CLEANING (requires turnover cleaning)
+        if (oldRoom != null) {
+            RoomStatus oldRStatus = oldRoom.getStatus();
+            oldRoom.setStatus(RoomStatus.CLEANING);
+            roomRepository.save(oldRoom);
+
+            RoomStatusLog oldRLog = new RoomStatusLog();
+            oldRLog.setRoom(oldRoom);
+            oldRLog.setWorker(receptionist);
+            oldRLog.setPreviousStatus(oldRStatus);
+            oldRLog.setCurrentStatus(RoomStatus.CLEANING);
+            oldRLog.setTimestamp(LocalDateTime.now());
+            entityManager.persist(oldRLog);
+
+            // Create automatic cleaning task
+            try {
+                Task cleaningTask = new Task();
+                cleaningTask.setRoom(oldRoom);
+                cleaningTask.setAction("Room Move Turnover Cleaning (Moved to " + newRoom.getRoomNumber() + ")");
+                TaskType tt = entityManager.createQuery("select tt from TaskType tt", TaskType.class).getResultStream().findFirst().orElse(null);
+                if (tt != null) {
+                    cleaningTask.setTaskType(tt);
+                }
+                cleaningTask.setStatus(deepbluehaven.pojo.enums.TaskStatus.CLEANING);
+                cleaningTask.setAssignedBy(receptionist);
+                entityManager.persist(cleaningTask);
+            } catch (Exception ignored) {}
+        }
+
+        // 2. Update New Room -> OCCUPIED
+        RoomStatus newRStatus = newRoom.getStatus();
+        newRoom.setStatus(RoomStatus.OCCUPIED);
+        roomRepository.save(newRoom);
+
+        RoomStatusLog newRLog = new RoomStatusLog();
+        newRLog.setRoom(newRoom);
+        newRLog.setWorker(receptionist);
+        newRLog.setPreviousStatus(newRStatus);
+        newRLog.setCurrentStatus(RoomStatus.OCCUPIED);
+        newRLog.setTimestamp(LocalDateTime.now());
+        entityManager.persist(newRLog);
+
+        // 3. Update Booking Detail
+        detail.setRoom(newRoom);
+        if (newRoom.getRoomType() != null) {
+            detail.setRoomType(newRoom.getRoomType());
+        }
+        bookingRepository.save(booking);
+
+        // 4. Log Booking History & System Audit
+        BookingLog bLog = new BookingLog();
+        bLog.setBooking(booking);
+        bLog.setActorId(receptionist != null ? receptionist.getId() : 1L);
+        bLog.setPreviousStatus(BookingStatus.CHECKED_IN);
+        bLog.setCurrentStatus(BookingStatus.CHECKED_IN);
+        bLog.setNote("Room moved from Room " + oldRoomNum + " to Room " + newRoom.getRoomNumber() + ". Reason: " + moveReason);
+        bLog.setTimestamp(LocalDateTime.now());
+        entityManager.persist(bLog);
+
+        Log log = new Log();
+        log.setObjectType(ObjectType.ROOM);
+        log.setObjectId(newRoom.getId());
+        log.setActionCode(ActionCode.UPDATE);
+        log.setWorkerId(receptionist != null ? receptionist.getId() : 1L);
+        log.setPreviousStatus(oldRoomNum);
+        log.setCurrentStatus(newRoom.getRoomNumber());
+        log.setMetadata("Booking #" + booking.getId() + " switched room: " + oldRoomNum + " -> " + newRoom.getRoomNumber() + " | Reason: " + moveReason);
+        logRepository.save(log);
+
+        // 5. Notify Guest
+        if (booking.getCustomer() != null) {
+            notificationService.createCustomerNotification(
+                booking.getCustomer(),
+                "Room Move Confirmed",
+                "Your reservation has been transferred to Room " + newRoom.getRoomNumber() + " (" + (newRoom.getRoomType() != null ? newRoom.getRoomType().name() : "Standard") + "). Please contact the front desk for your new keycard.",
+                NotificationType.BOOKING,
+                "/booking/history"
+            );
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReceptionistDTO.AvailableRoomOption> getAvailableRoomsForMove() {
+        return roomRepository.findAll().stream()
+                .filter(r -> r.getStatus() == RoomStatus.AVAILABLE)
+                .map(r -> new ReceptionistDTO.AvailableRoomOption(
+                        r.getId(),
+                        r.getRoomNumber(),
+                        r.getRoomType() != null ? r.getRoomType().name() : "Standard",
+                        formatVnd(r.getBasePrice()) + " VND"
+                ))
+                .collect(Collectors.toList());
+    }
+
     @Transactional(readOnly = true)
     public List<ReceptionistDTO.CheckOutQueueItem> getPendingCheckOutQueue() {
         List<Booking> bookings = bookingRepository.findAll();
@@ -505,12 +629,34 @@ public class ReceptionistService {
         BigDecimal serviceTotal = BigDecimal.ZERO;
         if (orders != null) {
             for (ServiceOrder so : orders) {
-                if (so.getStatus() != ServiceOrderStatus.CANCELLED) {
+                if (so.getStatus() == ServiceOrderStatus.PENDING) {
+                    so.setStatus(ServiceOrderStatus.CANCELLED);
+                    so.setNote((so.getNote() != null && !so.getNote().isBlank() ? so.getNote() + " | " : "") + "Auto-cancelled upon booking check-out");
+                    serviceOrderRepository.save(so);
+                } else if (so.getStatus() != ServiceOrderStatus.CANCELLED) {
                     serviceTotal = serviceTotal.add(so.getTotalPrice() != null ? so.getTotalPrice() : BigDecimal.ZERO);
                 }
             }
         }
-        BigDecimal grossSubtotal = roomCharge.add(serviceTotal);
+        // Surcharge calculation
+        BigDecimal surchargeAmount = BigDecimal.ZERO;
+        String surchargeType = request.getSurchargeType() != null ? request.getSurchargeType() : "NONE";
+        BigDecimal oneNightPrice = (bDetail != null && bDetail.getPricePerNight() != null) ? bDetail.getPricePerNight() : (assignedRoom != null ? assignedRoom.getBasePrice() : new BigDecimal("1000000"));
+        if (oneNightPrice == null) oneNightPrice = new BigDecimal("1000000");
+
+        if ("EARLY_CHECKIN_30".equalsIgnoreCase(surchargeType)) {
+            surchargeAmount = oneNightPrice.multiply(new BigDecimal("0.30")).setScale(0, RoundingMode.HALF_UP);
+        } else if ("EARLY_CHECKIN_50".equalsIgnoreCase(surchargeType)) {
+            surchargeAmount = oneNightPrice.multiply(new BigDecimal("0.50")).setScale(0, RoundingMode.HALF_UP);
+        } else if ("LATE_CHECKOUT_30".equalsIgnoreCase(surchargeType)) {
+            surchargeAmount = oneNightPrice.multiply(new BigDecimal("0.30")).setScale(0, RoundingMode.HALF_UP);
+        } else if ("LATE_CHECKOUT_50".equalsIgnoreCase(surchargeType)) {
+            surchargeAmount = oneNightPrice.multiply(new BigDecimal("0.50")).setScale(0, RoundingMode.HALF_UP);
+        } else if ("CUSTOM".equalsIgnoreCase(surchargeType) && request.getCustomSurchargeAmount() != null) {
+            surchargeAmount = request.getCustomSurchargeAmount();
+        }
+
+        BigDecimal grossSubtotal = roomCharge.add(serviceTotal).add(surchargeAmount);
 
         BigDecimal totalDiscountAmount = BigDecimal.ZERO;
         BigDecimal tierDiscountAmount = BigDecimal.ZERO;
@@ -530,20 +676,35 @@ public class ReceptionistService {
                 }
             } catch (Exception ignored) {}
 
-            // 2. Promotional Discount Code Voucher
+            // 2. Targeted or available Promotional Discount Code Voucher
             try {
-                List<CustomerDiscount> custDiscounts = entityManager.createQuery(
-                    "select cd from CustomerDiscount cd join fetch cd.discount d where cd.customer.id = :cId and cd.status = :st", CustomerDiscount.class)
-                    .setParameter("cId", custId)
-                    .setParameter("st", CustomerDiscountStatus.AVAILABLE)
-                    .getResultList();
-                if (!custDiscounts.isEmpty()) {
-                    activeCustDiscount = custDiscounts.get(0);
-                    Discount d = activeCustDiscount.getDiscount();
-                    if (d.getType() == DiscountType.PERCENTAGE) {
-                        voucherDiscountAmount = grossSubtotal.multiply(d.getDiscountValue()).divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
-                    } else {
-                        voucherDiscountAmount = d.getDiscountValue();
+                if (request.getCustomerDiscountId() != null) {
+                    CustomerDiscount cd = entityManager.find(CustomerDiscount.class, request.getCustomerDiscountId());
+                    if (cd != null && cd.getStatus() == CustomerDiscountStatus.AVAILABLE) {
+                        activeCustDiscount = cd;
+                        Discount d = cd.getDiscount();
+                        if (d != null) {
+                            if (d.getType() == DiscountType.PERCENTAGE) {
+                                voucherDiscountAmount = grossSubtotal.multiply(d.getDiscountValue()).divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
+                            } else {
+                                voucherDiscountAmount = d.getDiscountValue();
+                            }
+                        }
+                    }
+                } else {
+                    List<CustomerDiscount> custDiscounts = entityManager.createQuery(
+                        "select cd from CustomerDiscount cd join fetch cd.discount d where cd.customer.id = :cId and cd.status = :st", CustomerDiscount.class)
+                        .setParameter("cId", custId)
+                        .setParameter("st", CustomerDiscountStatus.AVAILABLE)
+                        .getResultList();
+                    if (!custDiscounts.isEmpty()) {
+                        activeCustDiscount = custDiscounts.get(0);
+                        Discount d = activeCustDiscount.getDiscount();
+                        if (d.getType() == DiscountType.PERCENTAGE) {
+                            voucherDiscountAmount = grossSubtotal.multiply(d.getDiscountValue()).divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
+                        } else {
+                            voucherDiscountAmount = d.getDiscountValue();
+                        }
                     }
                 }
             } catch (Exception ignored) {}
@@ -628,6 +789,18 @@ public class ReceptionistService {
             booking.getDetails().get(0).setAction("CHECK_OUT");
         }
         bookingRepository.save(booking);
+
+        // Automatically cancel any unfulfilled/pending service orders for this checked-out booking
+        List<ServiceOrder> serviceOrders = serviceOrderRepository.findByBookingId(booking.getId());
+        if (serviceOrders != null) {
+            for (ServiceOrder so : serviceOrders) {
+                if (so.getStatus() == ServiceOrderStatus.PENDING) {
+                    so.setStatus(ServiceOrderStatus.CANCELLED);
+                    so.setNote((so.getNote() != null && !so.getNote().isBlank() ? so.getNote() + " | " : "") + "Auto-cancelled upon booking check-out");
+                    serviceOrderRepository.save(so);
+                }
+            }
+        }
 
         BookingLog bLog = new BookingLog();
         bLog.setBooking(booking);
@@ -722,6 +895,7 @@ public class ReceptionistService {
                                 item.setGuestName(b.getCustomer() != null && b.getCustomer().getProfile() != null 
                                     ? b.getCustomer().getProfile().getFullName() : "Guest");
                                 item.setCheckOutDateStr(d.getCheckOut() != null ? d.getCheckOut().toString() : "Tomorrow");
+                                item.setBookingId(b.getId());
                                 break;
                             }
                         }
@@ -894,9 +1068,168 @@ public class ReceptionistService {
         return list;
     }
 
+    @Transactional(readOnly = true)
+    public ReceptionistDTO.CheckOutQueueItem getInvoiceFolioDetails(Long bookingId) {
+        Booking b = bookingRepository.findById(bookingId).orElse(null);
+        if (b == null) return null;
+
+        ReceptionistDTO.CheckOutQueueItem item = new ReceptionistDTO.CheckOutQueueItem();
+        item.setBookingId(b.getId());
+        item.setBookingCode(String.format("DBH-%d-%03d", (b.getBookingTime() != null ? b.getBookingTime().getYear() : 2026), b.getId()));
+
+        Customer cust = b.getCustomer();
+        if (cust != null && cust.getProfile() != null) {
+            item.setCustomerName(cust.getProfile().getFullName());
+            item.setCustomerPhone(cust.getProfile().getPhoneNumber() != null ? cust.getProfile().getPhoneNumber() : "N/A");
+        } else if (cust != null) {
+            item.setCustomerName(cust.getUsername());
+            item.setCustomerPhone("N/A");
+        } else {
+            item.setCustomerName("Guest");
+            item.setCustomerPhone("N/A");
+        }
+
+        Room assignedRoom = null;
+        if (b.getDetails() != null && !b.getDetails().isEmpty()) {
+            BookingDetail detail = b.getDetails().get(0);
+            assignedRoom = detail.getRoom();
+            item.setRoomNumber(detail.getRoom() != null ? detail.getRoom().getRoomNumber() : "N/A");
+            item.setRoomTypeName(detail.getRoomType() != null ? detail.getRoomType().name() : "Standard Room");
+            item.setCheckInDate(detail.getCheckIn());
+            item.setCheckOutDate(detail.getCheckOut());
+            if (detail.getCheckIn() != null && detail.getCheckOut() != null) {
+                long nights = ChronoUnit.DAYS.between(detail.getCheckIn(), detail.getCheckOut());
+                item.setNightsStayed(Math.max(nights, 1));
+            }
+        } else {
+            item.setRoomNumber("101");
+            item.setRoomTypeName("Standard Room");
+            item.setCheckInDate(LocalDate.now().minusDays(1));
+            item.setCheckOutDate(LocalDate.now());
+            item.setNightsStayed(1);
+        }
+
+        BookingDetail bDetail = (b.getDetails() != null && !b.getDetails().isEmpty()) ? b.getDetails().get(0) : null;
+        BigDecimal roomCharge = BigDecimal.ZERO;
+        if (bDetail != null && bDetail.getSubTotal() != null && bDetail.getSubTotal().compareTo(BigDecimal.ZERO) > 0) {
+            roomCharge = bDetail.getSubTotal();
+        } else if (bDetail != null && bDetail.getPricePerNight() != null) {
+            roomCharge = bDetail.getPricePerNight().multiply(BigDecimal.valueOf(item.getNightsStayed()));
+        } else if (assignedRoom != null && assignedRoom.getBasePrice() != null) {
+            roomCharge = assignedRoom.getBasePrice().multiply(BigDecimal.valueOf(item.getNightsStayed()));
+        } else {
+            roomCharge = (b.getTotalAmount() != null) ? b.getTotalAmount() : new BigDecimal("2100000");
+        }
+        item.setRoomCharge(roomCharge);
+        item.setRoomChargeStr(formatVnd(roomCharge));
+
+        List<ServiceOrder> orders = serviceOrderRepository.findByBookingId(b.getId());
+        BigDecimal serviceTotal = BigDecimal.ZERO;
+        List<ReceptionistDTO.ServiceOrderItem> orderItems = new ArrayList<>();
+        if (orders != null) {
+            for (ServiceOrder so : orders) {
+                if (b.getStatus() == BookingStatus.CHECKED_OUT || b.getStatus() == BookingStatus.CANCELLED || b.getStatus() == BookingStatus.COMPLETED) {
+                    if (so.getStatus() == ServiceOrderStatus.PENDING) {
+                        continue;
+                    }
+                }
+                if (so.getStatus() != ServiceOrderStatus.CANCELLED) {
+                    BigDecimal itemPrice = so.getTotalPrice() != null ? so.getTotalPrice() : BigDecimal.ZERO;
+                    serviceTotal = serviceTotal.add(itemPrice);
+
+                    ReceptionistDTO.ServiceOrderItem sItem = new ReceptionistDTO.ServiceOrderItem();
+                    sItem.setOrderId(so.getId());
+                    sItem.setServiceName(so.getService() != null ? so.getService().getName() : "Service Add-on");
+                    sItem.setQuantity(so.getQuantity() != null ? so.getQuantity() : 1);
+                    sItem.setTotalPriceStr(formatVnd(itemPrice));
+                    sItem.setStatusStr(so.getStatus() != null ? so.getStatus().name() : "CONFIRMED");
+                    orderItems.add(sItem);
+                }
+            }
+        }
+        item.setServiceOrders(orderItems);
+        item.setServiceCharge(serviceTotal);
+        item.setServiceChargeStr(formatVnd(serviceTotal));
+
+        BigDecimal grossSubtotal = roomCharge.add(serviceTotal);
+
+        BigDecimal totalDiscountAmount = BigDecimal.ZERO;
+        BigDecimal tierDiscountAmount = BigDecimal.ZERO;
+        BigDecimal voucherDiscountAmount = BigDecimal.ZERO;
+        String discountCode = null;
+        if (b.getCustomer() != null && b.getCustomer().getId() != null) {
+            Long custId = b.getCustomer().getId();
+            try {
+                CustomerProfile profile = entityManager.find(CustomerProfile.class, custId);
+                if (profile != null && profile.getMembershipTier() != null) {
+                    MembershipTier tier = profile.getMembershipTier();
+                    if (tier.getDiscountRate() != null && tier.getDiscountRate().compareTo(BigDecimal.ZERO) > 0) {
+                        tierDiscountAmount = grossSubtotal.multiply(tier.getDiscountRate()).divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
+                        discountCode = tier.getTierName() + " (" + tier.getDiscountRate() + "%)";
+                    }
+                }
+            } catch (Exception ignored) {}
+
+            try {
+                List<CustomerDiscount> availableDiscounts = entityManager.createQuery(
+                    "select cd from CustomerDiscount cd join fetch cd.discount d where cd.customer.id = :cId and cd.status = :st", CustomerDiscount.class)
+                    .setParameter("cId", custId)
+                    .setParameter("st", CustomerDiscountStatus.AVAILABLE)
+                    .getResultList();
+                List<ReceptionistDTO.CustomerDiscountOption> vOptions = new ArrayList<>();
+                for (CustomerDiscount cd : availableDiscounts) {
+                    if (cd.getDiscount() != null) {
+                        Discount d = cd.getDiscount();
+                        vOptions.add(new ReceptionistDTO.CustomerDiscountOption(
+                            cd.getId(),
+                            d.getCode(),
+                            d.getType() != null ? d.getType().name() : "PERCENTAGE",
+                            d.getDiscountValue(),
+                            d.getDescription() != null ? d.getDescription() : (d.getCode() + " - " + d.getDiscountValue() + (d.getType() == DiscountType.PERCENTAGE ? "%" : " VND"))
+                        ));
+                    }
+                }
+                item.setAvailableVouchers(vOptions);
+            } catch (Exception ignored) {}
+        }
+
+        totalDiscountAmount = tierDiscountAmount.add(voucherDiscountAmount);
+        item.setDiscountAmount(totalDiscountAmount);
+        item.setDiscountCode(discountCode != null ? discountCode : "None");
+        item.setDiscountAmountStr(formatVnd(totalDiscountAmount));
+
+        BigDecimal netSubtotal = grossSubtotal.subtract(totalDiscountAmount);
+        BigDecimal tax = netSubtotal.multiply(new BigDecimal("0.08")).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal totalFolio = netSubtotal.add(tax);
+
+        item.setTaxAmount(tax);
+        item.setTaxStr(formatVnd(tax));
+        item.setTotalFolio(totalFolio);
+        item.setTotalFolioStr(formatVnd(totalFolio));
+
+        BigDecimal depositPaid = totalFolio.multiply(new BigDecimal("0.30")).setScale(0, RoundingMode.HALF_UP);
+        try {
+            List<Invoice> invs = invoiceRepository.findByBookingId(b.getId());
+            if (invs != null && !invs.isEmpty() && invs.get(0).getPaidAmount() != null) {
+                depositPaid = invs.get(0).getPaidAmount();
+            }
+        } catch (Exception ignored) {}
+        item.setDepositPaid(depositPaid);
+        item.setDepositPaidStr(formatVnd(depositPaid));
+
+        BigDecimal remaining = totalFolio.subtract(depositPaid);
+        if (remaining.compareTo(BigDecimal.ZERO) < 0 || b.getStatus() == BookingStatus.CHECKED_OUT) {
+            remaining = BigDecimal.ZERO;
+        }
+        item.setNetRemainingPayable(remaining);
+        item.setNetRemainingPayableStr(formatVnd(remaining));
+
+        return item;
+    }
+
     private String formatVnd(BigDecimal amount) {
         if (amount == null) return "0";
-        NumberFormat fmt = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
+        NumberFormat fmt = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
         return fmt.format(amount.longValue());
     }
 }

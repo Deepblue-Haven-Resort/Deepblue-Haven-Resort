@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import deepbluehaven.dto.BookingHistoryDTO;
 import deepbluehaven.dto.CustomerProfileDTO;
+import deepbluehaven.dto.ReceptionistDTO;
 import deepbluehaven.dto.RoomCardViewDTO;
 import deepbluehaven.dto.ServiceDTO;
 import deepbluehaven.services.BookingService;
@@ -59,6 +60,7 @@ public class HomeController {
     private final ServiceOrderRepository serviceOrderRepository;
     private final BookingRepository bookingRepository;
     private final NotificationService notificationService;
+    private final deepbluehaven.services.ReceptionistService receptionistService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public HomeController(CustomerService customerService,
@@ -73,7 +75,8 @@ public class HomeController {
                           ServiceRepository serviceRepository,
                           ServiceOrderRepository serviceOrderRepository,
                           BookingRepository bookingRepository,
-                          NotificationService notificationService) {
+                          NotificationService notificationService,
+                          deepbluehaven.services.ReceptionistService receptionistService) {
         this.customerService = customerService;
         this.roomService = roomService;
         this.bookingService = bookingService;
@@ -87,6 +90,7 @@ public class HomeController {
         this.serviceOrderRepository = serviceOrderRepository;
         this.bookingRepository = bookingRepository;
         this.notificationService = notificationService;
+        this.receptionistService = receptionistService;
     }
 
 
@@ -223,7 +227,10 @@ public class HomeController {
                 Customer customer = customerId != null ? customerRepository.findById(customerId).orElse(null) : null;
                 Booking booking = null;
                 if (customerId != null) {
-                    List<Booking> activeBookings = bookingRepository.findByCustomerIdWithDetailsAndRoom(customerId);
+                    List<Booking> activeBookings = bookingRepository.findByCustomerIdWithDetailsAndRoom(customerId)
+                            .stream()
+                            .filter(b -> b.getStatus() == deepbluehaven.pojo.enums.BookingStatus.PENDING || b.getStatus() == deepbluehaven.pojo.enums.BookingStatus.CONFIRMED || b.getStatus() == deepbluehaven.pojo.enums.BookingStatus.CHECKED_IN)
+                            .collect(java.util.stream.Collectors.toList());
                     if (bookingCode != null && !bookingCode.isBlank()) {
                         for (Booking b : activeBookings) {
                             int yr = (b.getBookingTime() != null) ? b.getBookingTime().getYear() : LocalDate.now().getYear();
@@ -351,6 +358,28 @@ public class HomeController {
         List<BookingHistoryDTO.Response> bookings = bookingService.getBookingHistoryByCustomer(currentCustomerId);
         model.addAttribute("bookings", bookings);   
         return "customer/booking-history";
+    }
+
+    @GetMapping("/customer/booking/{bookingCode}/invoice")
+    public String showCustomerBookingInvoice(@PathVariable("bookingCode") String bookingCode,
+                                             Model model,
+                                             HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loggedInCustomerId") == null) {
+            return "redirect:/login";
+        }
+        Long customerId = (Long) session.getAttribute("loggedInCustomerId");
+        BookingHistoryDTO.Response booking = bookingService.getBookingByCode(bookingCode, customerId);
+        if (booking == null) {
+            return "redirect:/booking/history";
+        }
+        ReceptionistDTO.CheckOutQueueItem folio = receptionistService.getInvoiceFolioDetails(booking.getId());
+        if (folio == null) {
+            return "redirect:/booking/history";
+        }
+        model.addAttribute("folio", folio);
+        model.addAttribute("nowDate", java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        return "receptionist/invoice-print";
     }
 
     @PostMapping("/booking/comment/save")

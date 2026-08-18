@@ -367,7 +367,7 @@
                             </div>
 
                             <div>
-                                <strong>48m²</strong>
+                                <strong th:text="${room != null && room.area != null ? room.area + 'm²' : '35m²'}">35m²</strong>
                                 <span>Area</span>
                             </div>
 
@@ -384,6 +384,9 @@
                     </div>
 
                     <div class="room-plan-panel" data-plan-panel="plan">
+                        <div th:if="${room != null && room.planUrl != null && !room.planUrl.isBlank()}" style="text-align: center; margin-bottom: 12px;">
+                            <img th:src="${room.planUrl}" alt="Room Floor Plan" style="max-width: 100%; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        </div>
                         <div class="room-floorplan" aria-label="Room floor plan preview">
                             <span class="room-floorplan__zone room-floorplan__zone--bed">Bedroom</span>
                             <span class="room-floorplan__zone room-floorplan__zone--bath">Bath</span>

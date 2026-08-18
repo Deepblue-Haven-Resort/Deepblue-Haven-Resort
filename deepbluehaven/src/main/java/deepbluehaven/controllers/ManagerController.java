@@ -77,6 +77,7 @@ public class ManagerController {
     private final InventoryItemRepository inventoryItemRepository;
     private final SupplierRepository supplierRepository;
     private final InventoryTransactionRepository inventoryTransactionRepository;
+    private final deepbluehaven.repositories.ServicePointRepository servicePointRepository;
 
     public ManagerController(ManagerDashboardService managerDashboardService,
                              BookingService bookingService,
@@ -96,7 +97,8 @@ public class ManagerController {
                              deepbluehaven.services.ChatService chatService,
                              InventoryItemRepository inventoryItemRepository,
                              SupplierRepository supplierRepository,
-                             InventoryTransactionRepository inventoryTransactionRepository) {
+                             InventoryTransactionRepository inventoryTransactionRepository,
+                             deepbluehaven.repositories.ServicePointRepository servicePointRepository) {
         this.managerDashboardService = managerDashboardService;
         this.bookingService = bookingService;
         this.pricingRuleRepository = pricingRuleRepository;
@@ -116,6 +118,7 @@ public class ManagerController {
         this.inventoryItemRepository = inventoryItemRepository;
         this.supplierRepository = supplierRepository;
         this.inventoryTransactionRepository = inventoryTransactionRepository;
+        this.servicePointRepository = servicePointRepository;
     }
 
     @GetMapping("/manager/dashboard")
@@ -159,10 +162,21 @@ public class ManagerController {
                 .filter(t -> t.getStatus() == TaskStatus.WAITING_INSPECTION)
                 .count();
 
+        long availableRoomsCount = rooms.stream().filter(r -> r.getStatus() == RoomStatus.AVAILABLE).count();
+        long occupiedRoomsCount = rooms.stream().filter(r -> r.getStatus() == RoomStatus.OCCUPIED).count();
+        long cleaningQueueCount = rooms.stream().filter(r -> r.getStatus() == RoomStatus.CLEANING).count();
+        long maintenanceCount = rooms.stream().filter(r -> r.getStatus() == RoomStatus.MAINTENANCE).count();
+
         model.addAttribute("rooms", rooms);
+        model.addAttribute("availableRoomsCount", availableRoomsCount);
+        model.addAttribute("occupiedRoomsCount", occupiedRoomsCount);
+        model.addAttribute("cleaningQueueCount", cleaningQueueCount);
+        model.addAttribute("maintenanceCount", maintenanceCount);
         model.addAttribute("housekeepers", housekeepers);
         model.addAttribute("activeTasksMap", activeTasksMap);
         model.addAttribute("inspectionPendingCount", inspectionPendingCount);
+        model.addAttribute("allAmenities", deepbluehaven.pojo.enums.Amenity.values());
+        model.addAttribute("allTags", deepbluehaven.pojo.enums.RoomTag.values());
         model.addAttribute("activePage", "rooms");
         return "manager/rooms";
     }
@@ -214,13 +228,16 @@ public class ManagerController {
     }
 
     @GetMapping("/manager/services")
-    public String managerServices(Model model) {
-        List<ServiceOrder> allOrders = serviceOrderRepository.findAll();
+    public String managerServices(@RequestParam(value = "tab", required = false, defaultValue = "tab-catalog") String tab,
+                                  Model model) {
+        LocalDate today = LocalDate.now();
+
+        List<ServiceOrder> allOrders = bookingService.getAllServiceOrdersForStaff();
+
         long pendingOrdersCount = 0;
         long inProcessOrdersCount = 0;
         long completedTodayCount = 0;
         BigDecimal totalServiceRevenue = BigDecimal.ZERO;
-        LocalDate today = LocalDate.now();
 
         for (ServiceOrder so : allOrders) {
             if (so.getStatus() == ServiceOrderStatus.PENDING) {
@@ -241,12 +258,31 @@ public class ManagerController {
         }
 
         model.addAttribute("services", serviceRepository.findAll());
+        model.addAttribute("allServiceOrders", allOrders);
         model.addAttribute("pendingOrdersCount", pendingOrdersCount);
         model.addAttribute("inProcessOrdersCount", inProcessOrdersCount);
         model.addAttribute("completedTodayCount", completedTodayCount);
         model.addAttribute("totalServiceRevenue", totalServiceRevenue);
+        model.addAttribute("activeTab", tab);
         model.addAttribute("activePage", "services");
         return "manager/services";
+    }
+
+    @PostMapping("/manager/services/orders/{id}/status")
+    public String managerUpdateServiceOrderStatus(@PathVariable("id") Long id,
+                                                  @RequestParam("status") ServiceOrderStatus status,
+                                                  RedirectAttributes redirectAttrs,
+                                                  HttpSession session) {
+        try {
+            Worker worker = null;
+            Long wId = getLoggedInWorkerId(session);
+            if (wId != null) worker = workerRepository.findById(wId).orElse(null);
+            bookingService.updateServiceOrderStatus(id, status, worker);
+            redirectAttrs.addFlashAttribute("successMessage", "Service Order #" + id + " updated to " + status + " successfully!");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to update service order: " + e.getMessage());
+        }
+        return "redirect:/manager/services?tab=tab-orders";
     }
 
     @GetMapping("/manager/staff")
@@ -379,19 +415,88 @@ public class ManagerController {
         }
     }
 
+    @GetMapping("/manager/inventory/export-csv")
+    public void exportManagerInventoryReport(jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"inventory_stock_report.csv\"");
+
+        List<deepbluehaven.pojo.InventoryItem> items = inventoryItemRepository.findAll();
+        try (java.io.OutputStreamWriter writer = new java.io.OutputStreamWriter(response.getOutputStream(), java.nio.charset.StandardCharsets.UTF_8)) {
+            writer.write("\uFEFF");
+            writer.write("Item ID,Item Name,Unit,Quantity In Stock,Min Threshold,Supplier,Status\n");
+
+            for (deepbluehaven.pojo.InventoryItem item : items) {
+                String idStr = "#ITEM-" + item.getId();
+                String name = item.getName() != null ? item.getName() : "N/A";
+                String unit = item.getUnit() != null ? item.getUnit() : "pcs";
+                int qty = item.getQuantity() != null ? item.getQuantity() : 0;
+                int threshold = item.getMinThreshold() != null ? item.getMinThreshold() : 0;
+                String supplier = item.getSupplier() != null ? item.getSupplier().getName() : "N/A";
+                String status = qty <= threshold ? "LOW_STOCK" : "IN_STOCK";
+
+                writer.write(String.format("\"%s\",\"%s\",\"%s\",\"%d\",\"%d\",\"%s\",\"%s\"\n",
+                        escapeCsv(idStr), escapeCsv(name), escapeCsv(unit),
+                        qty, threshold, escapeCsv(supplier), escapeCsv(status)));
+            }
+            writer.flush();
+        }
+    }
+
+    @GetMapping("/manager/revenue/export-csv")
+    public void exportManagerRevenueReport(jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
+        exportManagerFinancialReport(response);
+    }
+
     private String escapeCsv(String value) {
         if (value == null) return "";
         return value.replace("\"", "\"\"");
     }
 
     @GetMapping("/manager/pricing")
-    public String managerPricing(Model model) {
+    public String managerPricing(@RequestParam(value = "tab", required = false, defaultValue = "tab-pricing-rules") String tab,
+                                 Model model) {
         model.addAttribute("pricingRules", pricingRuleRepository.findAll());
         model.addAttribute("discounts", discountRepository.findAll());
         model.addAttribute("membershipTiers", membershipTierRepository.findAllOrderedForProgression());
+        model.addAttribute("servicePoints", servicePointRepository.findAll());
+        model.addAttribute("serviceCategories", deepbluehaven.pojo.enums.ServiceCategory.values());
         model.addAttribute("roomTypes", RoomType.values());
+        model.addAttribute("activeTab", tab);
         model.addAttribute("activePage", "pricing");
         return "manager/pricing";
+    }
+
+    @PostMapping("/manager/pricing/service-points/save")
+    public String saveServicePoint(@RequestParam(value = "id", required = false) Long id,
+                                   @RequestParam("serviceCategory") deepbluehaven.pojo.enums.ServiceCategory serviceCategory,
+                                   @RequestParam("calculationType") deepbluehaven.pojo.enums.CalculationType calculationType,
+                                   @RequestParam(value = "fixedPoints", required = false) Integer fixedPoints,
+                                   @RequestParam(value = "rewardPercentage", required = false) BigDecimal rewardPercentage,
+                                   @RequestParam(value = "isActive", defaultValue = "true") Boolean isActive,
+                                   RedirectAttributes redirectAttrs,
+                                   HttpSession session) {
+        try {
+            deepbluehaven.pojo.ServicePoint sp;
+            if (id != null) {
+                sp = servicePointRepository.findById(id).orElse(new deepbluehaven.pojo.ServicePoint());
+            } else {
+                sp = servicePointRepository.findByServiceCategory(serviceCategory).orElse(new deepbluehaven.pojo.ServicePoint());
+            }
+            sp.setServiceCategory(serviceCategory);
+            sp.setCalculationType(calculationType);
+            sp.setFixedPoints(fixedPoints);
+            sp.setRewardPercentage(rewardPercentage);
+            sp.setIsActive(isActive);
+            servicePointRepository.save(sp);
+
+            logService.log(ObjectType.SYSTEM, ActionCode.UPDATE, sp.getId(),
+                    "Manager saved loyalty point rule for category " + serviceCategory, session);
+
+            redirectAttrs.addFlashAttribute("successMessage", "Loyalty point rule for " + serviceCategory.getDisplayName() + " saved successfully!");
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("errorMessage", "Failed to save loyalty point rule: " + e.getMessage());
+        }
+        return "redirect:/manager/pricing?tab=tab-service-points";
     }
 
     @PostMapping("/manager/pricing/membership-tiers/save")
@@ -420,7 +525,7 @@ public class ManagerController {
             System.err.println("[ManagerController] Error saving Membership Tier: " + e.getMessage());
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to save Membership Tier rule: " + e.getMessage());
         }
-        return "redirect:/manager/pricing";
+        return "redirect:/manager/pricing?tab=tab-membership-tiers";
     }
 
     private Long getLoggedInWorkerId(jakarta.servlet.http.HttpSession session) {
@@ -469,7 +574,7 @@ public class ManagerController {
             System.err.println("[ManagerController] Error saving pricing rule: " + e.getMessage());
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to save pricing rule: " + e.getMessage());
         }
-        return "redirect:/manager/pricing";
+        return "redirect:/manager/pricing?tab=tab-pricing-rules";
     }
 
     @PostMapping("/manager/pricing/discounts/save")
@@ -505,7 +610,7 @@ public class ManagerController {
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", "Failed to save discount: " + e.getMessage());
         }
-        return "redirect:/manager/pricing";
+        return "redirect:/manager/pricing?tab=tab-discounts";
     }
 
     @PostMapping("/manager/rooms/{id}/status")
@@ -602,6 +707,10 @@ public class ManagerController {
                            @RequestParam BigDecimal basePrice,
                            @RequestParam(required = false) Integer area,
                            @RequestParam RoomStatus status,
+                           @RequestParam(required = false) String description,
+                           @RequestParam(required = false) String planUrl,
+                           @RequestParam(required = false) List<deepbluehaven.pojo.enums.Amenity> amenities,
+                           @RequestParam(required = false) List<deepbluehaven.pojo.enums.RoomTag> tags,
                            @RequestParam(required = false) String imageUrl,
                            RedirectAttributes redirectAttrs,
                            jakarta.servlet.http.HttpSession session) {
@@ -635,7 +744,18 @@ public class ManagerController {
             room.setCapacity(capacity);
             room.setBasePrice(basePrice);
             if (area != null) room.setArea(area);
+            if (description != null) room.setDescription(description);
+            if (planUrl != null) room.setPlanUrl(planUrl);
             room.setStatus(status);
+
+            if (amenities != null) {
+                room.getAmenities().clear();
+                room.getAmenities().addAll(amenities);
+            }
+            if (tags != null) {
+                room.getTags().clear();
+                room.getTags().addAll(tags);
+            }
 
             if (imageUrl != null && !imageUrl.isBlank()) {
                 room.getImages().clear();

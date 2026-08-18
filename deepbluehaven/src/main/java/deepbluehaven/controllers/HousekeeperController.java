@@ -143,6 +143,27 @@ public class HousekeeperController {
         }
     }
 
+    @PostMapping("/housekeeper/tasks/{id}/minibar-log")
+    public ResponseEntity<Map<String, Object>> logMinibarConsumption(
+            @PathVariable Long id,
+            @RequestParam("itemName") String itemName,
+            @RequestParam(value = "quantity", defaultValue = "1") int quantity,
+            HttpSession session) {
+        Long workerId = getLoggedInWorkerId(session);
+        try {
+            housekeeperService.logMinibarConsumption(id, itemName, quantity, workerId);
+            Map<String, Object> resp = new java.util.HashMap<>();
+            resp.put("success", true);
+            resp.put("message", "Minibar consumption recorded successfully.");
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            Map<String, Object> resp = new java.util.HashMap<>();
+            resp.put("success", false);
+            resp.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(resp);
+        }
+    }
+
     @GetMapping("/housekeeper/history/export")
     public ResponseEntity<String> exportHistoryCsv(HttpSession session) {
         Long workerId = getLoggedInWorkerId(session);

@@ -69,9 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    const filterDropdowns = document.querySelectorAll('.filter-dropdown');
+    const formDropdowns = document.querySelectorAll('.form-filter-dropdown, #serviceModal .filter-dropdown');
     
-    filterDropdowns.forEach(dropdown => {
+    formDropdowns.forEach(dropdown => {
         const btn = dropdown.querySelector('.filter-btn');
         const menu = dropdown.querySelector('.filter-menu');
         const label = dropdown.querySelector('.filter-label strong');
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn) {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                filterDropdowns.forEach(other => {
+                formDropdowns.forEach(other => {
                     if (other !== dropdown) other.classList.remove('active');
                 });
                 dropdown.classList.toggle('active');
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('click', () => {
-        filterDropdowns.forEach(dropdown => {
+        formDropdowns.forEach(dropdown => {
             dropdown.classList.remove('active');
         });
     });
@@ -173,5 +173,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('error', 'Upload Error', 'Upload request failed.');
             }
         });
+    }
+
+    // Tab switching for Catalog vs Guest Orders (matches Inventory design)
+    const tabBtns = document.querySelectorAll(".panel-tab-btn");
+    const tabPanels = document.querySelectorAll(".tab-content-panel");
+
+    function switchTab(tabId) {
+        if (!tabId) return;
+        tabBtns.forEach(b => b.classList.remove("active"));
+        tabPanels.forEach(p => {
+            p.classList.remove("active");
+            p.style.display = "none";
+        });
+
+        const activeBtn = document.querySelector(`.panel-tab-btn[data-tab="${tabId}"]`);
+        const activePanel = document.getElementById(tabId);
+
+        if (activePanel) {
+            if (activeBtn) activeBtn.classList.add("active");
+            activePanel.classList.add("active");
+            activePanel.style.display = "block";
+            if (window.initTablePagination) {
+                window.initTablePagination();
+            }
+        }
+
+        try {
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tabId);
+            window.history.replaceState({}, '', url);
+        } catch (e) {}
+    }
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const tabId = btn.getAttribute("data-tab");
+            if (tabId) {
+                switchTab(tabId);
+            }
+        });
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    if (tabParam === 'orders' || tabParam === 'tab-orders') {
+        switchTab('tab-orders');
+    } else if (tabParam === 'catalog' || tabParam === 'tab-catalog') {
+        switchTab('tab-catalog');
     }
 });

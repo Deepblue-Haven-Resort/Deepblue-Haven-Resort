@@ -1,27 +1,53 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[Pricing JS] Initializing pricing & offers management scripts...');
 
-    // Tab switching logic
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
+    // Tab switching logic (matches Inventory style & preserves activeTab)
+    const tabBtns = document.querySelectorAll('.panel-tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-content-panel');
+
+    function switchTab(tabId) {
+        if (!tabId) return;
+        if (tabId === 'pricingRulesTab') tabId = 'tab-pricing-rules';
+        if (tabId === 'discountsTab') tabId = 'tab-discounts';
+        if (tabId === 'membershipTiersTab') tabId = 'tab-membership-tiers';
+        if (tabId === 'servicePointsTab') tabId = 'tab-service-points';
+
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabPanels.forEach(p => {
+            p.classList.remove('active');
+            p.style.display = 'none';
+        });
+
+        const activeBtn = document.querySelector(`.panel-tab-btn[data-tab="${tabId}"]`);
+        const activePanel = document.getElementById(tabId);
+
+        if (activePanel) {
+            if (activeBtn) activeBtn.classList.add('active');
+            activePanel.classList.add('active');
+            activePanel.style.display = 'block';
+        }
+
+        try {
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tabId);
+            window.history.replaceState({}, '', url);
+        } catch (e) {}
+    }
 
     tabBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const targetId = btn.getAttribute('data-target');
-            console.log('[Pricing JS] Switching tab to:', targetId);
-            
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
-            
-            btn.classList.add('active');
-            const targetContent = document.getElementById(targetId);
-            if (targetContent) {
-                targetContent.classList.add('active');
-            } else {
-                console.warn('[Pricing JS] Target tab content not found:', targetId);
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            if (tabId) {
+                switchTab(tabId);
             }
         });
     });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    if (tabParam) {
+        switchTab(tabParam);
+    }
 
     // 1. Pricing Rule Modal
     const ruleModal = document.getElementById('ruleModal');
@@ -179,7 +205,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Filter dropdowns logic
+    // 4. Service Point Modal
+    const spModal = document.getElementById('servicePointModal');
+    const addSpBtn = document.getElementById('addServicePointBtn');
+    const closeSpModalBtn = document.getElementById('closeServicePointModalBtn');
+    const cancelSpModalBtn = document.getElementById('cancelServicePointModalBtn');
+    const spForm = document.getElementById('servicePointForm');
+    const spTitle = document.getElementById('servicePointModalTitle');
+
+    const closeSpModal = () => {
+        if (spModal) spModal.classList.remove('active');
+    };
+    if (closeSpModalBtn) closeSpModalBtn.addEventListener('click', closeSpModal);
+    if (cancelSpModalBtn) cancelSpModalBtn.addEventListener('click', closeSpModal);
+
+    if (addSpBtn) {
+        addSpBtn.addEventListener('click', () => {
+            if (spTitle) spTitle.innerHTML = '<i class="fa-solid fa-gem"></i> Add Loyalty Point Rule';
+            if (spForm) spForm.reset();
+            const spIdInput = document.getElementById('spId');
+            if (spIdInput) spIdInput.value = '';
+            if (spModal) spModal.classList.add('active');
+        });
+    }
+
+    document.querySelectorAll('.edit-service-point-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            if (!row) return;
+
+            if (spTitle) spTitle.innerHTML = '<i class="fa-solid fa-gem"></i> Edit Loyalty Point Rule';
+            const spId = document.getElementById('spId');
+            const spCategory = document.getElementById('spCategory');
+            const spCalcType = document.getElementById('spCalcType');
+            const spFixedPoints = document.getElementById('spFixedPoints');
+            const spRewardPercentage = document.getElementById('spRewardPercentage');
+            const spIsActive = document.getElementById('spIsActive');
+
+            if (spId) spId.value = row.dataset.id || '';
+            if (spCategory) spCategory.value = row.dataset.category || 'FOOD_BEVERAGE';
+            if (spCalcType) spCalcType.value = row.dataset.type || 'PERCENTAGE';
+            if (spFixedPoints) spFixedPoints.value = row.dataset.fixed || '';
+            if (spRewardPercentage) spRewardPercentage.value = row.dataset.rate || '';
+            if (spIsActive) spIsActive.value = row.dataset.active === 'true' ? 'true' : 'false';
+
+            if (spModal) spModal.classList.add('active');
+        });
+    });
     const filterDropdowns = document.querySelectorAll('.filter-dropdown');
 
     filterDropdowns.forEach(dropdown => {

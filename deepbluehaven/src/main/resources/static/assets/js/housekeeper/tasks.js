@@ -123,6 +123,63 @@
                     completeModal.classList.remove('active');
             });
         });
+
+        // Minibar Logging Modal
+        const minibarModal = document.getElementById('minibarLogModal');
+        const minibarForm = document.getElementById('minibarLogForm');
+        let currentMinibarTaskId = null;
+
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.open-minibar-modal-btn');
+            if (btn) {
+                e.preventDefault();
+                currentMinibarTaskId = btn.getAttribute('data-task-id');
+                const roomNum = btn.getAttribute('data-room-number');
+                const display = document.getElementById('minibarRoomDisplay');
+                if (display) display.textContent = roomNum || 'Selected Room';
+                if (minibarModal) minibarModal.classList.add('active');
+            }
+        });
+
+        const closeMinibarBtn = document.getElementById('closeMinibarModalBtn');
+        const cancelMinibarBtn = document.getElementById('cancelMinibarModalBtn');
+        [closeMinibarBtn, cancelMinibarBtn].forEach(b => {
+            if (b) b.addEventListener('click', () => {
+                if (minibarModal) minibarModal.classList.remove('active');
+            });
+        });
+
+        if (minibarForm) {
+            minibarForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!currentMinibarTaskId) return;
+
+                const itemName = document.getElementById('minibarItemSelect').value;
+                const quantity = document.getElementById('minibarQtyInput').value;
+
+                const formData = new URLSearchParams();
+                formData.append('itemName', itemName);
+                formData.append('quantity', quantity);
+
+                fetch('/deepbluehaven/housekeeper/tasks/' + currentMinibarTaskId + '/minibar-log', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('success', 'Minibar Logged', data.message || 'Consumption added to guest bill.');
+                        if (minibarModal) minibarModal.classList.remove('active');
+                    } else {
+                        showToast('error', 'Error', data.message || 'Could not log minibar item.');
+                    }
+                })
+                .catch(err => {
+                    showToast('error', 'Error', 'Failed to communicate with server: ' + err.message);
+                });
+            });
+        }
     });
 })();
 

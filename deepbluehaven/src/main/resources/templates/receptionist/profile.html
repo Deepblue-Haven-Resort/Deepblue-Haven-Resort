@@ -11,6 +11,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/admin-sidebar.css}">
     <link rel="stylesheet" th:href="@{/assets/css/admin/profile-employee.css}">
     <link rel="stylesheet" th:href="@{/assets/css/housekeeper/profile.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/receptionist/profile.css}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -125,6 +126,23 @@
                     </div>
                 </div>
 
+                <div class="profile-info-section">
+                    <div class="section-heading">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Account Security</span>
+                    </div>
+
+                    <div class="security-card-box">
+                        <div class="security-card-info">
+                            <strong>Password & Credentials</strong>
+                            <p>Regularly updating your password protects your staff account.</p>
+                        </div>
+                        <button type="button" id="openChangePasswordBtn" class="btn btn-small btn-cta">
+                            <i class="fa-solid fa-key"></i> Change Password
+                        </button>
+                    </div>
+                </div>
+
             </div>
 
         </section>
@@ -132,6 +150,59 @@
     </main>
 </div>
 
+<!-- Change Password Modal -->
+<div class="password-modal-backdrop" id="changePasswordModal">
+    <div class="password-modal-container">
+        <div class="password-modal-header">
+            <h3><i class="fa-solid fa-lock"></i> Change Staff Password</h3>
+            <button type="button" id="closeChangePasswordBtn" class="password-modal-close" title="Close">&times;</button>
+        </div>
+
+        <form id="changePasswordForm">
+            <!-- Current Password -->
+            <div class="password-form-group">
+                <label for="currentPassword">Current Password</label>
+                <div class="password-input-wrapper">
+                    <input type="password" id="currentPassword" class="password-input-field" required placeholder="Enter current password">
+                    <button type="button" class="toggle-password-visibility-btn" data-target="currentPassword" title="Toggle password visibility">
+                        <i class="fa-regular fa-eye-slash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- New Password -->
+            <div class="password-form-group">
+                <label for="newPassword">New Password (min 6 characters)</label>
+                <div class="password-input-wrapper">
+                    <input type="password" id="newPassword" class="password-input-field" minlength="6" required placeholder="Enter new password">
+                    <button type="button" class="toggle-password-visibility-btn" data-target="newPassword" title="Toggle password visibility">
+                        <i class="fa-regular fa-eye-slash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Confirm New Password -->
+            <div class="password-form-group">
+                <label for="confirmNewPassword">Confirm New Password</label>
+                <div class="password-input-wrapper">
+                    <input type="password" id="confirmNewPassword" class="password-input-field" minlength="6" required placeholder="Confirm new password">
+                    <button type="button" class="toggle-password-visibility-btn" data-target="confirmNewPassword" title="Toggle password visibility">
+                        <i class="fa-regular fa-eye-slash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="password-modal-footer">
+                <button type="button" id="cancelChangePasswordBtn" class="btn btn-outline">Cancel</button>
+                <button type="submit" id="submitChangePasswordBtn" class="btn btn-cta">
+                    <i class="fa-solid fa-key"></i> Update Password
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script th:src="@{/assets/js/admin/admin-sidebar.js}"></script>
+<script th:src="@{/assets/js/receptionist/profile.js}"></script>
 </body>
 </html>

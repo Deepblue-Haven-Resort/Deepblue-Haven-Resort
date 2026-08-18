@@ -24,9 +24,17 @@ import deepbluehaven.pojo.enums.BookingStatus;
 import deepbluehaven.pojo.enums.NotificationType;
 import deepbluehaven.pojo.enums.ObjectType;
 import deepbluehaven.pojo.enums.ServiceOrderStatus;
+import deepbluehaven.pojo.InventoryItem;
+import deepbluehaven.pojo.InventoryTransaction;
+import deepbluehaven.pojo.Log;
 import deepbluehaven.pojo.PricingRule;
+import deepbluehaven.pojo.Worker;
+import deepbluehaven.pojo.enums.ServiceCategory;
 import deepbluehaven.repositories.BookingRepository;
 import deepbluehaven.repositories.CustomerRepository;
+import deepbluehaven.repositories.InventoryItemRepository;
+import deepbluehaven.repositories.InventoryTransactionRepository;
+import deepbluehaven.repositories.LogRepository;
 import deepbluehaven.repositories.PricingRuleRepository;
 import deepbluehaven.repositories.RoomRepository;
 import deepbluehaven.repositories.ServiceOrderRepository;
@@ -39,6 +47,9 @@ public class BookingService {
     private final CustomerRepository customerRepository;
     private final RoomRepository roomRepository;
     private final PricingRuleRepository pricingRuleRepository;
+    private final InventoryItemRepository inventoryItemRepository;
+    private final InventoryTransactionRepository inventoryTransactionRepository;
+    private final LogRepository logRepository;
     private final NotificationService notificationService;
     private final LogService logService;
     private static final BigDecimal EXCHANGE_RATE_USD = new BigDecimal("26200");
@@ -48,6 +59,9 @@ public class BookingService {
                           CustomerRepository customerRepository,
                           RoomRepository roomRepository,
                           PricingRuleRepository pricingRuleRepository,
+                          InventoryItemRepository inventoryItemRepository,
+                          InventoryTransactionRepository inventoryTransactionRepository,
+                          LogRepository logRepository,
                           NotificationService notificationService,
                           LogService logService) {
         this.bookingRepository = bookingRepository;
@@ -55,6 +69,9 @@ public class BookingService {
         this.customerRepository = customerRepository;
         this.roomRepository = roomRepository;
         this.pricingRuleRepository = pricingRuleRepository;
+        this.inventoryItemRepository = inventoryItemRepository;
+        this.inventoryTransactionRepository = inventoryTransactionRepository;
+        this.logRepository = logRepository;
         this.notificationService = notificationService;
         this.logService = logService;
     }
@@ -225,6 +242,19 @@ public class BookingService {
                     BookingStatus oldStatus = booking.getStatus();
                     booking.setStatus(BookingStatus.CANCELLED);
                     bookingRepository.save(booking);
+
+                    // Auto-cancel any pending service orders for this booking
+                    List<ServiceOrder> serviceOrders = serviceOrderRepository.findByBookingId(booking.getId());
+                    if (serviceOrders != null) {
+                        for (ServiceOrder so : serviceOrders) {
+                            if (so.getStatus() == ServiceOrderStatus.PENDING) {
+                                so.setStatus(ServiceOrderStatus.CANCELLED);
+                                so.setNote((so.getNote() != null && !so.getNote().isBlank() ? so.getNote() + " | " : "") + "Auto-cancelled upon booking cancellation");
+                                serviceOrderRepository.save(so);
+                            }
+                        }
+                    }
+
                     logService.logBookingStatusChange(booking, oldStatus, BookingStatus.CANCELLED, customerId, "Cancelled by customer #" + customerId);
                     notificationService.createCustomerNotification(
                         booking.getCustomer(),
@@ -396,12 +426,21 @@ public class BookingService {
             }
         }
 
+        boolean isBookingActive = (booking.getStatus() == BookingStatus.PENDING || booking.getStatus() == BookingStatus.CONFIRMED || booking.getStatus() == BookingStatus.CHECKED_IN);
+
         for (ServiceOrder order : orders) {
+            // If booking is already checked out, cancelled, or completed, auto-cancel any leftover pending services
+            if (!isBookingActive && order.getStatus() == ServiceOrderStatus.PENDING) {
+                order.setStatus(ServiceOrderStatus.CANCELLED);
+                order.setNote((order.getNote() != null && !order.getNote().isBlank() ? order.getNote() + " | " : "") + "Auto-cancelled: Booking is " + (booking.getStatus() != null ? booking.getStatus().getDisplayName() : "Checked Out"));
+                serviceOrderRepository.save(order);
+            }
+
             String name = (order.getService() != null) ? order.getService().getName() : "Extended Service";
             int qty = (order.getQuantity() != null) ? order.getQuantity() : 1;
             BigDecimal price = (order.getService() != null && order.getService().getBasePrice() != null) ? order.getService().getBasePrice() : BigDecimal.ZERO;
             BigDecimal itemTotal = (order.getTotalPrice() != null) ? order.getTotalPrice() : price.multiply(BigDecimal.valueOf(qty));
-            boolean canCancel = (order.getStatus() == ServiceOrderStatus.PENDING || order.getStatus() == ServiceOrderStatus.CONFIRMED);
+            boolean canCancel = isBookingActive && (order.getStatus() == ServiceOrderStatus.PENDING || order.getStatus() == ServiceOrderStatus.CONFIRMED);
             serviceItems.add(new BookingHistoryDTO.ServiceItem(order.getId(), name, qty, price, itemTotal, order.getStatus() != null ? order.getStatus().name() : "PENDING", canCancel));
             if (order.getStatus() != ServiceOrderStatus.CANCELLED) {
                 totalServicesVnd = totalServicesVnd.add(itemTotal);
@@ -420,6 +459,85 @@ public class BookingService {
         dto.setTotalAmountUsd(amountUsd);
 
         return dto;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ServiceOrder> getAllServiceOrdersForStaff() {
+        return serviceOrderRepository.findAllWithDetailsOrderByOrderTimeDesc();
+    }
+
+    @Transactional
+    public ServiceOrder updateServiceOrderStatus(Long orderId, ServiceOrderStatus newStatus, Worker worker) {
+        ServiceOrder order = serviceOrderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Service order not found: " + orderId));
+
+        ServiceOrderStatus oldStatus = order.getStatus();
+        order.setStatus(newStatus);
+        if (worker != null) {
+            order.setProcessedBy(worker);
+        }
+
+        if (newStatus == ServiceOrderStatus.COMPLETED) {
+            order.setCompletedTime(LocalDateTime.now());
+
+            // Auto-inventory deduction for physical / Minibar / F&B items
+            if (order.getService() != null) {
+                deepbluehaven.pojo.Service s = order.getService();
+                if (s.getCategory() == ServiceCategory.MINI_BAR || s.getCategory() == ServiceCategory.FOOD_BEVERAGE) {
+                    String serviceName = s.getName();
+                    List<InventoryItem> items = inventoryItemRepository.findByNameLike(serviceName.trim());
+                    if (items != null && !items.isEmpty()) {
+                        InventoryItem item = items.get(0);
+                        int qtyDeduct = (order.getQuantity() != null) ? order.getQuantity() : 1;
+                        int newQty = Math.max(0, (item.getQuantity() != null ? item.getQuantity() : 0) - qtyDeduct);
+                        item.setQuantity(newQty);
+                        inventoryItemRepository.save(item);
+
+                        InventoryTransaction tx = new InventoryTransaction();
+                        tx.setInventoryItem(item);
+                        tx.setChangeAmount(-qtyDeduct);
+                        tx.setReason("Service Order #" + order.getId() + " (" + s.getName() + ") completed for guest");
+                        inventoryTransactionRepository.save(tx);
+
+                        // Automated low stock alert for Managers
+                        int threshold = (item.getMinThreshold() != null) ? item.getMinThreshold() : 5;
+                        if (newQty <= threshold) {
+                            notificationService.notifyManagers(
+                                "Low Stock Alert: " + item.getName(),
+                                "Inventory item '" + item.getName() + "' is low on stock (" + newQty + " " + (item.getUnit() != null ? item.getUnit() : "units") + " remaining). Threshold: " + threshold + ".",
+                                NotificationType.SYSTEM,
+                                "/manager/inventory"
+                            );
+                        }
+                    }
+                }
+            }
+
+            // Notify Customer if applicable
+            if (order.getCustomer() != null) {
+                notificationService.createCustomerNotification(
+                    order.getCustomer(),
+                    "Service Order Delivered",
+                    "Your order for " + (order.getService() != null ? order.getService().getName() : "Resort Service") + " has been completed. Enjoy!",
+                    NotificationType.SERVICE,
+                    "/booking/history"
+                );
+            }
+        }
+
+        ServiceOrder saved = serviceOrderRepository.save(order);
+
+        Log log = new Log();
+        log.setObjectType(ObjectType.SERVICE);
+        log.setObjectId(order.getId());
+        log.setActionCode(ActionCode.UPDATE);
+        log.setWorkerId(worker != null ? worker.getId() : 1L);
+        log.setPreviousStatus(oldStatus != null ? oldStatus.name() : "PENDING");
+        log.setCurrentStatus(newStatus.name());
+        log.setMetadata("Service order #" + order.getId() + " status updated to " + newStatus);
+        logRepository.save(log);
+
+        return saved;
     }
 
     private String getStatusLabel(BookingStatus status) {

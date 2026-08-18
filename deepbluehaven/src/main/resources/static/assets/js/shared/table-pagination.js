@@ -67,6 +67,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const tableWrappers = document.querySelectorAll(".manager-panel, .reception-panel, .account-panel, .tab-content, .tab-content-panel");
 
         tableWrappers.forEach(panel => {
+            if ((panel.classList.contains("manager-panel") || panel.classList.contains("reception-panel") || panel.classList.contains("account-panel")) && panel.querySelector(".tab-content-panel, .tab-content")) {
+                return;
+            }
+
             const table = panel.querySelector("table.activity-table, table.account-table");
             if (!table) return;
 
@@ -93,12 +97,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     const textContent = row.textContent.toLowerCase();
                     const matchesSearch = !currentKeyword || textContent.includes(currentKeyword);
 
-                    const rowStatus = (row.getAttribute("data-status") || "").toUpperCase();
-                    const statusCellText = (row.querySelector(".status, .badge, .status-badge")?.textContent || "").toUpperCase();
+                    const rowStatus = (row.getAttribute("data-status") || "").toUpperCase().trim();
+                    const statusCell = row.querySelector(".status, .badge, .status-badge, .badge-status, .chip");
+                    const statusCellText = (statusCell ? statusCell.textContent : "").toUpperCase().trim();
                     
                     let matchesStatus = true;
                     if (currentStatus !== "ALL") {
-                        matchesStatus = rowStatus.includes(currentStatus) || statusCellText.includes(currentStatus);
+                        const target = currentStatus.replace(/[\s_-]+/g, '');
+                        const rStatus = rowStatus.replace(/[\s_-]+/g, '');
+                        const cStatus = statusCellText.replace(/[\s_-]+/g, '');
+                        matchesStatus = (rStatus === target || rStatus.includes(target) || cStatus === target || cStatus.includes(target));
                     }
 
                     return matchesSearch && matchesStatus;
@@ -273,34 +281,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (filterBtn) {
                     filterBtn.addEventListener("click", function (e) {
                         e.stopPropagation();
+                        // Close other open filter dropdowns
+                        document.querySelectorAll(".filter-dropdown.active").forEach(d => {
+                            if (d !== dropdown) d.classList.remove("active");
+                        });
                         dropdown.classList.toggle("active");
                     });
                 }
 
                 if (menu) {
                     menu.querySelectorAll("button").forEach(btn => {
-                        btn.addEventListener("click", function () {
+                        btn.addEventListener("click", function (e) {
+                            e.stopPropagation();
                             const text = this.textContent.trim();
-                            const statusVal = this.getAttribute("data-status") || text.toUpperCase();
+                            const rawStatus = (this.getAttribute("data-status") || text).toUpperCase().trim();
                             if (label) label.textContent = text;
                             dropdown.classList.remove("active");
 
-                            if (statusVal.includes("ALL")) {
+                            if (rawStatus === "ALL" || rawStatus.startsWith("ALL")) {
                                 currentStatus = "ALL";
-                            } else if (statusVal.includes("PENDING")) {
-                                currentStatus = "PENDING";
-                            } else if (statusVal.includes("CLEANING")) {
-                                currentStatus = "CLEANING";
-                            } else if (statusVal.includes("MAINTENANCE")) {
-                                currentStatus = "MAINTENANCE";
-                            } else if (statusVal.includes("COMPLETED") || statusVal.includes("INSPECTED") || statusVal.includes("APPROVED")) {
-                                currentStatus = "INSPECTED";
-                            } else if (statusVal.includes("AVAILABLE")) {
-                                currentStatus = "AVAILABLE";
-                            } else if (statusVal.includes("OCCUPIED")) {
-                                currentStatus = "OCCUPIED";
                             } else {
-                                currentStatus = statusVal;
+                                currentStatus = rawStatus;
                             }
                             applyFilters();
                         });

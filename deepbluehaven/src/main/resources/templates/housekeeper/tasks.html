@@ -97,9 +97,14 @@
                                     </form>
 
                                     <th:block th:if="${task.statusLabel == 'CLEANING'}">
-                                        <button type="button" class="btn btn-small btn-success badge open-complete-modal-btn" th:data-task-id="${task.id}" th:data-room-number="${task.roomNumber}">
-                                            <i class="fa-solid fa-camera"></i> Complete
-                                        </button>
+                                        <div style="display: flex; gap: 4px;">
+                                            <button type="button" class="btn btn-small btn-success badge open-complete-modal-btn" th:data-task-id="${task.id}" th:data-room-number="${task.roomNumber}">
+                                                <i class="fa-solid fa-camera"></i> Complete
+                                            </button>
+                                            <button type="button" class="btn btn-small btn-outline badge open-minibar-modal-btn" th:data-task-id="${task.id}" th:data-room-number="${task.roomNumber}">
+                                                <i class="fa-solid fa-wine-bottle"></i> Minibar
+                                            </button>
+                                        </div>
                                     </th:block>
 
                                     <span th:if="${task.statusLabel == 'WAITING_INSPECTION'}"
@@ -258,6 +263,48 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MINIBAR CONSUMPTION MODAL -->
+    <div class="modal-overlay" id="minibarLogModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-wine-bottle"></i> Record Minibar Consumption</h3>
+                <button type="button" class="modal-close" id="closeMinibarModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="minibarLogForm">
+                <div class="modal-body">
+                    <div class="modal-notice-box" style="margin-bottom: 16px;">
+                        <i class="fa-solid fa-door-open modal-notice-icon"></i>
+                        <span>Recording minibar usage for <strong id="minibarRoomDisplay">Room</strong>. Items will be added directly to the guest's folio invoice.</span>
+                    </div>
+
+                    <div class="modal-form-grid">
+                        <div class="form-group">
+                            <label>Consumed Item <span>*</span></label>
+                            <select id="minibarItemSelect" class="form-select" required>
+                                <option value="Mineral Water (Evian 500ml)" selected>Mineral Water (Evian 500ml) - 50,000 VND</option>
+                                <option value="Heineken Beer (Can 330ml)">Heineken Beer (Can 330ml) - 65,000 VND</option>
+                                <option value="Coca Cola (Can 330ml)">Coca Cola (Can 330ml) - 40,000 VND</option>
+                                <option value="Potato Chips (Pringles 110g)">Potato Chips (Pringles 110g) - 75,000 VND</option>
+                                <option value="Roasted Cashew Nuts (100g)">Roasted Cashew Nuts (100g) - 80,000 VND</option>
+                                <option value="Red Wine (Cabernet Sauvignon 375ml)">Red Wine (Cabernet Sauvignon 375ml) - 350,000 VND</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Quantity <span>*</span></label>
+                            <input type="number" id="minibarQtyInput" min="1" max="20" value="1" class="form-input" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-btn" id="cancelMinibarModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-cta"><i class="fa-solid fa-plus-circle"></i> Log Consumption</button>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 

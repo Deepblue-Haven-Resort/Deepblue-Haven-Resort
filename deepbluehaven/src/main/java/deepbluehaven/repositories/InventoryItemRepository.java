@@ -16,4 +16,7 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, Lo
 
     @Query("SELECT i FROM InventoryItem i WHERE i.quantity <= i.minThreshold")
     List<InventoryItem> findLowInventoryItems();
+
+    @Query("SELECT i FROM InventoryItem i WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    List<InventoryItem> findByNameLike(@org.springframework.data.repository.query.Param("name") String name);
 }

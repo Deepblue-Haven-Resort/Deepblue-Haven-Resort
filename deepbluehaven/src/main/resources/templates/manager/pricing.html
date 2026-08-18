@@ -32,14 +32,36 @@
             </section>
 
             <section class="manager-panel">
-                <div class="tabs">
-                    <button class="tab-btn active" data-target="pricingRulesTab">Pricing Rules</button>
-                    <button class="tab-btn" data-target="discountsTab">Discount Codes</button>
-                    <button class="tab-btn" data-target="membershipTiersTab">Membership Tier Rules</button>
+                <div class="panel-tabs-bar">
+                    <button type="button" class="panel-tab-btn"
+                            th:classappend="${activeTab == 'tab-pricing-rules' or activeTab == 'pricingRulesTab' or activeTab == null ? 'active' : ''}"
+                            data-tab="tab-pricing-rules">
+                        <i class="fa-solid fa-tags"></i> Seasonal Pricing Rules
+                        <span class="tab-badge-count" th:if="${pricingRules != null and !pricingRules.isEmpty()}" th:text="${pricingRules.size()}">0</span>
+                    </button>
+                    <button type="button" class="panel-tab-btn"
+                            th:classappend="${activeTab == 'tab-discounts' or activeTab == 'discountsTab' ? 'active' : ''}"
+                            data-tab="tab-discounts">
+                        <i class="fa-solid fa-percent"></i> Discount Codes
+                        <span class="tab-badge-count" th:if="${discounts != null and !discounts.isEmpty()}" th:text="${discounts.size()}">0</span>
+                    </button>
+                    <button type="button" class="panel-tab-btn"
+                            th:classappend="${activeTab == 'tab-membership-tiers' or activeTab == 'membershipTiersTab' ? 'active' : ''}"
+                            data-tab="tab-membership-tiers">
+                        <i class="fa-solid fa-crown"></i> Membership Tiers
+                        <span class="tab-badge-count" th:if="${membershipTiers != null and !membershipTiers.isEmpty()}" th:text="${membershipTiers.size()}">0</span>
+                    </button>
+                    <button type="button" class="panel-tab-btn"
+                            th:classappend="${activeTab == 'tab-service-points' or activeTab == 'servicePointsTab' ? 'active' : ''}"
+                            data-tab="tab-service-points">
+                        <i class="fa-solid fa-star"></i> Service Loyalty Points
+                        <span class="tab-badge-count" th:if="${servicePoints != null and !servicePoints.isEmpty()}" th:text="${servicePoints.size()}">0</span>
+                    </button>
                 </div>
 
                 <!-- Pricing Rules Tab -->
-                <div id="pricingRulesTab" class="tab-content active">
+                <div id="tab-pricing-rules" class="tab-content-panel"
+                     th:classappend="${activeTab == 'tab-pricing-rules' or activeTab == 'pricingRulesTab' or activeTab == null ? 'active' : ''}">
                     <div class="panel-header">
                         <div>
                             <h2>Seasonal Pricing Rules</h2>
@@ -90,7 +112,8 @@
                 </div>
 
                 <!-- Discounts Tab -->
-                <div id="discountsTab" class="tab-content">
+                <div id="tab-discounts" class="tab-content-panel"
+                     th:classappend="${activeTab == 'tab-discounts' or activeTab == 'discountsTab' ? 'active' : ''}">
                     <div class="panel-header">
                         <div>
                             <h2>Promotional Discount Codes</h2>
@@ -138,7 +161,8 @@
                 </div>
 
                 <!-- Membership Tiers Tab -->
-                <div id="membershipTiersTab" class="tab-content">
+                <div id="tab-membership-tiers" class="tab-content-panel"
+                     th:classappend="${activeTab == 'tab-membership-tiers' or activeTab == 'membershipTiersTab' ? 'active' : ''}">
                     <div class="panel-header">
                         <div>
                             <h2>Membership Tier Rules & Progression Thresholds</h2>
@@ -186,8 +210,120 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Service Loyalty Points Tab -->
+                <div id="tab-service-points" class="tab-content-panel"
+                     th:classappend="${activeTab == 'tab-service-points' or activeTab == 'servicePointsTab' ? 'active' : ''}">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Service Category Loyalty Point Rules</h2>
+                            <p style="color: #64748b; font-size: 13px; margin-top: 4px;">Define reward points earned by guests when purchasing specific service categories (Spa, Minibar, Dining, etc.).</p>
+                        </div>
+                        <div class="filter-options">
+                            <button type="button" class="btn btn-cta btn-medium" id="addServicePointBtn">Add Service Point Rule</button>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>Service Category</th>
+                                    <th>Calculation Type</th>
+                                    <th>Fixed Points</th>
+                                    <th>Reward % (of spend)</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="sp : ${servicePoints}"
+                                    th:data-id="${sp.id}"
+                                    th:data-category="${sp.serviceCategory}"
+                                    th:data-type="${sp.calculationType}"
+                                    th:data-fixed="${sp.fixedPoints}"
+                                    th:data-rate="${sp.rewardPercentage}"
+                                    th:data-active="${sp.isActive}">
+                                    <td>
+                                        <strong th:text="${sp.serviceCategory != null ? sp.serviceCategory.displayName : 'All Services'}">Food & Beverage</strong>
+                                    </td>
+                                    <td>
+                                        <span class="status status-info" th:text="${sp.calculationType}">PERCENTAGE</span>
+                                    </td>
+                                    <td>
+                                        <strong th:text="${sp.fixedPoints != null ? sp.fixedPoints + ' pts' : '—'}">10 pts</strong>
+                                    </td>
+                                    <td>
+                                        <strong th:text="${sp.rewardPercentage != null ? sp.rewardPercentage + '%' : '—'}">5%</strong>
+                                    </td>
+                                    <td>
+                                        <span th:class="|status ${sp.isActive ? 'status-success' : 'status-danger'}|"
+                                              th:text="${sp.isActive ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn outline-btn edit-service-point-btn btn-small">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(servicePoints)}">
+                                    <td colspan="6" class="empty-table-cell">No service point rules configured yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </section>
         </main>
+    </div>
+
+    <!-- Service Point Modal -->
+    <div class="modal-overlay" id="servicePointModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="servicePointModalTitle"><i class="fa-solid fa-gem"></i> Loyalty Point Rule</h3>
+                <button type="button" class="modal-close" id="closeServicePointModalBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="servicePointForm" th:action="@{/manager/pricing/service-points/save}" method="post">
+                <input type="hidden" id="spId" name="id">
+                <div class="modal-body">
+                    <div class="modal-form-grid">
+                        <div class="form-group">
+                            <label>Service Category <span>*</span></label>
+                            <select id="spCategory" name="serviceCategory" required style="width: 100%; height: 46px; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0 14px; font-weight: 500; outline: none; background: #fff; color: #1e293b;">
+                                <option th:each="cat : ${serviceCategories}" th:value="${cat}" th:text="${cat.displayName}">Food & Beverage</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Calculation Type <span>*</span></label>
+                            <select id="spCalcType" name="calculationType" required style="width: 100%; height: 46px; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0 14px; font-weight: 500; outline: none; background: #fff; color: #1e293b;">
+                                <option value="PERCENTAGE">PERCENTAGE (% of spend)</option>
+                                <option value="FIXED_AMOUNT">FIXED_AMOUNT (Fixed points)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fixed Points (if Fixed)</label>
+                            <input type="number" id="spFixedPoints" name="fixedPoints" min="0" step="1" placeholder="e.g. 10">
+                        </div>
+                        <div class="form-group">
+                            <label>Reward Percentage (if %)</label>
+                            <input type="number" id="spRewardPercentage" name="rewardPercentage" min="0" step="0.5" placeholder="e.g. 5.0">
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="spIsActive" name="isActive" style="width: 100%; height: 46px; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0 14px; font-weight: 500; outline: none; background: #fff; color: #1e293b;">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-btn" id="cancelServicePointModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-cta">Save Rule</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Pricing Rule Modal -->
